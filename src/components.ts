@@ -1289,8 +1289,8 @@ export function registerComponentElements(): void {
         const toolButtons = tools.map(([key, icon, label]) => '<button type="button" class="lm-story-tool' + (tool === key ? ' active' : '') + '" data-story-tool="' + e(key) + '" aria-pressed="' + String(tool === key) + '"><span>' + e(icon) + '</span>' + e(label) + '</button>').join('');
         const filterOptions: Array<[string, string]> = [['original', 'Original'], ['warm', 'Quente'], ['cool', 'Frio'], ['mono', 'P&B'], ['soft', 'Suave']];
         const filterButtons = filterOptions.map(([key, label]) => '<button type="button" class="lm-story-filter-option' + (interaction.storyFilter === key ? ' active' : '') + '" data-story-filter="' + e(key) + '" aria-pressed="' + String(interaction.storyFilter === key) + '"><span class="lm-story-filter-swatch ' + e(key) + '"></span>' + e(label) + '</button>').join('');
-        return '<form class="lm-story-editor" data-story-composer role="dialog" aria-modal="true" aria-label="Criar novo story">'
-          + '<header class="lm-story-editor-header"><button type="button" class="lm-story-editor-close" data-story-action="cancel" aria-label="Fechar editor">×</button><div><span>STORY STUDIO · LUMIRA</span><strong>Nova publicação</strong></div><button type="button" class="lm-story-editor-draft" data-story-action="draft">Salvar rascunho</button></header>'
+        return '<form class="lm-story-editor" data-story-composer aria-label="Criar novo story">'
+          + '<header class="lm-story-editor-header"><button type="button" class="lm-story-editor-close" data-story-action="cancel" aria-label="Fechar editor">×</button><div><span>NOVA PUBLICAÇÃO</span><strong>Criar story</strong></div><button type="button" class="lm-story-editor-draft" data-story-action="draft">Salvar rascunho</button></header>'
           + '<div class="lm-story-editor-layout"><aside class="lm-story-tools" aria-label="Adicionais do story"><span class="lm-story-editor-label">ADICIONAIS</span>' + toolButtons + '</aside>'
           + '<section class="lm-story-editor-stage"><div class="lm-story-preview-toolbar"><div><span class="lm-story-editor-label">FORMATO</span><button type="button" class="' + (interaction.storyOrientation === 'portrait' ? 'active' : '') + '" data-story-orientation="portrait" aria-pressed="' + String(interaction.storyOrientation === 'portrait') + '">Vertical · 9:16</button><button type="button" class="' + (interaction.storyOrientation === 'landscape' ? 'active' : '') + '" data-story-orientation="landscape" aria-pressed="' + String(interaction.storyOrientation === 'landscape') + '">Horizontal · 16:9</button></div></div>'
           + '<div class="lm-story-preview lm-story-preview--' + e(interaction.storyOrientation) + '"><img data-story-preview-image class="lm-story-filter-' + e(interaction.storyFilter) + '" src="' + e(interaction.storyImage || profileCoverAsset) + '" alt="Prévia da foto do story"><div class="lm-story-preview-shade"></div><div class="lm-story-preview-content">'
@@ -1375,7 +1375,7 @@ export function registerComponentElements(): void {
         if (button.hasAttribute('data-story-create')) {
           this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: true, feedback: '' }));
           this.render();
-          this.querySelector<HTMLInputElement>('[data-story-composer] input[name="title"]')?.focus();
+          this.querySelector<HTMLButtonElement>('[data-story-composer] [data-story-action="cancel"]')?.focus();
           return;
         }
         const storyAction = button.dataset.storyAction;

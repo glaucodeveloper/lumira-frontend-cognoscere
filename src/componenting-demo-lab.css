@@ -3092,7 +3092,7 @@ lumira-page-part {
   }
 }
 
-/* Full-screen Story Studio: photo stage, creation tools and post settings. */
+/* Story composer visual primitives; the inline card layout follows below. */
 .lm-story-editor {
   position: fixed;
   z-index: 10000;
@@ -3564,6 +3564,160 @@ lumira-page-part {
   .lm-inspector-footer {
     margin-top: 0;
   }
+}
+
+/* A criação de story fica dentro do fluxo da publicação, sem cobrir a página. */
+.lm-story-editor {
+  position: static;
+  z-index: auto;
+  inset: auto;
+  display: grid;
+  width: min(100%, 720px);
+  height: auto;
+  max-width: 720px;
+  grid-template-rows: auto auto;
+  margin: 12px auto 2px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #deded9;
+  border-radius: 8px;
+  background: #f7f7f4;
+  box-shadow: 0 5px 18px #1415120c;
+}
+.lm-story-editor-header {
+  min-height: 52px;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 8px 12px;
+}
+.lm-story-editor-header strong { font-size: 15px; }
+.lm-story-editor-header>div>span { font-size: 8px; }
+.lm-story-editor-close,
+.lm-story-editor-draft { height: 31px; min-width: 31px; font-size: 16px; }
+.lm-story-editor-draft { padding: 0 9px; font-size: 9px; }
+.lm-story-editor-layout {
+  grid-template-columns: minmax(0, .95fr) minmax(250px, 1.05fr);
+  align-items: stretch;
+  background: white;
+}
+.lm-story-tools {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  overflow: visible;
+  padding: 8px 12px 9px;
+  border-right: 0;
+  border-bottom: 1px solid #deded9;
+}
+.lm-story-tools>.lm-story-editor-label {
+  grid-column: 1 / -1;
+  margin: 0 0 2px;
+  font-size: 8px;
+}
+.lm-story-tool {
+  display: flex;
+  min-width: 0;
+  min-height: 33px;
+  flex-direction: row;
+  justify-content: center;
+  gap: 5px;
+  padding: 4px 3px;
+  font-size: 8px;
+}
+.lm-story-tool span { flex: 0 0 auto; font-size: 13px; }
+.lm-story-editor-stage {
+  min-height: 0;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+  overflow: visible;
+  padding: 12px;
+  border-right: 1px solid #deded9;
+  background: #f7f7f4;
+}
+.lm-story-preview-toolbar,
+.lm-story-filter-tray,
+.lm-story-upload { width: 100%; }
+.lm-story-preview-toolbar>div { flex-wrap: wrap; gap: 5px; }
+.lm-story-preview-toolbar .lm-story-editor-label { width: 100%; margin: 0; }
+.lm-story-preview-toolbar button,
+.lm-story-filter-option { min-height: 27px; padding: 4px 7px; font-size: 8px; }
+.lm-story-preview {
+  width: min(100%, 224px);
+  height: auto;
+  max-height: none;
+  flex: 0 0 auto;
+  box-shadow: 0 7px 22px #1415121c;
+}
+.lm-story-preview--portrait { width: min(100%, 224px); height: auto; aspect-ratio: 9 / 16; }
+.lm-story-preview--landscape { width: min(100%, 390px); height: auto; aspect-ratio: 16 / 9; }
+.lm-story-preview-content { padding: 10px; }
+.lm-story-preview-top { font-size: 8px; }
+.lm-story-preview-avatar { width: 22px; height: 22px; }
+.lm-story-preview-overlay-text { font-size: 14px; }
+.lm-story-preview-sticker { padding: 5px 7px; font-size: 8px; }
+.lm-story-preview-sticker.poll { gap: 3px; }
+.lm-story-preview-sticker.poll>span { padding: 3px 5px; font-size: 7px; }
+.lm-story-preview-caption strong { font-size: 12px; }
+.lm-story-preview-caption span { font-size: 8px; }
+.lm-story-filter-tray { flex-wrap: wrap; gap: 4px; }
+.lm-story-filter-tray>.lm-story-editor-label { width: 100%; margin: 0; font-size: 8px; }
+.lm-story-upload { flex-wrap: wrap; gap: 6px; font-size: 8px; }
+.lm-story-upload>span { padding: 6px 7px; }
+.lm-story-upload small { max-width: 100%; white-space: normal; overflow-wrap: anywhere; font-size: 7px; }
+.lm-story-editor-panel {
+  min-width: 0;
+  min-height: 0;
+  grid-column: 2;
+  grid-row: 2;
+  overflow: visible;
+}
+.lm-story-editor-panel-heading { padding: 12px 14px 10px; }
+.lm-story-editor-panel-heading strong { font-size: 13px; }
+.lm-story-tool-fields,
+.lm-story-post-details { gap: 8px; padding: 10px 14px; }
+.lm-story-tool-fields input,
+.lm-story-tool-fields textarea,
+.lm-story-tool-fields select,
+.lm-story-post-details input,
+.lm-story-post-details textarea,
+.lm-story-post-details select { padding: 7px 8px; font-size: 9px; }
+.lm-story-panel-hint { font-size: 8px; }
+.lm-story-editor-footer { gap: 7px; margin: 0; padding: 10px 14px 13px; }
+.lm-story-editor-footer small { font-size: 8px; }
+.lm-story-editor-footer button { min-height: 35px; font-size: 9px; }
+@media (max-width: 680px) {
+  .lm-story-editor { width: 100%; margin-top: 10px; }
+  .lm-story-editor-header { grid-template-columns: 31px minmax(0, 1fr) auto; gap: 7px; padding: 7px 9px; }
+  .lm-story-editor-header strong { font-size: 13px; }
+  .lm-story-editor-header>div>span { font-size: 7px; }
+  .lm-story-editor-draft { height: 29px; padding: 0 6px; font-size: 8px; }
+  .lm-story-editor-layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
+  .lm-story-tools { grid-column: 1; grid-row: auto; gap: 3px; padding: 8px; }
+  .lm-story-tools>.lm-story-editor-label { font-size: 7px; }
+  .lm-story-tool { min-height: 31px; flex-wrap: wrap; gap: 2px; font-size: 7px; }
+  .lm-story-tool span { font-size: 12px; }
+  .lm-story-editor-stage { grid-column: 1; grid-row: auto; gap: 7px; padding: 10px; border-right: 0; border-bottom: 1px solid #deded9; }
+  .lm-story-preview-toolbar>div { gap: 4px; }
+  .lm-story-preview-toolbar button { min-height: 25px; padding: 4px 6px; font-size: 7px; }
+  .lm-story-preview--portrait { width: min(100%, 210px); height: auto; aspect-ratio: 9 / 16; }
+  .lm-story-preview--landscape { width: min(100%, 390px); max-height: none; }
+  .lm-story-filter-tray>.lm-story-editor-label { display: block; }
+  .lm-story-filter-option { min-height: 25px; padding: 3px 6px; font-size: 7px; }
+  .lm-story-upload { font-size: 7px; }
+  .lm-story-editor-panel { grid-column: 1; grid-row: auto; border-left: 0; }
+  .lm-story-editor-panel-heading { padding: 10px 11px 8px; }
+  .lm-story-tool-fields,
+  .lm-story-post-details { gap: 7px; padding: 9px 11px; }
+  .lm-story-tool-fields input,
+  .lm-story-tool-fields textarea,
+  .lm-story-tool-fields select,
+  .lm-story-post-details input,
+  .lm-story-post-details textarea,
+  .lm-story-post-details select { padding: 7px 8px; font-size: 9px; }
+  .lm-story-editor-footer { padding: 9px 11px 11px; }
+  .lm-story-published-art { height: min(120vw, 520px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .componenting-lab-shell *,
