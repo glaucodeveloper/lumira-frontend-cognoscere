@@ -331,7 +331,10 @@ function labNumber(data: ComponentFixture, key: string, fallback = 0): number { 
 function labList<T = unknown>(data: ComponentFixture, key: string): T[] { return Array.isArray(data[key]) ? data[key] as T[] : []; }
 type DemoPagePartProps = {
   id: string;
+  title: string;
   content: string;
+  presentation: string;
+  evidence: ReferenceEvidence;
   selectedId: string;
   className: string;
   situation: ComponentMockSituation;
@@ -371,9 +374,13 @@ function labPart(id: string, content: string, selectedId: string, className = ''
   if (!activePageComposition) throw new Error('Parte de página criada fora da composição de um componente de página.');
   const part = activePageComposition.existing.get(id) ?? document.createElement('lumira-page-part') as DemoPagePartElement;
   const situation = activePageComposition.situation;
+  const region = referenceScreenSpecs.find(screen => screen.id === situation.screenId)?.regions.find(item => item.id === id);
   part.configure({
     id,
+    title: region?.title ?? id.replaceAll('-', ' '),
     content,
+    presentation: region?.presentation ?? '',
+    evidence: region?.evidence ?? 'derived',
     selectedId,
     className,
     situation: { ...situation, status: situation.componentStates?.[id] ?? situation.status },
@@ -656,7 +663,7 @@ export function registerComponentElements(): void {
       constructor() {
         super();
         this.transitions = componentState<DemoPagePartState>({
-          id: '', content: '', selectedId: '', className: '', situation: emptySituation(''),
+          id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           interaction: { groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, feedback: '' },
         });
         this.state = this.transitions.next().value;
@@ -889,17 +896,26 @@ export function registerComponentElements(): void {
         this.render();
       }
       private render(): void {
-        const { id, content, selectedId, className, situation } = this.state;
+        const { id, title, content, presentation, evidence, selectedId, className, situation } = this.state;
         this.className = 'lm-page-part ' + e(className) + (id === selectedId ? ' is-selected' : '');
         this.dataset.componentId = id;
-        this.setAttribute('aria-label', id.replaceAll('-', ' '));
+        this.setAttribute('aria-label', title);
         this.setAttribute('role', 'region');
         this.dataset.mockScreen = situation.screenId;
         this.dataset.mockFixture = situation.fixtureKey;
         this.dataset.mockRole = situation.role;
         this.dataset.mockStatus = situation.status;
         this.dataset.selectedRegion = situation.selectedRegionId;
-        this.innerHTML = content + componentStateLayer(situation.status);
+        const evidenceLabels: Record<ReferenceEvidence, string> = {
+          observed: 'Referência observada',
+          derived: 'Composição derivada',
+          'navigation-only': 'Mapa de navegação',
+        };
+        const presentationBlock = id === selectedId && presentation
+          ? '<aside class="lm-part-presentation"><header><span class="lm-eyebrow">CONTEXTO DA PARTE</span><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>'
+            + '<h3>' + e(title) + '</h3><p>' + e(presentation) + '</p></aside>'
+          : '';
+        this.innerHTML = content + presentationBlock + componentStateLayer(situation.status);
         this.prepareControls();
         this.restoreInteraction();
       }

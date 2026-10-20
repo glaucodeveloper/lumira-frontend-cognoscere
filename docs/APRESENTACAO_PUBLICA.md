@@ -5,7 +5,7 @@ Explore as telas da Lumira pela [apresentação ao vivo](https://glaucodeveloper
 ## Como conduzir a apresentação
 
 1. Escolha **Acesso**, **Perfil professor**, **Perfil aluno** ou **Comunidade** no índice à esquerda.
-2. Leia o contexto da tela e selecione uma parte na lista à direita. A área **Parte em foco** explica o papel daquela região.
+2. Leia o contexto da tela e selecione uma parte na lista à direita. A explicação aparece em um bloco dentro da própria parte destacada na prévia, junto do conteúdo demonstrado.
 3. Altere o papel ou o estado para demonstrar variações. Loading retorna a pronto após um breve intervalo; vazio, erro e restrito continuam selecionáveis.
 4. Edite o JSON de demonstração e aplique-o para atualizar a prévia. O conteúdo permanece apenas no navegador.
 5. Use **Compartilhar esta parte** para copiar um link direto. A seleção também aparece no endereço e responde aos comandos voltar/avançar do navegador.
