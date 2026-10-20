@@ -352,11 +352,11 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const markup = '<div class="componenting-lab-shell' + (this.state.fullView ? ' is-full-view' : '') + '">'
         + '<aside class="lm-app-rail"><header class="lm-lab-brand"><span class="lm-brand-glyph">L</span><div><b>LUMIRA</b><small>APRESENTAÇÃO INTERATIVA</small></div></header>'
         + '<div class="lm-rail-label">TELAS DE REFERÊNCIA</div><nav class="lm-page-nav">' + pageButtons + '</nav>'
-        + '<div class="lm-rail-bottom"><span>WORKSPACE DE DESENVOLVIMENTO</span><b>COMPONENTES · 01</b></div></aside>'
+        + '<div class="lm-rail-bottom"><span>ROTEIRO DE APRESENTAÇÃO</span><b>04 TELAS · ESTADOS INTERATIVOS</b></div></aside>'
         + '<section class="lm-preview-column"><header class="lm-preview-toolbar"><div><span class="lm-live-dot"></span><span>APRESENTAÇÃO LUMIRA</span><i>/</i><b>' + e(screen.title) + '</b></div><div class="lm-viewport-controls"><button type="button" class="lm-share-link" data-copy-demo-link><span aria-hidden="true">↗</span><span data-copy-demo-label>Compartilhar esta parte</span></button><button type="button" class="lm-full-view-toggle" data-full-view-toggle aria-pressed="' + String(this.state.fullView) + '" aria-label="' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '"><span aria-hidden="true">' + (this.state.fullView ? '⤡' : '⤢') + '</span><span>' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '</span></button></div></header>'
         + '<div class="lm-page-scroll"><div class="lm-page-caption"><div><span class="lm-eyebrow">LUMIRA · EXPERIÊNCIA DE PÁGINA</span><h1>' + e(screen.title) + '</h1><p>' + e(screen.description) + '</p></div><span class="lm-evidence-badge ' + e(screen.evidence) + '">' + e(screen.evidence) + '</span></div>'
         + '<div class="lm-preview-mat"><div class="lm-preview-frame ' + (screen.id === 'access' ? 'access-frame' : '') + '" data-screen-state="' + e(this.state.screenState) + '"><div class="lm-page-component-mount"></div></div></div></div>'
-        + '<footer class="lm-preview-footer"><span>Fixture <b>' + e(screen.fixtureKey) + '</b> · papel <b>' + e(this.state.role) + '</b></span><span>Selecione uma parte para inspecionar</span></footer></section>'
+        + '<footer class="lm-preview-footer"><span>Dados demonstrativos · papel <b>' + e(this.state.role) + '</b></span><span>Selecione uma parte para abrir seu contexto de apresentação</span></footer></section>'
         + '<aside class="lm-inspector"><header class="lm-inspector-heading"><div><span class="lm-eyebrow">GUIA DE APRESENTAÇÃO</span><h2>Partes desta página</h2></div><span class="lm-inspector-mark">L</span></header>'
         + '<section class="lm-inspector-section lm-presentation-overview"><span class="lm-eyebrow">LEITURA DA TELA</span><p>' + e(screen.presentation) + '</p></section>'
         + '<section class="lm-inspector-section lm-selection-summary"><span class="lm-eyebrow">PARTE EM FOCO</span><b>' + e(selectedRegion?.title ?? screen.title) + '</b><p>' + e(selectedRegion?.presentation ?? selectedRegion?.description ?? screen.presentation) + '</p><span class="lm-evidence-badge ' + e(selectedRegion?.evidence ?? screen.evidence) + '">' + e(selectedRegion?.evidence ?? screen.evidence) + '</span></section>'
@@ -430,7 +430,7 @@ export function* programGenerator(
     mount,
     mode: serviceMode,
     renderView: renderView ? () => renderView!() : undefined,
-    documentTitle: applicationMode ? undefined : 'Lumira · Componenting Demo Lab',
+    documentTitle: applicationMode ? undefined : 'Lumira · Apresentação interativa',
     bindEvents: applicationMode,
   });
 
