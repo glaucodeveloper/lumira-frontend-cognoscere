@@ -3622,7 +3622,50 @@ lumira-page-part {
   font: 12px/1.5 var(--lm-font-body);
   resize: vertical;
 }
-.lm-story-quick-composer>footer { display: flex; justify-content: space-between; gap: 8px; }
+.lm-story-quick-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 0;
+  border-top: 1px solid #ecece8;
+  border-bottom: 1px solid #ecece8;
+}
+.lm-story-quick-tools>span {
+  width: 100%;
+  color: #858780;
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: .1em;
+}
+.lm-story-quick-feature {
+  display: inline-flex;
+  min-height: 29px;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border: 1px solid #e2e3dd;
+  border-radius: 4px;
+  background: #fff;
+  color: #53554f;
+  font-size: 9px;
+  cursor: pointer;
+}
+.lm-story-quick-feature>span { color: #183f70; font-size: 12px; font-weight: 750; }
+.lm-story-quick-feature:hover,
+.lm-story-quick-feature-image { border-color: #bed0df; background: #f2f7fb; color: #173d63; }
+.lm-story-quick-composer>footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.lm-story-quick-visibility label { display: flex; align-items: center; gap: 6px; color: #858780; font-size: 9px; }
+.lm-story-quick-visibility select,
+.lm-story-editor-footer select {
+  min-height: 31px;
+  padding: 5px 8px;
+  border: 1px solid #deded9;
+  border-radius: 4px;
+  background: white;
+  color: #363732;
+  font: 9px var(--lm-font-body);
+}
 .lm-story-quick-composer>footer button {
   min-height: 34px;
   padding: 7px 11px;
@@ -3635,12 +3678,6 @@ lumira-page-part {
   cursor: pointer;
 }
 .lm-story-quick-composer>footer button span { margin-left: 5px; }
-.lm-story-quick-composer>footer .lm-story-expand-option {
-  border: 1px solid #deded9;
-  background: white;
-  color: #363732;
-  font-weight: 600;
-}
 .lm-story-editor {
   position: static;
   z-index: auto;
@@ -3669,6 +3706,25 @@ lumira-page-part {
 .lm-story-editor-close,
 .lm-story-editor-draft { height: 31px; min-width: 31px; font-size: 16px; }
 .lm-story-editor-draft { padding: 0 9px; font-size: 9px; }
+.lm-story-editor-prompt {
+  display: grid;
+  gap: 7px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #deded9;
+  background: white;
+}
+.lm-story-editor-prompt>span { font-size: 8px; }
+.lm-story-editor-prompt textarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 9px 10px;
+  border: 1px solid #e2e3dd;
+  border-radius: 5px;
+  background: #fbfbf9;
+  color: #242521;
+  font: 11px/1.5 var(--lm-font-body);
+  resize: vertical;
+}
 .lm-story-editor-layout {
   grid-template-columns: minmax(0, .95fr) minmax(250px, 1.05fr);
   align-items: stretch;
@@ -3760,17 +3816,24 @@ lumira-page-part {
 .lm-story-panel-hint { font-size: 8px; }
 .lm-story-editor-footer { gap: 7px; margin: 0; padding: 10px 14px 13px; }
 .lm-story-editor-footer small { font-size: 8px; }
+.lm-story-editor-footer>label { display: grid; gap: 4px; color: #858780; font-size: 9px; }
+.lm-story-editor-footer select { width: 100%; }
 .lm-story-editor-footer button { min-height: 35px; font-size: 9px; }
 @media (max-width: 680px) {
   .lm-story-editor { width: 100%; margin-top: 10px; }
   .lm-story-quick-composer { gap: 9px; margin-top: 10px; padding: 11px; }
   .lm-story-quick-composer>header small { font-size: 8px; }
   .lm-story-quick-composer>textarea { min-height: 65px; font-size: 11px; }
+  .lm-story-quick-tools { flex-wrap: nowrap; overflow-x: auto; }
+  .lm-story-quick-tools>span { position: sticky; left: 0; width: auto; flex: 0 0 auto; padding-right: 2px; background: white; }
+  .lm-story-quick-feature { flex: 0 0 auto; }
   .lm-story-quick-composer>footer button { min-height: 32px; padding: 6px 8px; font-size: 9px; }
   .lm-story-editor-header { grid-template-columns: 31px minmax(0, 1fr) auto auto; gap: 6px; padding: 7px 9px; }
   .lm-story-editor-header strong { font-size: 13px; }
   .lm-story-editor-header>div>span { font-size: 7px; }
   .lm-story-editor-draft { height: 29px; padding: 0 6px; font-size: 8px; }
+  .lm-story-editor-prompt { padding: 10px; }
+  .lm-story-editor-prompt textarea { min-height: 64px; font-size: 10px; }
   .lm-story-editor-layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
   .lm-story-tools { grid-column: 1; grid-row: auto; gap: 3px; padding: 8px; }
   .lm-story-tools>.lm-story-editor-label { font-size: 7px; }

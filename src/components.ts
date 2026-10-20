@@ -1264,24 +1264,32 @@ export function registerComponentElements(): void {
         const tool = interaction.storyComposerTool;
         const creatorName = this.state.id === 'student-stories' ? 'Caio Almeida' : 'Ana Beatriz Silva';
         const creatorInitial = creatorName.slice(0, 1).toLocaleUpperCase();
+        const select = (name: string, label: string, options: string[]): string =>
+          '<label>' + e(label) + '<select name="' + e(name) + '" data-story-field="' + e(name) + '">' + options.map(option => '<option value="' + e(option) + '">' + e(option) + '</option>').join('') + '</select></label>';
+        const quickFeatures: Array<[string, string, string]> = [
+          ['image', '▧', 'Imagem'], ['text', 'Aa', 'Texto'], ['music', '♫', 'Música'], ['activity', '✦', 'Atividade'],
+          ['link', '↗', 'Link'], ['poll', '▤', 'Enquete'], ['quiz', '?', 'Quiz'], ['question', '…', 'Pergunta'],
+          ['countdown', '◷', 'Contagem'], ['mention', '@', 'Marcação'], ['location', '⌖', 'Local'],
+        ];
+        const quickFeatureButtons = quickFeatures.map(([key, icon, label]) => '<button type="button" class="lm-story-quick-feature' + (key === 'image' ? ' lm-story-quick-feature-image' : '') + '" data-story-quick-feature="' + e(key) + '" aria-label="Adicionar ' + e(label.toLocaleLowerCase()) + '" title="' + e(label) + '"><span>' + e(icon) + '</span>' + e(label) + '</button>').join('');
         if (!interaction.storyComposerExpanded) {
           return '<form class="lm-story-quick-composer" data-story-composer aria-label="Criar novo story">'
             + '<header><span class="lm-story-quick-avatar" aria-hidden="true">' + e(creatorInitial) + '</span><div><strong>Criar story</strong><small>Compartilhe um momento com a comunidade</small></div><button type="button" data-story-action="cancel" aria-label="Fechar criação de story">×</button></header>'
             + '<textarea name="body" data-story-field="body" rows="3" maxlength="360" aria-label="Texto do story" placeholder="O que você quer compartilhar?"></textarea>'
-            + '<footer><button type="button" class="lm-story-expand-option" data-story-action="expand">＋ Abrir editor expandido</button><button type="submit">Compartilhar story <span>↗</span></button></footer></form>';
+            + '<div class="lm-story-quick-tools"><span>ADICIONAR AO STORY</span>' + quickFeatureButtons + '</div>'
+            + '<footer><div class="lm-story-quick-visibility">' + select('visibility', 'Público', ['Público', 'Seguidores', 'Somente eu', 'Privado']) + '</div><button type="submit">Compartilhar story <span>↗</span></button></footer></form>';
         }
         const field = (name: string, label: string, placeholder: string, type = 'text', maxlength = 120): string =>
           '<label>' + e(label) + '<input type="' + e(type) + '" name="' + e(name) + '" data-story-field="' + e(name) + '" maxlength="' + maxlength + '" placeholder="' + e(placeholder) + '"></label>';
         const area = (name: string, label: string, placeholder: string, rows = 3, maxlength = 240): string =>
           '<label>' + e(label) + '<textarea name="' + e(name) + '" data-story-field="' + e(name) + '" rows="' + rows + '" maxlength="' + maxlength + '" placeholder="' + e(placeholder) + '"></textarea></label>';
-        const select = (name: string, label: string, options: string[]): string =>
-          '<label>' + e(label) + '<select name="' + e(name) + '" data-story-field="' + e(name) + '">' + options.map(option => '<option value="' + e(option) + '">' + e(option) + '</option>').join('') + '</select></label>';
         const tools = [
-          ['text', 'Aa', 'Texto'], ['music', '♫', 'Música'], ['activity', '✦', 'Atividade'], ['link', '↗', 'Link'],
+          ['image', '▧', 'Imagem'], ['text', 'Aa', 'Texto'], ['music', '♫', 'Música'], ['activity', '✦', 'Atividade'], ['link', '↗', 'Link'],
           ['poll', '▤', 'Enquete'], ['quiz', '?', 'Quiz'], ['question', '…', 'Pergunta'], ['countdown', '◷', 'Contagem'],
           ['mention', '@', 'Marcação'], ['location', '⌖', 'Local'],
         ];
         const panels: Record<string, string> = {
+          image: '<p class="lm-story-panel-hint">Adicione uma imagem à prévia. Escolha um arquivo logo abaixo da imagem para começar.</p>',
           text: area('overlayText', 'Texto sobre a foto', 'Escreva uma frase para aparecer no story.', 4, 180) + select('textStyle', 'Estilo do texto', ['Clássico', 'Destaque', 'Contorno']),
           music: select('music', 'Faixa musical', ['Escolha uma faixa', 'Boa Energia · Jota.Pê', 'O Sol · Vitor Kley', 'Velha Infância · Tribalistas', 'Instrumental · Lumira']) + '<p class="lm-story-panel-hint">A faixa aparece como sticker musical na publicação.</p>',
           activity: select('activity', 'Atividade da comunidade', ['Escolha uma atividade', 'Feira de ciências', 'Clube de leitura', 'Desafio de matemática', 'Roda de conversa', 'Projeto de artes']) + '<p class="lm-story-panel-hint">Vincule o story a uma atividade demonstrativa do perfil.</p>',
@@ -1298,6 +1306,7 @@ export function registerComponentElements(): void {
         const filterButtons = filterOptions.map(([key, label]) => '<button type="button" class="lm-story-filter-option' + (interaction.storyFilter === key ? ' active' : '') + '" data-story-filter="' + e(key) + '" aria-pressed="' + String(interaction.storyFilter === key) + '"><span class="lm-story-filter-swatch ' + e(key) + '"></span>' + e(label) + '</button>').join('');
         return '<form class="lm-story-editor" data-story-composer aria-label="Criar novo story">'
           + '<header class="lm-story-editor-header"><button type="button" class="lm-story-editor-close" data-story-action="cancel" aria-label="Fechar editor">×</button><div><span>NOVA PUBLICAÇÃO</span><strong>Criar story</strong></div><button type="button" class="lm-story-editor-draft" data-story-action="compact">← Versão simples</button><button type="button" class="lm-story-editor-draft" data-story-action="draft">Salvar rascunho</button></header>'
+          + '<label class="lm-story-editor-prompt"><span class="lm-story-editor-label">O QUE VOCÊ QUER COMPARTILHAR?</span><textarea name="body" data-story-field="body" rows="3" maxlength="360" placeholder="Escreva algo para acompanhar sua imagem."></textarea></label>'
           + '<div class="lm-story-editor-layout"><aside class="lm-story-tools" aria-label="Adicionais do story"><span class="lm-story-editor-label">ADICIONAIS</span>' + toolButtons + '</aside>'
           + '<section class="lm-story-editor-stage"><div class="lm-story-preview-toolbar"><div><span class="lm-story-editor-label">FORMATO</span><button type="button" class="' + (interaction.storyOrientation === 'portrait' ? 'active' : '') + '" data-story-orientation="portrait" aria-pressed="' + String(interaction.storyOrientation === 'portrait') + '">Vertical · 9:16</button><button type="button" class="' + (interaction.storyOrientation === 'landscape' ? 'active' : '') + '" data-story-orientation="landscape" aria-pressed="' + String(interaction.storyOrientation === 'landscape') + '">Horizontal · 16:9</button></div></div>'
           + '<div class="lm-story-preview lm-story-preview--' + e(interaction.storyOrientation) + '"><img data-story-preview-image class="lm-story-filter-' + e(interaction.storyFilter) + '" src="' + e(interaction.storyImage || profileCoverAsset) + '" alt="Prévia da foto do story"><div class="lm-story-preview-shade"></div><div class="lm-story-preview-content">'
@@ -1311,8 +1320,7 @@ export function registerComponentElements(): void {
           + '<div class="lm-story-filter-tray"><span class="lm-story-editor-label">FILTROS</span>' + filterButtons + '</div>'
           + '<label class="lm-story-upload"><input type="file" accept="image/*" data-story-image-file><span>＋ Escolher foto</span><small data-story-image-name>Foto de demonstração · selecione uma imagem para substituir</small></label></section>'
           + '<aside class="lm-story-editor-panel"><div class="lm-story-editor-panel-heading"><span class="lm-story-editor-label">ADICIONAL SELECIONADO</span><strong>' + e(tools.find(item => item[0] === tool)?.[2] ?? 'Texto') + '</strong></div><div class="lm-story-tool-fields">' + (panels[tool] ?? panels.text) + '</div>'
-          + '<div class="lm-story-post-details"><span class="lm-story-editor-label">DETALHES DA PUBLICAÇÃO</span>' + field('title', 'Título', 'Ex.: Nosso projeto de ciências', 'text', 48) + field('caption', 'Chamada', 'O que você quer destacar?', 'text', 100) + area('body', 'Contexto', 'Conte um pouco mais para a comunidade.', 3, 360) + select('visibility', 'Público', ['Público', 'Seguidores', 'Somente eu', 'Privado']) + '</div>'
-          + '<footer class="lm-story-editor-footer"><small>Prévia e publicação permanecem nesta demonstração.</small><button type="submit">Compartilhar story <span>↗</span></button></footer></aside></div></form>';
+          + '<footer class="lm-story-editor-footer"><small>Prévia e publicação permanecem nesta demonstração.</small>' + select('visibility', 'Público', ['Público', 'Seguidores', 'Somente eu', 'Privado']) + '<button type="submit">Compartilhar story <span>↗</span></button></footer></aside></div></form>';
       }
       private syncStoryComposerPreview(): void {
         const mount = this.querySelector<HTMLElement>('.lm-story-composer-mount');
@@ -1347,8 +1355,9 @@ export function registerComponentElements(): void {
         setText('[data-story-preview-countdown]', '◷ ' + (value('countdown') || value('countdownDate')), Boolean(value('countdown') || value('countdownDate')));
         setText('[data-story-preview-mention]', '@ ' + value('mention'), Boolean(value('mention')));
         setText('[data-story-preview-location]', '⌖ ' + value('location'), Boolean(value('location')));
-        setText('[data-story-preview-title]', value('title') || 'Seu título aparece aqui', true);
-        setText('[data-story-preview-caption]', value('caption') || 'Adicione uma chamada para este story.', true);
+        const storyText = value('body');
+        setText('[data-story-preview-title]', value('title') || storyText.slice(0, 48) || 'Seu título aparece aqui', true);
+        setText('[data-story-preview-caption]', value('caption') || storyText || 'Adicione uma chamada para este story.', true);
       }
       private onClick(event: Event): void {
         if (!(event.target instanceof Element)) return;
@@ -1367,6 +1376,13 @@ export function registerComponentElements(): void {
         if (button.dataset.storyTool) {
           this.transitionInteraction(interaction => ({ ...interaction, storyComposerTool: button.dataset.storyTool ?? 'text', feedback: '' }));
           this.render();
+          return;
+        }
+        if (button.dataset.storyQuickFeature) {
+          const feature = button.dataset.storyQuickFeature;
+          this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: true, storyComposerExpanded: true, storyComposerTool: feature, feedback: '' }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-story-composer] [data-story-action="compact"]')?.focus();
           return;
         }
         if (button.dataset.storyOrientation) {
@@ -1402,15 +1418,10 @@ export function registerComponentElements(): void {
                 feedback: storyAction === 'like' ? (active ? 'Curtida registrada neste story.' : 'Curtida removida deste story.') : (active ? 'Story salvo nesta demonstração.' : 'Story removido dos salvos.'),
               };
             });
-          } else if (storyAction === 'expand') {
-            this.transitionInteraction(interaction => ({ ...interaction, storyComposerExpanded: true, feedback: '' }));
-            this.render();
-            this.querySelector<HTMLButtonElement>('[data-story-composer] [data-story-action="compact"]')?.focus();
-            return;
           } else if (storyAction === 'compact') {
             this.transitionInteraction(interaction => ({ ...interaction, storyComposerExpanded: false, feedback: '' }));
             this.render();
-            this.querySelector<HTMLButtonElement>('[data-story-composer] [data-story-action="expand"]')?.focus();
+            this.querySelector<HTMLButtonElement>('[data-story-composer] [data-story-quick-feature="image"]')?.focus();
             return;
           } else if (storyAction === 'cancel') {
             this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: false, storyComposerExpanded: false, feedback: 'Editor fechado; rascunho mantido nesta demonstração.' }));
