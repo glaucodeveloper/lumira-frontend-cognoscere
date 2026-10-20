@@ -316,6 +316,29 @@ lumira-page-part {
   font-size: 11px;
   line-height: 1.45;
 }
+.lm-page-responsibility {
+  display: grid;
+  gap: 3px;
+  max-width: 960px;
+  margin: 0 0 5px;
+}
+.lm-page-responsibility .lm-eyebrow {
+  color: var(--lm-brand);
+  font-size: 7px;
+  letter-spacing: .1em;
+}
+.lm-page-responsibility>p {
+  margin: 0;
+  color: var(--lm-ink-strong);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.lm-page-caption .lm-page-description {
+  color: var(--lm-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
 .lm-evidence-badge {
   display: inline-flex;
   align-items: center;
@@ -426,23 +449,6 @@ lumira-page-part {
   font-size: 13px;
   font-weight: 650;
   letter-spacing: -.02em;
-}
-.lm-region-responsibility {
-  display: grid;
-  gap: 4px;
-  margin-top: 7px;
-}
-.lm-region-responsibility .lm-eyebrow {
-  color: var(--lm-brand);
-  font-size: 7px;
-  letter-spacing: .1em;
-}
-.lm-region-responsibility>p {
-  margin: 0;
-  color: var(--lm-ink-strong);
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1.5;
 }
 .lm-presentation-overview>p {
   margin: 5px 0 0;
@@ -908,22 +914,6 @@ lumira-page-part {
   font-size: 14px;
   font-weight: 650;
   letter-spacing: -.02em;
-}
-.lm-part-responsibility {
-  display: grid;
-  gap: 4px;
-}
-.lm-part-responsibility .lm-eyebrow {
-  color: var(--lm-brand);
-  font-size: 7px;
-  letter-spacing: .1em;
-}
-.lm-part-responsibility>p {
-  margin: 0;
-  color: var(--lm-ink-strong);
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1.5;
 }
 .lm-part-presentation>p {
   margin: 0;

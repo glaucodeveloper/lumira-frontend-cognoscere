@@ -486,6 +486,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       }
       const selectedRegion = screen.regions.find(region => region.id === this.state.componentId) ?? screen.regions[0];
       const selectedId = selectedRegion?.id ?? screen.defaultComponentId;
+      const selectedResponsibility = selectedRegion?.responsibility ?? selectedRegion?.description ?? screen.presentation;
       const data = labRecord(this.state.fixtures[screen.fixtureKey]);
       const componentStates: Record<string, DemoScreenState> = {};
       screen.regions.forEach(region => {
@@ -527,12 +528,13 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         + '<div class="lm-rail-label">TELAS DE REFERÊNCIA</div><nav class="lm-page-nav">' + pageButtons + '</nav>'
         + '<div class="lm-rail-bottom"><span>ROTEIRO DE APRESENTAÇÃO</span><b>04 TELAS · ESTADOS INTERATIVOS</b></div></aside>'
         + '<section class="lm-preview-column"><header class="lm-preview-toolbar"><div><span class="lm-live-dot"></span><span>APRESENTAÇÃO LUMIRA</span><i>/</i><b>' + e(screen.title) + '</b></div><div class="lm-viewport-controls"><button type="button" class="lm-share-link" data-copy-demo-link><span aria-hidden="true">↗</span><span data-copy-demo-label>Compartilhar esta parte</span></button><button type="button" class="lm-full-view-toggle" data-full-view-toggle aria-pressed="' + String(this.state.fullView) + '" aria-label="' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '"><span aria-hidden="true">' + (this.state.fullView ? '⤡' : '⤢') + '</span><span>' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '</span></button></div></header>'
-        + '<div class="lm-page-scroll"><div class="lm-page-caption"><div><span class="lm-eyebrow">LUMIRA · EXPERIÊNCIA DE PÁGINA</span><h1>' + e(screen.title) + '</h1><p>' + e(screen.description) + '</p></div><span class="lm-evidence-badge ' + e(screen.evidence) + '">' + e(screen.evidence) + '</span></div>'
+        + '<div class="lm-page-scroll"><div class="lm-page-caption"><div><span class="lm-eyebrow">LUMIRA · EXPERIÊNCIA DE PÁGINA</span><h1>' + e(screen.title) + '</h1>'
+        + '<div class="lm-page-responsibility"><span class="lm-eyebrow">RESPONSABILIDADE NA PLATAFORMA · ' + e(selectedRegion?.title ?? screen.title) + '</span><p>' + e(selectedResponsibility) + '</p></div>'
+        + '<p class="lm-page-description">' + e(screen.description) + '</p></div><span class="lm-evidence-badge ' + e(screen.evidence) + '">' + e(screen.evidence) + '</span></div>'
         + '<div class="lm-preview-mat"><div class="lm-preview-frame ' + (screen.id === 'access' ? 'access-frame' : '') + '" data-screen-state="' + e(this.state.screenState) + '"><div class="lm-page-component-mount"></div></div></div></div>'
         + '<footer class="lm-preview-footer"><span>Dados demonstrativos · papel <b>' + e(this.state.role) + '</b></span><span>Selecione uma parte para abrir seu contexto de apresentação</span></footer></section>'
         + '<aside class="lm-inspector"><header class="lm-inspector-heading"><div><span class="lm-eyebrow">GUIA DE APRESENTAÇÃO</span><h2>Partes desta página</h2></div><span class="lm-inspector-mark">L</span></header>'
         + '<section class="lm-inspector-section lm-presentation-overview"><span class="lm-eyebrow">LEITURA DA PARTE</span><h3>' + e(selectedRegion?.title ?? screen.title) + '</h3>'
-        + '<div class="lm-region-responsibility"><span class="lm-eyebrow">RESPONSABILIDADE NA PLATAFORMA</span><p>' + e(selectedRegion?.responsibility ?? selectedRegion?.description ?? screen.presentation) + '</p></div>'
         + '<p>' + e(selectedRegion?.presentation ?? screen.presentation) + '</p></section>'
         + '<section class="lm-inspector-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">PARTES DA PÁGINA</span><small>' + String(screen.regions.length).padStart(2, '0') + '</small></header><nav class="lm-component-list">' + componentButtons + '</nav></section>'
         + '<section class="lm-inspector-section lm-controls-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">ESTADO PADRÃO DA PÁGINA</span><label class="lm-role-picker">Papel<select data-role-select><option value="professor" ' + (this.state.role === 'professor' ? 'selected' : '') + '>Professora</option><option value="aluno" ' + (this.state.role === 'aluno' ? 'selected' : '') + '>Estudante</option><option value="visitante" ' + (this.state.role === 'visitante' ? 'selected' : '') + '>Visitante</option></select></label></header>'

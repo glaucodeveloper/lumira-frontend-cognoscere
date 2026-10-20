@@ -5,7 +5,7 @@ Explore as telas da Lumira pela [apresentação ao vivo](https://glaucodeveloper
 ## Como conduzir a apresentação
 
 1. Escolha **Acesso**, **Perfil professor**, **Perfil aluno** ou **Comunidade** no índice à esquerda.
-2. Selecione uma parte na lista do inspetor. A leitura acompanha a seleção, explica a responsabilidade da parte na plataforma logo abaixo do título e aparece antes do conteúdo destacado na prévia.
+2. Selecione uma parte na lista do inspetor. A descrição da responsabilidade da parte aparece logo abaixo do título principal da página, dentro da legenda da prévia; a leitura e o contexto da parte acompanham a seleção.
 3. Altere o papel ou o estado para demonstrar variações. Loading retorna a pronto após um breve intervalo; vazio, erro e restrito continuam selecionáveis.
 4. Em **Protótipo parametrizado**, altere visibilidade, densidade, cor e os campos próprios da parte selecionada. Campos de texto, listas, percentuais e quantidade de itens variam conforme o componente. **Aplicar parâmetros** atualiza apenas essa parte; **Redefinir** recupera seus valores da fixture da página.
 5. Edite o JSON de demonstração para alterar os dados compartilhados da página inteira. Aplique-o para atualizar a prévia. O conteúdo permanece apenas no navegador.

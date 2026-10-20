@@ -502,7 +502,6 @@ function labList<T = unknown>(data: ComponentFixture, key: string): T[] {
 type DemoPagePartProps = {
   id: string;
   title: string;
-  responsibility: string;
   content: string;
   presentation: string;
   evidence: ReferenceEvidence;
@@ -589,7 +588,6 @@ function labPart(id: string, content: string, selectedId: string, className = ''
   part.configure({
     id,
     title: region?.title ?? id.replaceAll('-', ' '),
-    responsibility: region?.responsibility ?? '',
     content,
     presentation: region?.presentation ?? '',
     evidence: region?.evidence ?? 'derived',
@@ -898,7 +896,7 @@ export function registerComponentElements(): void {
       constructor() {
         super();
         this.transitions = componentState<DemoPagePartState>({
-          id: '', title: '', responsibility: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
+          id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
           interaction: { groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, feedback: '' },
         });
@@ -1132,7 +1130,7 @@ export function registerComponentElements(): void {
         this.render();
       }
       private render(): void {
-        const { id, title, responsibility, content, presentation, evidence, selectedId, className, situation, prototypeParameters } = this.state;
+        const { id, title, content, presentation, evidence, selectedId, className, situation, prototypeParameters } = this.state;
         this.className = 'lm-page-part ' + e(className) + (id === selectedId ? ' is-selected' : '');
         this.dataset.componentId = id;
         this.setAttribute('aria-label', title);
@@ -1152,8 +1150,7 @@ export function registerComponentElements(): void {
         };
         const presentationBlock = id === selectedId && presentation
           ? '<aside class="lm-part-presentation"><header><span class="lm-eyebrow">CONTEXTO DA PARTE</span><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>'
-            + '<h3>' + e(title) + '</h3><div class="lm-part-responsibility"><span class="lm-eyebrow">RESPONSABILIDADE NA PLATAFORMA</span><p>' + e(responsibility) + '</p></div>'
-            + '<p>' + e(presentation) + '</p></aside>'
+            + '<h3>' + e(title) + '</h3><p>' + e(presentation) + '</p></aside>'
           : '';
         const visibleContent = prototypeParameters.visible === false
           ? '<div class="lm-prototype-hidden" role="status"><strong>Componente oculto</strong><span>Ative “Exibir componente” nos parâmetros para mostrar a peça.</span></div>'
