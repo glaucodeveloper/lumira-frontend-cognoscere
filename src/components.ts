@@ -167,6 +167,15 @@ const presentationNotes: Record<string, string> = {
   'teacher-projects': 'Apresente projetos com estados e avanço legíveis para dar visão rápida do trabalho em andamento, sem transformar a lista em relatório privado de turma.',
   'teacher-agenda': 'A agenda aproxima compromissos e horários da rotina docente. Os itens servem como cenário de apresentação, sem integração com calendário externo.',
   'teacher-personalization': 'Demonstre os controles de aparência e visibilidade do perfil. Alterações são locais à página de demonstração e podem ser ajustadas nos controles da peça.',
+  'pedagogy-context': 'Demonstre como matéria, turma, série e contexto de aplicação delimitam o trabalho antes da geração de qualquer atividade.',
+  'pedagogy-competency': 'Mostre a relação entre habilidade curricular, competência aplicada e critérios observáveis. A seleção orienta a proposta sem substituir a revisão docente.',
+  'pedagogy-activity-builder': 'A orientação docente alimenta uma geração simulada de atividade contextual. O rascunho volta em campos editáveis para que a professora confira contexto, dados, pergunta e relação de conhecimento antes de aprovar.',
+  'pedagogy-evidence-review': 'A revisão reúne respostas fictícias, trechos citados e atribuições por critério. A professora pode aceitar ou contestar a leitura; nenhuma evidência isolada altera automaticamente o percurso.',
+  'pedagogy-course-sequence': 'A sequência simulada organiza base conceitual, hipótese inicial, representação, mudança de condição e aplicação independente para ensinar uma relação em mais de um contexto.',
+  'pedagogy-material-share': 'A publicação cria uma peça compartilhável a partir do material revisado. A resposta privada e a devolutiva individual ficam fora do conteúdo público.',
+  'learner-activity-brief': 'O enunciado oferece contexto, informações e uma pergunta aberta sem mostrar os critérios internos de análise.',
+  'learner-response': 'O estudante registra e envia sua explicação no espaço reservado. A tentativa fica visível como demonstração local e pode receber uma reflexão simulada.',
+  'learner-reflection': 'A reflexão de IA cita a própria resposta e aponta uma relação a considerar. Ela não atribui nota, não classifica o estudante e não altera seu percurso.',
   'student-hero': 'Apresente a identidade pública do estudante com o mesmo vocabulário visual do perfil docente, adaptado a um papel discente.',
   'student-stories': 'Mostre projetos e momentos que o estudante escolhe compartilhar. A proposta preserva a natureza social dos stories sem expor registros escolares.',
   'student-tabs': 'As abas separam apresentação pública, percurso autorizado e publicações para que cada área mantenha seu contexto.',
@@ -195,6 +204,15 @@ const platformResponsibilities: Record<string, string> = {
   'teacher-projects': 'Os projetos dão forma às sequências de compreensão que a docente planeja, revisa e disponibiliza. Uma sequência pode começar com uma situação, solicitar uma hipótese, oferecer uma representação, pedir uma decisão justificada e então introduzir uma condição que faça o estudante rever sua interpretação.\n\nA docente pode variar cenários, perguntas e apoios para observar outros modos de raciocinar, conservando a finalidade comum. O andamento do projeto deve ajudar a entender esse percurso, não apenas contar exercícios concluídos.',
   'teacher-agenda': 'A agenda organiza no tempo o preparo, a condução e a revisão de atividades docentes, além dos encontros da comunidade. Ela ajuda a relacionar uma sequência às turmas e aos momentos em que será usada, incluindo o tempo para conferir materiais gerados e analisar respostas.\n\nO calendário, por si só, não mede a qualidade da proposta nem comprova aprendizagem. Para isso, são necessárias evidências contextualizadas e a interpretação docente do que cada estudante apresentou.',
   'teacher-personalization': 'A personalização permite à docente ajustar a apresentação do perfil e escolher quais informações deseja tornar visíveis. Essa escolha dá controle sobre a identidade pública e a autoria de suas produções.\n\nQuando a adaptação alcança uma experiência de aprendizagem, a orientação do Capítulo 01 é variar contexto, perguntas e apoios para tornar outros raciocínios observáveis, sem alterar a finalidade comum de compreender a relação estudada. Personalizar não é repetir o mesmo exercício com outra aparência.',
+  'pedagogy-context': 'A matéria e a turma situam as condições reais de trabalho: repertório, série, finalidade e possibilidades de participação. O contexto orienta exemplos e materiais, mas não substitui a competência que a atividade pretende mobilizar.\n\nA professora pode trabalhar a mesma relação em situações distintas para tornar a compreensão observável sem presumir características do estudante pelo lugar onde vive ou pelo grupo a que pertence.',
+  'pedagogy-competency': 'A habilidade curricular funciona como referência; a competência explicita a ação que será exercida sobre um assunto. Só depois dessa relação a equipe escolhe situações, materiais e critérios para observar o trabalho.\n\nUma tarefa pode mobilizar mais de uma habilidade. A revisão precisa indicar que relações aquela questão realmente permite examinar, sem afirmar que a simples presença de códigos comprova aprendizagem.',
+  'pedagogy-activity-builder': 'A professora escreve a compreensão que deseja observar e seleciona referências e contexto. A IA pode propor uma situação e alternativas de enunciado; a docente verifica se os dados são suficientes, se a pergunta exige o raciocínio pretendido e se a resposta não é antecipada pelo próprio texto.\n\nO rascunho permanece editável. A aprovação fixa uma revisão identificável para a turma; gerar outra versão não altera materiais já publicados nem muda silenciosamente os contratos de avaliação.',
+  'pedagogy-evidence-review': 'A leitura do monitor descreve realizações em relação a critérios específicos e aponta trechos da resposta que sustentam cada atribuição. A professora pode corrigir a leitura ou registrar que o enunciado não produziu evidência suficiente.\n\nUma resposta pode sustentar um critério e não informar outro. A plataforma não transforma um parecer isolado em nota global, progressão curricular ou decisão automática sobre o próximo conteúdo.',
+  'pedagogy-course-sequence': 'Um material de compreensão encadeia texto-base, exemplo comentado, prática guiada, tentativa independente e aplicação em outro contexto. Cada segmento explica a ação que pretende exercitar e a evidência que poderá produzir.\n\nA personalização responde a uma necessidade observada: a IA pode sugerir outra representação ou contexto, e a professora revisa a razão da mudança. Concluir uma etapa não basta para declarar a competência consolidada; é preciso observar a ação em uma situação adequada.',
+  'pedagogy-material-share': 'Depois da revisão, a professora escolhe como apresentar o material, a quem disponibilizá-lo e quais partes podem circular. A publicação é um objeto próprio, vinculado à matéria e à competência sem carregar a resposta privada que motivou a produção.\n\nO conteúdo social comunica a proposta pedagógica e preserva sua autoria. Respostas individuais, hipóteses e pareceres de sondagem permanecem no acompanhamento reservado.',
+  'learner-activity-brief': 'A atividade apresenta uma situação concreta, fornece os dados necessários e pede uma conclusão justificada sem revelar os critérios internos do monitor. O estudante pode estimar, organizar uma tabela, calcular ou explicar uma relação com suas próprias palavras.\n\nO contexto não dita um procedimento. Ele dá condições para que diferentes estratégias mostrem o que a pessoa considerou e como revisou sua hipótese diante de uma mudança.',
+  'learner-response': 'A resposta é uma produção pedagógica privada, ligada à revisão da atividade e às referências usadas. O envio confirma uma tentativa sem apagar versões anteriores e sem publicar o texto no perfil social.\n\nA análise posterior deve localizar as evidências na própria resposta. Se faltar informação, isso descreve o que aquela produção mostrou, não uma característica fixa do estudante.',
+  'learner-reflection': 'A reflexão devolve ao estudante uma leitura compreensível do que escreveu, com trechos que sustentam os pontos observados e uma oportunidade de continuar pensando.\n\nEla é um apoio para estudar, não uma nota ou decisão automática. O professor pode revisar o parecer, e uma nova resposta em outro contexto é necessária antes de concluir se a compreensão se mantém.',
   'student-hero': 'O perfil apresenta a pessoa estudante, suas produções e aspectos de seu percurso que podem ser compartilhados. Ele permite reconhecer autoria e participação sem converter a identidade pública em prontuário de aprendizagem.\n\nRespostas da sondagem, hipóteses, dificuldades observadas e interpretações da IA pertencem ao acompanhamento reservado e não devem aparecer no perfil por padrão. A pessoa pode mostrar o que escolheu produzir enquanto o trabalho pedagógico conserva seu contexto e suas permissões.',
   'student-stories': 'Os stories abrem espaço para o estudante compartilhar trabalhos, descobertas e produções que escolheu divulgar. Uma representação, explicação ou projeto pode convidar outras pessoas a conhecer o raciocínio que ela expressa.\n\nEssa participação não publica automaticamente respostas de sondagem ou dificuldades individuais. Assim, a comunidade circula conhecimento e o acompanhamento formativo mantém privadas as devolutivas dirigidas a quem aprende e a quem orienta.',
   'student-tabs': 'As abas distinguem a apresentação pública, as áreas do percurso de aprendizagem e as produções que o estudante compartilha. Essa organização ajuda a entender para que serve cada informação e quem pode acessá-la.\n\nTambém evita confundir uma atividade social com a sondagem usada para compreender hipóteses e competências. O histórico reservado de respostas e devolutivas conserva seu propósito formativo e não se mistura com o perfil público.',
@@ -258,6 +276,18 @@ const prototypeFieldsByRegion: Record<string, readonly PrototypeParameterSpec[]>
     { id: 'activityText', label: 'Texto', type: 'textarea', targetPath: 'activityText' },
     { id: 'activityTags', label: 'Assuntos', type: 'list', targetPath: 'activityTags', hint: 'Um assunto por linha.' },
     { id: 'likes', label: 'Curtidas', type: 'number', targetPath: 'likes', min: 0, max: 9999 },
+  ],
+  'pedagogy-context': [
+    { id: 'subject', label: 'Matéria', type: 'text', targetPath: 'subject' },
+    { id: 'className', label: 'Turma', type: 'text', targetPath: 'className' },
+    { id: 'context', label: 'Contexto da atividade', type: 'textarea', targetPath: 'context' },
+  ],
+  'pedagogy-competency': [{ id: 'competencies', label: 'Competências em foco', type: 'list', targetPath: 'competencies', hint: 'Uma competência por linha.' }],
+  'pedagogy-activity-builder': [{ id: 'prompt', label: 'Orientação para IA', type: 'textarea', targetPath: 'prompt', hint: 'A simulação demonstra o formato da proposta.' }],
+  'pedagogy-course-sequence': [{ id: 'courseTitle', label: 'Título do percurso', type: 'text', targetPath: 'courseTitle' }],
+  'learner-activity-brief': [
+    { id: 'activityTitle', label: 'Título da atividade', type: 'text', targetPath: 'activityTitle' },
+    { id: 'question', label: 'Enunciado', type: 'textarea', targetPath: 'question' },
   ],
   'teacher-projects': [{ id: 'projects', label: 'Projetos visíveis', type: 'count', targetPath: 'projects', min: 0, max: 10 }],
   'teacher-agenda': [{ id: 'agenda', label: 'Compromissos visíveis', type: 'count', targetPath: 'agenda', min: 0, max: 12 }],
@@ -379,6 +409,20 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
     ],
   },
   {
+    id: 'teacher-workspace', title: 'Espaço docente', description: 'Matéria, turma, competências, atividade, evidências e materiais de compreensão.',
+    presentation: 'Proposta derivada da estratégia pedagógica e da especificação de produto. O fluxo demonstra como a professora orienta uma geração, revisa o material, examina evidências e prepara uma sequência, com sugestões de IA simuladas e editáveis.',
+    evidence: 'derived', fixtureKey: 'teacher-workspace', defaultComponentId: 'pedagogy-context',
+    regions: [
+      ...shellParts('teacher-workspace', 'derived'),
+      partSpec('pedagogy-context', 'Matéria e turma', 'Especialidade, turma, série e contexto de aplicação.', 'derived', 'teacher-workspace'),
+      partSpec('pedagogy-competency', 'Competência e critérios', 'Referência curricular ligada à ação e às evidências esperadas.', 'derived', 'teacher-workspace'),
+      partSpec('pedagogy-activity-builder', 'Atividade aberta', 'Orientação docente, preenchimento por IA simulada e revisão editável.', 'derived', 'teacher-workspace'),
+      partSpec('pedagogy-evidence-review', 'Revisão de evidências', 'Resposta demonstrativa, trechos citados e revisão docente por critério.', 'derived', 'teacher-workspace'),
+      partSpec('pedagogy-course-sequence', 'Material de compreensão', 'Sequência progressiva com hipótese, representação e aplicação independente.', 'derived', 'teacher-workspace'),
+      partSpec('pedagogy-material-share', 'Compartilhamento do material', 'Publicação revisada com fronteira explícita para dados privados.', 'derived', 'teacher-workspace'),
+    ],
+  },
+  {
     id: 'student-profile', title: 'Perfil aluno', description: 'Variação discente derivada do perfil de referência.',
     presentation: 'Esta variação aplica a linguagem do perfil a um estudante e explicita limites de privacidade. Não havia captura de perfil discente: a composição é uma proposta derivada, com percurso público somente quando autorizado.',
     evidence: 'derived', fixtureKey: 'student', defaultComponentId: 'student-hero',
@@ -390,6 +434,17 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
       partSpec('student-progress', 'Percurso autorizado', 'Indicadores liberados pelo estudante.', 'derived', 'student'),
       partSpec('student-achievements', 'Conquistas', 'Conquistas demonstrativas autorizadas.', 'derived', 'student'),
       partSpec('student-privacy', 'Apresentação e privacidade', 'Texto público e limites de visibilidade.', 'derived', 'student'),
+    ],
+  },
+  {
+    id: 'student-activity', title: 'Atividade do aluno', description: 'Enunciado contextual, resposta reservada e reflexão simulada por evidências.',
+    presentation: 'Proposta derivada da jornada de atividade aberta. O estudante recebe uma versão aprovada, envia uma resposta privada e vê uma reflexão local que cita o próprio texto sem atribuir nota nem alterar o percurso.',
+    evidence: 'derived', fixtureKey: 'student-activity', defaultComponentId: 'learner-activity-brief',
+    regions: [
+      ...shellParts('student-activity', 'derived'),
+      partSpec('learner-activity-brief', 'Enunciado e contexto', 'Material aprovado, contexto e pergunta aberta.', 'derived', 'student-activity'),
+      partSpec('learner-response', 'Sua resposta', 'Editor privado da tentativa com envio local demonstrativo.', 'derived', 'student-activity'),
+      partSpec('learner-reflection', 'Reflexão sobre a resposta', 'Reflexão de IA simulada com evidências da produção enviada.', 'derived', 'student-activity'),
     ],
   },
   {
@@ -506,6 +561,25 @@ export const initialComponentData: Record<string, unknown> = {
     bio: 'Aprendo investigando e gosto de transformar perguntas em projetos com a turma.',
     privacy: 'Este perfil exibe somente informações e conquistas autorizadas pelo estudante e pela escola.',
   },
+  'teacher-workspace': {
+    name: 'Helena Martins', handle: '@helenamartins', role: 'Professora · Ciências da Natureza',
+    school: 'Escola Aurora', subject: 'Ciências da Natureza', className: '8º A', grade: '8º ano',
+    context: 'Biblioteca escolar · consumo de energia durante vinte dias letivos.',
+    competencies: ['Relacionar potência, tempo de uso e consumo elétrico'],
+    skills: ['EF08CI03', 'EF08CI04', 'EF08CI05'],
+    criteria: ['Considera a potência do conjunto de lâmpadas', 'Incorpora a mudança na duração de uso', 'Justifica a comparação com os dados do contexto'],
+    prompt: 'Crie uma questão aberta situada na biblioteca escolar. Apresente interpretações divergentes e dados suficientes para confrontá-las. Solicite uma conclusão justificada. Não indique a fórmula e mantenha os critérios de análise fora do enunciado.',
+    activityTitle: '', question: '', activityContext: '', knowledgeRelation: '',
+    courseTitle: 'Energia em uso: potência, tempo e consumo',
+    shareDescription: 'Sequência de compreensão sobre como potência e duração de uso se relacionam ao consumo elétrico.',
+  },
+  'student-activity': {
+    name: 'Caio Almeida', handle: '@caioalmeida', role: 'Estudante · 8º ano', school: 'Escola Aurora',
+    activityTitle: 'Uma decisão sobre o consumo da biblioteca',
+    context: 'A biblioteca mantém oito lâmpadas de 10 W acesas por 6 horas ao dia durante 20 dias. Um ventilador de 100 W, antes ligado por 8 horas ao dia, passará a funcionar por 4 horas. A escola quer saber qual mudança reduz mais o consumo.',
+    question: 'Compare o consumo dos dois usos no período e explique como a mudança no tempo de funcionamento afeta sua conclusão. Você pode organizar os dados como preferir; mostre como chegou à resposta.',
+    competencies: ['Relacionar potência, tempo de uso e consumo elétrico'],
+  },
   community: {
     title: 'Eventos e encontros',
     subtitle: 'Compartilhe práticas, participe de encontros e construa a comunidade.',
@@ -601,11 +675,20 @@ type DemoPagePartInteraction = {
   storyFilter: string;
   storyImage: string;
   storyReplies: Record<string, string[]>;
+  aiGenerated: Record<string, boolean>;
+  aiReflection: string;
+  studentSubmissions: string[];
+  reviewFeedback: string;
+  shareFeedback: string;
+  responseFeedback: string;
   feedback: string;
 };
 type DemoPagePartState = DemoPagePartProps & { interaction: DemoPagePartInteraction };
 type ComponentStateIterator<T> = Generator<T, never, (state: T) => T>;
-interface DemoPagePartElement extends HTMLElement { configure(props: DemoPagePartProps): void }
+interface DemoPagePartElement extends HTMLElement {
+  configure(props: DemoPagePartProps): void;
+  syncLearningReflection(aiReflection: string, submissions: string[]): void;
+}
 type PageCompositionContext = {
   host: HTMLElement;
   situation: ComponentMockSituation;
@@ -728,15 +811,20 @@ function LabPill(text: string, tone = ''): string { return '<span class="lm-pill
 function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, selectedId: string): string {
   data = prototypeData('workspace-sidebar', data);
   const community = screenId === 'community';
-  const student = screenId === 'student-profile';
+  const teachingSpace = screenId === 'teacher-workspace';
+  const learnerActivity = screenId === 'student-activity';
+  const student = screenId === 'student-profile' || learnerActivity;
   const name = labText(data, 'name', student ? 'Caio Almeida' : 'Ana Beatriz Silva');
-  const labels = community ? ['Feed', 'Meus círculos', 'Explorar', 'Mensagens', 'Salvos'] : ['Perfil', 'Áreas', 'Cursos', 'Fórum', 'IA pedagógica'];
-  const active = community ? 'Feed' : 'Perfil';
+  const labels = community ? ['Feed', 'Meus círculos', 'Explorar', 'Mensagens', 'Salvos']
+    : teachingSpace ? ['Início', 'Matérias e turmas', 'Competências', 'Sondagem', 'Evidências', 'Cursos', 'Comunidade']
+      : learnerActivity ? ['Início', 'Sondagem', 'Atividade', 'Cursos', 'Meu percurso', 'Comunidade']
+        : ['Perfil', 'Áreas', 'Cursos', 'Fórum', 'IA pedagógica'];
+  const active = community ? 'Feed' : teachingSpace ? 'Matérias e turmas' : learnerActivity ? 'Atividade' : 'Perfil';
   const links = labels.map(label => '<button type="button" class="lm-side-link ' + (label === active ? 'active' : '') + '"><span aria-hidden="true">' + (label === active ? '◉' : '◇') + '</span>' + e(label) + (label === 'Mensagens' ? '<i>3</i>' : '') + '</button>').join('');
   const content = '<div class="lm-brand"><span class="lm-brand-symbol">✳</span><span>Lumira</span></div>'
     + '<div class="lm-side-account">' + LabAvatar(name, student ? 'blue' : 'teal', 'small') + '<div><strong>' + e(name) + '</strong><small>' + e(student ? 'Estudante' : 'Professora') + '</small></div></div>'
     + '<nav class="lm-side-nav" aria-label="Navegação de demonstração">' + links + '</nav>'
-    + '<aside class="lm-sidebar-promo"><span class="lm-sidebar-promo-mark">✦</span><p>' + e(community ? 'Professores que inspiram professores.' : 'Educação que se conecta com o real.') + '</p><button type="button">' + (community ? 'Criar evento' : 'Explorar áreas') + ' →</button></aside>'
+    + '<aside class="lm-sidebar-promo"><span class="lm-sidebar-promo-mark">✦</span><p>' + e(community ? 'Professores que inspiram professores.' : teachingSpace ? 'Planeje experiências que tornam o conhecimento observável.' : learnerActivity ? 'Responda com suas próprias estratégias.' : 'Educação que se conecta com o real.') + '</p><button type="button">' + (community ? 'Criar evento' : teachingSpace ? 'Abrir sondagem' : learnerActivity ? 'Ver meu percurso' : 'Explorar áreas') + ' →</button></aside>'
     + '<footer class="lm-sidebar-footer">LUMIRA · COMPONENTING LAB</footer>';
   return labPart('workspace-sidebar', content, selectedId, 'lm-product-sidebar');
 }
@@ -918,6 +1006,118 @@ function renderStudentProfilePage(props: ComponentPageProps): string {
     + '</main></div></div>';
 }
 
+function renderPedagogyContext(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('pedagogy-context', data);
+  const content = '<section class="lm-workspace-context"><header><div><span class="lm-eyebrow">ESPAÇO DOCENTE · PLANEJAMENTO</span><h1>' + e(labText(data, 'subject', 'Ciências da Natureza')) + '</h1><p>Defina a turma e a situação em que a competência será exercida.</p></div><span class="lm-derived-label">PROPOSTA DERIVADA</span></header>'
+    + '<div class="lm-context-fields"><label><span>Turma</span><select name="className" data-ai-field="className"><option ' + (labText(data, 'className') === '8º A' ? 'selected' : '') + '>8º A</option><option>8º B</option></select></label>'
+    + '<label><span>Série</span><select name="grade" data-ai-field="grade"><option selected>8º ano</option><option>7º ano</option><option>9º ano</option></select></label>'
+    + '<label class="lm-context-wide"><span>Contexto de aplicação</span><input name="context" data-ai-field="context" value="' + e(labText(data, 'context')) + '"></label></div>'
+    + '<div class="lm-context-foot"><span>Professora <b>' + e(labText(data, 'name', 'Helena Martins')) + '</b></span><span>Referência curricular <b>BNCC · Ciências</b></span><span>Dados demonstrativos · edição local</span></div></section>';
+  return labPart('pedagogy-context', content, selectedId, 'lm-pedagogy-context-part');
+}
+
+function renderPedagogyCompetency(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('pedagogy-competency', data);
+  const codes = labList<string>(data, 'skills');
+  const criteria = labList<string>(data, 'criteria');
+  const content = '<article class="lm-panel lm-pedagogy-competency"><header><div><span class="lm-eyebrow">DA REFERÊNCIA À AÇÃO</span><h2>Competência em foco</h2></div><button type="button" class="lm-text-action">Editar relação</button></header>'
+    + '<div class="lm-competency-summary"><div><small>HABILIDADES DE REFERÊNCIA · BNCC</small><div class="lm-bncc-codes">' + codes.map(code => LabPill(code, 'blue')).join('') + '</div></div><span class="lm-competency-arrow" aria-hidden="true">→</span><div><small>AÇÃO A OBSERVAR</small><strong>' + e(labList<string>(data, 'competencies')[0] ?? 'Relacionar potência, tempo de uso e consumo elétrico') + '</strong></div></div>'
+    + '<div class="lm-observation-criteria"><b>Critérios que orientarão a leitura</b><div>' + criteria.map((criterion, index) => '<label><input type="checkbox" name="criterion-' + index + '" data-ai-field="criterion-' + index + '" ' + (index < 3 ? 'checked' : '') + '><span>' + e(criterion) + '</span></label>').join('') + '</div></div>'
+    + '<p class="lm-pedagogy-note">A atividade pode mobilizar mais de uma habilidade. A professora define quais relações a questão realmente permite observar.</p></article>';
+  return labPart('pedagogy-competency', content, selectedId, 'lm-pedagogy-panel-part');
+}
+
+function renderPedagogyActivityBuilder(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('pedagogy-activity-builder', data);
+  const content = '<article class="lm-panel lm-activity-builder"><header><div><span class="lm-eyebrow">EDITOR DE ATIVIDADE · RASCUNHO V1</span><h2>Preparar uma questão aberta</h2><p>Descreva a compreensão desejada. A proposta simulada será preenchida em campos que você pode revisar.</p></div><span class="lm-ai-badge"><i></i> IA · SIMULAÇÃO</span></header>'
+    + '<label class="lm-ai-prompt"><span>Orientação da professora</span><textarea name="prompt" data-ai-field="prompt" rows="4">' + e(labText(data, 'prompt')) + '</textarea></label>'
+    + '<div class="lm-ai-actions"><label><span>Formato</span><select name="responseType" data-ai-field="responseType"><option>Resposta aberta com justificativa</option><option>Comparação com tabela</option><option>Explicação oral</option></select></label><button type="button" class="lm-primary-button" data-ai-generate="activity">✦ Gerar proposta demonstrativa</button></div>'
+    + '<div class="lm-ai-empty" data-ai-empty><span aria-hidden="true">✳</span><div><b>Prévia ainda não gerada</b><p>A sugestão aparecerá aqui para edição. Nenhum modelo está conectado.</p></div></div>'
+    + '<section class="lm-generated-activity" data-ai-generated-card hidden><div class="lm-generated-heading"><div><span class="lm-eyebrow">RASCUNHO SUGERIDO · DEMONSTRAÇÃO LOCAL</span><h3>Revise cada campo antes de aprovar</h3></div><button type="button" class="lm-quiet-action" data-ai-generate="activity">Gerar alternativa</button></div>'
+    + '<div class="lm-activity-edit-grid"><label><span>Título</span><input name="activityTitle" data-ai-field="activityTitle" value=""></label><label class="lm-edit-wide"><span>Enunciado apresentado ao estudante</span><textarea name="question" data-ai-field="question" rows="4"></textarea></label><label><span>Contexto e dados</span><textarea name="activityContext" data-ai-field="activityContext" rows="3"></textarea></label><label><span>Relação planejada · uso docente</span><textarea name="teacherRelation" data-ai-field="teacherRelation" rows="3"></textarea></label></div>'
+    + '<div class="lm-generated-actions"><label><input type="checkbox" name="teacherReviewed" data-ai-field="teacherReviewed"><span>Conferi se os dados são suficientes e se o enunciado não antecipa a conclusão.</span></label><button type="button" class="lm-primary-button" data-review-action="activity">Aprovar rascunho para revisão</button></div><p class="lm-action-feedback" data-review-feedback role="status"></p></section>'
+    + '<p class="lm-pedagogy-note">A aprovação cria uma revisão de demonstração. Não publica nem altera uma atividade real.</p></article>';
+  return labPart('pedagogy-activity-builder', content, selectedId, 'lm-pedagogy-panel-part');
+}
+
+function renderPedagogyEvidenceReview(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('pedagogy-evidence-review', data);
+  const criteria = labList<string>(data, 'criteria');
+  const answer = 'As oito lâmpadas somam 80 W e ficam ligadas seis horas. O ventilador usa 100 W, mas agora funciona quatro horas. Vou comparar energia no período: as lâmpadas chegam a 9,6 kWh e o ventilador a 8 kWh, então a mudança do horário faz diferença.';
+  const mappings = [
+    ['Considera a potência do conjunto de lâmpadas', '“As oito lâmpadas somam 80 W”', 'Evidenciado'],
+    ['Incorpora a mudança na duração de uso', '“agora funciona quatro horas”', 'Evidenciado'],
+    ['Justifica a comparação com os dados do contexto', '“9,6 kWh e o ventilador a 8 kWh”', 'Parcial'],
+  ];
+  const rows = mappings.map(([criterion, quote, status], index) => '<article class="lm-evidence-row"><div><small>CRITÉRIO ' + String(index + 1).padStart(2, '0') + '</small><b>' + e(criteria[index] ?? criterion) + '</b></div><blockquote>' + e(quote) + '</blockquote><label><span>Leitura do monitor</span><select name="evidence-' + index + '" data-ai-field="evidence-' + index + '"><option ' + (status === 'Evidenciado' ? 'selected' : '') + '>Evidenciado</option><option ' + (status === 'Parcial' ? 'selected' : '') + '>Parcial</option><option>Não evidenciado</option><option>Enunciado insuficiente</option></select></label></article>').join('');
+  const content = '<article class="lm-panel lm-evidence-review"><header><div><span class="lm-eyebrow">RESPOSTA FICTÍCIA · 8º A</span><h2>Conferir atribuições do monitor</h2></div><span class="lm-ai-badge"><i></i> IA · MOCK</span></header>'
+    + '<blockquote class="lm-student-evidence-answer">“' + e(answer) + '”<small>Caio · tentativa demonstrativa · atividade V1</small></blockquote>'
+    + '<div class="lm-evidence-table"><div class="lm-evidence-table-head"><span>CRITÉRIO</span><span>TRECHO CITADO</span><span>ATRIBUIÇÃO</span></div>' + rows + '</div>'
+    + '<div class="lm-review-footer"><p>Trechos e parecer são fictícios. Revisar esta resposta não altera outras tentativas nem o estado da competência.</p><div><button type="button" class="lm-secondary-button" data-review-action="request">Pedir nova leitura</button><button type="button" class="lm-primary-button" data-review-action="accept">Confirmar revisão</button></div></div><p class="lm-action-feedback" data-review-feedback role="status"></p></article>';
+  return labPart('pedagogy-evidence-review', content, selectedId, 'lm-pedagogy-panel-part');
+}
+
+function renderPedagogyCourseSequence(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('pedagogy-course-sequence', data);
+  const content = '<article class="lm-panel lm-course-sequence"><header><div><span class="lm-eyebrow">CURSO · SEQUÊNCIA DE COMPREENSÃO</span><h2>Montar um percurso revisável</h2><p>Varie apoio e situação sem perder a ação aplicada que organiza o material.</p></div><button type="button" class="lm-primary-button" data-ai-generate="sequence">✦ Preencher sequência mock</button></header>'
+    + '<label class="lm-course-title"><span>Nome do percurso</span><input name="courseTitle" data-ai-field="courseTitle" value="' + e(labText(data, 'courseTitle')) + '"></label>'
+    + '<div class="lm-sequence-empty" data-sequence-empty>Peça uma proposta para preencher as etapas. A ordem continua editável pela professora.</div>'
+    + '<ol class="lm-sequence-list" data-sequence-generated hidden>' + Array.from({ length: 5 }, (_, index) => '<li><span class="lm-sequence-number">0' + (index + 1) + '</span><div><label><span>Etapa</span><input name="stage-title-' + index + '" data-ai-field="stage-title-' + index + '" data-sequence-title value=""></label><label><span>Material e ação</span><textarea name="stage-body-' + index + '" data-ai-field="stage-body-' + index + '" data-sequence-body rows="2"></textarea></label></div></li>').join('') + '</ol>'
+    + '<p class="lm-pedagogy-note">Sugestão local: texto-base → hipótese → representação → nova condição → aplicação independente. Concluir o curso não comprova domínio.</p></article>';
+  return labPart('pedagogy-course-sequence', content, selectedId, 'lm-pedagogy-panel-part');
+}
+
+function renderPedagogyMaterialShare(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('pedagogy-material-share', data);
+  const content = '<article class="lm-panel lm-material-share"><header><div><span class="lm-eyebrow">PUBLICAÇÃO · CONTEÚDO REVISADO</span><h2>Compartilhar o material</h2><p>O material circula como objeto próprio, com autoria e relação curricular.</p></div><span class="lm-derived-label">RASCUNHO</span></header>'
+    + '<div class="lm-share-grid"><label><span>Apresentação pública</span><textarea name="shareDescription" data-ai-field="shareDescription" rows="3">' + e(labText(data, 'shareDescription')) + '</textarea></label><label><span>Público</span><select name="audience" data-ai-field="audience"><option>Minha turma</option><option>Minha escola</option><option>Comunidade Lumira</option></select></label></div>'
+    + '<fieldset class="lm-share-includes"><legend>Partes que acompanham a publicação</legend><label><input type="checkbox" name="shareQuestion" data-ai-field="shareQuestion" checked><span>Enunciado revisado</span></label><label><input type="checkbox" name="shareContext" data-ai-field="shareContext" checked><span>Contexto e fontes selecionadas</span></label><label><input type="checkbox" name="shareSequence" data-ai-field="shareSequence" checked><span>Sequência de compreensão</span></label></fieldset>'
+    + '<div class="lm-private-boundary"><span aria-hidden="true">⌑</span><p><b>Respostas e pareceres permanecem privados.</b> Eles não acompanham esta publicação nem aparecem no feed.</p></div>'
+    + '<footer class="lm-share-footer"><p class="lm-action-feedback" data-share-feedback role="status">Nenhum material publicado nesta demonstração.</p><button type="button" class="lm-primary-button" data-share-action="publish">Publicar amostra revisada</button></footer></article>';
+  return labPart('pedagogy-material-share', content, selectedId, 'lm-pedagogy-panel-part');
+}
+
+function renderTeacherWorkspacePage(props: ComponentPageProps): string {
+  const { data, situation } = props, selectedId = situation.selectedRegionId;
+  return '<div class="lm-product-page lm-teacher-workspace" data-page-id="teacher-workspace"' + mockAttributes(situation) + '>'
+    + renderWorkspaceSidebar('teacher-workspace', data, selectedId) + '<div class="lm-product-main">' + renderWorkspaceTopbar(data, selectedId)
+    + '<main class="lm-pedagogy-canvas">' + renderPedagogyContext(data, selectedId) + renderPedagogyCompetency(data, selectedId)
+    + renderPedagogyActivityBuilder(data, selectedId) + renderPedagogyEvidenceReview(data, selectedId)
+    + renderPedagogyCourseSequence(data, selectedId) + renderPedagogyMaterialShare(data, selectedId) + '</main></div></div>';
+}
+
+function renderLearnerActivityBrief(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('learner-activity-brief', data);
+  const content = '<article class="lm-panel lm-learner-brief"><header><div><span class="lm-eyebrow">CIÊNCIAS · 8º A · ATIVIDADE ABERTA</span><h2>' + e(labText(data, 'activityTitle', 'Uma decisão sobre o consumo da biblioteca')) + '</h2></div><span class="lm-due-date">Disponível até 24 out.</span></header>'
+    + '<div class="lm-activity-context"><span class="lm-context-icon">⌂</span><div><small>A SITUAÇÃO</small><p>' + e(labText(data, 'context')) + '</p></div></div>'
+    + '<div class="lm-open-question"><span>DESAFIO</span><p>' + e(labText(data, 'question')) + '</p></div>'
+    + '<div class="lm-learner-resources"><span>Referências compartilhadas</span><div>' + LabPill('Ciências da Natureza', 'blue') + LabPill('Consumo elétrico') + LabPill('Resposta aberta') + '</div></div>'
+    + '<p class="lm-pedagogy-note">Use os dados da situação e explique seu caminho. Há mais de uma forma de organizar o raciocínio.</p></article>';
+  return labPart('learner-activity-brief', content, selectedId, 'lm-pedagogy-panel-part');
+}
+
+function renderLearnerResponse(selectedId: string): string {
+  const content = '<article class="lm-panel lm-learner-response"><header><div><span class="lm-eyebrow">TENTATIVA 01 · PRIVADA</span><h2>Como você chegou a essa conclusão?</h2></div><span class="lm-lock-label">⌑ Só você e sua professora</span></header>'
+    + '<form data-student-answer-form><label><span>Sua resposta e justificativa</span><textarea name="response" data-ai-field="response" rows="8" placeholder="Explique quais dados comparou e como a mudança no tempo de uso afeta sua conclusão."></textarea></label><div class="lm-response-footer"><button type="button" class="lm-secondary-button" data-student-draft>Guardar rascunho</button><span>Resposta não será publicada no perfil.</span><button type="submit" class="lm-primary-button">Enviar tentativa <span aria-hidden="true">→</span></button></div></form><p class="lm-action-feedback" data-response-feedback role="status"></p></article>';
+  return labPart('learner-response', content, selectedId, 'lm-pedagogy-panel-part');
+}
+
+function renderLearnerReflection(selectedId: string): string {
+  const content = '<article class="lm-panel lm-learner-reflection"><header><div><span class="lm-eyebrow">REFLEXÃO APÓS O ENVIO</span><h2>Uma leitura para continuar pensando</h2></div><span class="lm-ai-badge"><i></i> IA · SIMULAÇÃO</span></header>'
+    + '<div class="lm-reflection-empty" data-reflection-empty><span aria-hidden="true">✳</span><div><b>A reflexão aparece depois da tentativa</b><p>Ela observa relações no texto enviado e não atribui nota nem muda seu percurso.</p></div></div>'
+    + '<section class="lm-reflection-result" data-reflection-result hidden><p data-ai-feedback aria-live="polite"></p><div class="lm-reflection-boundary"><b>O que esta leitura significa</b><span>Uma tentativa mostra evidências situadas. Sua professora revisa a interpretação; nenhum estado de competência muda automaticamente.</span></div></section>'
+    + '<div class="lm-attempt-history" data-ai-attempts></div></article>';
+  return labPart('learner-reflection', content, selectedId, 'lm-pedagogy-panel-part');
+}
+
+function renderStudentActivityPage(props: ComponentPageProps): string {
+  const { data, situation } = props, selectedId = situation.selectedRegionId;
+  return '<div class="lm-product-page lm-student-activity" data-page-id="student-activity"' + mockAttributes(situation) + '>'
+    + renderWorkspaceSidebar('student-activity', data, selectedId) + '<div class="lm-product-main">' + renderWorkspaceTopbar(data, selectedId)
+    + '<main class="lm-learner-canvas"><header class="lm-learner-heading"><span class="lm-eyebrow">MEU ESPAÇO DE APRENDIZAGEM</span><h1>Atividade aberta</h1><p>Leia o contexto, organize sua ideia e explique as informações que sustentam sua conclusão.</p></header>'
+    + renderLearnerActivityBrief(data, selectedId) + renderLearnerResponse(selectedId) + renderLearnerReflection(selectedId) + '</main></div></div>';
+}
+
 type CommunityEventFixture = { day: number; title: string; time: string; color: string };
 function renderCommunityCalendar(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('community-calendar', data);
@@ -1007,9 +1207,10 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-            groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, localStories: [],
+            groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, localStories: [], aiGenerated: {},
             selectedStory: null, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
-            storyFilter: 'original', storyImage: '', storyReplies: {}, feedback: '',
+            storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
+            reviewFeedback: '', shareFeedback: '', responseFeedback: '', feedback: '',
           },
         });
         this.state = this.transitions.next().value;
@@ -1027,6 +1228,11 @@ export function registerComponentElements(): void {
             selectedStory: current.interaction.selectedStory ?? (props.id.endsWith('-stories') ? 0 : null),
           },
         })).value;
+        this.render();
+      }
+      syncLearningReflection(aiReflection: string, submissions: string[]): void {
+        if (this.state.id !== 'learner-reflection') return;
+        this.transitionInteraction(interaction => ({ ...interaction, aiReflection, studentSubmissions: [...submissions] }));
         this.render();
       }
       private transitionInteraction(change: (interaction: DemoPagePartInteraction) => DemoPagePartInteraction): void {
@@ -1138,6 +1344,7 @@ export function registerComponentElements(): void {
           if (kind === 'sort' && active) button.textContent = 'Mais recentes⌄';
         });
         this.restoreStories();
+        this.restorePedagogyDemo();
         if (interaction.feedback) {
           const feedback = document.createElement('p');
           feedback.className = 'lm-component-feedback';
@@ -1259,6 +1466,66 @@ export function registerComponentElements(): void {
         this.syncStoryComposerPreview();
       }
       private storyFieldKey(name: string): string { return this.state.id + ':story:' + name; }
+      private restorePedagogyDemo(): void {
+        const interaction = this.state.interaction;
+        const activityGenerated = interaction.aiGenerated.activity === true;
+        const activityCard = this.querySelector<HTMLElement>('[data-ai-generated-card]');
+        const activityEmpty = this.querySelector<HTMLElement>('[data-ai-empty]');
+        if (activityCard) activityCard.hidden = !activityGenerated;
+        if (activityEmpty) activityEmpty.hidden = activityGenerated;
+        const sequenceGenerated = interaction.aiGenerated.sequence === true;
+        const sequence = this.querySelector<HTMLElement>('[data-sequence-generated]');
+        const sequenceEmpty = this.querySelector<HTMLElement>('[data-sequence-empty]');
+        if (sequence) sequence.hidden = !sequenceGenerated;
+        if (sequenceEmpty) sequenceEmpty.hidden = sequenceGenerated;
+        const sequenceValues = [
+          ['Texto-base e relação de potência', 'Identifique o que potência descreve e relacione a quantidade de aparelhos ao tempo em que são usados.'],
+          ['Hipótese inicial', 'Compare a intuição de que um aparelho mais potente sempre consome mais com o caso de vários aparelhos ligados por mais tempo.'],
+          ['Representação dos dados', 'Organize quantidade, potência e duração em uma tabela e explique quais dados precisa combinar para comparar os usos.'],
+          ['Mudança de condição', 'Altere o tempo do ventilador de oito para quatro horas, mantenha as outras condições e refaça sua interpretação.'],
+          ['Aplicação independente', 'Escolha outra situação da escola, indique que dados seriam necessários e justifique uma proposta de economia.'],
+        ];
+        sequence?.querySelectorAll<HTMLInputElement>('[data-sequence-title]').forEach((target, index) => { target.value = interaction.fields[target.dataset.interactionField ?? ''] ?? sequenceValues[index]?.[0] ?? ''; });
+        sequence?.querySelectorAll<HTMLTextAreaElement>('[data-sequence-body]').forEach((target, index) => { target.value = interaction.fields[target.dataset.interactionField ?? ''] ?? sequenceValues[index]?.[1] ?? ''; });
+        const reflectionEmpty = this.querySelector<HTMLElement>('[data-reflection-empty]');
+        const reflectionResult = this.querySelector<HTMLElement>('[data-reflection-result]');
+        const reflection = this.querySelector<HTMLElement>('[data-ai-feedback]');
+        const hasReflection = Boolean(interaction.aiReflection);
+        if (reflectionEmpty) reflectionEmpty.hidden = hasReflection;
+        if (reflectionResult) reflectionResult.hidden = !hasReflection;
+        if (reflection) reflection.textContent = interaction.aiReflection;
+        const history = this.querySelector<HTMLElement>('[data-ai-attempts]');
+        if (history) {
+          history.replaceChildren();
+          interaction.studentSubmissions.forEach((submission, index) => {
+            const article = document.createElement('article');
+            const title = document.createElement('b');
+            title.textContent = 'Tentativa ' + (index + 1);
+            const excerpt = document.createElement('p');
+            excerpt.textContent = submission;
+            article.append(title, excerpt);
+            history.append(article);
+          });
+        }
+        const reviewFeedback = this.querySelector<HTMLElement>('[data-review-feedback]');
+        if (reviewFeedback) reviewFeedback.textContent = interaction.reviewFeedback;
+        const shareFeedback = this.querySelector<HTMLElement>('[data-share-feedback]');
+        if (shareFeedback && interaction.shareFeedback) shareFeedback.textContent = interaction.shareFeedback;
+        const responseFeedback = this.querySelector<HTMLElement>('[data-response-feedback]');
+        if (responseFeedback) responseFeedback.textContent = interaction.responseFeedback;
+      }
+      private fillMockAiFields(values: Record<string, string>): void {
+        const fields = { ...this.state.interaction.fields };
+        this.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-ai-field]').forEach(field => {
+          const name = field.dataset.aiField ?? '';
+          const value = values[name];
+          if (value === undefined || field instanceof HTMLInputElement && (field.type === 'checkbox' || field.type === 'radio')) return;
+          field.value = value;
+          const key = field.dataset.interactionField;
+          if (key) fields[key] = value;
+        });
+        this.transitionInteraction(interaction => ({ ...interaction, fields }));
+      }
       private storyComposerMarkup(): string {
         const interaction = this.state.interaction;
         const tool = interaction.storyComposerTool;
@@ -1365,7 +1632,14 @@ export function registerComponentElements(): void {
         if (checkbox && this.contains(checkbox)) {
           const key = checkbox.dataset.interactionToggle;
           if (key) {
-            this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, [key]: checkbox.checked }, feedback: 'Preferência atualizada nesta demonstração.' }));
+            const feedback = this.state.id === 'pedagogy-activity-builder'
+              ? 'Conferência do rascunho atualizada.'
+              : this.state.id === 'pedagogy-competency'
+                ? 'Critério de observação atualizado.'
+                : this.state.id === 'pedagogy-material-share'
+                  ? 'Seleção de publicação atualizada.'
+                  : 'Preferência atualizada nesta demonstração.';
+            this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, [key]: checkbox.checked }, feedback }));
             this.render();
           }
           return;
@@ -1373,6 +1647,66 @@ export function registerComponentElements(): void {
         const button = event.target.closest<HTMLButtonElement>('button');
         if (!button || button.disabled || !this.contains(button)) return;
         if (button.type === 'submit') return;
+        if (button.dataset.aiGenerate) {
+          if (button.dataset.aiGenerate === 'activity' && this.state.id === 'pedagogy-activity-builder') {
+            this.fillMockAiFields({
+              activityTitle: 'A energia que a biblioteca precisa',
+              question: 'A equipe da biblioteca compara duas propostas de uso. Qual delas reduz mais o consumo no período? Construa uma conclusão para a escola, explique quais dados usou e indique se uma informação adicional poderia mudar sua decisão.',
+              activityContext: 'Oito lâmpadas de 10 W ficam acesas por 6 horas ao dia. O ventilador de 100 W passará de 8 para 4 horas diárias. O período observado é de 20 dias.',
+              teacherRelation: 'Relacionar potência total e duração de uso para comparar a energia consumida. A redução do tempo pode mudar uma conclusão baseada apenas na potência de um aparelho.',
+            });
+            this.transitionInteraction(interaction => ({ ...interaction, aiGenerated: { ...interaction.aiGenerated, activity: true }, reviewFeedback: 'Rascunho demonstrativo pronto para revisão. Confira dados, pergunta e relação pretendida.' }));
+          } else if (button.dataset.aiGenerate === 'sequence' && this.state.id === 'pedagogy-course-sequence') {
+            const values: Record<string, string> = {};
+            [
+              ['Texto-base e relação de potência', 'Identifique o que potência descreve e relacione a quantidade de aparelhos ao tempo em que são usados.'],
+              ['Hipótese inicial', 'Compare a intuição de que um aparelho mais potente sempre consome mais com o caso de vários aparelhos ligados por mais tempo.'],
+              ['Representação dos dados', 'Organize quantidade, potência e duração em uma tabela e explique quais dados precisa combinar para comparar os usos.'],
+              ['Mudança de condição', 'Altere o tempo do ventilador de oito para quatro horas, mantenha as outras condições e refaça sua interpretação.'],
+              ['Aplicação independente', 'Escolha outra situação da escola, indique que dados seriam necessários e justifique uma proposta de economia.'],
+            ].forEach(([title, body], index) => { values['stage-title-' + index] = title; values['stage-body-' + index] = body; });
+            this.fillMockAiFields(values);
+            this.transitionInteraction(interaction => ({ ...interaction, aiGenerated: { ...interaction.aiGenerated, sequence: true }, feedback: 'Sequência preenchida com etapas editáveis · demonstração local.' }));
+          }
+          this.render();
+          return;
+        }
+        if (button.dataset.reviewAction) {
+          let reviewFeedback = '';
+          if (this.state.id === 'pedagogy-activity-builder') {
+            const reviewed = this.querySelector<HTMLInputElement>('[name="teacherReviewed"]')?.checked === true;
+            reviewFeedback = reviewed
+              ? 'Rascunho aprovado para revisão da professora. A publicação ainda exige a conferência final do material.'
+              : 'Marque a conferência dos dados e do enunciado antes de aprovar o rascunho.';
+          } else if (this.state.id === 'pedagogy-evidence-review') {
+            reviewFeedback = button.dataset.reviewAction === 'accept'
+              ? 'Revisão demonstrativa confirmada. O registro não atualiza o estado da competência.'
+              : 'Nova leitura demonstrativa solicitada. A resposta e a atribuição original continuam visíveis.';
+          }
+          this.transitionInteraction(interaction => ({ ...interaction, reviewFeedback }));
+          this.render();
+          return;
+        }
+        if (button.dataset.shareAction === 'publish' && this.state.id === 'pedagogy-material-share') {
+          const audience = this.querySelector<HTMLSelectElement>('[name="audience"]')?.value ?? 'Minha turma';
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            shareFeedback: 'Material de demonstração preparado para ' + audience + '. Respostas e pareceres privados foram excluídos.',
+          }));
+          this.render();
+          return;
+        }
+        if (button.hasAttribute('data-student-draft') && this.state.id === 'learner-response') {
+          const response = this.querySelector<HTMLTextAreaElement>('[name="response"]')?.value ?? '';
+          const key = this.querySelector<HTMLTextAreaElement>('[name="response"]')?.dataset.interactionField ?? '';
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            fields: key ? { ...interaction.fields, [key]: response } : interaction.fields,
+            responseFeedback: response.trim() ? 'Rascunho guardado nesta tela de demonstração.' : 'Escreva sua ideia para guardar um rascunho.',
+          }));
+          this.render();
+          return;
+        }
         if (button.dataset.storyTool) {
           this.transitionInteraction(interaction => ({ ...interaction, storyComposerTool: button.dataset.storyTool ?? 'text', feedback: '' }));
           this.render();
@@ -1530,7 +1864,14 @@ export function registerComponentElements(): void {
         if (!key) return;
         if (field instanceof HTMLInputElement && (field.type === 'checkbox' || field.type === 'radio')) {
           const toggle = field.dataset.interactionToggle ?? key;
-          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, [toggle]: field.checked }, feedback: 'Preferência atualizada nesta demonstração.' }));
+          const feedback = this.state.id === 'pedagogy-activity-builder'
+            ? 'Conferência do rascunho atualizada.'
+            : this.state.id === 'pedagogy-competency'
+              ? 'Critério de observação atualizado.'
+              : this.state.id === 'pedagogy-material-share'
+                ? 'Seleção de publicação atualizada.'
+                : 'Preferência atualizada nesta demonstração.';
+          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, [toggle]: field.checked }, feedback }));
         } else {
           this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, [key]: field.value } }));
         }
@@ -1539,6 +1880,36 @@ export function registerComponentElements(): void {
       private onSubmit(event: Event): void {
         event.preventDefault();
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
+        if (form?.matches('[data-student-answer-form]') && this.state.id === 'learner-response') {
+          const response = form.querySelector<HTMLTextAreaElement>('[name="response"]')?.value.trim() ?? '';
+          if (!response) {
+            this.transitionInteraction(interaction => ({ ...interaction, responseFeedback: 'Escreva uma resposta antes de enviar.' }));
+            this.render();
+            return;
+          }
+          const hasGroupPower = /\b80\s*w\b|\b80\b|oito\s+l[aâ]mpadas/i.test(response);
+          const hasChangedTime = /\b4\s*h(?:oras?)?\b|quatro\s+horas|quatro\s+h/i.test(response);
+          const hasReasoning = /porque|por isso|portanto|ent[aã]o|justific|compar/i.test(response);
+          const identified: string[] = [];
+          if (hasGroupPower) identified.push('potência do conjunto');
+          if (hasChangedTime) identified.push('mudança no tempo de uso');
+          if (hasReasoning) identified.push('uma justificativa ou comparação');
+          const excerpt = response.length > 180 ? response.slice(0, 177).trimEnd() + '…' : response;
+          const nextStep = hasGroupPower && hasChangedTime && hasReasoning
+            ? 'Você relacionou os dados principais. Confira se sua conclusão explica como eles mudam a comparação no período.'
+            : 'Na próxima revisão, compare a potência do conjunto de lâmpadas com a duração alterada do ventilador e explique o que esses dados permitem concluir.';
+          const aiReflection = 'Na sua resposta, a leitura simulada encontrou: ' + (identified.length ? identified.join(', ') : 'a ideia inicial registrada') + '.\n\nTrecho considerado: “' + excerpt + '”\n\n' + nextStep;
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            aiReflection,
+            studentSubmissions: [...interaction.studentSubmissions, response],
+            responseFeedback: 'Tentativa ' + (interaction.studentSubmissions.length + 1) + ' registrada nesta demonstração. Sua resposta continua privada.',
+          }));
+          this.parentElement?.querySelector<DemoPagePartElement>('[data-component-id="learner-reflection"]')
+            ?.syncLearningReflection(this.state.interaction.aiReflection, this.state.interaction.studentSubmissions);
+          this.render();
+          return;
+        }
         if (form?.matches('[data-story-composer]')) {
           const readField = (name: string): string => form.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-story-field="' + name + '"]')?.value.trim() ?? '';
           const body = readField('body') || readField('overlayText') || readField('pollQuestion') || 'Story visual compartilhado com a comunidade.';
@@ -1680,6 +2051,16 @@ export function registerComponentElements(): void {
     }
     customElements.define('lumira-teacher-profile-page', TeacherProfilePageComponent);
   }
+  if (!customElements.get('lumira-teacher-workspace-page')) {
+    class TeacherWorkspacePageComponent extends HTMLElement implements ComponentPageElement {
+      private transitions: ComponentStateIterator<ComponentPageProps>;
+      private state: ComponentPageProps;
+      constructor() { super(); this.transitions = componentState(emptyPageProps('teacher-workspace')); this.state = this.transitions.next().value; }
+      configure(props: ComponentPageProps): void { this.state = this.transitions.next(() => structuredClone(props)).value; this.render(); }
+      private render(): void { renderPageWithParts(this, this.state, renderTeacherWorkspacePage); }
+    }
+    customElements.define('lumira-teacher-workspace-page', TeacherWorkspacePageComponent);
+  }
   if (!customElements.get('lumira-student-profile-page')) {
     class StudentProfilePageComponent extends HTMLElement implements ComponentPageElement {
       private transitions: ComponentStateIterator<ComponentPageProps>;
@@ -1689,6 +2070,16 @@ export function registerComponentElements(): void {
       private render(): void { renderPageWithParts(this, this.state, renderStudentProfilePage); }
     }
     customElements.define('lumira-student-profile-page', StudentProfilePageComponent);
+  }
+  if (!customElements.get('lumira-student-activity-page')) {
+    class StudentActivityPageComponent extends HTMLElement implements ComponentPageElement {
+      private transitions: ComponentStateIterator<ComponentPageProps>;
+      private state: ComponentPageProps;
+      constructor() { super(); this.transitions = componentState(emptyPageProps('student-activity')); this.state = this.transitions.next().value; }
+      configure(props: ComponentPageProps): void { this.state = this.transitions.next(() => structuredClone(props)).value; this.render(); }
+      private render(): void { renderPageWithParts(this, this.state, renderStudentActivityPage); }
+    }
+    customElements.define('lumira-student-activity-page', StudentActivityPageComponent);
   }
   if (!customElements.get('lumira-community-page')) {
     class CommunityPageComponent extends HTMLElement implements ComponentPageElement {

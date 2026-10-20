@@ -102,7 +102,9 @@ function componentingPage(
   const pageTags: Record<string, string> = {
     access: 'lumira-access-page',
     'teacher-profile': 'lumira-teacher-profile-page',
+    'teacher-workspace': 'lumira-teacher-workspace-page',
     'student-profile': 'lumira-student-profile-page',
+    'student-activity': 'lumira-student-activity-page',
     community: 'lumira-community-page',
   };
   const tag = pageTags[screen.id] ?? pageTags.community;
@@ -249,7 +251,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
 
     constructor() {
       super();
-      const initialScreen = screens.find(screen => screen.id === 'teacher-profile') ?? screens[0];
+      const initialScreen = screens.find(screen => screen.id === 'teacher-workspace') ?? screens.find(screen => screen.id === 'teacher-profile') ?? screens[0];
       this.transitions = stateIterator<LabState>({
         screens: [], fixtures: {}, screenId: initialScreen?.id ?? '',
         componentId: initialScreen?.defaultComponentId ?? '', role: 'professor', screenState: 'ready', componentStates: {}, componentParameters: {}, fullView: false, inspectorTab: 'part',
@@ -364,13 +366,14 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const copiedFixtures = structuredClone(nextFixtures);
       const params = new URLSearchParams(window.location.search);
       const initialScreen = nextScreens.find(screen => screen.id === params.get('screen'))
+        ?? nextScreens.find(screen => screen.id === 'teacher-workspace')
         ?? nextScreens.find(screen => screen.id === 'teacher-profile')
         ?? nextScreens[0];
       const initialRegion = initialScreen?.regions.find(region => region.id === params.get('part'));
       const requestedRole = params.get('role');
       const initialRole: LabRole = requestedRole === 'aluno' || requestedRole === 'visitante' || requestedRole === 'professor'
         ? requestedRole
-        : initialScreen?.id === 'student-profile' ? 'aluno' : initialScreen?.id === 'access' ? 'visitante' : 'professor';
+        : initialScreen?.id === 'student-profile' || initialScreen?.id === 'student-activity' ? 'aluno' : initialScreen?.id === 'access' ? 'visitante' : 'professor';
       this.state = this.transitions.next(state => ({
         ...state, screens: nextScreens, fixtures: copiedFixtures,
         screenId: initialScreen?.id ?? '', componentId: initialRegion?.id ?? initialScreen?.defaultComponentId ?? '', role: initialRole, inspectorTab: 'part',
@@ -394,7 +397,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const requestedRole = params.get('role');
       const role: LabRole = requestedRole === 'aluno' || requestedRole === 'visitante' || requestedRole === 'professor'
         ? requestedRole
-        : screen.id === 'student-profile' ? 'aluno' : screen.id === 'access' ? 'visitante' : 'professor';
+        : screen.id === 'student-profile' || screen.id === 'student-activity' ? 'aluno' : screen.id === 'access' ? 'visitante' : 'professor';
       this.state = this.transitions.next(state => ({
         ...state, screenId: screen.id, componentId: region?.id ?? screen.defaultComponentId, role, screenState: 'ready', inspectorTab: 'part',
       })).value;
@@ -451,7 +454,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         const screen = this.state.screens.find(item => item.id === screenButton.dataset.screenSelect);
         if (screen) {
           this.clearLoadingTimer();
-          const role: LabRole = screen.id === 'student-profile' ? 'aluno' : screen.id === 'access' ? 'visitante' : 'professor';
+          const role: LabRole = screen.id === 'student-profile' || screen.id === 'student-activity' ? 'aluno' : screen.id === 'access' ? 'visitante' : 'professor';
           this.state = this.transitions.next(state => ({
             ...state,
             screenId: screen.id,
@@ -629,13 +632,13 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         componentStates,
       };
       const existingPage = this.querySelector<ComponentPageElement>(
-        'lumira-access-page, lumira-teacher-profile-page, lumira-student-profile-page, lumira-community-page',
+        'lumira-access-page, lumira-teacher-profile-page, lumira-teacher-workspace-page, lumira-student-profile-page, lumira-student-activity-page, lumira-community-page',
       ) ?? undefined;
       const pageElement = componentingPage(screen, { data, situation, prototypeParameters }, existingPage);
       pageElement.classList.add('lm-demo-flow');
       const statuses: DemoScreenState[] = ['ready', 'loading', 'empty', 'error', 'forbidden'];
       const labels: Record<DemoScreenState, string> = { ready: 'Pronto', loading: 'Carregando', empty: 'Vazio', error: 'Erro', forbidden: 'Restrito' };
-      const pageButtons = this.state.screens.map(item => '<button type="button" data-screen-select="' + e(item.id) + '" class="' + (item.id === screen.id ? 'active' : '') + '"><span class="lm-page-icon">' + (item.id === 'community' ? '◌' : item.id === 'teacher-profile' ? '◎' : item.id === 'student-profile' ? '◇' : '↗') + '</span><span><b>' + e(item.title) + '</b><small>' + e(item.evidence === 'observed' ? 'TELA DE REFERÊNCIA' : item.evidence === 'derived' ? 'PROPOSTA DERIVADA' : 'MAPA DE NAVEGAÇÃO') + '</small></span><i>→</i></button>').join('');
+      const pageButtons = this.state.screens.map(item => '<button type="button" data-screen-select="' + e(item.id) + '" class="' + (item.id === screen.id ? 'active' : '') + '"><span class="lm-page-icon">' + (item.id === 'community' ? '◌' : item.id === 'teacher-profile' ? '◎' : item.id === 'student-profile' ? '◇' : item.id === 'teacher-workspace' ? '▤' : item.id === 'student-activity' ? '✎' : '↗') + '</span><span><b>' + e(item.title) + '</b><small>' + e(item.evidence === 'observed' ? 'TELA DE REFERÊNCIA' : item.evidence === 'derived' ? 'PROPOSTA DERIVADA' : 'MAPA DE NAVEGAÇÃO') + '</small></span><i>→</i></button>').join('');
       const componentButtons = screen.regions.map((region, index) =>
         '<button type="button" data-component-select="' + e(region.id) + '" class="lm-scrollpoint-button ' + (region.id === selectedId ? 'active' : '') + '" aria-current="' + (region.id === selectedId ? 'location' : 'false') + '">'
         + '<span class="lm-component-index">' + String(index + 1).padStart(2, '0') + '</span><span><b>' + e(region.title) + '</b><small>' + e(region.evidence === 'observed' ? 'REFERÊNCIA' : region.evidence === 'derived' ? 'DERIVADA' : 'NAVEGAÇÃO') + '</small></span></button>',
@@ -656,7 +659,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         + '<aside class="lm-app-rail"><header class="lm-lab-brand"><span class="lm-brand-glyph">L</span><div><b>LUMIRA</b><small>APRESENTAÇÃO INTERATIVA</small></div></header>'
         + '<div class="lm-rail-label">TELAS DE REFERÊNCIA</div><nav class="lm-page-nav">' + pageButtons + '</nav>'
         + '<div class="lm-rail-label lm-scrollpoint-label">PONTOS DA PÁGINA</div><nav class="lm-scrollpoint-nav" aria-label="Navegação por partes da página">' + componentButtons + '</nav>'
-        + '<div class="lm-rail-bottom"><span>ROTEIRO DE APRESENTAÇÃO</span><b>04 TELAS · ESTADOS INTERATIVOS</b></div></aside>'
+        + '<div class="lm-rail-bottom"><span>ROTEIRO DE APRESENTAÇÃO</span><b>' + String(this.state.screens.length).padStart(2, '0') + ' TELAS · ESTADOS INTERATIVOS</b></div></aside>'
         + '<section class="lm-preview-column"><header class="lm-preview-toolbar"><div><span class="lm-live-dot"></span><span>APRESENTAÇÃO LUMIRA</span><i>/</i><b>' + e(screen.title) + '</b></div><div class="lm-viewport-controls"><button type="button" class="lm-share-link" data-copy-demo-link><span aria-hidden="true">↗</span><span data-copy-demo-label>Compartilhar esta parte</span></button><button type="button" class="lm-full-view-toggle" data-full-view-toggle aria-pressed="' + String(this.state.fullView) + '" aria-label="' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '"><span aria-hidden="true">' + (this.state.fullView ? '⤡' : '⤢') + '</span><span>' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '</span></button></div></header>'
         + '<div class="lm-page-scroll"><div class="lm-page-caption"><div><span class="lm-eyebrow">LUMIRA · EXPERIÊNCIA DE PÁGINA</span><h1>' + e(screen.title) + '</h1>'
         + '<div class="lm-page-responsibility"><span class="lm-eyebrow">RESPONSABILIDADE NA PLATAFORMA · ' + e(selectedRegion?.title ?? screen.title) + '</span>' + responsibilityParagraphs + '</div>'
