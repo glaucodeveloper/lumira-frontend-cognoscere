@@ -180,31 +180,56 @@ const presentationNotes: Record<string, string> = {
 };
 
 const platformResponsibilities: Record<string, string> = {
-  'workspace-sidebar': 'Orientar a navegação global, mostrar as áreas disponíveis e manter visível o papel atual da pessoa.',
-  'workspace-topbar': 'Dar acesso consistente à busca, criação, notificações e conta nas páginas autenticadas.',
-  'access-brand': 'Apresentar a proposta da Lumira e situar a pessoa antes de iniciar o acesso.',
-  'access-form': 'Coletar os dados de entrada e encaminhar a pessoa ao fluxo correspondente ao seu papel.',
-  'teacher-hero': 'Estabelecer a identidade profissional, o vínculo institucional e os principais pontos de entrada do perfil docente.',
-  'teacher-stories': 'Exibir atualizações breves escolhidas pela docente para dar visibilidade à atividade recente.',
-  'teacher-tabs': 'Organizar as áreas do perfil e conduzir a navegação entre suas diferentes visões.',
-  'teacher-progress': 'Resumir indicadores de participação docente em uma leitura rápida, sem substituir avaliação institucional.',
-  'teacher-skills': 'Mostrar competências profissionais e seus níveis para contextualizar o percurso da docente.',
-  'teacher-about': 'Apresentar biografia, vínculos e canais públicos selecionados pela docente.',
-  'teacher-activity': 'Compartilhar práticas pedagógicas com contexto, autoria e interação da comunidade.',
-  'teacher-projects': 'Acompanhar frentes de projeto e tornar sua situação e seu avanço visíveis.',
-  'teacher-agenda': 'Exibir compromissos e próximos marcos da rotina docente.',
-  'teacher-personalization': 'Permitir que a docente configure a aparência, o conteúdo e a visibilidade dos elementos do perfil.',
-  'student-hero': 'Apresentar a identidade pública do estudante e os dados escolares autorizados.',
-  'student-stories': 'Dar espaço a projetos e momentos que o estudante escolhe tornar públicos.',
-  'student-tabs': 'Organizar apresentação, percurso e publicações sem expor áreas privadas.',
-  'student-progress': 'Exibir somente indicadores de percurso autorizados pelo estudante e pela escola.',
-  'student-achievements': 'Publicar conquistas escolhidas para compor a apresentação pública do estudante.',
-  'student-privacy': 'Explicar o alcance e os limites de exposição das informações do perfil discente.',
-  'community-calendar': 'Organizar datas e eventos para orientar a participação da comunidade.',
-  'community-tabs': 'Encaminhar a pessoa entre feed, eventos e espaços de participação da comunidade.',
-  'community-topics': 'Facilitar a descoberta de conversas e áreas relevantes por assunto.',
-  'community-feed': 'Reunir publicações da comunidade e permitir compartilhar experiências e interagir com elas.',
-  'community-aside': 'Apoiar a descoberta de eventos, pessoas e grupos relacionados à atividade da comunidade.',
+  'workspace-sidebar': 'A navegação lateral situa a pessoa nas áreas que compõem a Lumira e mantém o papel ativo como contexto para a experiência. ' +
+    'Isso ajuda professor e estudante a chegar às suas superfícies de trabalho sem misturar preparação pedagógica, acompanhamento de respostas e circulação social.',
+  'workspace-topbar': 'A barra superior reúne acesso às ações comuns e mantém disponível a identidade da pessoa enquanto ela percorre a plataforma. ' +
+    'Sua responsabilidade é dar continuidade ao trabalho entre páginas, deixando matéria, atividade e participação no contexto em que foram iniciadas.',
+  'access-brand': 'Esta composição apresenta a Lumira como ambiente de ensino, reforço e desenvolvimento de competências com apoio de inteligência generativa. ' +
+    'A velocidade da IA tem valor quando amplia as formas de explicar, questionar e reconstruir um conhecimento, não quando apenas multiplica exercícios iguais.',
+  'access-form': 'Esta parte conduz professor e estudante ao espaço compatível com sua participação na plataforma. ' +
+    'A entrada deve preservar a distinção entre quem planeja atividades, referências e critérios e quem encontra situações para exercitar e apresentar o que aprendeu.',
+  'teacher-hero': 'O perfil coloca a especialidade docente no início do ciclo pedagógico. Identidade, matéria e vínculo ajudam a reconhecer quem articula habilidades curriculares, seleciona referências e define que compreensão deseja observar. ' +
+    'As ações do perfil aproximam esse trabalho sem sugerir que a inteligência artificial substitua a escolha e a revisão da professora.',
+  'teacher-stories': 'Os stories dão visibilidade a momentos recentes, projetos ou sequências que a docente decidiu compartilhar. ' +
+    'Sua função é aproximar a comunidade do trabalho pedagógico e conduzir a produções publicadas, sem expor respostas de estudantes, hipóteses individuais ou devolutivas reservadas.',
+  'teacher-tabs': 'As abas organizam as diferentes leituras do perfil para que identidade, competências, materiais e atividade não virem um bloco indistinto. ' +
+    'Ao direcionar a pessoa entre essas visões, ajudam a localizar cada etapa do trabalho docente e mantêm separadas elaboração, resposta do estudante e divulgação comunitária.',
+  'teacher-progress': 'Este resumo situa a participação e a continuidade da docente no uso da plataforma. ' +
+    'Não vale como avaliação pedagógica nem transforma contagem, frequência ou pontuação em prova de domínio; a compreensão é examinada por evidências contextualizadas nas respostas e passa por revisão docente.',
+  'teacher-skills': 'Esta parte relaciona a prática docente às competências e habilidades curriculares que podem orientar uma atividade. ' +
+    'Como uma proposta pode articular vários códigos e competências aplicadas, os indicadores ajudam a localizar os focos sem substituir as evidências concretas do que cada estudante compreendeu.',
+  'teacher-about': 'A apresentação reúne a especialidade da docente, sua biografia e os vínculos que ela escolhe tornar visíveis. ' +
+    'Esse contexto ajuda a comunidade a reconhecer a autoria e a origem de um material, enquanto respostas de turma e pareceres individuais permanecem no espaço reservado ao acompanhamento.',
+  'teacher-activity': 'Esta parte mostra um exemplo de conhecimento ou prática que pode circular depois da revisão docente. ' +
+    'A publicação conserva contexto e autoria para permitir consulta, discussão e adaptação; dificuldades identificadas na sondagem, respostas individuais e devolutivas privadas não acompanham o conteúdo público.',
+  'teacher-projects': 'Os projetos organizam sequências e frentes de trabalho que a docente prepara, revisa e pode disponibilizar. ' +
+    'A leitura do andamento deve manter visível a finalidade de compreensão: situações, representações e apoios podem variar, mas não se reduzem a uma lista de exercícios repetidos.',
+  'teacher-agenda': 'A agenda relaciona compromissos e atividades para apoiar a organização temporal do trabalho docente. ' +
+    'Ela ajuda a planejar preparação, revisão e disponibilização de sequências; não define a qualidade pedagógica de uma atividade nem substitui a análise das evidências de aprendizagem.',
+  'teacher-personalization': 'A personalização permite à docente ajustar sua apresentação e escolher quais informações do perfil podem circular. ' +
+    'Quando a adaptação alcança as experiências de aprendizagem, ela deve variar contextos, perguntas e apoios para os estudantes sem alterar a finalidade comum de compreender a relação estudada.',
+  'student-hero': 'O perfil apresenta a pessoa estudante e oferece contexto para reconhecer suas produções e seu percurso. ' +
+    'A identidade pública fica separada do registro pedagógico reservado: respostas, dificuldades observadas na sondagem e leituras da IA não viram elementos do perfil por padrão.',
+  'student-stories': 'Os stories abrem espaço para o estudante compartilhar trabalhos, descobertas e produções escolhidas para divulgação. ' +
+    'Essa circulação dá visibilidade ao que foi aprendido sem publicar automaticamente respostas da sondagem, dificuldades individuais ou devolutivas que pertencem ao acompanhamento reservado.',
+  'student-tabs': 'Separar apresentação pública, percurso de aprendizagem e produções compartilhadas ajuda o estudante a entender o contexto e o alcance de cada área. ' +
+    'A navegação preserva a finalidade formativa e evita confundir uma experiência social com a atividade de avaliação ou com o histórico reservado.',
+  'student-progress': 'Esta parte apresenta evidências autorizadas do percurso sem transformar uma resposta isolada ou um único número em conclusão de domínio. ' +
+    'A compreensão considera contextos variados, idade, série e evidências por competência; o que aparece publicamente precisa ser selecionado e compreensível para o estudante.',
+  'student-achievements': 'As conquistas destacam participações e produções que o estudante escolheu incluir em sua apresentação. ' +
+    'Uma conquista social, uma posição em evento ou um marco de percurso não equivale ao nível curricular demonstrado, que depende de evidências contextualizadas e revisão docente.',
+  'student-privacy': 'Este espaço esclarece quais aspectos do perfil podem ser compartilhados e quais permanecem no ambiente reservado de aprendizagem. ' +
+    'A regra acompanha a proposta da Lumira: circular conhecimento escolhido e permitir interação comunitária sem expor respostas, dificuldades individuais ou devolutivas da sondagem.',
+  'community-calendar': 'O calendário situa encontros e atividades coletivas para que turmas e comunidade organizem sua participação. ' +
+    'Mostras, desafios e eventos têm datas e regras próprias; o calendário orienta quando participar sem confundir a classificação de um evento com a progressão curricular do estudante.',
+  'community-tabs': 'As abas conduzem entre feed, eventos e espaços de participação, mantendo cada interação em seu contexto. ' +
+    'Essa organização permite compartilhar materiais e debater conhecimento sem transportar para a área social respostas, critérios internos ou devolutivas individuais.',
+  'community-topics': 'Os tópicos oferecem caminhos para encontrar assuntos, matérias e conversas que podem conectar estudantes e docentes. ' +
+    'A descoberta amplia a circulação de conhecimento e estratégias, preservando avaliações, diagnósticos e dificuldades pessoais no espaço reservado a quem acompanha a aprendizagem.',
+  'community-feed': 'O feed reúne publicações que docentes ou estudantes escolheram compartilhar para explicar uma ideia, apresentar uma produção ou iniciar uma discussão. ' +
+    'Cada item conserva contexto e autoria para consulta e adaptação; respostas e pareceres privados da sondagem não pertencem à circulação social.',
+  'community-aside': 'Este painel aproxima eventos, pessoas e grupos que ajudam a transformar leitura em participação coletiva. ' +
+    'Cada evento mantém inscrição, calendário e resultados em seu próprio escopo; quando houver pontuação, ela representa aquela atividade, não a competência curricular do estudante.',
 };
 
 const prototypeFieldsByRegion: Record<string, readonly PrototypeParameterSpec[]> = {
