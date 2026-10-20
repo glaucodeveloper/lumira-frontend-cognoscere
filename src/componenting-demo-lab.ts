@@ -105,6 +105,9 @@ function componentingPage(
     'teacher-workspace': 'lumira-teacher-workspace-page',
     'student-profile': 'lumira-student-profile-page',
     'student-activity': 'lumira-student-activity-page',
+    'leveling-enrollment': 'lumira-leveling-enrollment-page',
+    quests: 'lumira-quests-page',
+    'competency-questions': 'lumira-competency-questions-page',
     community: 'lumira-community-page',
   };
   const tag = pageTags[screen.id] ?? pageTags.community;
@@ -373,7 +376,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const requestedRole = params.get('role');
       const initialRole: LabRole = requestedRole === 'aluno' || requestedRole === 'visitante' || requestedRole === 'professor'
         ? requestedRole
-        : initialScreen?.id === 'student-profile' || initialScreen?.id === 'student-activity' ? 'aluno' : initialScreen?.id === 'access' ? 'visitante' : 'professor';
+        : ['student-profile', 'student-activity', 'leveling-enrollment', 'quests', 'competency-questions'].includes(initialScreen?.id ?? '') ? 'aluno' : initialScreen?.id === 'access' ? 'visitante' : 'professor';
       this.state = this.transitions.next(state => ({
         ...state, screens: nextScreens, fixtures: copiedFixtures,
         screenId: initialScreen?.id ?? '', componentId: initialRegion?.id ?? initialScreen?.defaultComponentId ?? '', role: initialRole, inspectorTab: 'part',
@@ -397,7 +400,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const requestedRole = params.get('role');
       const role: LabRole = requestedRole === 'aluno' || requestedRole === 'visitante' || requestedRole === 'professor'
         ? requestedRole
-        : screen.id === 'student-profile' || screen.id === 'student-activity' ? 'aluno' : screen.id === 'access' ? 'visitante' : 'professor';
+        : ['student-profile', 'student-activity', 'leveling-enrollment', 'quests', 'competency-questions'].includes(screen.id) ? 'aluno' : screen.id === 'access' ? 'visitante' : 'professor';
       this.state = this.transitions.next(state => ({
         ...state, screenId: screen.id, componentId: region?.id ?? screen.defaultComponentId, role, screenState: 'ready', inspectorTab: 'part',
       })).value;
@@ -454,7 +457,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         const screen = this.state.screens.find(item => item.id === screenButton.dataset.screenSelect);
         if (screen) {
           this.clearLoadingTimer();
-          const role: LabRole = screen.id === 'student-profile' || screen.id === 'student-activity' ? 'aluno' : screen.id === 'access' ? 'visitante' : 'professor';
+          const role: LabRole = ['student-profile', 'student-activity', 'leveling-enrollment', 'quests', 'competency-questions'].includes(screen.id) ? 'aluno' : screen.id === 'access' ? 'visitante' : 'professor';
           this.state = this.transitions.next(state => ({
             ...state,
             screenId: screen.id,
@@ -632,13 +635,13 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         componentStates,
       };
       const existingPage = this.querySelector<ComponentPageElement>(
-        'lumira-access-page, lumira-teacher-profile-page, lumira-teacher-workspace-page, lumira-student-profile-page, lumira-student-activity-page, lumira-community-page',
+        'lumira-access-page, lumira-teacher-profile-page, lumira-teacher-workspace-page, lumira-student-profile-page, lumira-student-activity-page, lumira-leveling-enrollment-page, lumira-quests-page, lumira-competency-questions-page, lumira-community-page',
       ) ?? undefined;
       const pageElement = componentingPage(screen, { data, situation, prototypeParameters }, existingPage);
       pageElement.classList.add('lm-demo-flow');
       const statuses: DemoScreenState[] = ['ready', 'loading', 'empty', 'error', 'forbidden'];
       const labels: Record<DemoScreenState, string> = { ready: 'Pronto', loading: 'Carregando', empty: 'Vazio', error: 'Erro', forbidden: 'Restrito' };
-      const pageButtons = this.state.screens.map(item => '<button type="button" data-screen-select="' + e(item.id) + '" class="' + (item.id === screen.id ? 'active' : '') + '"><span class="lm-page-icon">' + (item.id === 'community' ? '◌' : item.id === 'teacher-profile' ? '◎' : item.id === 'student-profile' ? '◇' : item.id === 'teacher-workspace' ? '▤' : item.id === 'student-activity' ? '✎' : '↗') + '</span><span><b>' + e(item.title) + '</b><small>' + e(item.evidence === 'observed' ? 'TELA DE REFERÊNCIA' : item.evidence === 'derived' ? 'PROPOSTA DERIVADA' : 'MAPA DE NAVEGAÇÃO') + '</small></span><i>→</i></button>').join('');
+      const pageButtons = this.state.screens.map(item => '<button type="button" data-screen-select="' + e(item.id) + '" class="' + (item.id === screen.id ? 'active' : '') + '"><span class="lm-page-icon">' + (item.id === 'community' ? '◌' : item.id === 'teacher-profile' ? '◎' : item.id === 'student-profile' ? '◇' : item.id === 'teacher-workspace' ? '▤' : item.id === 'student-activity' ? '✎' : item.id === 'leveling-enrollment' ? '＋' : item.id === 'quests' ? '⚑' : item.id === 'competency-questions' ? '▤' : '↗') + '</span><span><b>' + e(item.title) + '</b><small>' + e(item.evidence === 'observed' ? 'TELA DE REFERÊNCIA' : item.evidence === 'derived' ? 'PROPOSTA DERIVADA' : 'MAPA DE NAVEGAÇÃO') + '</small></span><i>→</i></button>').join('');
       const componentButtons = screen.regions.map((region, index) =>
         '<button type="button" data-component-select="' + e(region.id) + '" class="lm-scrollpoint-button ' + (region.id === selectedId ? 'active' : '') + '" aria-current="' + (region.id === selectedId ? 'location' : 'false') + '">'
         + '<span class="lm-component-index">' + String(index + 1).padStart(2, '0') + '</span><span><b>' + e(region.title) + '</b><small>' + e(region.evidence === 'observed' ? 'REFERÊNCIA' : region.evidence === 'derived' ? 'DERIVADA' : 'NAVEGAÇÃO') + '</small></span></button>',
