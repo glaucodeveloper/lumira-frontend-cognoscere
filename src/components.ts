@@ -132,6 +132,7 @@ export interface ReferenceRegionSpec {
   id: string;
   title: string;
   description: string;
+  responsibility: string;
   presentation: string;
   evidence: ReferenceEvidence;
   fixtureKey: string;
@@ -176,6 +177,34 @@ const presentationNotes: Record<string, string> = {
   'community-topics': 'Apresente tópicos como caminhos de descoberta por área e assunto, facilitando a entrada em comunidades relevantes.',
   'community-feed': 'O feed central mostra como uma publicação ganha contexto, autoria e interação. Conteúdo e reações são dados de demonstração.',
   'community-aside': 'O painel reúne próximos eventos e grupos como apoio à descoberta, sem competir com o conteúdo principal do feed.',
+};
+
+const platformResponsibilities: Record<string, string> = {
+  'workspace-sidebar': 'Orientar a navegação global, mostrar as áreas disponíveis e manter visível o papel atual da pessoa.',
+  'workspace-topbar': 'Dar acesso consistente à busca, criação, notificações e conta nas páginas autenticadas.',
+  'access-brand': 'Apresentar a proposta da Lumira e situar a pessoa antes de iniciar o acesso.',
+  'access-form': 'Coletar os dados de entrada e encaminhar a pessoa ao fluxo correspondente ao seu papel.',
+  'teacher-hero': 'Estabelecer a identidade profissional, o vínculo institucional e os principais pontos de entrada do perfil docente.',
+  'teacher-stories': 'Exibir atualizações breves escolhidas pela docente para dar visibilidade à atividade recente.',
+  'teacher-tabs': 'Organizar as áreas do perfil e conduzir a navegação entre suas diferentes visões.',
+  'teacher-progress': 'Resumir indicadores de participação docente em uma leitura rápida, sem substituir avaliação institucional.',
+  'teacher-skills': 'Mostrar competências profissionais e seus níveis para contextualizar o percurso da docente.',
+  'teacher-about': 'Apresentar biografia, vínculos e canais públicos selecionados pela docente.',
+  'teacher-activity': 'Compartilhar práticas pedagógicas com contexto, autoria e interação da comunidade.',
+  'teacher-projects': 'Acompanhar frentes de projeto e tornar sua situação e seu avanço visíveis.',
+  'teacher-agenda': 'Exibir compromissos e próximos marcos da rotina docente.',
+  'teacher-personalization': 'Permitir que a docente configure a aparência, o conteúdo e a visibilidade dos elementos do perfil.',
+  'student-hero': 'Apresentar a identidade pública do estudante e os dados escolares autorizados.',
+  'student-stories': 'Dar espaço a projetos e momentos que o estudante escolhe tornar públicos.',
+  'student-tabs': 'Organizar apresentação, percurso e publicações sem expor áreas privadas.',
+  'student-progress': 'Exibir somente indicadores de percurso autorizados pelo estudante e pela escola.',
+  'student-achievements': 'Publicar conquistas escolhidas para compor a apresentação pública do estudante.',
+  'student-privacy': 'Explicar o alcance e os limites de exposição das informações do perfil discente.',
+  'community-calendar': 'Organizar datas e eventos para orientar a participação da comunidade.',
+  'community-tabs': 'Encaminhar a pessoa entre feed, eventos e espaços de participação da comunidade.',
+  'community-topics': 'Facilitar a descoberta de conversas e áreas relevantes por assunto.',
+  'community-feed': 'Reunir publicações da comunidade e permitir compartilhar experiências e interagir com elas.',
+  'community-aside': 'Apoiar a descoberta de eventos, pessoas e grupos relacionados à atividade da comunidade.',
 };
 
 const prototypeFieldsByRegion: Record<string, readonly PrototypeParameterSpec[]> = {
@@ -286,7 +315,8 @@ const sharedPrototypeParameters: readonly PrototypeParameterSpec[] = [
 
 const partSpec = (id: string, title: string, description: string, evidence: ReferenceEvidence, fixtureKey: string): ReferenceRegionSpec =>
   ({
-    id, title, description, presentation: presentationNotes[id] ?? description, evidence, fixtureKey, kind: id,
+    id, title, description, responsibility: platformResponsibilities[id] ?? description,
+    presentation: presentationNotes[id] ?? description, evidence, fixtureKey, kind: id,
     parameters: [...sharedPrototypeParameters, ...(prototypeFieldsByRegion[id] ?? [])],
   });
 
@@ -472,6 +502,7 @@ function labList<T = unknown>(data: ComponentFixture, key: string): T[] {
 type DemoPagePartProps = {
   id: string;
   title: string;
+  responsibility: string;
   content: string;
   presentation: string;
   evidence: ReferenceEvidence;
@@ -558,6 +589,7 @@ function labPart(id: string, content: string, selectedId: string, className = ''
   part.configure({
     id,
     title: region?.title ?? id.replaceAll('-', ' '),
+    responsibility: region?.responsibility ?? '',
     content,
     presentation: region?.presentation ?? '',
     evidence: region?.evidence ?? 'derived',
@@ -866,7 +898,7 @@ export function registerComponentElements(): void {
       constructor() {
         super();
         this.transitions = componentState<DemoPagePartState>({
-          id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
+          id: '', title: '', responsibility: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
           interaction: { groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, feedback: '' },
         });
@@ -1100,7 +1132,7 @@ export function registerComponentElements(): void {
         this.render();
       }
       private render(): void {
-        const { id, title, content, presentation, evidence, selectedId, className, situation, prototypeParameters } = this.state;
+        const { id, title, responsibility, content, presentation, evidence, selectedId, className, situation, prototypeParameters } = this.state;
         this.className = 'lm-page-part ' + e(className) + (id === selectedId ? ' is-selected' : '');
         this.dataset.componentId = id;
         this.setAttribute('aria-label', title);
@@ -1120,7 +1152,8 @@ export function registerComponentElements(): void {
         };
         const presentationBlock = id === selectedId && presentation
           ? '<aside class="lm-part-presentation"><header><span class="lm-eyebrow">CONTEXTO DA PARTE</span><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>'
-            + '<h3>' + e(title) + '</h3><p>' + e(presentation) + '</p></aside>'
+            + '<h3>' + e(title) + '</h3><div class="lm-part-responsibility"><span class="lm-eyebrow">RESPONSABILIDADE NA PLATAFORMA</span><p>' + e(responsibility) + '</p></div>'
+            + '<p>' + e(presentation) + '</p></aside>'
           : '';
         const visibleContent = prototypeParameters.visible === false
           ? '<div class="lm-prototype-hidden" role="status"><strong>Componente oculto</strong><span>Ative “Exibir componente” nos parâmetros para mostrar a peça.</span></div>'
