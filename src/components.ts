@@ -96,6 +96,7 @@ export interface ComponentMockSituation {
 export interface ComponentPageProps {
   data: ComponentFixture;
   situation: ComponentMockSituation;
+  prototypeParameters?: Record<string, PrototypeParameterValues>;
 }
 
 export interface ComponentPageElement extends HTMLElement {
@@ -105,6 +106,28 @@ export interface ComponentPageElement extends HTMLElement {
 // Componenting Demo Lab: specs, dados, funções e componentes de página do laboratório.
 export type ReferenceEvidence = 'observed' | 'derived' | 'navigation-only';
 
+export type PrototypeParameterValue = string | number | boolean | string[];
+export type PrototypeParameterValues = Record<string, PrototypeParameterValue>;
+export type PrototypeParameterType = 'text' | 'textarea' | 'list' | 'number' | 'range' | 'count' | 'toggle' | 'select';
+
+export interface PrototypeParameterOption {
+  value: string;
+  label: string;
+}
+
+export interface PrototypeParameterSpec {
+  id: string;
+  label: string;
+  type: PrototypeParameterType;
+  targetPath?: string;
+  defaultValue?: PrototypeParameterValue;
+  options?: readonly PrototypeParameterOption[];
+  min?: number;
+  max?: number;
+  step?: number;
+  hint?: string;
+}
+
 export interface ReferenceRegionSpec {
   id: string;
   title: string;
@@ -113,6 +136,7 @@ export interface ReferenceRegionSpec {
   evidence: ReferenceEvidence;
   fixtureKey: string;
   kind: string;
+  parameters: readonly PrototypeParameterSpec[];
 }
 
 export interface ReferenceScreenSpec {
@@ -154,8 +178,117 @@ const presentationNotes: Record<string, string> = {
   'community-aside': 'O painel reúne próximos eventos e grupos como apoio à descoberta, sem competir com o conteúdo principal do feed.',
 };
 
+const prototypeFieldsByRegion: Record<string, readonly PrototypeParameterSpec[]> = {
+  'workspace-sidebar': [{ id: 'name', label: 'Nome do perfil', type: 'text', targetPath: 'name' }],
+  'workspace-topbar': [{ id: 'name', label: 'Nome do perfil', type: 'text', targetPath: 'name' }],
+  'access-brand': [
+    { id: 'subtitle', label: 'Chamada', type: 'text', targetPath: 'subtitle' },
+    { id: 'description', label: 'Descrição', type: 'textarea', targetPath: 'description' },
+  ],
+  'access-form': [
+    { id: 'title', label: 'Título do formulário', type: 'text', targetPath: 'title' },
+    { id: 'email', label: 'E-mail de demonstração', type: 'text', targetPath: 'email' },
+    { id: 'roles', label: 'Papéis disponíveis', type: 'list', targetPath: 'roles', hint: 'Um papel por linha.' },
+  ],
+  'teacher-hero': [
+    { id: 'name', label: 'Nome', type: 'text', targetPath: 'name' },
+    { id: 'role', label: 'Função', type: 'text', targetPath: 'role' },
+    { id: 'quote', label: 'Frase de perfil', type: 'textarea', targetPath: 'quote' },
+    { id: 'music', label: 'Status musical', type: 'text', targetPath: 'music' },
+    { id: 'competencies', label: 'Competências', type: 'list', targetPath: 'competencies', hint: 'Uma competência por linha.' },
+  ],
+  'teacher-stories': [{ id: 'stories', label: 'Stories', type: 'list', targetPath: 'stories', hint: 'Um story por linha.' }],
+  'teacher-tabs': [{ id: 'tabs', label: 'Abas', type: 'list', targetPath: 'tabs', hint: 'Uma aba por linha.' }],
+  'teacher-progress': [
+    { id: 'progress', label: 'Progresso', type: 'range', targetPath: 'progress', min: 0, max: 100, step: 1 },
+    { id: 'streak', label: 'Dias seguidos', type: 'text', targetPath: 'streak' },
+    { id: 'xp', label: 'Pontos de percurso', type: 'text', targetPath: 'xp' },
+    { id: 'achievements', label: 'Conquistas', type: 'text', targetPath: 'achievements' },
+  ],
+  'teacher-skills': [{ id: 'skills', label: 'Competências visíveis', type: 'count', targetPath: 'skills', min: 0, max: 10 }],
+  'teacher-about': [
+    { id: 'bio', label: 'Biografia', type: 'textarea', targetPath: 'bio' },
+    { id: 'affiliations', label: 'Vínculos', type: 'list', targetPath: 'affiliations', hint: 'Um vínculo por linha.' },
+    { id: 'socials', label: 'Redes sociais', type: 'list', targetPath: 'socials', hint: 'Uma rede por linha.' },
+  ],
+  'teacher-activity': [
+    { id: 'activityTitle', label: 'Título da publicação', type: 'text', targetPath: 'activityTitle' },
+    { id: 'activityText', label: 'Texto', type: 'textarea', targetPath: 'activityText' },
+    { id: 'activityTags', label: 'Assuntos', type: 'list', targetPath: 'activityTags', hint: 'Um assunto por linha.' },
+    { id: 'likes', label: 'Curtidas', type: 'number', targetPath: 'likes', min: 0, max: 9999 },
+  ],
+  'teacher-projects': [{ id: 'projects', label: 'Projetos visíveis', type: 'count', targetPath: 'projects', min: 0, max: 10 }],
+  'teacher-agenda': [{ id: 'agenda', label: 'Compromissos visíveis', type: 'count', targetPath: 'agenda', min: 0, max: 12 }],
+  'teacher-personalization': [{ id: 'preferences', label: 'Opções de visibilidade', type: 'list', targetPath: 'preferences', hint: 'Uma opção por linha.' }],
+  'student-hero': [
+    { id: 'name', label: 'Nome', type: 'text', targetPath: 'name' },
+    { id: 'role', label: 'Função', type: 'text', targetPath: 'role' },
+    { id: 'school', label: 'Escola', type: 'text', targetPath: 'school' },
+    { id: 'competencies', label: 'Interesses', type: 'list', targetPath: 'competencies', hint: 'Um interesse por linha.' },
+  ],
+  'student-stories': [{ id: 'stories', label: 'Stories', type: 'list', targetPath: 'stories', hint: 'Um story por linha.' }],
+  'student-tabs': [{ id: 'tabs', label: 'Abas', type: 'list', targetPath: 'tabs', hint: 'Uma aba por linha.' }],
+  'student-progress': [
+    { id: 'progress', label: 'Percurso autorizado', type: 'range', targetPath: 'progress', min: 0, max: 100, step: 1 },
+    { id: 'streak', label: 'Dias seguidos', type: 'text', targetPath: 'streak', defaultValue: '8' },
+    { id: 'xp', label: 'Pontos de percurso', type: 'text', targetPath: 'xp', defaultValue: '1.250' },
+    { id: 'achievements', label: 'Conquistas', type: 'text', targetPath: 'achievements', defaultValue: '3' },
+  ],
+  'student-achievements': [{ id: 'achievements', label: 'Conquistas visíveis', type: 'list', targetPath: 'achievements', hint: 'Uma conquista por linha.' }],
+  'student-privacy': [
+    { id: 'bio', label: 'Apresentação', type: 'textarea', targetPath: 'bio' },
+    { id: 'privacy', label: 'Aviso de privacidade', type: 'textarea', targetPath: 'privacy' },
+  ],
+  'community-calendar': [
+    { id: 'title', label: 'Título', type: 'text', targetPath: 'title' },
+    { id: 'subtitle', label: 'Descrição', type: 'text', targetPath: 'subtitle' },
+    { id: 'month', label: 'Mês', type: 'text', targetPath: 'month' },
+    { id: 'events', label: 'Eventos exibidos', type: 'count', targetPath: 'events', min: 0, max: 31 },
+  ],
+  'community-tabs': [{ id: 'tabs', label: 'Abas', type: 'list', targetPath: 'tabs', hint: 'Uma aba por linha.' }],
+  'community-topics': [
+    { id: 'topics', label: 'Tópicos visíveis', type: 'count', targetPath: 'topics', min: 0, max: 20 },
+    { id: 'areas', label: 'Áreas', type: 'list', targetPath: 'areas', hint: 'Uma área por linha.' },
+  ],
+  'community-feed': [
+    { id: 'postTitle', label: 'Título da publicação', type: 'text', targetPath: 'posts.0.title' },
+    { id: 'postText', label: 'Texto da publicação', type: 'textarea', targetPath: 'posts.0.text' },
+    { id: 'postTags', label: 'Assuntos', type: 'list', targetPath: 'posts.0.tags', hint: 'Um assunto por linha.' },
+    { id: 'posts', label: 'Publicações visíveis', type: 'count', targetPath: 'posts', min: 0, max: 10 },
+  ],
+  'community-aside': [
+    { id: 'events', label: 'Eventos visíveis', type: 'count', targetPath: 'events', defaultValue: 3, min: 0, max: 12 },
+    { id: 'people', label: 'Pessoas sugeridas', type: 'count', targetPath: 'people', min: 0, max: 10 },
+    { id: 'groups', label: 'Grupos sugeridos', type: 'count', targetPath: 'groups', min: 0, max: 10 },
+  ],
+};
+
+const sharedPrototypeParameters: readonly PrototypeParameterSpec[] = [
+  { id: 'visible', label: 'Exibir componente', type: 'toggle', defaultValue: true },
+  {
+    id: 'density', label: 'Densidade', type: 'select', defaultValue: 'regular',
+    options: [
+      { value: 'compact', label: 'Compacta' },
+      { value: 'regular', label: 'Regular' },
+      { value: 'spacious', label: 'Ampla' },
+    ],
+  },
+  {
+    id: 'accent', label: 'Cor de destaque', type: 'select', defaultValue: 'teal',
+    options: [
+      { value: 'teal', label: 'Turquesa' },
+      { value: 'blue', label: 'Azul' },
+      { value: 'violet', label: 'Violeta' },
+      { value: 'rose', label: 'Rosa' },
+    ],
+  },
+];
+
 const partSpec = (id: string, title: string, description: string, evidence: ReferenceEvidence, fixtureKey: string): ReferenceRegionSpec =>
-  ({ id, title, description, presentation: presentationNotes[id] ?? description, evidence, fixtureKey, kind: id });
+  ({
+    id, title, description, presentation: presentationNotes[id] ?? description, evidence, fixtureKey, kind: id,
+    parameters: [...sharedPrototypeParameters, ...(prototypeFieldsByRegion[id] ?? [])],
+  });
 
 const shellParts = (fixtureKey: string, evidence: ReferenceEvidence): ReferenceRegionSpec[] => [
   partSpec('workspace-sidebar', 'Navegação lateral', 'Marca, áreas da plataforma e papel ativo.', evidence, fixtureKey),
@@ -326,9 +459,16 @@ export const initialComponentData: Record<string, unknown> = {
   },
 };
 
-function labText(data: ComponentFixture, key: string, fallback = ''): string { return typeof data[key] === 'string' ? data[key] as string : fallback; }
+function labText(data: ComponentFixture, key: string, fallback = ''): string {
+  const value = data[key];
+  return typeof value === 'string' || typeof value === 'number' ? String(value) : fallback;
+}
 function labNumber(data: ComponentFixture, key: string, fallback = 0): number { return typeof data[key] === 'number' ? data[key] as number : fallback; }
-function labList<T = unknown>(data: ComponentFixture, key: string): T[] { return Array.isArray(data[key]) ? data[key] as T[] : []; }
+function labList<T = unknown>(data: ComponentFixture, key: string): T[] {
+  const list = Array.isArray(data[key]) ? data[key] as T[] : [];
+  const limits = data.__prototypeLimits as Record<string, number> | undefined;
+  return limits && typeof limits[key] === 'number' ? list.slice(0, Math.max(0, limits[key])) : list;
+}
 type DemoPagePartProps = {
   id: string;
   title: string;
@@ -338,6 +478,7 @@ type DemoPagePartProps = {
   selectedId: string;
   className: string;
   situation: ComponentMockSituation;
+  prototypeParameters: PrototypeParameterValues;
 };
 type DemoPagePartInteraction = {
   groups: Record<string, string>;
@@ -353,6 +494,7 @@ interface DemoPagePartElement extends HTMLElement { configure(props: DemoPagePar
 type PageCompositionContext = {
   host: HTMLElement;
   situation: ComponentMockSituation;
+  prototypeParameters: Record<string, PrototypeParameterValues>;
   existing: Map<string, DemoPagePartElement>;
   parts: DemoPagePartElement[];
 };
@@ -370,6 +512,44 @@ function mockAttributes(situation: ComponentMockSituation): string {
     + '" data-mock-role="' + e(situation.role) + '" data-mock-status="' + e(situation.status)
     + '" data-selected-region="' + e(situation.selectedRegionId) + '"';
 }
+function setFixtureValueAtPath(data: ComponentFixture, path: string, value: PrototypeParameterValue): void {
+  const segments = path.split('.');
+  let cursor: Record<string | number, unknown> | unknown[] = data;
+  segments.forEach((segment, index) => {
+    const isLast = index === segments.length - 1;
+    const key = Array.isArray(cursor) && /^\d+$/.test(segment) ? Number(segment) : segment;
+    if (isLast) {
+      (cursor as Record<string | number, unknown>)[key] = value;
+      return;
+    }
+    let child = (cursor as Record<string | number, unknown>)[key];
+    if (child === null || typeof child !== 'object') {
+      child = /^\d+$/.test(segments[index + 1]) ? [] : {};
+      (cursor as Record<string | number, unknown>)[key] = child;
+    }
+    cursor = child as Record<string | number, unknown> | unknown[];
+  });
+}
+function prototypeData(id: string, data: ComponentFixture): ComponentFixture {
+  const parameters = activePageComposition?.prototypeParameters[id];
+  if (!parameters) return data;
+  const screenId = activePageComposition?.situation.screenId;
+  const region = referenceScreenSpecs.find(screen => screen.id === screenId)?.regions.find(item => item.id === id);
+  if (!region) return data;
+  const result = structuredClone(data);
+  const limits: Record<string, number> = {};
+  region.parameters.forEach(parameter => {
+    if (!parameter.targetPath || !Object.hasOwn(parameters, parameter.id)) return;
+    const value = parameters[parameter.id];
+    if (parameter.type === 'count' && typeof value === 'number') {
+      limits[parameter.targetPath] = value;
+      return;
+    }
+    setFixtureValueAtPath(result, parameter.targetPath, value);
+  });
+  result.__prototypeLimits = limits;
+  return result;
+}
 function labPart(id: string, content: string, selectedId: string, className = ''): string {
   if (!activePageComposition) throw new Error('Parte de página criada fora da composição de um componente de página.');
   const part = activePageComposition.existing.get(id) ?? document.createElement('lumira-page-part') as DemoPagePartElement;
@@ -384,6 +564,7 @@ function labPart(id: string, content: string, selectedId: string, className = ''
     selectedId,
     className,
     situation: { ...situation, status: situation.componentStates?.[id] ?? situation.status },
+    prototypeParameters: activePageComposition.prototypeParameters[id] ?? {},
   });
   const slot = activePageComposition.parts.push(part) - 1;
   return '<span data-demo-part-slot="' + slot + '"></span>';
@@ -409,7 +590,9 @@ function renderPageWithParts(host: HTMLElement, props: ComponentPageProps, rende
   host.querySelectorAll<DemoPagePartElement>('lumira-page-part').forEach(part => {
     if (part.dataset.componentId) existing.set(part.dataset.componentId, part);
   });
-  const context: PageCompositionContext = { host, situation: props.situation, existing, parts: [] };
+  const context: PageCompositionContext = {
+    host, situation: props.situation, prototypeParameters: props.prototypeParameters ?? {}, existing, parts: [],
+  };
   const previous = activePageComposition;
   activePageComposition = context;
   try {
@@ -428,6 +611,7 @@ function LabAvatar(name: string, tone = 'teal', className = ''): string {
 }
 function LabPill(text: string, tone = ''): string { return '<span class="lm-pill ' + e(tone) + '">' + e(text) + '</span>'; }
 function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('workspace-sidebar', data);
   const community = screenId === 'community';
   const student = screenId === 'student-profile';
   const name = labText(data, 'name', student ? 'Caio Almeida' : 'Ana Beatriz Silva');
@@ -442,12 +626,14 @@ function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, select
   return labPart('workspace-sidebar', content, selectedId, 'lm-product-sidebar');
 }
 function renderWorkspaceTopbar(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('workspace-topbar', data);
   const name = labText(data, 'name', 'Ana Beatriz Silva');
   const content = '<div class="lm-search"><span aria-hidden="true">⌕</span><input aria-label="Buscar" placeholder="Buscar áreas, cursos, pessoas, conteúdos..." /></div>'
     + '<div class="lm-top-actions"><button type="button" class="lm-top-action">＋ <span>Criar</span></button><button type="button" class="lm-top-action">♧ <span>Notificações</span><i>3</i></button><button type="button" class="lm-user-menu">' + LabAvatar(name, 'teal', 'tiny') + '<span>' + e(name) + '</span><b>⌄</b></button></div>';
   return labPart('workspace-topbar', content, selectedId, 'lm-product-topbar');
 }
 function renderAccessBrand(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('access-brand', data);
   const image = "url('" + profileCoverAsset + "')";
   const content = '<section class="lm-access-brand" style="background-image:linear-gradient(90deg,rgba(8,38,70,.76),rgba(8,38,70,.18)),' + image + '">'
     + '<div class="lm-access-logo"><span class="lm-brand-symbol">✳</span> Lumira</div>'
@@ -457,6 +643,7 @@ function renderAccessBrand(data: ComponentFixture, selectedId: string): string {
   return labPart('access-brand', content, selectedId, 'lm-access-brand-part');
 }
 function renderAccessForm(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('access-form', data);
   const roles = labList<string>(data, 'roles').map((role, index) => '<option ' + (index === 0 ? 'selected' : '') + '>' + e(role) + '</option>').join('');
   const content = '<section class="lm-access-card"><span class="lm-eyebrow">ÁREA DO ESTUDANTE E EDUCADOR</span><h2>' + e(labText(data, 'title', 'Entrar na Lumira')) + '</h2><p class="lm-access-intro">Use sua conta institucional ou continue com o modo de demonstração.</p>'
     + '<form class="lm-login-form"><label>Perfil de demonstração<select name="role"><option value="">Escolha um perfil</option>' + roles + '</select></label>'
@@ -472,6 +659,7 @@ function renderAccessPage(props: ComponentPageProps): string {
   return '<div class="lm-access-page" data-page-id="access"' + mockAttributes(situation) + '>' + renderAccessBrand(data, selectedId) + renderAccessForm(data, selectedId) + '</div>';
 }
 function renderProfileHero(id: string, data: ComponentFixture, selectedId: string, student = false): string {
+  data = prototypeData(id, data);
   const name = labText(data, 'name', student ? 'Caio Almeida' : 'Ana Beatriz Silva');
   const role = labText(data, 'role', student ? 'Estudante · 8º ano' : 'Professora de Língua Portuguesa');
   const chips = labList<string>(data, 'competencies').slice(0, 4).map(item => LabPill(item, 'glass')).join('');
@@ -486,17 +674,20 @@ function renderProfileHero(id: string, data: ComponentFixture, selectedId: strin
   return labPart(id, content, selectedId, 'lm-profile-hero-part');
 }
 function renderStories(id: string, data: ComponentFixture, selectedId: string): string {
+  data = prototypeData(id, data);
   const stories = labList<string>(data, 'stories');
   const cards = stories.map((title, index) => '<button type="button" class="lm-story-card"><span class="lm-story-ring tone-' + (index % 5) + '">' + LabAvatar(title, ['teal', 'blue', 'violet', 'rose', 'sun'][index % 5], 'story-avatar') + '</span><b>' + e(title) + '</b><small>' + (index === 0 ? 'há 2h' : 'há ' + index + ' dia' + (index > 1 ? 's' : '')) + '</small></button>').join('');
   const content = '<div class="lm-stories-track"><button type="button" class="lm-story-card lm-new-story"><span class="lm-new-story-icon">＋</span><b>Novo story</b></button>' + cards + '<button type="button" class="lm-story-next" aria-label="Ver mais stories">›</button></div>';
   return labPart(id, content, selectedId, 'lm-stories-part');
 }
 function renderProfileTabs(id: string, data: ComponentFixture, selectedId: string): string {
+  data = prototypeData(id, data);
   const tabs = labList<string>(data, 'tabs');
   const content = '<nav class="lm-profile-tabs" aria-label="Seções do perfil">' + tabs.map((label, index) => '<button type="button" class="' + (index === 0 ? 'active' : '') + '">' + (index === 0 ? '<span>✦</span>' : '') + e(label) + '</button>').join('') + '</nav>';
   return labPart(id, content, selectedId, 'lm-tabs-part');
 }
 function renderProgressCard(data: ComponentFixture, selectedId: string, student = false): string {
+  data = prototypeData(student ? 'student-progress' : 'teacher-progress', data);
   const value = Math.max(0, Math.min(100, labNumber(data, 'progress', student ? 68 : 78)));
   const content = '<article class="lm-panel lm-progress-panel"><header><h2>' + (student ? 'Meu percurso' : 'Meu progresso geral') + '</h2><button type="button" class="lm-panel-more">•••</button></header>'
     + '<div class="lm-progress-layout"><div class="lm-progress-ring" style="--progress:' + value + '%"><div><strong>' + value + '%</strong><small>' + (student ? 'Percurso' : 'alinhamento') + '</small></div></div>'
@@ -505,6 +696,7 @@ function renderProgressCard(data: ComponentFixture, selectedId: string, student 
   return labPart(student ? 'student-progress' : 'teacher-progress', content, selectedId, 'lm-profile-card-part');
 }
 function renderSkillsPanel(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('teacher-skills', data);
   const skills = labList<ComponentFixture>(data, 'skills').map(skill => {
     const title = labText(skill, 'title', 'Competência');
     const value = Math.max(0, Math.min(100, labNumber(skill, 'value', 50)));
@@ -515,6 +707,7 @@ function renderSkillsPanel(data: ComponentFixture, selectedId: string): string {
   return labPart('teacher-skills', content, selectedId, 'lm-profile-card-part');
 }
 function renderAboutPanel(data: ComponentFixture, selectedId: string, student = false): string {
+  data = prototypeData(student ? 'student-privacy' : 'teacher-about', data);
   const affiliations = labList<string>(data, 'affiliations');
   const socials = labList<string>(data, 'socials');
   const content = '<article class="lm-panel lm-about-panel"><header><h2>' + (student ? 'Sobre mim' : 'Sobre mim') + '</h2><button type="button" class="lm-panel-edit" aria-label="Editar sobre mim">✎</button></header>'
@@ -525,6 +718,7 @@ function renderAboutPanel(data: ComponentFixture, selectedId: string, student = 
   return labPart(student ? 'student-privacy' : 'teacher-about', content + '</article>', selectedId, 'lm-profile-card-part');
 }
 function renderActivityCard(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('teacher-activity', data);
   const content = '<article class="lm-panel lm-activity-panel"><header><h2>Posts e atividades</h2><div class="lm-filter-pills"><button class="active">Todos</button><button>Posts</button><button>Vídeos</button><button>Projetos</button></div><button type="button" class="lm-small-primary">Criar post</button></header>'
     + '<div class="lm-activity-author">' + LabAvatar(labText(data, 'name', 'Ana Beatriz Silva'), 'teal', 'tiny') + '<div><b>' + e(labText(data, 'name', 'Ana Beatriz Silva')) + '</b><small>Professora · há 2 dias</small></div><button type="button" class="lm-panel-more">⌄</button></div>'
     + '<h3>' + e(labText(data, 'activityTitle', 'Linguagem conecta realidades')) + '</h3><p>' + e(labText(data, 'activityText', 'Uma atividade compartilhada com a comunidade escolar.')) + '</p>'
@@ -534,18 +728,21 @@ function renderActivityCard(data: ComponentFixture, selectedId: string): string 
   return labPart('teacher-activity', content, selectedId, 'lm-feed-card-part');
 }
 function renderProjectsPanel(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('teacher-projects', data);
   const projects = labList<ComponentFixture>(data, 'projects');
   const rows = projects.map((project, index) => '<article class="lm-project-row"><span class="lm-project-art art-' + index + '">✦</span><div><b>' + e(labText(project, 'title', 'Projeto')) + '</b><small>' + e(labText(project, 'progress', '0/4 atividades')) + '</small><div class="lm-project-meter"><i style="width:' + [67, 34, 12][index % 3] + '%"></i></div></div>' + LabPill(labText(project, 'status', 'Ideia'), index === 0 ? 'mint' : index === 1 ? 'lilac' : 'gray') + '</article>').join('');
   const content = '<article class="lm-panel lm-projects-panel"><header><h2>Meus projetos em andamento</h2><button type="button" class="lm-text-action">Ver todos →</button></header><div class="lm-project-list">' + rows + '</div><button type="button" class="lm-outline-action">＋ Criar novo projeto</button></article>';
   return labPart('teacher-projects', content, selectedId, 'lm-profile-card-part');
 }
 function renderAgendaPanel(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('teacher-agenda', data);
   const agenda = labList<ComponentFixture>(data, 'agenda');
   const rows = agenda.map(item => '<div class="lm-agenda-item"><time>' + e(labText(item, 'time', '09:00')) + '</time><i class="tone-' + e(labText(item, 'tone', 'blue')) + '"></i><div><b>' + e(labText(item, 'title', 'Atividade')) + '</b><small>' + e(labText(item, 'detail', 'Encontro da comunidade')) + '</small></div></div>').join('');
   const content = '<article class="lm-panel lm-agenda-panel"><header><h2>Minha agenda</h2><button type="button" class="lm-text-action">Ver agenda →</button></header><div class="lm-agenda-date">▦ <b>Hoje, 14 de outubro</b></div><div class="lm-agenda-list">' + rows + '</div></article>';
   return labPart('teacher-agenda', content, selectedId, 'lm-profile-card-part');
 }
 function renderPersonalizationPanel(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('teacher-personalization', data);
   const preferences = labList<string>(data, 'preferences');
   const toggles = preferences.map((item, index) => '<label>' + e(item) + '<input type="checkbox" ' + (index < 3 ? 'checked' : '') + ' /><span></span></label>').join('');
   const content = '<article class="lm-panel lm-personalization-panel"><header><div><span class="lm-eyebrow">SEU ESPAÇO</span><h2>Personalizar perfil</h2></div><button type="button" class="lm-close-button">×</button></header>'
@@ -567,6 +764,7 @@ function renderTeacherProfilePage(props: ComponentPageProps): string {
     + renderPersonalizationPanel(data, selectedId) + '</main></div></div>';
 }
 function renderStudentAchievements(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('student-achievements', data);
   const rows = labList<string>(data, 'achievements').map((item, index) => '<article class="lm-achievement"><span class="lm-achievement-icon tone-' + ['teal', 'sun', 'violet'][index % 3] + '">✦</span><div><b>' + e(item) + '</b><small>Autorizada para exibição pública</small></div><span class="lm-achievement-check">✓</span></article>').join('');
   const content = '<article class="lm-panel lm-student-achievements"><header><h2>Conquistas compartilhadas</h2><span>3 itens</span></header><div>' + rows + '</div></article>';
   return labPart('student-achievements', content, selectedId, 'lm-profile-card-part');
@@ -584,6 +782,7 @@ function renderStudentProfilePage(props: ComponentPageProps): string {
 
 type CommunityEventFixture = { day: number; title: string; time: string; color: string };
 function renderCommunityCalendar(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('community-calendar', data);
   const events = labList<CommunityEventFixture>(data, 'events');
   const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
   const offset = 4, daysInMonth = 31;
@@ -601,11 +800,13 @@ function renderCommunityCalendar(data: ComponentFixture, selectedId: string): st
   return labPart('community-calendar', content, selectedId, 'lm-community-calendar-part');
 }
 function renderCommunityTabs(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('community-tabs', data);
   const tabs = labList<string>(data, 'tabs');
   const content = '<nav class="lm-community-tabs">' + tabs.map((label, index) => '<button type="button" class="' + (index === 0 ? 'active' : '') + '">' + e(label) + '</button>').join('') + '<button type="button" class="lm-community-sort">Mais relevantes⌄</button></nav>';
   return labPart('community-tabs', content, selectedId, 'lm-community-tabs-part');
 }
 function renderTopicsPanel(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('community-topics', data);
   const topics = labList<ComponentFixture>(data, 'topics'), areas = labList<string>(data, 'areas');
   const topicRows = topics.map((topic, index) => '<li><i>' + (index + 1) + '</i><span>' + e(labText(topic, 'title', 'Tópico')) + '</span><b>' + e(labText(topic, 'posts', '0')) + ' posts</b></li>').join('');
   const areaRows = areas.map((area, index) => '<div class="lm-area-row"><span class="lm-area-icon tone-' + ['violet', 'blue', 'teal', 'rose', 'sun', 'green'][index % 6] + '">' + ['▦', '✳', '△', '◉', '＋', '✦'][index % 6] + '</span><div><b>' + e(area) + '</b><small>' + [342, 280, 198, 176, 64, 54][index % 6] + ' posts</small></div></div>').join('');
@@ -614,6 +815,7 @@ function renderTopicsPanel(data: ComponentFixture, selectedId: string): string {
   return labPart('community-topics', content, selectedId, 'lm-community-column-part');
 }
 function renderCommunityFeed(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('community-feed', data);
   const posts = labList<ComponentFixture>(data, 'posts');
   const cards = posts.map((post, index) => `
     <article class="lm-panel lm-community-post">
@@ -627,7 +829,8 @@ function renderCommunityFeed(data: ComponentFixture, selectedId: string): string
   return labPart('community-feed', '<div class="lm-community-feed-stack">' + composer + cards + '</div>', selectedId, 'lm-community-column-part');
 }
 function renderCommunityAside(data: ComponentFixture, selectedId: string): string {
-  const events = labList<CommunityEventFixture>(data, 'events').slice(0, 3);
+  data = prototypeData('community-aside', data);
+  const events = labList<CommunityEventFixture>(data, 'events').slice(0, 12);
   const people = labList<ComponentFixture>(data, 'people'), groups = labList<ComponentFixture>(data, 'groups');
   const eventRows = events.map(event => '<div class="lm-upcoming-event"><span class="lm-date-badge"><b>' + event.day + '</b><small>OUT</small></span><div><b>' + e(event.title) + '</b><small>Online · ' + e(event.time) + '</small><button type="button" class="lm-event-register">Inscrever-se →</button></div></div>').join('');
   const peopleRows = people.map(person => '<div class="lm-suggested-person">' + LabAvatar(labText(person, 'name', 'Educador'), labText(person, 'tone', 'teal'), 'tiny') + '<div><b>' + e(labText(person, 'name', 'Educador')) + '</b><small>' + e(labText(person, 'role', 'Comunidade')) + '</small></div><button type="button">Seguir</button></div>').join('');
@@ -664,6 +867,7 @@ export function registerComponentElements(): void {
         super();
         this.transitions = componentState<DemoPagePartState>({
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
+          prototypeParameters: {},
           interaction: { groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, feedback: '' },
         });
         this.state = this.transitions.next().value;
@@ -896,7 +1100,7 @@ export function registerComponentElements(): void {
         this.render();
       }
       private render(): void {
-        const { id, title, content, presentation, evidence, selectedId, className, situation } = this.state;
+        const { id, title, content, presentation, evidence, selectedId, className, situation, prototypeParameters } = this.state;
         this.className = 'lm-page-part ' + e(className) + (id === selectedId ? ' is-selected' : '');
         this.dataset.componentId = id;
         this.setAttribute('aria-label', title);
@@ -906,6 +1110,9 @@ export function registerComponentElements(): void {
         this.dataset.mockRole = situation.role;
         this.dataset.mockStatus = situation.status;
         this.dataset.selectedRegion = situation.selectedRegionId;
+        this.dataset.prototypeVisible = String(prototypeParameters.visible !== false);
+        this.dataset.prototypeDensity = typeof prototypeParameters.density === 'string' ? prototypeParameters.density : 'regular';
+        this.dataset.prototypeAccent = typeof prototypeParameters.accent === 'string' ? prototypeParameters.accent : 'teal';
         const evidenceLabels: Record<ReferenceEvidence, string> = {
           observed: 'Referência observada',
           derived: 'Composição derivada',
@@ -915,7 +1122,10 @@ export function registerComponentElements(): void {
           ? '<aside class="lm-part-presentation"><header><span class="lm-eyebrow">CONTEXTO DA PARTE</span><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>'
             + '<h3>' + e(title) + '</h3><p>' + e(presentation) + '</p></aside>'
           : '';
-        this.innerHTML = content + presentationBlock + componentStateLayer(situation.status);
+        const visibleContent = prototypeParameters.visible === false
+          ? '<div class="lm-prototype-hidden" role="status"><strong>Componente oculto</strong><span>Ative “Exibir componente” nos parâmetros para mostrar a peça.</span></div>'
+          : content;
+        this.innerHTML = visibleContent + presentationBlock + componentStateLayer(situation.status);
         this.prepareControls();
         this.restoreInteraction();
       }

@@ -1,7 +1,17 @@
 /** Laboratório de páginas e ponto único de montagem imperativa. */
 import { program } from './program';
 import { e, initialComponentData, referenceScreenSpecs, registerComponentElements } from './components';
-import type { ComponentFixture, ComponentMockSituation, ComponentPageElement, ComponentPageProps, ReferenceScreenSpec } from './components';
+import type {
+  ComponentFixture,
+  ComponentMockSituation,
+  ComponentPageElement,
+  ComponentPageProps,
+  PrototypeParameterSpec,
+  PrototypeParameterValue,
+  PrototypeParameterValues,
+  ReferenceRegionSpec,
+  ReferenceScreenSpec,
+} from './components';
 import './componenting-demo-lab.css';
 import type { LumiraSystem } from './types';
 
@@ -27,6 +37,7 @@ type LabState = {
   role: LabRole;
   screenState: DemoScreenState;
   componentStates: Record<string, DemoScreenState>;
+  componentParameters: Record<string, PrototypeParameterValues>;
   fullView: boolean;
 };
 type LabStateIterator<T> = Generator<T, never, (state: T) => T>;
@@ -35,6 +46,50 @@ function componentStateKey(screenId: string, componentId: string): string {
 }
 function labRecord(value: unknown): ComponentFixture {
   return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as ComponentFixture : {};
+}
+function valueAtPath(value: unknown, path: string): unknown {
+  return path.split('.').reduce<unknown>((current, segment) => {
+    if (current === null || typeof current !== 'object') return undefined;
+    return (current as Record<string, unknown>)[segment];
+  }, value);
+}
+function prototypeDefaults(region: ReferenceRegionSpec, fixture: ComponentFixture, active: PrototypeParameterValues): PrototypeParameterValues {
+  return Object.fromEntries(region.parameters.map(parameter => {
+    if (Object.hasOwn(active, parameter.id)) return [parameter.id, active[parameter.id]];
+    if (parameter.type === 'count' && parameter.defaultValue !== undefined) return [parameter.id, parameter.defaultValue];
+    if (parameter.targetPath) {
+      const target = valueAtPath(fixture, parameter.targetPath);
+      if (parameter.type === 'count' && Array.isArray(target)) return [parameter.id, target.length];
+      if (parameter.type === 'list' && Array.isArray(target)) return [parameter.id, target.map(String)];
+      if (typeof target === 'string' || typeof target === 'number' || typeof target === 'boolean') return [parameter.id, target];
+    }
+    return [parameter.id, parameter.defaultValue ?? ''];
+  }));
+}
+function renderPrototypeField(parameter: PrototypeParameterSpec, value: PrototypeParameterValue): string {
+  const id = e(parameter.id);
+  const label = e(parameter.label);
+  const hint = parameter.hint ? '<small>' + e(parameter.hint) + '</small>' : '';
+  if (parameter.type === 'toggle') {
+    return '<label class="lm-prototype-toggle"><span>' + label + '</span><input type="checkbox" data-prototype-field="' + id + '" aria-label="' + label + '" ' + (value === true ? 'checked' : '') + '><i aria-hidden="true"></i></label>';
+  }
+  if (parameter.type === 'select') {
+    const options = (parameter.options ?? []).map(option => '<option value="' + e(option.value) + '" ' + (value === option.value ? 'selected' : '') + '>' + e(option.label) + '</option>').join('');
+    return '<label class="lm-prototype-field"><span>' + label + '</span><select data-prototype-field="' + id + '" aria-label="' + label + '">' + options + '</select>' + hint + '</label>';
+  }
+  if (parameter.type === 'textarea' || parameter.type === 'list') {
+    const text = Array.isArray(value) ? value.join('\n') : String(value ?? '');
+    return '<label class="lm-prototype-field"><span>' + label + '</span><textarea data-prototype-field="' + id + '" aria-label="' + label + '" rows="' + (parameter.type === 'list' ? 3 : 4) + '">' + e(text) + '</textarea>' + hint + '</label>';
+  }
+  if (parameter.type === 'text') {
+    return '<label class="lm-prototype-field"><span>' + label + '</span><input type="text" data-prototype-field="' + id + '" aria-label="' + label + '" value="' + e(value) + '">' + hint + '</label>';
+  }
+  const inputType = parameter.type === 'range' ? 'range' : 'number';
+  const min = parameter.min === undefined ? '' : ' min="' + String(parameter.min) + '"';
+  const max = parameter.max === undefined ? '' : ' max="' + String(parameter.max) + '"';
+  const step = parameter.step === undefined ? '' : ' step="' + String(parameter.step) + '"';
+  const output = parameter.type === 'range' ? '<output>' + e(value) + '</output>' : '';
+  return '<label class="lm-prototype-field lm-prototype-numeric"><span>' + label + '</span><input type="' + inputType + '" data-prototype-field="' + id + '" aria-label="' + label + '" value="' + e(value) + '"' + min + max + step + '>' + output + hint + '</label>';
 }
 
 function componentingPage(
@@ -103,6 +158,84 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
     }
   }
 
+  type PrototypeEditorState = {
+    screenId: string;
+    region: ReferenceRegionSpec | null;
+    values: PrototypeParameterValues;
+  };
+  class DemoPrototypeEditor extends HTMLElement {
+    private transitions: LabStateIterator<PrototypeEditorState>;
+    private state: PrototypeEditorState;
+
+    constructor() {
+      super();
+      this.transitions = stateIterator<PrototypeEditorState>({ screenId: '', region: null, values: {} });
+      this.state = this.transitions.next().value;
+      this.addEventListener('click', event => this.onClick(event));
+      this.addEventListener('input', event => this.onInput(event));
+    }
+    configure(screenId: string, region: ReferenceRegionSpec | null, fixture: ComponentFixture, active: PrototypeParameterValues): void {
+      this.state = this.transitions.next(() => ({
+        screenId,
+        region,
+        values: region ? prototypeDefaults(region, fixture, active) : {},
+      })).value;
+      this.render();
+    }
+    private onInput(event: Event): void {
+      if (!(event.target instanceof HTMLInputElement) || event.target.type !== 'range') return;
+      const output = event.target.parentElement?.querySelector('output');
+      if (output) output.textContent = event.target.value;
+    }
+    private readValues(): PrototypeParameterValues {
+      const values: PrototypeParameterValues = {};
+      for (const parameter of this.state.region?.parameters ?? []) {
+        const control = [...this.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-prototype-field]')]
+          .find(field => field.dataset.prototypeField === parameter.id);
+        if (!control) continue;
+        if (parameter.type === 'toggle' && control instanceof HTMLInputElement) values[parameter.id] = control.checked;
+        else if (parameter.type === 'list' && control instanceof HTMLTextAreaElement) {
+          values[parameter.id] = control.value.split('\n').map(item => item.trim()).filter(Boolean);
+        } else if ((parameter.type === 'count' || parameter.type === 'number' || parameter.type === 'range') && control instanceof HTMLInputElement) {
+          const parsed = Number(control.value);
+          if (Number.isFinite(parsed)) values[parameter.id] = parsed;
+        } else values[parameter.id] = control.value;
+      }
+      return values;
+    }
+    private onClick(event: Event): void {
+      if (!(event.target instanceof Element)) return;
+      const applyButton = event.target.closest<HTMLButtonElement>('[data-prototype-apply]');
+      if (applyButton && this.contains(applyButton) && this.state.region) {
+        this.dispatchEvent(new CustomEvent('lab-prototype-change', {
+          bubbles: true,
+          composed: true,
+          detail: { screenId: this.state.screenId, componentId: this.state.region.id, values: this.readValues() },
+        }));
+        return;
+      }
+      const resetButton = event.target.closest<HTMLButtonElement>('[data-prototype-reset]');
+      if (resetButton && this.contains(resetButton) && this.state.region) {
+        this.dispatchEvent(new CustomEvent('lab-prototype-reset', {
+          bubbles: true,
+          composed: true,
+          detail: { screenId: this.state.screenId, componentId: this.state.region.id },
+        }));
+      }
+    }
+    private render(): void {
+      const region = this.state.region;
+      if (!region) {
+        this.innerHTML = '<section class="lm-prototype-editor"><p>Selecione uma parte para configurar o protótipo.</p></section>';
+        return;
+      }
+      const controls = region.parameters.map(parameter => renderPrototypeField(parameter, this.state.values[parameter.id] ?? '')).join('');
+      this.innerHTML = '<section class="lm-prototype-editor"><header><div><span class="lm-eyebrow">PROTÓTIPO PARAMETRIZADO</span><b>' + e(region.title) + '</b></div><code>' + e(region.id) + '</code></header>'
+        + '<p class="lm-prototype-description">Ajuste os dados e a aparência desta peça. Aplicar altera só a prévia; redefinir volta aos dados da página.</p>'
+        + '<form class="lm-prototype-fields">' + controls + '<div class="lm-prototype-actions"><button type="button" class="lm-primary-button" data-prototype-apply>Aplicar parâmetros</button><button type="button" class="lm-secondary-button" data-prototype-reset>Redefinir</button></div></form></section>';
+    }
+  }
+
   class ComponentingDemoLab extends HTMLElement {
     private transitions: LabStateIterator<LabState>;
     private state: LabState;
@@ -115,13 +248,19 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const initialScreen = screens.find(screen => screen.id === 'teacher-profile') ?? screens[0];
       this.transitions = stateIterator<LabState>({
         screens: [], fixtures: {}, screenId: initialScreen?.id ?? '',
-        componentId: initialScreen?.defaultComponentId ?? '', role: 'professor', screenState: 'ready', componentStates: {}, fullView: false,
+        componentId: initialScreen?.defaultComponentId ?? '', role: 'professor', screenState: 'ready', componentStates: {}, componentParameters: {}, fullView: false,
       });
       this.state = this.transitions.next().value;
       this.addEventListener('click', event => this.onClick(event));
       this.addEventListener('keydown', event => this.onKeyDown(event as KeyboardEvent));
       this.addEventListener('change', event => this.onChange(event));
       this.addEventListener('lab-fixture-change', event => this.onFixtureChange(event as CustomEvent<{ key: string; value: unknown }>));
+      this.addEventListener('lab-prototype-change', event => this.onPrototypeChange(event as CustomEvent<{
+        screenId: string; componentId: string; values: PrototypeParameterValues;
+      }>));
+      this.addEventListener('lab-prototype-reset', event => this.onPrototypeReset(event as CustomEvent<{
+        screenId: string; componentId: string;
+      }>));
       window.addEventListener('popstate', this.popStateHandler);
     }
     disconnectedCallback(): void {
@@ -310,6 +449,35 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       this.state = this.transitions.next(state => ({ ...state, fixtures: { ...state.fixtures, [key]: value } })).value;
       this.render();
     }
+    private onPrototypeChange(event: CustomEvent<{
+      screenId: string; componentId: string; values: PrototypeParameterValues;
+    }>): void {
+      const { screenId, componentId, values } = event.detail;
+      const key = componentStateKey(screenId, componentId);
+      const previewScrollTop = this.querySelector<HTMLElement>('.lm-page-scroll')?.scrollTop ?? 0;
+      this.state = this.transitions.next(state => ({
+        ...state,
+        componentParameters: { ...state.componentParameters, [key]: structuredClone(values) },
+      })).value;
+      this.render();
+      const pageScroll = this.querySelector<HTMLElement>('.lm-page-scroll');
+      if (pageScroll) pageScroll.scrollTop = previewScrollTop;
+      this.querySelector<HTMLButtonElement>('[data-prototype-apply]')?.focus();
+    }
+    private onPrototypeReset(event: CustomEvent<{ screenId: string; componentId: string }>): void {
+      const { screenId, componentId } = event.detail;
+      const key = componentStateKey(screenId, componentId);
+      const previewScrollTop = this.querySelector<HTMLElement>('.lm-page-scroll')?.scrollTop ?? 0;
+      this.state = this.transitions.next(state => {
+        const componentParameters = { ...state.componentParameters };
+        delete componentParameters[key];
+        return { ...state, componentParameters };
+      }).value;
+      this.render();
+      const pageScroll = this.querySelector<HTMLElement>('.lm-page-scroll');
+      if (pageScroll) pageScroll.scrollTop = previewScrollTop;
+      this.querySelector<HTMLButtonElement>('[data-prototype-reset]')?.focus();
+    }
     private render(): void {
       const screen = this.state.screens.find(item => item.id === this.state.screenId) ?? this.state.screens[0];
       if (!screen) {
@@ -324,6 +492,11 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         const status = this.state.componentStates[componentStateKey(screen.id, region.id)];
         if (status) componentStates[region.id] = status;
       });
+      const prototypeParameters: Record<string, PrototypeParameterValues> = {};
+      screen.regions.forEach(region => {
+        const values = this.state.componentParameters[componentStateKey(screen.id, region.id)];
+        if (values) prototypeParameters[region.id] = values;
+      });
       const situation: ComponentMockSituation = {
         screenId: screen.id,
         fixtureKey: screen.fixtureKey,
@@ -335,7 +508,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const existingPage = this.querySelector<ComponentPageElement>(
         'lumira-access-page, lumira-teacher-profile-page, lumira-student-profile-page, lumira-community-page',
       ) ?? undefined;
-      const pageElement = componentingPage(screen, { data, situation }, existingPage);
+      const pageElement = componentingPage(screen, { data, situation, prototypeParameters }, existingPage);
       const statuses: DemoScreenState[] = ['ready', 'loading', 'empty', 'error', 'forbidden'];
       const labels: Record<DemoScreenState, string> = { ready: 'Pronto', loading: 'Carregando', empty: 'Vazio', error: 'Erro', forbidden: 'Restrito' };
       const pageButtons = this.state.screens.map(item => '<button type="button" data-screen-select="' + e(item.id) + '" class="' + (item.id === screen.id ? 'active' : '') + '"><span class="lm-page-icon">' + (item.id === 'community' ? '◌' : item.id === 'teacher-profile' ? '◎' : item.id === 'student-profile' ? '◇' : '↗') + '</span><span><b>' + e(item.title) + '</b><small>' + e(item.evidence === 'observed' ? 'TELA DE REFERÊNCIA' : item.evidence === 'derived' ? 'PROPOSTA DERIVADA' : 'MAPA DE NAVEGAÇÃO') + '</small></span><i>→</i></button>').join('');
@@ -362,12 +535,17 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         + '<section class="lm-inspector-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">PARTES DA PÁGINA</span><small>' + String(screen.regions.length).padStart(2, '0') + '</small></header><nav class="lm-component-list">' + componentButtons + '</nav></section>'
         + '<section class="lm-inspector-section lm-controls-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">ESTADO PADRÃO DA PÁGINA</span><label class="lm-role-picker">Papel<select data-role-select><option value="professor" ' + (this.state.role === 'professor' ? 'selected' : '') + '>Professora</option><option value="aluno" ' + (this.state.role === 'aluno' ? 'selected' : '') + '>Estudante</option><option value="visitante" ' + (this.state.role === 'visitante' ? 'selected' : '') + '>Visitante</option></select></label></header>'
         + '<div class="lm-state-controls">' + statusControls + '</div><p class="lm-state-help">Cada parte pode sobrescrever este estado na lista.</p></section>'
+        + '<section class="lm-inspector-section lm-prototype-section"><div class="lm-prototype-mount"></div></section>'
         + '<section class="lm-inspector-section lm-fixture-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">DADOS DE DEMONSTRAÇÃO</span><small>EDITÁVEIS</small></header><div class="lm-fixture-mount"></div></section>'
         + '<footer class="lm-inspector-footer">A explicação aparece dentro da parte selecionada na prévia, junto ao conteúdo demonstrado.</footer></aside></div>';
       const editor = document.createElement('demo-data-editor') as DemoDataEditorElement;
       editor.configure(screen.fixtureKey, data);
+      const prototypeEditor = document.createElement('demo-prototype-editor') as DemoPrototypeEditor;
+      const selectedParameters = this.state.componentParameters[componentStateKey(screen.id, selectedId)] ?? {};
+      prototypeEditor.configure(screen.id, selectedRegion ?? null, data, selectedParameters);
       const slots: Array<[string, HTMLElement]> = [
         ['<div class="lm-page-component-mount"></div>', pageElement],
+        ['<div class="lm-prototype-mount"></div>', prototypeEditor],
         ['<div class="lm-fixture-mount"></div>', editor],
       ];
       const parts: Part[] = [];
@@ -385,6 +563,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
   }
 
   if (!customElements.get('demo-data-editor')) customElements.define('demo-data-editor', DemoDataEditor);
+  if (!customElements.get('demo-prototype-editor')) customElements.define('demo-prototype-editor', DemoPrototypeEditor);
   if (!customElements.get('componenting-demo-lab')) customElements.define('componenting-demo-lab', ComponentingDemoLab);
   const lab = document.createElement('componenting-demo-lab') as HTMLElement & {
     configure(screens: readonly ReferenceScreenSpec[], fixtures: Record<string, unknown>): void;

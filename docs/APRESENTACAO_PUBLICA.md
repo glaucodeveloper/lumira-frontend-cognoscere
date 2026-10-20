@@ -1,15 +1,16 @@
 # Apresentação interativa · Lumira
 
-Explore as telas da Lumira pela [apresentação ao vivo](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/). A página mantém a prévia completa e o laboratório de componentes: o índice troca de tela, a lista lateral abre cada parte e os controles alteram papéis, estados e dados demonstrativos.
+Explore as telas da Lumira pela [apresentação ao vivo](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/). A página mantém a prévia completa e o laboratório de componentes: o índice troca de tela, a lista lateral abre cada parte e o inspetor ajusta seu estado e seus parâmetros de demonstração.
 
 ## Como conduzir a apresentação
 
 1. Escolha **Acesso**, **Perfil professor**, **Perfil aluno** ou **Comunidade** no índice à esquerda.
 2. Leia o contexto da tela e selecione uma parte na lista à direita. A explicação aparece em um bloco dentro da própria parte destacada na prévia, junto do conteúdo demonstrado.
 3. Altere o papel ou o estado para demonstrar variações. Loading retorna a pronto após um breve intervalo; vazio, erro e restrito continuam selecionáveis.
-4. Edite o JSON de demonstração e aplique-o para atualizar a prévia. O conteúdo permanece apenas no navegador.
-5. Use **Compartilhar esta parte** para copiar um link direto. A seleção também aparece no endereço e responde aos comandos voltar/avançar do navegador.
-6. Expanda a prévia para apresentar somente a tela; pressione Escape ou volte ao laboratório para continuar a exploração.
+4. Em **Protótipo parametrizado**, altere visibilidade, densidade, cor e os campos próprios da parte selecionada. Campos de texto, listas, percentuais e quantidade de itens variam conforme o componente. **Aplicar parâmetros** atualiza apenas essa parte; **Redefinir** recupera seus valores da fixture da página.
+5. Edite o JSON de demonstração para alterar os dados compartilhados da página inteira. Aplique-o para atualizar a prévia. O conteúdo permanece apenas no navegador.
+6. Use **Compartilhar esta parte** para copiar um link direto. A seleção também aparece no endereço e responde aos comandos voltar/avançar do navegador.
+7. Expanda a prévia para apresentar somente a tela; pressione Escape ou volte ao laboratório para continuar a exploração.
 
 Os controles são parte do formato de demonstração: não indicam persistência, autenticação ou serviço ativo. Os dados são fictícios. Ações e alterações ficam no navegador.
 
