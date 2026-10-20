@@ -1125,7 +1125,7 @@ export function registerComponentElements(): void {
         const visibleContent = prototypeParameters.visible === false
           ? '<div class="lm-prototype-hidden" role="status"><strong>Componente oculto</strong><span>Ative “Exibir componente” nos parâmetros para mostrar a peça.</span></div>'
           : content;
-        this.innerHTML = visibleContent + presentationBlock + componentStateLayer(situation.status);
+        this.innerHTML = presentationBlock + visibleContent + componentStateLayer(situation.status);
         this.prepareControls();
         this.restoreInteraction();
       }

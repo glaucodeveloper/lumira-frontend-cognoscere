@@ -419,8 +419,16 @@ lumira-page-part {
 .lm-presentation-overview {
   background: #fff;
 }
+.lm-presentation-overview>h3 {
+  margin: 7px 0 0;
+  color: var(--lm-ink-strong);
+  font-family: var(--lm-font-display);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: -.02em;
+}
 .lm-presentation-overview>p {
-  margin: 8px 0 0;
+  margin: 5px 0 0;
   color: var(--lm-muted);
   font-size: 10px;
   line-height: 1.55;

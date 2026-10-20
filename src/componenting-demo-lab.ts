@@ -531,13 +531,13 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         + '<div class="lm-preview-mat"><div class="lm-preview-frame ' + (screen.id === 'access' ? 'access-frame' : '') + '" data-screen-state="' + e(this.state.screenState) + '"><div class="lm-page-component-mount"></div></div></div></div>'
         + '<footer class="lm-preview-footer"><span>Dados demonstrativos · papel <b>' + e(this.state.role) + '</b></span><span>Selecione uma parte para abrir seu contexto de apresentação</span></footer></section>'
         + '<aside class="lm-inspector"><header class="lm-inspector-heading"><div><span class="lm-eyebrow">GUIA DE APRESENTAÇÃO</span><h2>Partes desta página</h2></div><span class="lm-inspector-mark">L</span></header>'
-        + '<section class="lm-inspector-section lm-presentation-overview"><span class="lm-eyebrow">LEITURA DA TELA</span><p>' + e(screen.presentation) + '</p></section>'
+        + '<section class="lm-inspector-section lm-presentation-overview"><span class="lm-eyebrow">LEITURA DA PARTE</span><h3>' + e(selectedRegion?.title ?? screen.title) + '</h3><p>' + e(selectedRegion?.presentation ?? screen.presentation) + '</p></section>'
         + '<section class="lm-inspector-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">PARTES DA PÁGINA</span><small>' + String(screen.regions.length).padStart(2, '0') + '</small></header><nav class="lm-component-list">' + componentButtons + '</nav></section>'
         + '<section class="lm-inspector-section lm-controls-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">ESTADO PADRÃO DA PÁGINA</span><label class="lm-role-picker">Papel<select data-role-select><option value="professor" ' + (this.state.role === 'professor' ? 'selected' : '') + '>Professora</option><option value="aluno" ' + (this.state.role === 'aluno' ? 'selected' : '') + '>Estudante</option><option value="visitante" ' + (this.state.role === 'visitante' ? 'selected' : '') + '>Visitante</option></select></label></header>'
         + '<div class="lm-state-controls">' + statusControls + '</div><p class="lm-state-help">Cada parte pode sobrescrever este estado na lista.</p></section>'
         + '<section class="lm-inspector-section lm-prototype-section"><div class="lm-prototype-mount"></div></section>'
         + '<section class="lm-inspector-section lm-fixture-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">DADOS DE DEMONSTRAÇÃO</span><small>EDITÁVEIS</small></header><div class="lm-fixture-mount"></div></section>'
-        + '<footer class="lm-inspector-footer">A explicação aparece dentro da parte selecionada na prévia, junto ao conteúdo demonstrado.</footer></aside></div>';
+        + '<footer class="lm-inspector-footer">O contexto aparece antes do conteúdo da parte selecionada na prévia.</footer></aside></div>';
       const editor = document.createElement('demo-data-editor') as DemoDataEditorElement;
       editor.configure(screen.fixtureKey, data);
       const prototypeEditor = document.createElement('demo-prototype-editor') as DemoPrototypeEditor;
