@@ -6,7 +6,7 @@ Este documento registra a composição implementada no Componenting Demo Lab. As
 
 ### Responsabilidade das partes
 
-Os textos de responsabilidade apresentados abaixo do título principal da prévia desenvolvem, para cada parte selecionada, os princípios do **Capítulo 01 — Filosofia e Visão**: a especialidade docente orienta o uso da IA; materiais passam por revisão docente; atividades tornam o raciocínio observável por situações contextualizadas; uma resposta isolada não determina domínio; a circulação social preserva respostas e devolutivas privadas. Os textos são uma interpretação de produto para explicar o papel de cada parte, não citações literais do capítulo. A referência técnica integral identifica o Capítulo 01 como fundamento do projeto.
+Os textos de responsabilidade apresentados abaixo do título principal da prévia desenvolvem, para cada parte selecionada, os princípios do **Capítulo 01 — Filosofia e Visão**: a especialidade docente orienta o uso da IA; materiais passam por revisão docente; atividades tornam o raciocínio observável por situações contextualizadas; uma resposta isolada não determina domínio; a circulação social preserva respostas e devolutivas privadas. Cada texto descreve a contribuição da parte para esse percurso e explicita limites de interpretação e privacidade quando pertinentes. São interpretações de produto para explicar o papel de cada parte, não citações literais do capítulo. A referência técnica integral identifica o Capítulo 01 como fundamento do projeto.
 
 Fontes: [Apresentação institucional, Capítulo 01 — Filosofia e Visão](referencias/iniciais/Lumira_Apresentacao_Institucional_Sondagem_Inferencial.pdf) e [Projeto Integral — fundamento pedagógico e engenharia](referencias/iniciais/Lumira_Projeto_Integral.pdf).
 

@@ -318,9 +318,9 @@ lumira-page-part {
 }
 .lm-page-responsibility {
   display: grid;
-  gap: 3px;
-  max-width: 960px;
-  margin: 0 0 5px;
+  gap: 5px;
+  max-width: 1040px;
+  margin: 0 0 8px;
 }
 .lm-page-responsibility .lm-eyebrow {
   color: var(--lm-brand);
@@ -329,10 +329,10 @@ lumira-page-part {
 }
 .lm-page-responsibility>p {
   margin: 0;
-  color: var(--lm-ink-strong);
+  color: var(--lm-ink);
   font-size: 12px;
-  font-weight: 600;
-  line-height: 1.5;
+  font-weight: 450;
+  line-height: 1.7;
 }
 .lm-page-caption .lm-page-description {
   color: var(--lm-muted);
