@@ -283,6 +283,11 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
           .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top)[0];
         const componentId = (current?.target as HTMLElement | undefined)?.dataset.scrollpoint;
         if (!componentId) return;
+        const selectionChanged = componentId !== this.state.componentId;
+        if (selectionChanged) {
+          this.selectComponent(componentId, true);
+          return;
+        }
         this.querySelectorAll<HTMLButtonElement>('.lm-scrollpoint-button').forEach(button => {
           const active = button.dataset.componentSelect === componentId;
           button.classList.toggle('active', active);
@@ -293,9 +298,58 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
     }
     private scrollToComponent(componentId: string): void {
       requestAnimationFrame(() => {
-        this.querySelector<HTMLElement>('[data-scrollpoint="' + e(componentId) + '"]')
-          ?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        const scroller = this.querySelector<HTMLElement>('.lm-page-scroll');
+        const point = this.querySelector<HTMLElement>('[data-scrollpoint="' + e(componentId) + '"]');
+        if (!scroller || !point) return;
+        const top = scroller.scrollTop + point.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 12;
+        scroller.scrollTop = Math.max(0, top);
       });
+    }
+    private selectComponent(componentId: string, replaceUrl: boolean): void {
+      const screen = this.state.screens.find(item => item.id === this.state.screenId);
+      const region = screen?.regions.find(item => item.id === componentId);
+      if (!screen || !region || componentId === this.state.componentId) return;
+      this.state = this.transitions.next(state => ({ ...state, componentId })).value;
+      this.writeSelectionToLocation(replaceUrl);
+
+      this.querySelectorAll<HTMLElement>('[data-component-id]').forEach(part => {
+        part.classList.toggle('is-selected', part.dataset.componentId === componentId);
+        part.dataset.selectedRegion = componentId;
+      });
+      this.querySelectorAll<HTMLButtonElement>('.lm-scrollpoint-button').forEach(button => {
+        const active = button.dataset.componentSelect === componentId;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-current', active ? 'location' : 'false');
+      });
+      const responsibility = region.responsibility ?? region.description;
+      const paragraphs = responsibility.split(/\n\s*\n/).map(paragraph => '<p>' + e(paragraph.trim()) + '</p>').join('');
+      const responsibilityPanel = this.querySelector<HTMLElement>('.lm-page-responsibility');
+      if (responsibilityPanel) {
+        responsibilityPanel.innerHTML = '<span class="lm-eyebrow">RESPONSABILIDADE NA PLATAFORMA · ' + e(region.title) + '</span>' + paragraphs;
+      }
+      const overview = this.querySelector<HTMLElement>('.lm-presentation-overview');
+      if (overview) {
+        overview.innerHTML = '<span class="lm-eyebrow">PARTE SELECIONADA</span><h3>' + e(region.title) + '</h3><p>' + e(region.presentation) + '</p>';
+      }
+      const stateSelect = this.querySelector<HTMLSelectElement>('[data-component-state]');
+      if (stateSelect) {
+        const selectedState = this.state.componentStates[componentStateKey(screen.id, componentId)] ?? 'inherit';
+        const statuses: Array<DemoScreenState | 'inherit'> = ['inherit', 'ready', 'loading', 'empty', 'error', 'forbidden'];
+        const labels: Record<DemoScreenState | 'inherit', string> = {
+          inherit: 'Herdar estado da página', ready: 'Pronto', loading: 'Carregando', empty: 'Vazio', error: 'Erro', forbidden: 'Restrito',
+        };
+        stateSelect.dataset.componentState = componentId;
+        stateSelect.dataset.screenId = screen.id;
+        stateSelect.setAttribute('aria-label', 'Estado de ' + region.title);
+        stateSelect.innerHTML = statuses.map(status => '<option value="' + status + '" ' + (selectedState === status ? 'selected' : '') + '>' + labels[status] + '</option>').join('');
+        const stateLabel = stateSelect.parentElement?.querySelector('span');
+        if (stateLabel) stateLabel.textContent = region.title;
+      }
+      const prototypeEditor = this.querySelector<DemoPrototypeEditor>('demo-prototype-editor');
+      const activeParameters = this.state.componentParameters[componentStateKey(screen.id, componentId)] ?? {};
+      prototypeEditor?.configure(screen.id, region, labRecord(this.state.fixtures[screen.fixtureKey]), activeParameters);
+      const page = this.querySelector<HTMLElement>('[data-page-id]');
+      if (page) page.dataset.selectedRegion = componentId;
     }
     private clearLoadingTimer(): void {
       if (this.loadingTimer !== undefined) {
@@ -400,27 +454,13 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         return;
       }
       const componentButton = target.closest<HTMLElement>('[data-component-select]');
-      const pageComponent = target.closest<HTMLElement>('[data-component-id]');
+      const pageComponent = target.closest<HTMLElement>('[data-component-id]')
+        ?? event.composedPath().find((item): item is HTMLElement => item instanceof HTMLElement && item.hasAttribute('data-component-id'));
       const componentId = componentButton?.dataset.componentSelect ?? pageComponent?.dataset.componentId;
       const selectedElement = componentButton ?? pageComponent;
       if (componentId && componentId !== this.state.componentId && selectedElement && this.contains(selectedElement)) {
-        const focusedControl = target.closest<HTMLElement>('[data-interaction-field]');
-        const focusedFieldKey = focusedControl?.dataset.interactionField;
-        const selectionStart = focusedControl instanceof HTMLInputElement || focusedControl instanceof HTMLTextAreaElement
-          ? focusedControl.selectionStart
-          : null;
-        this.state = this.transitions.next(state => ({ ...state, componentId })).value;
-        this.writeSelectionToLocation(false);
-        this.render();
+        this.selectComponent(componentId, false);
         if (componentButton) this.scrollToComponent(componentId);
-        if (focusedFieldKey) {
-          const replacement = [...this.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-interaction-field]')]
-            .find(field => field.dataset.interactionField === focusedFieldKey);
-          replacement?.focus();
-          if (selectionStart !== null && (replacement instanceof HTMLInputElement || replacement instanceof HTMLTextAreaElement)) {
-            replacement.setSelectionRange(selectionStart, selectionStart);
-          }
-        }
       }
     }
     private onKeyDown(event: KeyboardEvent): void {

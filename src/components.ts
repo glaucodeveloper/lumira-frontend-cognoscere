@@ -227,7 +227,19 @@ const prototypeFieldsByRegion: Record<string, readonly PrototypeParameterSpec[]>
     { id: 'music', label: 'Status musical', type: 'text', targetPath: 'music' },
     { id: 'competencies', label: 'Competências', type: 'list', targetPath: 'competencies', hint: 'Uma competência por linha.' },
   ],
-  'teacher-stories': [{ id: 'stories', label: 'Stories', type: 'list', targetPath: 'stories', hint: 'Um story por linha.' }],
+  'teacher-stories': [
+    { id: 'stories', label: 'Stories', type: 'list', targetPath: 'stories', hint: 'Um story por linha; aplicar atualiza a faixa.' },
+    {
+      id: 'storyVisibility', label: 'Visibilidade dos novos stories', type: 'select', defaultValue: 'Público',
+      options: [
+        { value: 'Público', label: 'Público' },
+        { value: 'Seguidores', label: 'Seguidores' },
+        { value: 'Privado', label: 'Somente eu' },
+      ],
+    },
+    { id: 'allowReplies', label: 'Permitir respostas', type: 'toggle', defaultValue: true },
+    { id: 'allowCreate', label: 'Exibir criação de story', type: 'toggle', defaultValue: true },
+  ],
   'teacher-tabs': [{ id: 'tabs', label: 'Abas', type: 'list', targetPath: 'tabs', hint: 'Uma aba por linha.' }],
   'teacher-progress': [
     { id: 'progress', label: 'Progresso', type: 'range', targetPath: 'progress', min: 0, max: 100, step: 1 },
@@ -256,7 +268,19 @@ const prototypeFieldsByRegion: Record<string, readonly PrototypeParameterSpec[]>
     { id: 'school', label: 'Escola', type: 'text', targetPath: 'school' },
     { id: 'competencies', label: 'Interesses', type: 'list', targetPath: 'competencies', hint: 'Um interesse por linha.' },
   ],
-  'student-stories': [{ id: 'stories', label: 'Stories', type: 'list', targetPath: 'stories', hint: 'Um story por linha.' }],
+  'student-stories': [
+    { id: 'stories', label: 'Stories', type: 'list', targetPath: 'stories', hint: 'Um story por linha; aplicar atualiza a faixa.' },
+    {
+      id: 'storyVisibility', label: 'Visibilidade dos novos stories', type: 'select', defaultValue: 'Público',
+      options: [
+        { value: 'Público', label: 'Público' },
+        { value: 'Seguidores', label: 'Seguidores' },
+        { value: 'Privado', label: 'Somente eu' },
+      ],
+    },
+    { id: 'allowReplies', label: 'Permitir respostas', type: 'toggle', defaultValue: true },
+    { id: 'allowCreate', label: 'Exibir criação de story', type: 'toggle', defaultValue: true },
+  ],
   'student-tabs': [{ id: 'tabs', label: 'Abas', type: 'list', targetPath: 'tabs', hint: 'Uma aba por linha.' }],
   'student-progress': [
     { id: 'progress', label: 'Percurso autorizado', type: 'range', targetPath: 'progress', min: 0, max: 100, step: 1 },
@@ -394,6 +418,33 @@ export const initialComponentData: Record<string, unknown> = {
     school: 'Rede Municipal · Vitória da Conquista', quote: 'Educação é caminho, colaboração e destino.',
     competencies: ['Português', 'Comunicação', 'Pensamento crítico'], music: 'Boa Energia · Jota.Pê',
     stories: ['Sala de aula', 'Projetos', 'Formação', 'Livro da semana', 'Evento BNCC'],
+    storyDetails: [
+      {
+        category: 'Prática docente', caption: 'Leitura de crônicas com o território como ponto de partida.',
+        body: 'A turma reuniu relatos da própria cidade e comparou as escolhas de linguagem dos textos. Depois, cada grupo explicou que evidência sustentava sua interpretação.',
+        publishedAt: 'Hoje, 08:20', likes: 14, replies: ['Vou experimentar essa proposta com meu grupo.'],
+      },
+      {
+        category: 'Projeto', caption: 'O podcast da turma já tem pauta e pergunta-guia.',
+        body: 'Organizamos as etapas para que cada episódio apresente uma hipótese, exemplos e uma conclusão revisada a partir das conversas com a comunidade.',
+        publishedAt: 'Ontem, 15:10', likes: 9, replies: [],
+      },
+      {
+        category: 'Formação', caption: 'Planejar outra situação ajuda a observar outras justificativas.',
+        body: 'Na formação de hoje, estudamos como variar o contexto sem perder a relação de conhecimento que a atividade pretende tornar observável.',
+        publishedAt: 'Há 2 dias', likes: 18, replies: ['Ótima síntese da discussão.'],
+      },
+      {
+        category: 'Leitura', caption: 'Livro da semana: histórias que mudam de perspectiva.',
+        body: 'Separei trechos que permitem discutir como ponto de vista, escolha de palavras e contexto alteram a interpretação de uma mesma cena.',
+        publishedAt: 'Há 4 dias', likes: 7, replies: [],
+      },
+      {
+        category: 'Evento', caption: 'Encontro de práticas de linguagem confirmado.',
+        body: 'A roda de conversa vai reunir materiais revisados e perguntas para trocar experiências entre docentes de diferentes anos escolares.',
+        publishedAt: 'Há 1 semana', likes: 11, replies: [],
+      },
+    ],
     tabs: ['Visão geral', 'Competências', 'Trilhas', 'Atividades', 'Posts', 'Arquivos', 'Conquistas'],
     progress: 78, streak: '12', xp: '1.250', achievements: '3',
     skills: [
@@ -426,7 +477,25 @@ export const initialComponentData: Record<string, unknown> = {
   student: {
     name: 'Caio Almeida', handle: '@caioalmeida', role: 'Estudante · 8º ano',
     school: 'Escola Municipal Nova Esperança', quote: 'Curiosidade abre novos caminhos.',
-    competencies: ['Ciências', 'Leitura', 'Projetos'], stories: ['Experimentos', 'Leituras', 'Clube de ciências'],
+    competencies: ['Ciências', 'Leitura', 'Projetos'],
+    stories: ['Experimentos', 'Leituras', 'Clube de ciências'],
+    storyDetails: [
+      {
+        category: 'Experimento', caption: 'O que muda quando alteramos uma variável?',
+        body: 'No experimento da rampa, mantive o carrinho e a distância iguais e mudei a inclinação. Comparei as tentativas para perceber como a velocidade se relaciona com a altura.',
+        publishedAt: 'Hoje, 10:24', likes: 5, replies: ['Boa comparação entre as tentativas!'],
+      },
+      {
+        category: 'Leitura', caption: 'Uma pista importante estava no segundo parágrafo.',
+        body: 'Li o texto procurando evidências para a hipótese inicial. A ideia mudou quando relacionei a descrição do ambiente com a decisão da personagem.',
+        publishedAt: 'Ontem, 16:40', likes: 3, replies: [],
+      },
+      {
+        category: 'Projeto', caption: 'Clube de ciências: pergunta da semana.',
+        body: 'Nosso grupo está investigando como reduzir o desperdício de água na escola. Primeiro vamos observar os usos; depois, comparar propostas com os mesmos critérios.',
+        publishedAt: 'Há 3 dias', likes: 8, replies: ['Vamos registrar os horários também?'],
+      },
+    ],
     tabs: ['Visão geral', 'Meu percurso', 'Publicações', 'Conquistas'], progress: 68,
     skills: [
       { title: 'Investigação científica', value: 76, tone: 'teal' },
@@ -517,6 +586,10 @@ type DemoPagePartInteraction = {
   fields: Record<string, string>;
   publications: string[];
   actions: Record<string, number>;
+  localStories: Array<{ title: string; caption: string; body: string; category: string; visibility: string; likes: number }>;
+  selectedStory: number | null;
+  storyComposerOpen: boolean;
+  storyReplies: Record<string, string[]>;
   feedback: string;
 };
 type DemoPagePartState = DemoPagePartProps & { interaction: DemoPagePartInteraction };
@@ -707,8 +780,31 @@ function renderProfileHero(id: string, data: ComponentFixture, selectedId: strin
 function renderStories(id: string, data: ComponentFixture, selectedId: string): string {
   data = prototypeData(id, data);
   const stories = labList<string>(data, 'stories');
-  const cards = stories.map((title, index) => '<button type="button" class="lm-story-card"><span class="lm-story-ring tone-' + (index % 5) + '">' + LabAvatar(title, ['teal', 'blue', 'violet', 'rose', 'sun'][index % 5], 'story-avatar') + '</span><b>' + e(title) + '</b><small>' + (index === 0 ? 'há 2h' : 'há ' + index + ' dia' + (index > 1 ? 's' : '')) + '</small></button>').join('');
-  const content = '<div class="lm-stories-track"><button type="button" class="lm-story-card lm-new-story"><span class="lm-new-story-icon">＋</span><b>Novo story</b></button>' + cards + '<button type="button" class="lm-story-next" aria-label="Ver mais stories">›</button></div>';
+  const details = labList<Record<string, unknown>>(data, 'storyDetails');
+  const parameters = activePageComposition?.prototypeParameters[id] ?? {};
+  const allowCreate = parameters.allowCreate !== false;
+  const allowReplies = parameters.allowReplies !== false;
+  const visibility = typeof parameters.storyVisibility === 'string' ? parameters.storyVisibility : 'Público';
+  const cards = stories.map((title, index) => {
+    const detail = details[index] ?? {};
+    const caption = typeof detail.caption === 'string' ? detail.caption : 'Um momento compartilhado por ' + (id === 'student-stories' ? 'Caio' : 'Ana Beatriz') + '.';
+    const body = typeof detail.body === 'string' ? detail.body : 'Uma atualização breve sobre ' + title.toLocaleLowerCase() + ', publicada no perfil para compartilhar uma ideia com a comunidade.';
+    const category = typeof detail.category === 'string' ? detail.category : 'Momento';
+    const publishedAt = typeof detail.publishedAt === 'string' ? detail.publishedAt : (index === 0 ? 'Hoje, 09:15' : 'Há ' + index + ' dia' + (index > 1 ? 's' : ''));
+    const likes = typeof detail.likes === 'number' ? detail.likes : 0;
+    const replies = Array.isArray(detail.replies) ? detail.replies.map(String) : [];
+    const storyVisibility = typeof detail.visibility === 'string' ? detail.visibility : 'Público';
+    return '<button type="button" class="lm-story-card" data-story-index="' + index + '" data-story-title="' + e(title) + '" data-story-caption="' + e(caption) + '" data-story-body="' + e(body) + '" data-story-category="' + e(category) + '" data-story-time="' + e(publishedAt) + '" data-story-visibility="' + e(storyVisibility) + '" data-story-likes="' + likes + '" data-story-replies="' + e(JSON.stringify(replies)) + '"><span class="lm-story-ring tone-' + (index % 5) + '">' + LabAvatar(title, ['teal', 'blue', 'violet', 'rose', 'sun'][index % 5], 'story-avatar') + '</span><b>' + e(title) + '</b><small>' + e(publishedAt) + '</small></button>';
+  }).join('');
+  const createCard = allowCreate
+    ? '<button type="button" class="lm-story-card lm-new-story" data-story-create><span class="lm-new-story-icon">＋</span><b>Novo story</b><small>Compartilhar</small></button>'
+    : '';
+  const content = '<section class="lm-stories-experience" aria-label="Stories do perfil">'
+    + '<div class="lm-stories-track">' + createCard + cards + '<button type="button" class="lm-story-next" aria-label="Rolar para os próximos stories">›</button></div>'
+    + '<div class="lm-story-stage" data-story-stage aria-live="polite"></div>'
+    + '<div class="lm-story-composer-mount"></div>'
+    + '<p class="lm-story-demo-note">Interações, publicação e respostas ficam somente nesta demonstração.</p>'
+    + '<span class="lm-story-settings" data-story-visibility="' + e(visibility) + '" data-story-replies="' + String(allowReplies) + '" data-story-can-create="' + String(allowCreate) + '"></span></section>';
   return labPart(id, content, selectedId, 'lm-stories-part');
 }
 function renderProfileTabs(id: string, data: ComponentFixture, selectedId: string): string {
@@ -899,7 +995,10 @@ export function registerComponentElements(): void {
         this.transitions = componentState<DemoPagePartState>({
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
-          interaction: { groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, feedback: '' },
+          interaction: {
+            groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, localStories: [],
+            selectedStory: null, storyComposerOpen: false, storyReplies: {}, feedback: '',
+          },
         });
         this.state = this.transitions.next().value;
         this.addEventListener('click', event => this.onClick(event));
@@ -909,7 +1008,13 @@ export function registerComponentElements(): void {
       }
       configure(props: DemoPagePartProps): void {
         const snapshot = structuredClone(props);
-        this.state = this.transitions.next(current => ({ ...snapshot, interaction: current.interaction })).value;
+        this.state = this.transitions.next(current => ({
+          ...snapshot,
+          interaction: {
+            ...current.interaction,
+            selectedStory: current.interaction.selectedStory ?? (props.id.endsWith('-stories') ? 0 : null),
+          },
+        })).value;
         this.render();
       }
       private transitionInteraction(change: (interaction: DemoPagePartInteraction) => DemoPagePartInteraction): void {
@@ -932,11 +1037,8 @@ export function registerComponentElements(): void {
         });
         const storyTrack = this.querySelector<HTMLElement>('.lm-stories-track');
         if (storyTrack) {
-          const key = id + ':stories';
-          storyTrack.dataset.interactionGroup = key;
-          storyTrack.querySelectorAll<HTMLButtonElement>('.lm-story-card:not(.lm-new-story)').forEach((button, index) => {
-            button.dataset.interactionGroup = key;
-            button.dataset.interactionValue = String(index);
+          storyTrack.querySelectorAll<HTMLButtonElement>('.lm-story-card:not(.lm-new-story):not(.lm-story-next)').forEach((button, index) => {
+            if (!button.classList.contains('lm-new-story')) button.dataset.storyIndex = String(index);
           });
         }
         const calendarViews = [...this.querySelectorAll<HTMLButtonElement>('.lm-calendar-toolbar button')]
@@ -1023,6 +1125,7 @@ export function registerComponentElements(): void {
           }
           if (kind === 'sort' && active) button.textContent = 'Mais recentes⌄';
         });
+        this.restoreStories();
         if (interaction.feedback) {
           const feedback = document.createElement('p');
           feedback.className = 'lm-component-feedback';
@@ -1030,6 +1133,100 @@ export function registerComponentElements(): void {
           feedback.textContent = interaction.feedback;
           this.append(feedback);
         }
+      }
+      private restoreStories(): void {
+        const track = this.querySelector<HTMLElement>('.lm-stories-track');
+        const stage = this.querySelector<HTMLElement>('[data-story-stage]');
+        const composerMount = this.querySelector<HTMLElement>('.lm-story-composer-mount');
+        if (!track || !stage || !composerMount) return;
+
+        track.querySelectorAll('.lm-local-story').forEach(story => story.remove());
+        const baseStories = [...track.querySelectorAll<HTMLButtonElement>('.lm-story-card:not(.lm-new-story):not(.lm-story-next)')];
+        const localStartIndex = baseStories.length;
+        const localCards = this.state.interaction.localStories.map((story, index) => {
+          const storyIndex = localStartIndex + index;
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'lm-story-card lm-local-story';
+          card.dataset.storyIndex = String(storyIndex);
+          card.dataset.storyTitle = story.title;
+          card.dataset.storyCaption = story.caption;
+          card.dataset.storyBody = story.body;
+          card.dataset.storyCategory = story.category;
+          card.dataset.storyTime = 'Agora';
+          card.dataset.storyVisibility = story.visibility;
+          card.dataset.storyLikes = String(story.likes);
+          card.dataset.storyReplies = '[]';
+          card.innerHTML = '<span class="lm-story-ring tone-' + (storyIndex % 5) + '">' + LabAvatar(story.title, ['teal', 'blue', 'violet', 'rose', 'sun'][storyIndex % 5], 'story-avatar') + '</span><b>' + e(story.title) + '</b><small>Agora</small>';
+          return card;
+        });
+        const nextButton = track.querySelector('.lm-story-next');
+        localCards.forEach(card => nextButton ? track.insertBefore(card, nextButton) : track.append(card));
+        const stories = [...track.querySelectorAll<HTMLButtonElement>('.lm-story-card:not(.lm-new-story):not(.lm-story-next)')];
+        let selectedStory = this.state.interaction.selectedStory;
+        const safeSelectedStory = stories.length ? Math.max(0, Math.min(selectedStory ?? 0, stories.length - 1)) : null;
+        if (safeSelectedStory !== selectedStory) {
+          selectedStory = safeSelectedStory;
+          this.transitionInteraction(interaction => ({ ...interaction, selectedStory }));
+        }
+        stories.forEach(button => {
+          const active = Number(button.dataset.storyIndex) === selectedStory;
+          button.classList.toggle('is-interaction-active', active);
+          button.setAttribute('aria-pressed', String(active));
+        });
+        if (selectedStory === null || selectedStory < 0 || selectedStory >= stories.length) {
+          stage.innerHTML = '<div class="lm-story-stage-empty"><span>✳</span><b>Stories do perfil</b><p>Selecione um story para abrir sua publicação e explorar as interações.</p></div>';
+        } else {
+          const card = stories.find(button => Number(button.dataset.storyIndex) === selectedStory);
+          if (!card) return;
+          const storyTitle = card.dataset.storyTitle ?? 'Story';
+          const caption = card.dataset.storyCaption ?? '';
+          const body = card.dataset.storyBody ?? '';
+          const category = card.dataset.storyCategory ?? 'Momento';
+          const publishedAt = card.dataset.storyTime ?? 'Agora';
+          const baseLikes = Number(card.dataset.storyLikes ?? 0);
+          const replyKey = String(selectedStory);
+          let initialReplies: string[] = [];
+          try {
+            const decoded: unknown = JSON.parse(card.dataset.storyReplies ?? '[]');
+            if (Array.isArray(decoded)) initialReplies = decoded.map(String);
+          } catch { initialReplies = []; }
+          const replies = [...initialReplies, ...(this.state.interaction.storyReplies[replyKey] ?? [])];
+          const likeKey = 'story-like:' + replyKey;
+          const saveKey = 'story-save:' + replyKey;
+          const liked = this.state.interaction.toggles[likeKey] === true;
+          const saved = this.state.interaction.toggles[saveKey] === true;
+          const settings = this.querySelector<HTMLElement>('.lm-story-settings');
+          const visibility = this.state.interaction.localStories[selectedStory - localStartIndex]?.visibility
+            ?? card.dataset.storyVisibility ?? settings?.dataset.storyVisibility ?? 'Público';
+          const allowReplies = settings?.dataset.storyReplies !== 'false';
+          const replyItems = replies.length
+            ? '<div class="lm-story-replies"><b>Respostas (' + replies.length + ')</b>' + replies.map(reply => '<p>' + e(reply) + '</p>').join('') + '</div>'
+            : '<p class="lm-story-no-replies">Ainda não há respostas. Inicie a conversa sobre esta publicação.</p>';
+          const replyForm = allowReplies
+            ? '<form class="lm-story-reply-form" data-story-reply-form><label for="story-reply-' + e(this.state.id) + '">Responder ao story</label><div><input id="story-reply-' + e(this.state.id) + '" name="storyReply" data-interaction-field="' + e(this.state.id) + ':story-reply" maxlength="180" placeholder="Escreva uma resposta…"><button type="submit" aria-label="Enviar resposta">Enviar</button></div></form>'
+            : '<p class="lm-story-replies-disabled">As respostas estão desativadas nos controles desta demonstração.</p>';
+          stage.innerHTML = '<article class="lm-story-viewer" aria-label="Story ' + e(storyTitle) + '">'
+            + '<header class="lm-story-viewer-header"><div><span class="lm-story-category">' + e(category) + '</span><b>' + e(storyTitle) + '</b><small>' + e(publishedAt) + ' · ' + e(visibility) + '</small></div>'
+            + '<div class="lm-story-viewer-nav"><button type="button" data-story-action="previous" aria-label="Story anterior" ' + (selectedStory === 0 ? 'disabled' : '') + '>‹</button><span>' + (selectedStory + 1) + ' / ' + stories.length + '</span><button type="button" data-story-action="next" aria-label="Próximo story" ' + (selectedStory >= stories.length - 1 ? 'disabled' : '') + '>›</button></div></header>'
+            + '<div class="lm-story-progress" aria-hidden="true"><i style="width:' + Math.round(((selectedStory + 1) / stories.length) * 100) + '%"></i></div>'
+            + '<h3>' + e(caption) + '</h3><p class="lm-story-body">' + e(body) + '</p>'
+            + '<footer class="lm-story-actions"><button type="button" data-story-action="like" aria-pressed="' + String(liked) + '">' + (liked ? '♥ Curtido' : '♡ Curtir') + ' · ' + (baseLikes + (liked ? 1 : 0)) + '</button><button type="button" data-story-action="save" aria-pressed="' + String(saved) + '">' + (saved ? '✓ Salvo' : '＋ Salvar') + '</button><span>Visibilidade: ' + e(visibility) + '</span></footer>'
+            + replyItems + replyForm + '</article>';
+        }
+        const settings = this.querySelector<HTMLElement>('.lm-story-settings');
+        const canCreate = settings?.dataset.storyCanCreate !== 'false';
+        composerMount.innerHTML = this.state.interaction.storyComposerOpen && canCreate
+          ? '<form class="lm-story-composer" data-story-composer><header><div><span class="lm-eyebrow">NOVA PUBLICAÇÃO</span><b>Criar story</b></div><button type="button" class="lm-story-composer-close" data-story-action="cancel" aria-label="Fechar criação">×</button></header>'
+            + '<label>Título<input name="storyTitle" data-interaction-field="' + e(this.state.id) + ':new-story-title" maxlength="48" required placeholder="Ex.: Projeto de ciências"></label>'
+            + '<label>Chamada<input name="storyCaption" data-interaction-field="' + e(this.state.id) + ':new-story-caption" maxlength="100" required placeholder="O que você quer destacar?"></label>'
+            + '<label>Descrição<textarea name="storyBody" data-interaction-field="' + e(this.state.id) + ':new-story-body" rows="3" maxlength="360" required placeholder="Conte o contexto da produção ou descoberta."></textarea></label>'
+            + '<label>Quem pode ver<select name="storyVisibility" data-interaction-field="' + e(this.state.id) + ':new-story-visibility"><option>Público</option><option>Seguidores</option><option>Privado</option></select></label>'
+            + '<footer><button type="button" data-story-action="cancel">Cancelar</button><button type="submit">Publicar story</button></footer><small>Publicação local de demonstração; nenhuma informação é enviada.</small></form>'
+          : '';
+        const visibilitySelect = composerMount.querySelector<HTMLSelectElement>('select[name="storyVisibility"]');
+        const savedVisibility = this.state.interaction.fields[this.state.id + ':new-story-visibility'];
+        if (visibilitySelect) visibilitySelect.value = savedVisibility ?? settings?.dataset.storyVisibility ?? 'Público';
       }
       private onClick(event: Event): void {
         if (!(event.target instanceof Element)) return;
@@ -1045,6 +1242,41 @@ export function registerComponentElements(): void {
         const button = event.target.closest<HTMLButtonElement>('button');
         if (!button || button.disabled || !this.contains(button)) return;
         if (button.type === 'submit') return;
+        if (button.hasAttribute('data-story-create')) {
+          this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: true, feedback: '' }));
+          this.render();
+          this.querySelector<HTMLInputElement>('[data-story-composer] input[name="storyTitle"]')?.focus();
+          return;
+        }
+        const storyAction = button.dataset.storyAction;
+        if (storyAction) {
+          const selected = this.state.interaction.selectedStory ?? 0;
+          const storyCount = this.querySelectorAll('.lm-story-card:not(.lm-new-story):not(.lm-story-next)').length;
+          if (storyAction === 'previous' || storyAction === 'next') {
+            const nextIndex = Math.max(0, Math.min(storyCount - 1, selected + (storyAction === 'next' ? 1 : -1)));
+            this.transitionInteraction(interaction => ({ ...interaction, selectedStory: nextIndex, feedback: 'Story ' + (nextIndex + 1) + ' de ' + storyCount + '.' }));
+          } else if (storyAction === 'like' || storyAction === 'save') {
+            const key = 'story-' + storyAction + ':' + selected;
+            this.transitionInteraction(interaction => {
+              const active = !(interaction.toggles[key] ?? false);
+              return {
+                ...interaction,
+                toggles: { ...interaction.toggles, [key]: active },
+                feedback: storyAction === 'like' ? (active ? 'Curtida registrada neste story.' : 'Curtida removida deste story.') : (active ? 'Story salvo nesta demonstração.' : 'Story removido dos salvos.'),
+              };
+            });
+          } else if (storyAction === 'cancel') {
+            this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: false, feedback: 'Criação cancelada.' }));
+          }
+          this.render();
+          return;
+        }
+        if (button.dataset.storyIndex !== undefined) {
+          const selected = Number(button.dataset.storyIndex);
+          this.transitionInteraction(interaction => ({ ...interaction, selectedStory: selected, feedback: '' }));
+          this.render();
+          return;
+        }
         const group = button.dataset.interactionGroup;
         if (group !== undefined && button.dataset.interactionValue !== undefined) {
           const value = button.dataset.interactionValue;
@@ -1108,6 +1340,49 @@ export function registerComponentElements(): void {
       private onSubmit(event: Event): void {
         event.preventDefault();
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
+        if (form?.matches('[data-story-composer]')) {
+          const titleControl = form.elements.namedItem('storyTitle');
+          const captionControl = form.elements.namedItem('storyCaption');
+          const bodyControl = form.elements.namedItem('storyBody');
+          const visibilityControl = form.elements.namedItem('storyVisibility');
+          const title = titleControl instanceof HTMLInputElement ? titleControl.value.trim() : '';
+          const caption = captionControl instanceof HTMLInputElement ? captionControl.value.trim() : '';
+          const body = bodyControl instanceof HTMLTextAreaElement ? bodyControl.value.trim() : '';
+          const visibility = visibilityControl instanceof HTMLSelectElement ? visibilityControl.value : 'Público';
+          if (!title || !caption || !body) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Preencha título, chamada e descrição para publicar.' }));
+            this.render();
+            return;
+          }
+          const baseCount = this.querySelectorAll('.lm-story-card:not(.lm-new-story):not(.lm-story-next):not(.lm-local-story)').length;
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            localStories: [...interaction.localStories, { title, caption, body, category: 'Produção', visibility, likes: 0 }],
+            selectedStory: baseCount + interaction.localStories.length,
+            storyComposerOpen: false,
+            feedback: 'Story publicado e aberto nesta demonstração local.',
+          }));
+          this.render();
+          return;
+        }
+        if (form?.matches('[data-story-reply-form]')) {
+          const replyControl = form.elements.namedItem('storyReply');
+          const reply = replyControl instanceof HTMLInputElement ? replyControl.value.trim() : '';
+          if (!reply) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escreva uma resposta antes de enviar.' }));
+            this.render();
+            return;
+          }
+          const key = String(this.state.interaction.selectedStory ?? 0);
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            storyReplies: { ...interaction.storyReplies, [key]: [...(interaction.storyReplies[key] ?? []), reply] },
+            fields: { ...interaction.fields, [this.state.id + ':story-reply']: '' },
+            feedback: 'Resposta adicionada ao story nesta demonstração local.',
+          }));
+          this.render();
+          return;
+        }
         if (this.state.id === 'community-feed' && form) {
           const field = form.querySelector<HTMLTextAreaElement>('textarea[name="post"]');
           const text = field?.value.trim() ?? '';
@@ -1162,7 +1437,7 @@ export function registerComponentElements(): void {
           this.removeAttribute('id');
           delete this.dataset.scrollpoint;
         }
-        const presentationBlock = id === selectedId && presentation
+        const presentationBlock = situation.presentationMode === 'continuous-list' && presentation
           ? '<aside class="lm-part-presentation"><header><span class="lm-eyebrow">CONTEXTO DA PARTE</span><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>'
             + '<h3>' + e(title) + '</h3><p>' + e(presentation) + '</p></aside>'
           : '';

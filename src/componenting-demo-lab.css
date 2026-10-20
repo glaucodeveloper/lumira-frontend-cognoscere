@@ -1472,6 +1472,239 @@ lumira-page-part {
   background: white;
   color: var(--lm-brand);
 }
+.lm-stories-experience {
+  display: grid;
+  gap: 12px;
+  padding: 4px 2px 7px;
+}
+.lm-story-card[data-story-index] {
+  cursor: pointer;
+}
+.lm-story-demo-note {
+  margin: 0;
+  color: var(--lm-muted);
+  font-size: 8px;
+}
+.lm-story-settings {
+  display: none;
+}
+.lm-story-stage {
+  min-width: 0;
+}
+.lm-story-stage-empty,
+.lm-story-viewer,
+.lm-story-composer {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  border: 1px solid #dfe6ec;
+  border-radius: 8px;
+  background: #fbfcfd;
+}
+.lm-story-stage-empty {
+  display: grid;
+  min-height: 96px;
+  justify-items: center;
+  align-content: center;
+  gap: 5px;
+  color: var(--lm-muted);
+  text-align: center;
+}
+.lm-story-stage-empty>span {
+  color: var(--lm-brand);
+  font-size: 17px;
+}
+.lm-story-stage-empty>b {
+  color: var(--lm-ink-strong);
+  font-size: 10px;
+}
+.lm-story-stage-empty>p {
+  margin: 0;
+  font-size: 9px;
+}
+.lm-story-viewer-header,
+.lm-story-composer>header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.lm-story-viewer-header>div:first-child,
+.lm-story-composer>header>div {
+  display: grid;
+  gap: 3px;
+}
+.lm-story-viewer-header b,
+.lm-story-composer>header b {
+  color: var(--lm-ink-strong);
+  font-family: var(--lm-font-display);
+  font-size: 13px;
+}
+.lm-story-viewer-header small,
+.lm-story-composer>small {
+  color: var(--lm-muted);
+  font-size: 8px;
+}
+.lm-story-category {
+  color: var(--lm-brand);
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.lm-story-viewer-nav {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--lm-muted);
+  font-size: 8px;
+}
+.lm-story-viewer-nav button,
+.lm-story-composer-close {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border: 1px solid var(--lm-line);
+  border-radius: 50%;
+  background: white;
+  color: var(--lm-brand);
+  font-size: 15px;
+  cursor: pointer;
+}
+.lm-story-viewer-nav button:disabled {
+  opacity: .35;
+  cursor: default;
+}
+.lm-story-progress {
+  height: 3px;
+  margin: 10px 0 12px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #e7edf1;
+}
+.lm-story-progress i {
+  display: block;
+  height: 100%;
+  background: var(--lm-brand);
+  transition: width .2s ease;
+}
+.lm-story-viewer>h3 {
+  margin: 0 0 6px;
+  color: var(--lm-ink-strong);
+  font-family: var(--lm-font-display);
+  font-size: 13px;
+}
+.lm-story-body {
+  margin: 0;
+  color: #526273;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.lm-story-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 12px;
+  padding-top: 9px;
+  border-top: 1px solid #e7edf1;
+}
+.lm-story-actions button,
+.lm-story-reply-form button,
+.lm-story-composer>footer button {
+  min-height: 27px;
+  padding: 5px 9px;
+  border: 1px solid #dfe6ec;
+  border-radius: 5px;
+  background: white;
+  color: var(--lm-brand);
+  font-size: 8px;
+  cursor: pointer;
+}
+.lm-story-actions button[aria-pressed="true"] {
+  border-color: #b8ddda;
+  background: #eff9f8;
+}
+.lm-story-actions>span {
+  margin-left: auto;
+  color: var(--lm-muted);
+  font-size: 8px;
+}
+.lm-story-replies,
+.lm-story-no-replies,
+.lm-story-replies-disabled {
+  margin: 10px 0 0;
+  color: var(--lm-muted);
+  font-size: 8px;
+}
+.lm-story-replies>b {
+  color: var(--lm-ink);
+}
+.lm-story-replies p {
+  margin: 5px 0 0;
+  padding: 6px 8px;
+  border-radius: 5px;
+  background: white;
+  color: #526273;
+  line-height: 1.45;
+}
+.lm-story-reply-form,
+.lm-story-composer {
+  display: grid;
+  gap: 8px;
+}
+.lm-story-reply-form {
+  margin-top: 10px;
+}
+.lm-story-reply-form>label,
+.lm-story-composer>label {
+  display: grid;
+  gap: 4px;
+  color: #586879;
+  font-size: 8px;
+  font-weight: 700;
+}
+.lm-story-reply-form>div {
+  display: flex;
+  gap: 6px;
+}
+.lm-story-reply-form input,
+.lm-story-composer input,
+.lm-story-composer textarea,
+.lm-story-composer select {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid var(--lm-line);
+  border-radius: 5px;
+  background: white;
+  color: var(--lm-ink);
+  font-size: 9px;
+}
+.lm-story-reply-form input {
+  flex: 1;
+}
+.lm-story-composer {
+  margin-top: 12px;
+  background: #fff;
+}
+.lm-story-composer>header {
+  margin-bottom: 2px;
+}
+.lm-story-composer>footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.lm-story-composer>footer button[type="submit"],
+.lm-story-reply-form button {
+  border-color: var(--lm-brand);
+  background: var(--lm-brand);
+  color: white;
+}
+.lm-story-composer>small {
+  line-height: 1.4;
+}
 .lm-profile-tabs,
 .lm-community-tabs {
   display: flex;
