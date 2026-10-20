@@ -586,9 +586,19 @@ type DemoPagePartInteraction = {
   fields: Record<string, string>;
   publications: string[];
   actions: Record<string, number>;
-  localStories: Array<{ title: string; caption: string; body: string; category: string; visibility: string; likes: number }>;
+  localStories: Array<{
+    title: string; caption: string; body: string; category: string; visibility: string; likes: number;
+    image: string; orientation: 'portrait' | 'landscape'; filter: string; overlayText: string; textStyle: string; music: string;
+    activity: string; linkLabel: string; linkUrl: string; pollQuestion: string; pollOptionA: string;
+    pollOptionB: string; quizQuestion: string; quizOptionA: string; quizOptionB: string; quizAnswer: string;
+    question: string; countdown: string; mention: string; location: string;
+  }>;
   selectedStory: number | null;
   storyComposerOpen: boolean;
+  storyComposerTool: string;
+  storyOrientation: 'portrait' | 'landscape';
+  storyFilter: string;
+  storyImage: string;
   storyReplies: Record<string, string[]>;
   feedback: string;
 };
@@ -997,7 +1007,8 @@ export function registerComponentElements(): void {
           prototypeParameters: {},
           interaction: {
             groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, localStories: [],
-            selectedStory: null, storyComposerOpen: false, storyReplies: {}, feedback: '',
+            selectedStory: null, storyComposerOpen: false, storyComposerTool: 'text', storyOrientation: 'portrait',
+            storyFilter: 'original', storyImage: '', storyReplies: {}, feedback: '',
           },
         });
         this.state = this.transitions.next().value;
@@ -1199,6 +1210,7 @@ export function registerComponentElements(): void {
           const settings = this.querySelector<HTMLElement>('.lm-story-settings');
           const visibility = this.state.interaction.localStories[selectedStory - localStartIndex]?.visibility
             ?? card.dataset.storyVisibility ?? settings?.dataset.storyVisibility ?? 'Público';
+          const localStory = this.state.interaction.localStories[selectedStory - localStartIndex];
           const allowReplies = settings?.dataset.storyReplies !== 'false';
           const replyItems = replies.length
             ? '<div class="lm-story-replies"><b>Respostas (' + replies.length + ')</b>' + replies.map(reply => '<p>' + e(reply) + '</p>').join('') + '</div>'
@@ -1206,27 +1218,130 @@ export function registerComponentElements(): void {
           const replyForm = allowReplies
             ? '<form class="lm-story-reply-form" data-story-reply-form><label for="story-reply-' + e(this.state.id) + '">Responder ao story</label><div><input id="story-reply-' + e(this.state.id) + '" name="storyReply" data-interaction-field="' + e(this.state.id) + ':story-reply" maxlength="180" placeholder="Escreva uma resposta…"><button type="submit" aria-label="Enviar resposta">Enviar</button></div></form>'
             : '<p class="lm-story-replies-disabled">As respostas estão desativadas nos controles desta demonstração.</p>';
+          const storyStickers = localStory ? [
+            localStory.music ? '<div class="lm-story-published-sticker music">♫ ' + e(localStory.music) + '</div>' : '',
+            localStory.activity ? '<div class="lm-story-published-sticker">✦ Atividade · ' + e(localStory.activity) + '</div>' : '',
+            localStory.linkLabel || localStory.linkUrl ? '<div class="lm-story-published-sticker link">↗ ' + e(localStory.linkLabel || localStory.linkUrl) + (localStory.linkLabel && localStory.linkUrl ? '<small>' + e(localStory.linkUrl) + '</small>' : '') + '</div>' : '',
+            localStory.pollQuestion ? '<div class="lm-story-published-sticker poll"><b>ENQUETE · ' + e(localStory.pollQuestion) + '</b><span>' + e(localStory.pollOptionA) + '</span><span>' + e(localStory.pollOptionB) + '</span></div>' : '',
+            localStory.quizQuestion ? '<div class="lm-story-published-sticker poll"><b>QUIZ · ' + e(localStory.quizQuestion) + '</b><span>' + e(localStory.quizOptionA) + '</span><span>' + e(localStory.quizOptionB) + '</span><small>Resposta: ' + e(localStory.quizAnswer) + '</small></div>' : '',
+            localStory.question ? '<div class="lm-story-published-sticker">? ' + e(localStory.question) + '</div>' : '',
+            localStory.countdown ? '<div class="lm-story-published-sticker">◷ ' + e(localStory.countdown) + '</div>' : '',
+            localStory.mention ? '<div class="lm-story-published-sticker">@ ' + e(localStory.mention) + '</div>' : '',
+            localStory.location ? '<div class="lm-story-published-sticker">⌖ ' + e(localStory.location) + '</div>' : '',
+          ].filter(Boolean).join('') : '';
+          const publishedArtwork = localStory ? '<div class="lm-story-published-art lm-story-published-art--' + e(localStory.orientation) + '">'
+            + '<img class="lm-story-filter-' + e(localStory.filter) + '" src="' + e(localStory.image || profileCoverAsset) + '" alt="Imagem publicada em ' + e(storyTitle) + '">'
+            + '<div class="lm-story-art-content">' + (localStory.overlayText ? '<div class="lm-story-art-text lm-story-art-text--' + e(localStory.textStyle) + '">' + e(localStory.overlayText) + '</div>' : '') + storyStickers
+            + '<div class="lm-story-art-caption"><strong>' + e(localStory.title) + '</strong><span>' + e(localStory.caption) + '</span></div></div></div>' : '';
           stage.innerHTML = '<article class="lm-story-viewer" aria-label="Story ' + e(storyTitle) + '">'
             + '<header class="lm-story-viewer-header"><div><span class="lm-story-category">' + e(category) + '</span><b>' + e(storyTitle) + '</b><small>' + e(publishedAt) + ' · ' + e(visibility) + '</small></div>'
             + '<div class="lm-story-viewer-nav"><button type="button" data-story-action="previous" aria-label="Story anterior" ' + (selectedStory === 0 ? 'disabled' : '') + '>‹</button><span>' + (selectedStory + 1) + ' / ' + stories.length + '</span><button type="button" data-story-action="next" aria-label="Próximo story" ' + (selectedStory >= stories.length - 1 ? 'disabled' : '') + '>›</button></div></header>'
             + '<div class="lm-story-progress" aria-hidden="true"><i style="width:' + Math.round(((selectedStory + 1) / stories.length) * 100) + '%"></i></div>'
-            + '<h3>' + e(caption) + '</h3><p class="lm-story-body">' + e(body) + '</p>'
+            + publishedArtwork + '<h3>' + e(caption) + '</h3><p class="lm-story-body">' + e(body) + '</p>'
             + '<footer class="lm-story-actions"><button type="button" data-story-action="like" aria-pressed="' + String(liked) + '">' + (liked ? '♥ Curtido' : '♡ Curtir') + ' · ' + (baseLikes + (liked ? 1 : 0)) + '</button><button type="button" data-story-action="save" aria-pressed="' + String(saved) + '">' + (saved ? '✓ Salvo' : '＋ Salvar') + '</button><span>Visibilidade: ' + e(visibility) + '</span></footer>'
             + replyItems + replyForm + '</article>';
         }
         const settings = this.querySelector<HTMLElement>('.lm-story-settings');
         const canCreate = settings?.dataset.storyCanCreate !== 'false';
         composerMount.innerHTML = this.state.interaction.storyComposerOpen && canCreate
-          ? '<form class="lm-story-composer" data-story-composer><header><div><span class="lm-eyebrow">NOVA PUBLICAÇÃO</span><b>Criar story</b></div><button type="button" class="lm-story-composer-close" data-story-action="cancel" aria-label="Fechar criação">×</button></header>'
-            + '<label>Título<input name="storyTitle" data-interaction-field="' + e(this.state.id) + ':new-story-title" maxlength="48" required placeholder="Ex.: Projeto de ciências"></label>'
-            + '<label>Chamada<input name="storyCaption" data-interaction-field="' + e(this.state.id) + ':new-story-caption" maxlength="100" required placeholder="O que você quer destacar?"></label>'
-            + '<label>Descrição<textarea name="storyBody" data-interaction-field="' + e(this.state.id) + ':new-story-body" rows="3" maxlength="360" required placeholder="Conte o contexto da produção ou descoberta."></textarea></label>'
-            + '<label>Quem pode ver<select name="storyVisibility" data-interaction-field="' + e(this.state.id) + ':new-story-visibility"><option>Público</option><option>Seguidores</option><option>Privado</option></select></label>'
-            + '<footer><button type="button" data-story-action="cancel">Cancelar</button><button type="submit">Publicar story</button></footer><small>Publicação local de demonstração; nenhuma informação é enviada.</small></form>'
+          ? this.storyComposerMarkup()
           : '';
-        const visibilitySelect = composerMount.querySelector<HTMLSelectElement>('select[name="storyVisibility"]');
-        const savedVisibility = this.state.interaction.fields[this.state.id + ':new-story-visibility'];
-        if (visibilitySelect) visibilitySelect.value = savedVisibility ?? settings?.dataset.storyVisibility ?? 'Público';
+        composerMount.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-story-field]').forEach(field => {
+          const name = field.dataset.storyField ?? '';
+          const saved = this.state.interaction.fields[this.storyFieldKey(name)];
+          if (saved !== undefined) field.value = saved;
+          else if (name === 'visibility') field.value = settings?.dataset.storyVisibility ?? 'Público';
+        });
+        const preview = composerMount.querySelector<HTMLImageElement>('[data-story-preview-image]');
+        if (preview) preview.src = this.state.interaction.storyImage || profileCoverAsset;
+        composerMount.querySelector<HTMLElement>('[data-story-image-name]')?.replaceChildren(document.createTextNode(this.state.interaction.storyImage ? 'Imagem carregada nesta sessão' : 'Foto de demonstração · selecione uma imagem para substituir'));
+        this.syncStoryComposerPreview();
+      }
+      private storyFieldKey(name: string): string { return this.state.id + ':story:' + name; }
+      private storyComposerMarkup(): string {
+        const interaction = this.state.interaction;
+        const tool = interaction.storyComposerTool;
+        const creatorName = this.state.id === 'student-stories' ? 'Caio Almeida' : 'Ana Beatriz Silva';
+        const creatorInitial = creatorName.slice(0, 1).toLocaleUpperCase();
+        const field = (name: string, label: string, placeholder: string, type = 'text', maxlength = 120): string =>
+          '<label>' + e(label) + '<input type="' + e(type) + '" name="' + e(name) + '" data-story-field="' + e(name) + '" maxlength="' + maxlength + '" placeholder="' + e(placeholder) + '"></label>';
+        const area = (name: string, label: string, placeholder: string, rows = 3, maxlength = 240): string =>
+          '<label>' + e(label) + '<textarea name="' + e(name) + '" data-story-field="' + e(name) + '" rows="' + rows + '" maxlength="' + maxlength + '" placeholder="' + e(placeholder) + '"></textarea></label>';
+        const select = (name: string, label: string, options: string[]): string =>
+          '<label>' + e(label) + '<select name="' + e(name) + '" data-story-field="' + e(name) + '">' + options.map(option => '<option value="' + e(option) + '">' + e(option) + '</option>').join('') + '</select></label>';
+        const tools = [
+          ['text', 'Aa', 'Texto'], ['music', '♫', 'Música'], ['activity', '✦', 'Atividade'], ['link', '↗', 'Link'],
+          ['poll', '▤', 'Enquete'], ['quiz', '?', 'Quiz'], ['question', '…', 'Pergunta'], ['countdown', '◷', 'Contagem'],
+          ['mention', '@', 'Marcação'], ['location', '⌖', 'Local'],
+        ];
+        const panels: Record<string, string> = {
+          text: area('overlayText', 'Texto sobre a foto', 'Escreva uma frase para aparecer no story.', 4, 180) + select('textStyle', 'Estilo do texto', ['Clássico', 'Destaque', 'Contorno']),
+          music: select('music', 'Faixa musical', ['Escolha uma faixa', 'Boa Energia · Jota.Pê', 'O Sol · Vitor Kley', 'Velha Infância · Tribalistas', 'Instrumental · Lumira']) + '<p class="lm-story-panel-hint">A faixa aparece como sticker musical na publicação.</p>',
+          activity: select('activity', 'Atividade da comunidade', ['Escolha uma atividade', 'Feira de ciências', 'Clube de leitura', 'Desafio de matemática', 'Roda de conversa', 'Projeto de artes']) + '<p class="lm-story-panel-hint">Vincule o story a uma atividade demonstrativa do perfil.</p>',
+          link: field('linkLabel', 'Texto do link', 'Ex.: Ver projeto completo') + field('linkUrl', 'Endereço', 'https://exemplo.org/projeto', 'url'),
+          poll: area('pollQuestion', 'Pergunta da enquete', 'Qual ideia devemos explorar?', 2, 120) + field('pollOptionA', 'Opção 1', 'Primeira resposta', 'text', 48) + field('pollOptionB', 'Opção 2', 'Segunda resposta', 'text', 48),
+          quiz: area('quizQuestion', 'Pergunta do quiz', 'Qual resposta está correta?', 2, 120) + field('quizOptionA', 'Resposta A', 'Alternativa A', 'text', 48) + field('quizOptionB', 'Resposta B', 'Alternativa B', 'text', 48) + select('quizAnswer', 'Resposta correta', ['Alternativa A', 'Alternativa B']),
+          question: area('question', 'Caixa de perguntas', 'Convide a comunidade a responder.', 3, 120),
+          countdown: field('countdown', 'Evento ou prazo', 'Ex.: Mostra de projetos · sexta-feira', 'text', 100) + field('countdownDate', 'Data e hora', '', 'datetime-local'),
+          mention: field('mention', 'Marcar perfil', '@nome-do-perfil', 'text', 48),
+          location: field('location', 'Localização', 'Escola, cidade ou espaço cultural', 'text', 90),
+        };
+        const toolButtons = tools.map(([key, icon, label]) => '<button type="button" class="lm-story-tool' + (tool === key ? ' active' : '') + '" data-story-tool="' + e(key) + '" aria-pressed="' + String(tool === key) + '"><span>' + e(icon) + '</span>' + e(label) + '</button>').join('');
+        const filterOptions: Array<[string, string]> = [['original', 'Original'], ['warm', 'Quente'], ['cool', 'Frio'], ['mono', 'P&B'], ['soft', 'Suave']];
+        const filterButtons = filterOptions.map(([key, label]) => '<button type="button" class="lm-story-filter-option' + (interaction.storyFilter === key ? ' active' : '') + '" data-story-filter="' + e(key) + '" aria-pressed="' + String(interaction.storyFilter === key) + '"><span class="lm-story-filter-swatch ' + e(key) + '"></span>' + e(label) + '</button>').join('');
+        return '<form class="lm-story-editor" data-story-composer role="dialog" aria-modal="true" aria-label="Criar novo story">'
+          + '<header class="lm-story-editor-header"><button type="button" class="lm-story-editor-close" data-story-action="cancel" aria-label="Fechar editor">×</button><div><span>STORY STUDIO · LUMIRA</span><strong>Nova publicação</strong></div><button type="button" class="lm-story-editor-draft" data-story-action="draft">Salvar rascunho</button></header>'
+          + '<div class="lm-story-editor-layout"><aside class="lm-story-tools" aria-label="Adicionais do story"><span class="lm-story-editor-label">ADICIONAIS</span>' + toolButtons + '</aside>'
+          + '<section class="lm-story-editor-stage"><div class="lm-story-preview-toolbar"><div><span class="lm-story-editor-label">FORMATO</span><button type="button" class="' + (interaction.storyOrientation === 'portrait' ? 'active' : '') + '" data-story-orientation="portrait" aria-pressed="' + String(interaction.storyOrientation === 'portrait') + '">Vertical · 9:16</button><button type="button" class="' + (interaction.storyOrientation === 'landscape' ? 'active' : '') + '" data-story-orientation="landscape" aria-pressed="' + String(interaction.storyOrientation === 'landscape') + '">Horizontal · 16:9</button></div></div>'
+          + '<div class="lm-story-preview lm-story-preview--' + e(interaction.storyOrientation) + '"><img data-story-preview-image class="lm-story-filter-' + e(interaction.storyFilter) + '" src="' + e(interaction.storyImage || profileCoverAsset) + '" alt="Prévia da foto do story"><div class="lm-story-preview-shade"></div><div class="lm-story-preview-content">'
+          + '<div class="lm-story-preview-top"><span class="lm-story-preview-avatar">' + e(creatorInitial) + '</span><span>' + e(creatorName) + ' <small>agora</small></span><b>•••</b></div>'
+          + '<div class="lm-story-preview-stickers"><div class="lm-story-preview-overlay-text lm-story-preview-text--classic" data-story-preview-text hidden></div>'
+          + '<div class="lm-story-preview-sticker music" data-story-preview-music hidden></div><div class="lm-story-preview-sticker" data-story-preview-activity hidden></div><div class="lm-story-preview-sticker link" data-story-preview-link hidden></div>'
+          + '<div class="lm-story-preview-sticker poll" data-story-preview-poll hidden><b data-story-preview-poll-question></b><span data-story-preview-poll-a></span><span data-story-preview-poll-b></span></div>'
+          + '<div class="lm-story-preview-sticker poll" data-story-preview-quiz hidden><b data-story-preview-quiz-question></b><span data-story-preview-quiz-a></span><span data-story-preview-quiz-b></span></div>'
+          + '<div class="lm-story-preview-sticker" data-story-preview-question hidden></div><div class="lm-story-preview-sticker" data-story-preview-countdown hidden></div><div class="lm-story-preview-sticker" data-story-preview-mention hidden></div><div class="lm-story-preview-sticker" data-story-preview-location hidden></div></div>'
+          + '<div class="lm-story-preview-caption"><strong data-story-preview-title>Seu título aparece aqui</strong><span data-story-preview-caption>Adicione uma chamada para este story.</span></div></div></div>'
+          + '<div class="lm-story-filter-tray"><span class="lm-story-editor-label">FILTROS</span>' + filterButtons + '</div>'
+          + '<label class="lm-story-upload"><input type="file" accept="image/*" data-story-image-file><span>＋ Escolher foto</span><small data-story-image-name>Foto de demonstração · selecione uma imagem para substituir</small></label></section>'
+          + '<aside class="lm-story-editor-panel"><div class="lm-story-editor-panel-heading"><span class="lm-story-editor-label">ADICIONAL SELECIONADO</span><strong>' + e(tools.find(item => item[0] === tool)?.[2] ?? 'Texto') + '</strong></div><div class="lm-story-tool-fields">' + (panels[tool] ?? panels.text) + '</div>'
+          + '<div class="lm-story-post-details"><span class="lm-story-editor-label">DETALHES DA PUBLICAÇÃO</span>' + field('title', 'Título', 'Ex.: Nosso projeto de ciências', 'text', 48) + field('caption', 'Chamada', 'O que você quer destacar?', 'text', 100) + area('body', 'Contexto', 'Conte um pouco mais para a comunidade.', 3, 360) + select('visibility', 'Público', ['Público', 'Seguidores', 'Somente eu', 'Privado']) + '</div>'
+          + '<footer class="lm-story-editor-footer"><small>Prévia e publicação permanecem nesta demonstração.</small><button type="submit">Compartilhar story <span>↗</span></button></footer></aside></div></form>';
+      }
+      private syncStoryComposerPreview(): void {
+        const mount = this.querySelector<HTMLElement>('.lm-story-composer-mount');
+        if (!mount || !this.state.interaction.storyComposerOpen) return;
+        const value = (name: string): string => this.state.interaction.fields[this.storyFieldKey(name)] ?? '';
+        const setText = (selector: string, text: string, visible = true): void => {
+          const target = mount.querySelector<HTMLElement>(selector);
+          if (!target) return;
+          target.textContent = text;
+          target.hidden = !visible;
+        };
+        setText('[data-story-preview-text]', value('overlayText'), Boolean(value('overlayText')));
+        const textPreview = mount.querySelector<HTMLElement>('[data-story-preview-text]');
+        if (textPreview) {
+          const textStyle = value('textStyle').toLocaleLowerCase();
+          textPreview.className = 'lm-story-preview-overlay-text lm-story-preview-text--' + (textStyle === 'destaque' ? 'highlight' : textStyle === 'contorno' ? 'outline' : 'classic');
+        }
+        setText('[data-story-preview-music]', '♫ ' + value('music'), Boolean(value('music') && value('music') !== 'Escolha uma faixa'));
+        setText('[data-story-preview-activity]', '✦ ' + value('activity'), Boolean(value('activity') && value('activity') !== 'Escolha uma atividade'));
+        setText('[data-story-preview-link]', '↗ ' + (value('linkLabel') || value('linkUrl')), Boolean(value('linkLabel') || value('linkUrl')));
+        setText('[data-story-preview-poll-question]', value('pollQuestion'), Boolean(value('pollQuestion')));
+        setText('[data-story-preview-poll-a]', value('pollOptionA'), Boolean(value('pollOptionA')));
+        setText('[data-story-preview-poll-b]', value('pollOptionB'), Boolean(value('pollOptionB')));
+        const poll = mount.querySelector<HTMLElement>('[data-story-preview-poll]');
+        if (poll) poll.hidden = !Boolean(value('pollQuestion') || value('pollOptionA') || value('pollOptionB'));
+        setText('[data-story-preview-quiz-question]', value('quizQuestion'), Boolean(value('quizQuestion')));
+        setText('[data-story-preview-quiz-a]', value('quizOptionA'), Boolean(value('quizOptionA')));
+        setText('[data-story-preview-quiz-b]', value('quizOptionB'), Boolean(value('quizOptionB')));
+        const quiz = mount.querySelector<HTMLElement>('[data-story-preview-quiz]');
+        if (quiz) quiz.hidden = !Boolean(value('quizQuestion') || value('quizOptionA') || value('quizOptionB'));
+        setText('[data-story-preview-question]', '? ' + value('question'), Boolean(value('question')));
+        setText('[data-story-preview-countdown]', '◷ ' + (value('countdown') || value('countdownDate')), Boolean(value('countdown') || value('countdownDate')));
+        setText('[data-story-preview-mention]', '@ ' + value('mention'), Boolean(value('mention')));
+        setText('[data-story-preview-location]', '⌖ ' + value('location'), Boolean(value('location')));
+        setText('[data-story-preview-title]', value('title') || 'Seu título aparece aqui', true);
+        setText('[data-story-preview-caption]', value('caption') || 'Adicione uma chamada para este story.', true);
       }
       private onClick(event: Event): void {
         if (!(event.target instanceof Element)) return;
@@ -1242,10 +1357,25 @@ export function registerComponentElements(): void {
         const button = event.target.closest<HTMLButtonElement>('button');
         if (!button || button.disabled || !this.contains(button)) return;
         if (button.type === 'submit') return;
+        if (button.dataset.storyTool) {
+          this.transitionInteraction(interaction => ({ ...interaction, storyComposerTool: button.dataset.storyTool ?? 'text', feedback: '' }));
+          this.render();
+          return;
+        }
+        if (button.dataset.storyOrientation) {
+          this.transitionInteraction(interaction => ({ ...interaction, storyOrientation: button.dataset.storyOrientation === 'landscape' ? 'landscape' : 'portrait', feedback: '' }));
+          this.render();
+          return;
+        }
+        if (button.dataset.storyFilter) {
+          this.transitionInteraction(interaction => ({ ...interaction, storyFilter: button.dataset.storyFilter ?? 'original', feedback: '' }));
+          this.render();
+          return;
+        }
         if (button.hasAttribute('data-story-create')) {
           this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: true, feedback: '' }));
           this.render();
-          this.querySelector<HTMLInputElement>('[data-story-composer] input[name="storyTitle"]')?.focus();
+          this.querySelector<HTMLInputElement>('[data-story-composer] input[name="title"]')?.focus();
           return;
         }
         const storyAction = button.dataset.storyAction;
@@ -1266,7 +1396,11 @@ export function registerComponentElements(): void {
               };
             });
           } else if (storyAction === 'cancel') {
-            this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: false, feedback: 'Criação cancelada.' }));
+            this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: false, feedback: 'Editor fechado; rascunho mantido nesta demonstração.' }));
+          } else if (storyAction === 'draft') {
+            this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: false, feedback: 'Rascunho salvo nesta demonstração local.' }));
+          } else if (storyAction === 'clear-photo') {
+            this.transitionInteraction(interaction => ({ ...interaction, storyImage: '', feedback: 'Foto removida; a imagem de demonstração voltou.' }));
           }
           this.render();
           return;
@@ -1321,12 +1455,49 @@ export function registerComponentElements(): void {
         if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) return;
         const field = event.target;
         const key = field.dataset.interactionField;
-        if (!key || field instanceof HTMLInputElement && (field.type === 'checkbox' || field.type === 'radio')) return;
+        if (field instanceof HTMLInputElement && (field.type === 'checkbox' || field.type === 'radio')) return;
+        if (field.dataset.storyField) {
+          this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, [this.storyFieldKey(field.dataset.storyField ?? '')]: field.value } }));
+          this.syncStoryComposerPreview();
+          return;
+        }
+        if (!key) return;
         this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, [key]: field.value } }));
       }
       private onChange(event: Event): void {
         if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) return;
         const field = event.target;
+        if (field instanceof HTMLInputElement && field.type === 'file' && field.hasAttribute('data-story-image-file')) {
+          const file = field.files?.[0];
+          if (!file) return;
+          if (!file.type.startsWith('image/')) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escolha um arquivo de imagem.' }));
+            this.render();
+            return;
+          }
+          if (file.size > 8 * 1024 * 1024) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'A imagem deve ter até 8 MB nesta demonstração.' }));
+            this.render();
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (typeof reader.result !== 'string') return;
+            this.transitionInteraction(interaction => ({ ...interaction, storyImage: reader.result as string, feedback: 'Foto carregada na prévia.' }));
+            this.render();
+          };
+          reader.onerror = () => {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Não foi possível ler a imagem selecionada.' }));
+            this.render();
+          };
+          reader.readAsDataURL(file);
+          return;
+        }
+        if (field.dataset.storyField) {
+          this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, [this.storyFieldKey(field.dataset.storyField ?? '')]: field.value } }));
+          this.render();
+          return;
+        }
         const key = field.dataset.interactionField;
         if (!key) return;
         if (field instanceof HTMLInputElement && (field.type === 'checkbox' || field.type === 'radio')) {
@@ -1341,25 +1512,33 @@ export function registerComponentElements(): void {
         event.preventDefault();
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
         if (form?.matches('[data-story-composer]')) {
-          const titleControl = form.elements.namedItem('storyTitle');
-          const captionControl = form.elements.namedItem('storyCaption');
-          const bodyControl = form.elements.namedItem('storyBody');
-          const visibilityControl = form.elements.namedItem('storyVisibility');
-          const title = titleControl instanceof HTMLInputElement ? titleControl.value.trim() : '';
-          const caption = captionControl instanceof HTMLInputElement ? captionControl.value.trim() : '';
-          const body = bodyControl instanceof HTMLTextAreaElement ? bodyControl.value.trim() : '';
-          const visibility = visibilityControl instanceof HTMLSelectElement ? visibilityControl.value : 'Público';
-          if (!title || !caption || !body) {
-            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Preencha título, chamada e descrição para publicar.' }));
-            this.render();
-            return;
-          }
+          const readField = (name: string): string => form.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-story-field="' + name + '"]')?.value.trim() ?? '';
+          const title = readField('title') || 'Novo story';
+          const caption = readField('caption') || 'Novo momento';
+          const body = readField('body') || readField('overlayText') || readField('pollQuestion') || 'Story visual compartilhado com a comunidade.';
+          const visibility = readField('visibility') || 'Público';
+          const music = readField('music');
+          const activity = readField('activity');
+          const selectedTextStyle = readField('textStyle').toLocaleLowerCase();
+          const textStyle = selectedTextStyle === 'destaque' ? 'highlight' : selectedTextStyle === 'contorno' ? 'outline' : 'classic';
           const baseCount = this.querySelectorAll('.lm-story-card:not(.lm-new-story):not(.lm-story-next):not(.lm-local-story)').length;
+          const fieldPrefix = this.state.id + ':story:';
           this.transitionInteraction(interaction => ({
             ...interaction,
-            localStories: [...interaction.localStories, { title, caption, body, category: 'Produção', visibility, likes: 0 }],
+            localStories: [...interaction.localStories, {
+              title, caption, body, category: 'Produção', visibility, likes: 0,
+              image: interaction.storyImage, orientation: interaction.storyOrientation, filter: interaction.storyFilter,
+              overlayText: readField('overlayText'), textStyle, music: music === 'Escolha uma faixa' ? '' : music,
+              activity: activity === 'Escolha uma atividade' ? '' : activity, linkLabel: readField('linkLabel'), linkUrl: readField('linkUrl'),
+              pollQuestion: readField('pollQuestion'), pollOptionA: readField('pollOptionA'), pollOptionB: readField('pollOptionB'),
+              quizQuestion: readField('quizQuestion'), quizOptionA: readField('quizOptionA'), quizOptionB: readField('quizOptionB'), quizAnswer: readField('quizAnswer'),
+              question: readField('question'), countdown: [readField('countdown'), readField('countdownDate')].filter(Boolean).join(' · '),
+              mention: readField('mention'), location: readField('location'),
+            }],
             selectedStory: baseCount + interaction.localStories.length,
             storyComposerOpen: false,
+            storyImage: '', storyOrientation: 'portrait', storyFilter: 'original', storyComposerTool: 'text',
+            fields: Object.fromEntries(Object.entries(interaction.fields).filter(([key]) => !key.startsWith(fieldPrefix))),
             feedback: 'Story publicado e aberto nesta demonstração local.',
           }));
           this.render();
