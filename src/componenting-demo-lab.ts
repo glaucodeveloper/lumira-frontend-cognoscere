@@ -29,6 +29,7 @@ function mountParts(host: HTMLElement, parts: readonly Part[]): void {
 
 type DemoScreenState = ComponentMockSituation['status'];
 type LabRole = ComponentMockSituation['role'];
+type InspectorTab = 'part' | 'page' | 'data';
 type LabState = {
   screens: readonly ReferenceScreenSpec[];
   fixtures: Record<string, unknown>;
@@ -39,6 +40,7 @@ type LabState = {
   componentStates: Record<string, DemoScreenState>;
   componentParameters: Record<string, PrototypeParameterValues>;
   fullView: boolean;
+  inspectorTab: InspectorTab;
 };
 type LabStateIterator<T> = Generator<T, never, (state: T) => T>;
 function componentStateKey(screenId: string, componentId: string): string {
@@ -250,7 +252,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const initialScreen = screens.find(screen => screen.id === 'teacher-profile') ?? screens[0];
       this.transitions = stateIterator<LabState>({
         screens: [], fixtures: {}, screenId: initialScreen?.id ?? '',
-        componentId: initialScreen?.defaultComponentId ?? '', role: 'professor', screenState: 'ready', componentStates: {}, componentParameters: {}, fullView: false,
+        componentId: initialScreen?.defaultComponentId ?? '', role: 'professor', screenState: 'ready', componentStates: {}, componentParameters: {}, fullView: false, inspectorTab: 'part',
       });
       this.state = this.transitions.next().value;
       this.addEventListener('click', event => this.onClick(event));
@@ -309,7 +311,8 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const screen = this.state.screens.find(item => item.id === this.state.screenId);
       const region = screen?.regions.find(item => item.id === componentId);
       if (!screen || !region || componentId === this.state.componentId) return;
-      this.state = this.transitions.next(state => ({ ...state, componentId })).value;
+      this.state = this.transitions.next(state => ({ ...state, componentId, inspectorTab: 'part' })).value;
+      this.syncInspectorTabs();
       this.writeSelectionToLocation(replaceUrl);
 
       this.querySelectorAll<HTMLElement>('[data-component-id]').forEach(part => {
@@ -370,7 +373,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         : initialScreen?.id === 'student-profile' ? 'aluno' : initialScreen?.id === 'access' ? 'visitante' : 'professor';
       this.state = this.transitions.next(state => ({
         ...state, screens: nextScreens, fixtures: copiedFixtures,
-        screenId: initialScreen?.id ?? '', componentId: initialRegion?.id ?? initialScreen?.defaultComponentId ?? '', role: initialRole,
+        screenId: initialScreen?.id ?? '', componentId: initialRegion?.id ?? initialScreen?.defaultComponentId ?? '', role: initialRole, inspectorTab: 'part',
       })).value;
       this.writeSelectionToLocation(true);
       this.render();
@@ -393,14 +396,39 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         ? requestedRole
         : screen.id === 'student-profile' ? 'aluno' : screen.id === 'access' ? 'visitante' : 'professor';
       this.state = this.transitions.next(state => ({
-        ...state, screenId: screen.id, componentId: region?.id ?? screen.defaultComponentId, role, screenState: 'ready',
+        ...state, screenId: screen.id, componentId: region?.id ?? screen.defaultComponentId, role, screenState: 'ready', inspectorTab: 'part',
       })).value;
       this.render();
       this.scrollToComponent(region?.id ?? screen.defaultComponentId);
     }
+    private selectInspectorTab(tab: InspectorTab): void {
+      if (tab !== this.state.inspectorTab) {
+        this.state = this.transitions.next(state => ({ ...state, inspectorTab: tab })).value;
+      }
+      this.syncInspectorTabs();
+    }
+    private syncInspectorTabs(): void {
+      this.querySelectorAll<HTMLButtonElement>('[data-inspector-tab]').forEach(button => {
+        const selected = button.dataset.inspectorTab === this.state.inspectorTab;
+        button.classList.toggle('active', selected);
+        button.setAttribute('aria-selected', String(selected));
+        button.tabIndex = selected ? 0 : -1;
+      });
+      this.querySelectorAll<HTMLElement>('[data-inspector-panel]').forEach(panel => {
+        const selected = panel.dataset.inspectorPanel === this.state.inspectorTab;
+        panel.hidden = !selected;
+        panel.setAttribute('aria-hidden', String(!selected));
+      });
+    }
     private onClick(event: Event): void {
       if (!(event.target instanceof Element)) return;
       const target = event.target;
+      const tabButton = target.closest<HTMLButtonElement>('[data-inspector-tab]');
+      if (tabButton && this.contains(tabButton)) {
+        const tab = tabButton.dataset.inspectorTab as InspectorTab | undefined;
+        if (tab === 'part' || tab === 'page' || tab === 'data') this.selectInspectorTab(tab);
+        return;
+      }
       const copyLinkButton = target.closest<HTMLButtonElement>('[data-copy-demo-link]');
       if (copyLinkButton && this.contains(copyLinkButton)) {
         const button = copyLinkButton;
@@ -430,6 +458,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
             componentId: screen.defaultComponentId,
             role,
             screenState: 'ready',
+            inspectorTab: 'part',
           })).value;
           this.writeSelectionToLocation(false);
         }
@@ -464,6 +493,24 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       }
     }
     private onKeyDown(event: KeyboardEvent): void {
+      const currentTab = event.target instanceof Element
+        ? event.target.closest<HTMLButtonElement>('[data-inspector-tab]')
+        : null;
+      if (currentTab && this.contains(currentTab)) {
+        const tabs = [...this.querySelectorAll<HTMLButtonElement>('[data-inspector-tab]')];
+        const currentIndex = tabs.indexOf(currentTab);
+        const nextIndex = event.key === 'ArrowRight' ? (currentIndex + 1) % tabs.length
+          : event.key === 'ArrowLeft' ? (currentIndex - 1 + tabs.length) % tabs.length
+            : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : -1;
+        if (nextIndex >= 0) {
+          event.preventDefault();
+          const nextTab = tabs[nextIndex];
+          const tab = nextTab.dataset.inspectorTab as InspectorTab | undefined;
+          if (tab === 'part' || tab === 'page' || tab === 'data') this.selectInspectorTab(tab);
+          nextTab.focus();
+          return;
+        }
+      }
       if (event.key !== 'Escape' || !this.state.fullView) return;
       event.preventDefault();
       this.state = this.transitions.next(state => ({ ...state, fullView: false })).value;
@@ -600,6 +647,11 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         return '<option value="' + value + '" ' + (selectedState === value ? 'selected' : '') + '>' + e(label) + '</option>';
       }).join('');
       const statusControls = statuses.map(status => '<button type="button" data-state-select="' + status + '" class="' + (this.state.screenState === status ? 'active' : '') + '">' + e(labels[status]) + '</button>').join('');
+      const inspectorTabs: Array<[InspectorTab, string]> = [['part', 'Parte'], ['page', 'Página'], ['data', 'Dados']];
+      const inspectorTabButtons = inspectorTabs.map(([tab, label]) => {
+        const selected = this.state.inspectorTab === tab;
+        return '<button type="button" id="inspector-tab-' + tab + '" role="tab" aria-controls="inspector-panel-' + tab + '" aria-selected="' + String(selected) + '" tabindex="' + (selected ? '0' : '-1') + '" data-inspector-tab="' + tab + '" class="' + (selected ? 'active' : '') + '">' + label + '</button>';
+      }).join('');
       const markup = '<div class="componenting-lab-shell' + (this.state.fullView ? ' is-full-view' : '') + '">'
         + '<aside class="lm-app-rail"><header class="lm-lab-brand"><span class="lm-brand-glyph">L</span><div><b>LUMIRA</b><small>APRESENTAÇÃO INTERATIVA</small></div></header>'
         + '<div class="lm-rail-label">TELAS DE REFERÊNCIA</div><nav class="lm-page-nav">' + pageButtons + '</nav>'
@@ -612,15 +664,19 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         + '<div class="lm-continuous-component-list" data-screen-state="' + e(this.state.screenState) + '"><div class="lm-page-component-mount"></div></div></div>'
         + '<footer class="lm-preview-footer"><span>Dados demonstrativos · papel <b>' + e(this.state.role) + '</b></span><span>Selecione uma parte para abrir seu contexto de apresentação</span></footer></section>'
         + '<aside class="lm-inspector"><header class="lm-inspector-heading"><div><span class="lm-eyebrow">CONTROLES DA DEMONSTRAÇÃO</span><h2>Estado e propriedades</h2></div><span class="lm-inspector-mark">L</span></header>'
+        + '<nav class="lm-inspector-tabs" role="tablist" aria-label="Propriedades da demonstração">' + inspectorTabButtons + '</nav>'
+        + '<section class="lm-inspector-panel" id="inspector-panel-part" role="tabpanel" aria-labelledby="inspector-tab-part" data-inspector-panel="part" tabindex="0"' + (this.state.inspectorTab === 'part' ? '' : ' hidden') + '>'
         + '<section class="lm-inspector-section lm-presentation-overview"><span class="lm-eyebrow">PARTE SELECIONADA</span><h3>' + e(selectedRegion?.title ?? screen.title) + '</h3>'
         + '<p>' + e(selectedRegion?.presentation ?? screen.presentation) + '</p></section>'
         + '<section class="lm-inspector-section lm-controls-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">ESTADO DA PARTE</span></header>'
         + '<label class="lm-selected-state"><span>' + e(selectedRegion?.title ?? 'Parte') + '</span><select data-component-state="' + e(selectedId) + '" data-screen-id="' + e(screen.id) + '" aria-label="Estado de ' + e(selectedRegion?.title ?? 'Parte') + '">' + selectedStateOptions + '</select></label></section>'
+        + '<section class="lm-inspector-section lm-prototype-section"><div class="lm-prototype-mount"></div></section></section>'
+        + '<section class="lm-inspector-panel" id="inspector-panel-page" role="tabpanel" aria-labelledby="inspector-tab-page" data-inspector-panel="page" tabindex="0"' + (this.state.inspectorTab === 'page' ? '' : ' hidden') + '>'
         + '<section class="lm-inspector-section lm-controls-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">ESTADO PADRÃO DA PÁGINA</span><label class="lm-role-picker">Papel<select data-role-select><option value="professor" ' + (this.state.role === 'professor' ? 'selected' : '') + '>Professora</option><option value="aluno" ' + (this.state.role === 'aluno' ? 'selected' : '') + '>Estudante</option><option value="visitante" ' + (this.state.role === 'visitante' ? 'selected' : '') + '>Visitante</option></select></label></header>'
-        + '<div class="lm-state-controls">' + statusControls + '</div><p class="lm-state-help">O estado da parte pode herdar este padrão ou substituí-lo.</p></section>'
-        + '<section class="lm-inspector-section lm-prototype-section"><div class="lm-prototype-mount"></div></section>'
-        + '<section class="lm-inspector-section lm-fixture-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">DADOS DE DEMONSTRAÇÃO</span><small>EDITÁVEIS</small></header><div class="lm-fixture-mount"></div></section>'
-        + '<footer class="lm-inspector-footer">O contexto aparece antes do conteúdo da parte selecionada na prévia.</footer></aside></div>';
+        + '<div class="lm-state-controls">' + statusControls + '</div><p class="lm-state-help">O estado da parte pode herdar este padrão ou substituí-lo.</p></section></section>'
+        + '<section class="lm-inspector-panel" id="inspector-panel-data" role="tabpanel" aria-labelledby="inspector-tab-data" data-inspector-panel="data" tabindex="0"' + (this.state.inspectorTab === 'data' ? '' : ' hidden') + '>'
+        + '<section class="lm-inspector-section lm-fixture-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">DADOS DE DEMONSTRAÇÃO</span><small>EDITÁVEIS</small></header><div class="lm-fixture-mount"></div></section></section>'
+        + '<footer class="lm-inspector-footer">Controles demonstrativos da parte, da página e dos dados simulados.</footer></aside></div>';
       const editor = document.createElement('demo-data-editor') as DemoDataEditorElement;
       editor.configure(screen.fixtureKey, data);
       const prototypeEditor = document.createElement('demo-prototype-editor') as DemoPrototypeEditor;
