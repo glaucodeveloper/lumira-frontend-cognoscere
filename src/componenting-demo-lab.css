@@ -3018,3 +3018,390 @@ lumira-page-part {
     transition-duration: .01ms !important;
   }
 }
+
+/* A demonstração apresenta cada parte da página como um ponto de leitura. */
+.lm-app-rail {
+  min-height: 0;
+  overflow: hidden;
+}
+.lm-scrollpoint-nav {
+  display: grid;
+  min-height: 0;
+  flex: 1 1 auto;
+  align-content: start;
+  gap: 3px;
+  overflow: auto;
+  padding: 0 2px 6px;
+  scrollbar-color: #c8d2dc transparent;
+  scrollbar-width: thin;
+}
+.lm-scrollpoint-button {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 7px 6px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background .16s ease, border-color .16s ease;
+}
+.lm-scrollpoint-button:hover {
+  background: #f5f8fa;
+}
+.lm-scrollpoint-button.active {
+  border-color: #cfe3f4;
+  background: #edf5fc;
+}
+.lm-scrollpoint-button .lm-component-index {
+  display: grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  border: 1px solid #e3e9ee;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--lm-muted);
+}
+.lm-scrollpoint-button.active .lm-component-index {
+  border-color: var(--lm-brand);
+  background: var(--lm-brand);
+  color: #fff;
+}
+.lm-scrollpoint-button>span:nth-child(2) {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.lm-scrollpoint-button b {
+  overflow: hidden;
+  color: var(--lm-ink);
+  font-size: 10px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lm-scrollpoint-button small {
+  color: #9aa7b3;
+  font-size: 7px;
+  letter-spacing: .08em;
+}
+.lm-scrollpoint-label {
+  margin-top: 18px;
+}
+.lm-selected-state {
+  display: grid;
+  gap: 6px;
+  color: var(--lm-ink);
+  font-size: 9px;
+  font-weight: 650;
+}
+.lm-selected-state select {
+  width: 100%;
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid var(--lm-line);
+  border-radius: 5px;
+  background: #fff;
+  color: var(--lm-ink);
+  font-size: 9px;
+}
+.lm-page-responsibility {
+  gap: 9px;
+}
+.lm-page-responsibility>p+p {
+  margin-top: 1px;
+}
+.lm-continuous-component-list {
+  width: 100%;
+  max-width: 1480px;
+  margin: 0 auto;
+  border-top: 1px solid #dfe6eb;
+  background: #fff;
+}
+.lm-demo-flow .lm-product-page {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  background: transparent;
+}
+.lm-demo-flow .lm-product-main,
+.lm-demo-flow .lm-profile-canvas,
+.lm-demo-flow .lm-profile-overview,
+.lm-demo-flow .lm-profile-lower,
+.lm-demo-flow .lm-student-overview,
+.lm-demo-flow .lm-community-canvas,
+.lm-demo-flow .lm-community-columns,
+.lm-demo-flow .lm-access-page {
+  display: contents;
+}
+.lm-demo-flow .lm-community-canvas {
+  overflow: visible;
+}
+.lm-demo-flow lumira-page-part {
+  position: relative;
+  min-height: 0;
+  margin: 0;
+  padding: 12px 14px 16px;
+  border-bottom: 1px solid #e3e8ed;
+  background: #fff;
+  scroll-margin-block: 16px;
+}
+.lm-demo-flow lumira-page-part.is-selected {
+  background: #fbfefe;
+}
+.lm-demo-flow lumira-page-part.is-selected::after {
+  border-radius: 3px;
+  inset: 2px;
+}
+.lm-flow-element-heading {
+  display: flex;
+  min-height: 31px;
+  align-items: center;
+  gap: 9px;
+  margin: -2px 0 10px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #edf0f3;
+}
+.lm-flow-element-heading .lm-component-index {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid #dfe6eb;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--lm-brand);
+}
+.lm-flow-element-heading h2 {
+  min-width: 0;
+  margin: 0;
+  color: var(--lm-ink-strong);
+  font-family: var(--lm-font-display);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: -.02em;
+}
+.lm-flow-element-heading .lm-evidence-badge {
+  margin-left: auto;
+  padding: 4px 6px;
+  font-size: 7px;
+}
+.lm-demo-flow lumira-page-part.lm-product-sidebar {
+  display: grid;
+  grid-template-columns: minmax(105px, auto) minmax(130px, .55fr) minmax(220px, 1fr);
+  align-items: center;
+  column-gap: 18px;
+  padding-top: 10px;
+  padding-bottom: 11px;
+  border-right: 0;
+}
+.lm-demo-flow .lm-product-sidebar>.lm-flow-element-heading {
+  grid-column: 1 / -1;
+}
+.lm-demo-flow .lm-product-sidebar>.lm-brand {
+  margin: 0;
+  font-size: 18px;
+}
+.lm-demo-flow .lm-product-sidebar>.lm-side-account {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.lm-demo-flow .lm-product-sidebar>.lm-side-nav {
+  display: flex;
+  min-width: 0;
+  gap: 3px;
+  overflow-x: auto;
+}
+.lm-demo-flow .lm-product-sidebar .lm-side-link {
+  min-height: 30px;
+  flex: 0 0 auto;
+  padding: 5px 7px;
+  font-size: 9px;
+}
+.lm-demo-flow .lm-product-sidebar>.lm-sidebar-promo,
+.lm-demo-flow .lm-product-sidebar>.lm-sidebar-footer {
+  display: none;
+}
+.lm-demo-flow lumira-page-part.lm-product-topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  height: auto;
+  min-height: 58px;
+}
+.lm-demo-flow .lm-product-topbar>.lm-flow-element-heading {
+  grid-column: 1 / -1;
+}
+.lm-demo-flow .lm-profile-canvas,
+.lm-demo-flow .lm-community-canvas {
+  min-height: 0;
+  padding: 0;
+}
+.lm-demo-flow .lm-profile-overview,
+.lm-demo-flow .lm-profile-lower,
+.lm-demo-flow .lm-student-overview,
+.lm-demo-flow .lm-community-columns {
+  padding: 0;
+  gap: 0;
+}
+.lm-demo-flow .lm-access-brand-part {
+  min-height: 440px;
+}
+.lm-demo-flow .lm-access-brand {
+  min-height: 420px;
+}
+.lm-demo-flow .lm-access-form-part {
+  min-height: 510px;
+}
+.lm-demo-flow lumira-page-part.lm-personalization-part {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  width: auto;
+}
+.lm-demo-flow .lm-part-presentation {
+  margin: 0 0 12px;
+}
+
+@media (max-width: 1120px) {
+  .componenting-lab-shell {
+    grid-template-columns: 190px minmax(0, 1fr) 292px;
+  }
+}
+@media (max-width: 900px) {
+  .componenting-lab-shell {
+    grid-template-columns: 154px minmax(0, 1fr) 276px;
+  }
+  .lm-preview-column {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .lm-inspector {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    width: auto;
+    grid-row: 1;
+    grid-column: 3;
+    border: 0;
+    border-left: 1px solid var(--lm-line);
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+  }
+  .lm-inspector:focus-within {
+    transform: none;
+  }
+}
+@media (max-width: 680px) {
+  .componenting-lab-shell {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    overflow: hidden;
+  }
+  .lm-app-rail {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .lm-rail-label,
+  .lm-rail-bottom {
+    display: none;
+  }
+  .lm-page-nav {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 5px;
+    overflow: auto;
+  }
+  .lm-page-nav button {
+    min-width: 142px;
+    padding: 6px;
+  }
+  .lm-scrollpoint-label {
+    display: block;
+    margin: 10px 2px 5px;
+    color: var(--lm-muted);
+    font-size: 8px;
+    letter-spacing: .12em;
+  }
+  .lm-scrollpoint-nav {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 5px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 0 3px;
+  }
+  .lm-scrollpoint-button {
+    width: auto;
+    min-width: 145px;
+  }
+  .lm-preview-column {
+    min-height: 0;
+    grid-row: 2;
+    grid-column: 1;
+    grid-template-rows: 45px minmax(0, 1fr) 30px;
+  }
+  .lm-page-scroll {
+    padding: 14px 10px;
+  }
+  .lm-preview-mat {
+    padding: 4px;
+  }
+  .lm-demo-flow lumira-page-part.lm-product-sidebar {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 8px;
+  }
+  .lm-demo-flow .lm-product-sidebar>.lm-brand,
+  .lm-demo-flow .lm-product-sidebar>.lm-side-account {
+    display: none;
+  }
+  .lm-demo-flow .lm-product-sidebar>.lm-side-nav {
+    grid-column: 1;
+  }
+  .lm-demo-flow .lm-profile-cover {
+    min-height: 240px;
+  }
+  .lm-demo-flow .lm-community-cover {
+    min-height: 313px;
+  }
+  .lm-demo-flow .lm-access-page {
+    display: contents;
+  }
+  .lm-demo-flow .lm-access-brand-part {
+    min-height: 360px;
+  }
+  .lm-demo-flow .lm-access-brand {
+    min-height: 340px;
+  }
+  .lm-demo-flow .lm-access-form-part {
+    min-height: 470px;
+  }
+  .lm-inspector {
+    position: static;
+    z-index: auto;
+    display: flex;
+    width: auto;
+    max-height: 38vh;
+    grid-row: 3;
+    grid-column: 1;
+    overflow: auto;
+    border: 0;
+    border-top: 1px solid var(--lm-line);
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+  }
+}

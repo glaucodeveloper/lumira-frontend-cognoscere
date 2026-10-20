@@ -240,7 +240,9 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
     private transitions: LabStateIterator<LabState>;
     private state: LabState;
     private loadingTimer: number | undefined;
+    private lastRenderedScreenId = '';
     private componentLoadingTimers = new Map<string, number>();
+    private scrollpointObserver: IntersectionObserver | undefined;
     private popStateHandler = (): void => this.restoreSelectionFromLocation();
 
     constructor() {
@@ -267,7 +269,33 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       this.clearLoadingTimer();
       this.componentLoadingTimers.forEach(timer => window.clearTimeout(timer));
       this.componentLoadingTimers.clear();
+      this.scrollpointObserver?.disconnect();
+      this.scrollpointObserver = undefined;
       window.removeEventListener('popstate', this.popStateHandler);
+    }
+    private observeScrollpoints(): void {
+      this.scrollpointObserver?.disconnect();
+      const scroller = this.querySelector<HTMLElement>('.lm-page-scroll');
+      if (!scroller || typeof IntersectionObserver === 'undefined') return;
+      this.scrollpointObserver = new IntersectionObserver(entries => {
+        const current = entries
+          .filter(entry => entry.isIntersecting)
+          .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top)[0];
+        const componentId = (current?.target as HTMLElement | undefined)?.dataset.scrollpoint;
+        if (!componentId) return;
+        this.querySelectorAll<HTMLButtonElement>('.lm-scrollpoint-button').forEach(button => {
+          const active = button.dataset.componentSelect === componentId;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-current', active ? 'location' : 'false');
+        });
+      }, { root: scroller, rootMargin: '-12% 0px -72% 0px', threshold: 0 });
+      this.querySelectorAll<HTMLElement>('[data-scrollpoint]').forEach(point => this.scrollpointObserver?.observe(point));
+    }
+    private scrollToComponent(componentId: string): void {
+      requestAnimationFrame(() => {
+        this.querySelector<HTMLElement>('[data-scrollpoint="' + e(componentId) + '"]')
+          ?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      });
     }
     private clearLoadingTimer(): void {
       if (this.loadingTimer !== undefined) {
@@ -292,6 +320,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       })).value;
       this.writeSelectionToLocation(true);
       this.render();
+      if (initialRegion && initialRegion.id !== initialScreen?.defaultComponentId) this.scrollToComponent(initialRegion.id);
     }
     private writeSelectionToLocation(replace: boolean): void {
       const url = new URL(window.location.href);
@@ -313,6 +342,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         ...state, screenId: screen.id, componentId: region?.id ?? screen.defaultComponentId, role, screenState: 'ready',
       })).value;
       this.render();
+      this.scrollToComponent(region?.id ?? screen.defaultComponentId);
     }
     private onClick(event: Event): void {
       if (!(event.target instanceof Element)) return;
@@ -382,6 +412,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         this.state = this.transitions.next(state => ({ ...state, componentId })).value;
         this.writeSelectionToLocation(false);
         this.render();
+        if (componentButton) this.scrollToComponent(componentId);
         if (focusedFieldKey) {
           const replacement = [...this.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-interaction-field]')]
             .find(field => field.dataset.interactionField === focusedFieldKey);
@@ -484,9 +515,12 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         this.innerHTML = '<main class="lm-lab-empty"><h1>Configure uma tela para iniciar.</h1></main>';
         return;
       }
+      const previousScrollTop = this.querySelector<HTMLElement>('.lm-page-scroll')?.scrollTop ?? 0;
+      const keepScrollPosition = this.lastRenderedScreenId === screen.id;
       const selectedRegion = screen.regions.find(region => region.id === this.state.componentId) ?? screen.regions[0];
       const selectedId = selectedRegion?.id ?? screen.defaultComponentId;
       const selectedResponsibility = selectedRegion?.responsibility ?? selectedRegion?.description ?? screen.presentation;
+      const responsibilityParagraphs = selectedResponsibility.split(/\n\s*\n/).map(paragraph => '<p>' + e(paragraph.trim()) + '</p>').join('');
       const data = labRecord(this.state.fixtures[screen.fixtureKey]);
       const componentStates: Record<string, DemoScreenState> = {};
       screen.regions.forEach(region => {
@@ -504,41 +538,46 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         selectedRegionId: selectedId,
         role: this.state.role,
         status: this.state.screenState,
+        presentationMode: 'continuous-list',
         componentStates,
       };
       const existingPage = this.querySelector<ComponentPageElement>(
         'lumira-access-page, lumira-teacher-profile-page, lumira-student-profile-page, lumira-community-page',
       ) ?? undefined;
       const pageElement = componentingPage(screen, { data, situation, prototypeParameters }, existingPage);
+      pageElement.classList.add('lm-demo-flow');
       const statuses: DemoScreenState[] = ['ready', 'loading', 'empty', 'error', 'forbidden'];
       const labels: Record<DemoScreenState, string> = { ready: 'Pronto', loading: 'Carregando', empty: 'Vazio', error: 'Erro', forbidden: 'Restrito' };
       const pageButtons = this.state.screens.map(item => '<button type="button" data-screen-select="' + e(item.id) + '" class="' + (item.id === screen.id ? 'active' : '') + '"><span class="lm-page-icon">' + (item.id === 'community' ? '◌' : item.id === 'teacher-profile' ? '◎' : item.id === 'student-profile' ? '◇' : '↗') + '</span><span><b>' + e(item.title) + '</b><small>' + e(item.evidence === 'observed' ? 'TELA DE REFERÊNCIA' : item.evidence === 'derived' ? 'PROPOSTA DERIVADA' : 'MAPA DE NAVEGAÇÃO') + '</small></span><i>→</i></button>').join('');
-      const componentButtons = screen.regions.map((region, index) => {
-        const stateValue = this.state.componentStates[componentStateKey(screen.id, region.id)] ?? 'inherit';
-        const stateOptions = ['inherit', ...statuses].map(status => {
-          const value = status === 'inherit' ? 'inherit' : status;
-          const label = status === 'inherit' ? 'Padrão' : labels[status as DemoScreenState];
-          return '<option value="' + value + '" ' + (stateValue === value ? 'selected' : '') + '>' + e(label) + '</option>';
-        }).join('');
-        return '<div class="lm-component-row"><button type="button" data-component-select="' + e(region.id) + '" class="lm-component-select-button ' + (region.id === selectedId ? 'active' : '') + '"><span class="lm-component-index">' + String(index + 1).padStart(2, '0') + '</span><span><b>' + e(region.title) + '</b><small>' + e(region.kind.replaceAll('-', ' ')) + '</small></span><i>' + (region.evidence === 'observed' ? '●' : '○') + '</i></button><label class="lm-component-state"><span class="visually-hidden">Estado de ' + e(region.title) + '</span><select data-component-state="' + e(region.id) + '" data-screen-id="' + e(screen.id) + '" aria-label="Estado de ' + e(region.title) + '">' + stateOptions + '</select></label></div>';
+      const componentButtons = screen.regions.map((region, index) =>
+        '<button type="button" data-component-select="' + e(region.id) + '" class="lm-scrollpoint-button ' + (region.id === selectedId ? 'active' : '') + '" aria-current="' + (region.id === selectedId ? 'location' : 'false') + '">'
+        + '<span class="lm-component-index">' + String(index + 1).padStart(2, '0') + '</span><span><b>' + e(region.title) + '</b><small>' + e(region.evidence === 'observed' ? 'REFERÊNCIA' : region.evidence === 'derived' ? 'DERIVADA' : 'NAVEGAÇÃO') + '</small></span></button>',
+      ).join('');
+      const selectedState = this.state.componentStates[componentStateKey(screen.id, selectedId)] ?? 'inherit';
+      const selectedStateOptions = ['inherit', ...statuses].map(status => {
+        const value = status === 'inherit' ? 'inherit' : status;
+        const label = status === 'inherit' ? 'Herdar estado da página' : labels[status as DemoScreenState];
+        return '<option value="' + value + '" ' + (selectedState === value ? 'selected' : '') + '>' + e(label) + '</option>';
       }).join('');
       const statusControls = statuses.map(status => '<button type="button" data-state-select="' + status + '" class="' + (this.state.screenState === status ? 'active' : '') + '">' + e(labels[status]) + '</button>').join('');
       const markup = '<div class="componenting-lab-shell' + (this.state.fullView ? ' is-full-view' : '') + '">'
         + '<aside class="lm-app-rail"><header class="lm-lab-brand"><span class="lm-brand-glyph">L</span><div><b>LUMIRA</b><small>APRESENTAÇÃO INTERATIVA</small></div></header>'
         + '<div class="lm-rail-label">TELAS DE REFERÊNCIA</div><nav class="lm-page-nav">' + pageButtons + '</nav>'
+        + '<div class="lm-rail-label lm-scrollpoint-label">PONTOS DA PÁGINA</div><nav class="lm-scrollpoint-nav" aria-label="Navegação por partes da página">' + componentButtons + '</nav>'
         + '<div class="lm-rail-bottom"><span>ROTEIRO DE APRESENTAÇÃO</span><b>04 TELAS · ESTADOS INTERATIVOS</b></div></aside>'
         + '<section class="lm-preview-column"><header class="lm-preview-toolbar"><div><span class="lm-live-dot"></span><span>APRESENTAÇÃO LUMIRA</span><i>/</i><b>' + e(screen.title) + '</b></div><div class="lm-viewport-controls"><button type="button" class="lm-share-link" data-copy-demo-link><span aria-hidden="true">↗</span><span data-copy-demo-label>Compartilhar esta parte</span></button><button type="button" class="lm-full-view-toggle" data-full-view-toggle aria-pressed="' + String(this.state.fullView) + '" aria-label="' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '"><span aria-hidden="true">' + (this.state.fullView ? '⤡' : '⤢') + '</span><span>' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '</span></button></div></header>'
         + '<div class="lm-page-scroll"><div class="lm-page-caption"><div><span class="lm-eyebrow">LUMIRA · EXPERIÊNCIA DE PÁGINA</span><h1>' + e(screen.title) + '</h1>'
-        + '<div class="lm-page-responsibility"><span class="lm-eyebrow">RESPONSABILIDADE NA PLATAFORMA · ' + e(selectedRegion?.title ?? screen.title) + '</span><p>' + e(selectedResponsibility) + '</p></div>'
+        + '<div class="lm-page-responsibility"><span class="lm-eyebrow">RESPONSABILIDADE NA PLATAFORMA · ' + e(selectedRegion?.title ?? screen.title) + '</span>' + responsibilityParagraphs + '</div>'
         + '<p class="lm-page-description">' + e(screen.description) + '</p></div><span class="lm-evidence-badge ' + e(screen.evidence) + '">' + e(screen.evidence) + '</span></div>'
-        + '<div class="lm-preview-mat"><div class="lm-preview-frame ' + (screen.id === 'access' ? 'access-frame' : '') + '" data-screen-state="' + e(this.state.screenState) + '"><div class="lm-page-component-mount"></div></div></div></div>'
+        + '<div class="lm-continuous-component-list" data-screen-state="' + e(this.state.screenState) + '"><div class="lm-page-component-mount"></div></div></div>'
         + '<footer class="lm-preview-footer"><span>Dados demonstrativos · papel <b>' + e(this.state.role) + '</b></span><span>Selecione uma parte para abrir seu contexto de apresentação</span></footer></section>'
-        + '<aside class="lm-inspector"><header class="lm-inspector-heading"><div><span class="lm-eyebrow">GUIA DE APRESENTAÇÃO</span><h2>Partes desta página</h2></div><span class="lm-inspector-mark">L</span></header>'
-        + '<section class="lm-inspector-section lm-presentation-overview"><span class="lm-eyebrow">LEITURA DA PARTE</span><h3>' + e(selectedRegion?.title ?? screen.title) + '</h3>'
+        + '<aside class="lm-inspector"><header class="lm-inspector-heading"><div><span class="lm-eyebrow">CONTROLES DA DEMONSTRAÇÃO</span><h2>Estado e propriedades</h2></div><span class="lm-inspector-mark">L</span></header>'
+        + '<section class="lm-inspector-section lm-presentation-overview"><span class="lm-eyebrow">PARTE SELECIONADA</span><h3>' + e(selectedRegion?.title ?? screen.title) + '</h3>'
         + '<p>' + e(selectedRegion?.presentation ?? screen.presentation) + '</p></section>'
-        + '<section class="lm-inspector-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">PARTES DA PÁGINA</span><small>' + String(screen.regions.length).padStart(2, '0') + '</small></header><nav class="lm-component-list">' + componentButtons + '</nav></section>'
+        + '<section class="lm-inspector-section lm-controls-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">ESTADO DA PARTE</span></header>'
+        + '<label class="lm-selected-state"><span>' + e(selectedRegion?.title ?? 'Parte') + '</span><select data-component-state="' + e(selectedId) + '" data-screen-id="' + e(screen.id) + '" aria-label="Estado de ' + e(selectedRegion?.title ?? 'Parte') + '">' + selectedStateOptions + '</select></label></section>'
         + '<section class="lm-inspector-section lm-controls-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">ESTADO PADRÃO DA PÁGINA</span><label class="lm-role-picker">Papel<select data-role-select><option value="professor" ' + (this.state.role === 'professor' ? 'selected' : '') + '>Professora</option><option value="aluno" ' + (this.state.role === 'aluno' ? 'selected' : '') + '>Estudante</option><option value="visitante" ' + (this.state.role === 'visitante' ? 'selected' : '') + '>Visitante</option></select></label></header>'
-        + '<div class="lm-state-controls">' + statusControls + '</div><p class="lm-state-help">Cada parte pode sobrescrever este estado na lista.</p></section>'
+        + '<div class="lm-state-controls">' + statusControls + '</div><p class="lm-state-help">O estado da parte pode herdar este padrão ou substituí-lo.</p></section>'
         + '<section class="lm-inspector-section lm-prototype-section"><div class="lm-prototype-mount"></div></section>'
         + '<section class="lm-inspector-section lm-fixture-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">DADOS DE DEMONSTRAÇÃO</span><small>EDITÁVEIS</small></header><div class="lm-fixture-mount"></div></section>'
         + '<footer class="lm-inspector-footer">O contexto aparece antes do conteúdo da parte selecionada na prévia.</footer></aside></div>';
@@ -563,6 +602,10 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       }
       add(parts, markup.slice(cursor));
       mountParts(this, parts);
+      this.lastRenderedScreenId = screen.id;
+      const pageScroll = this.querySelector<HTMLElement>('.lm-page-scroll');
+      if (pageScroll) pageScroll.scrollTop = keepScrollPosition ? previousScrollTop : 0;
+      this.observeScrollpoints();
     }
   }
 
