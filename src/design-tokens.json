@@ -1,0 +1,49 @@
+{
+  "name": "Lumira Atlas",
+  "fonts": {
+    "ui": "Inter, Aptos, Segoe UI, sans-serif",
+    "display": "Inter, Aptos, Segoe UI, sans-serif",
+    "editorial": "Georgia, Times New Roman, serif",
+    "mono": "SFMono-Regular, Consolas, Liberation Mono, monospace"
+  },
+  "colors": {
+    "ink": "#17324f",
+    "inkStrong": "#102943",
+    "muted": "#71849a",
+    "canvas": "#f4f7fb",
+    "surface": "#ffffff",
+    "surfaceSoft": "#f8fafc",
+    "line": "#e4eaf1",
+    "brand": "#0b477d",
+    "brandStrong": "#082e5c",
+    "teal": "#21a99f",
+    "tealSoft": "#e3f6f2",
+    "sun": "#f4b64a",
+    "rose": "#df7685",
+    "violet": "#7868d7",
+    "success": "#15846f",
+    "warning": "#a66a0b",
+    "danger": "#b64040"
+  },
+  "spacing": {
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "20px",
+    "6": "24px",
+    "8": "32px",
+    "10": "40px",
+    "12": "48px"
+  },
+  "radius": {
+    "sm": "8px",
+    "md": "14px",
+    "lg": "20px",
+    "pill": "999px"
+  },
+  "shadow": {
+    "soft": "0 8px 28px rgba(19, 47, 77, .08)",
+    "lifted": "0 18px 46px rgba(19, 47, 77, .14)"
+  }
+}

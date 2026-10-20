@@ -1,0 +1,22 @@
+{
+  "profile": {
+    "cover": {
+      "path": "./profile/serra-dourada-cover.webp",
+      "source": "Generated for Lumira profile and page headers",
+      "alt": "Serra da Mantiqueira ao nascer do sol"
+    }
+  },
+  "community": {
+    "postPhoto": {
+      "path": "./community/sala-colaborativa.webp",
+      "source": "Generated for Lumira community feed cards",
+      "alt": "Professora e estudantes trabalhando juntos em uma atividade"
+    }
+  },
+  "legacy": {
+    "educationHero": {
+      "path": "./hero-professores.jpg",
+      "source": "Existing platform asset; retained for the application presentation mode"
+    }
+  }
+}

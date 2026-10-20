@@ -1,0 +1,191 @@
+export type Role = 'professor' | 'aluno' | 'admin';
+
+export interface SessionUser {
+  id: string;
+  name: string;
+  handle: string;
+  role: Role;
+  grade?: string;
+  school: string;
+}
+
+export interface Competency {
+  id: string;
+  title: string;
+  action: string;
+  object: string;
+  bncc: string[];
+  criteria: string[];
+  status: string;
+}
+
+export interface ClassRoom {
+  id: string;
+  name: string;
+  subject: string;
+  students: number;
+  teacher: string;
+  grade: number;
+}
+
+export interface ContractVersion {
+  version: number;
+  text: string;
+}
+
+export interface Contracts {
+  interpretation: ContractVersion;
+  generation: ContractVersion;
+  evaluation: ContractVersion;
+}
+
+export interface Material {
+  id: string;
+  title: string;
+  status: string;
+  subject: string;
+  skillIds: string[];
+}
+
+export interface CommunityPost {
+  id: string;
+  author: string;
+  role: string;
+  space: 'comunidade' | 'forum-docente';
+  subject: string;
+  title: string;
+  text: string;
+  likes: number;
+}
+
+export interface CommunityEvent {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  kind: string;
+  status: string;
+  leaderboard: unknown[];
+}
+
+export interface SocialProfile {
+  cover: string;
+  bio: string;
+  music: string;
+  stories: string[];
+  displayProgress: boolean;
+}
+
+export interface Preview {
+  id: string;
+  mode: string;
+  status: string;
+  contractVersion: number;
+  question: string;
+  internal: string;
+}
+
+export interface Answer {
+  text: string;
+  status: string;
+  id: string;
+}
+
+export interface AgeGradeContext {
+  age: number | null;
+  grade: number;
+  referenceAge: number | null;
+  deviationYears: number | null;
+  coefficient: number | null;
+  policyVersion: string;
+  note: string;
+}
+
+export interface SondagemPlan {
+  id: string;
+  status: 'draft';
+  grade: number;
+  ageGrade: AgeGradeContext;
+  competencies: Array<{
+    id: string;
+    title: string;
+    contexts: number;
+    evidenceCriteria: string[];
+    items: unknown[];
+    state: string;
+  }>;
+  gradeAdvance: null;
+  reviewRequired: true;
+  policyVersion: string;
+}
+
+export interface AppSnapshot {
+  user: SessionUser | null;
+  competencies: Competency[];
+  classes: ClassRoom[];
+  contracts: Contracts;
+  materials: Material[];
+  posts: CommunityPost[];
+  events: CommunityEvent[];
+  social: SocialProfile;
+  preview: Preview | null;
+  sondagem: SondagemPlan | null;
+  answer: Answer | null;
+  activityOpen: boolean;
+}
+
+export interface LoginInput {
+  role: Role;
+}
+
+export type ContractInput = Partial<Record<keyof Contracts, string>>;
+
+export interface SondagemInput {
+  grade: string | number;
+  birthDate: string;
+}
+
+export interface PostInput {
+  title: string;
+  text: string;
+  space?: 'comunidade' | 'forum-docente';
+}
+
+export interface ProfileInput {
+  bio?: string;
+  music?: string;
+  cover?: string;
+  displayProgress?: boolean;
+}
+
+export interface Gateway {
+  readonly mode: 'demo' | 'worker';
+  login(input: LoginInput): Promise<AppSnapshot>;
+  logout(): Promise<AppSnapshot>;
+  snapshot(): Promise<AppSnapshot>;
+  saveContracts(input: ContractInput): Promise<AppSnapshot>;
+  prepareSondagem(input: SondagemInput): Promise<AppSnapshot>;
+  generatePreview(): Promise<AppSnapshot>;
+  publishActivity(): Promise<AppSnapshot>;
+  submitAnswer(text: string): Promise<AppSnapshot>;
+  publishPost(input: PostInput): Promise<AppSnapshot>;
+  saveProfile(input: ProfileInput): Promise<AppSnapshot>;
+}
+
+export interface LumiraSystem {
+  navigate(route: string): void;
+  render(): void;
+  login(input: LoginInput): Promise<void>;
+  logout(): Promise<void>;
+  saveContracts(input: ContractInput): Promise<void>;
+  prepareSondagem(input: SondagemInput): Promise<void>;
+  generatePreview(): Promise<void>;
+  publishActivity(): Promise<void>;
+  submitAnswer(text: string): Promise<void>;
+  publishPost(input: PostInput): Promise<void>;
+  saveProfile(input: ProfileInput): Promise<void>;
+  saveDraft(): void;
+  snapshot(): AppSnapshot | null;
+  info(): { mode: Gateway['mode']; role: Role | null; pending: boolean };
+  destroy(): void;
+}

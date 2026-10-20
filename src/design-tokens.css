@@ -1,0 +1,41 @@
+:root {
+  --lm-font-ui: Inter, Aptos, "Segoe UI", sans-serif;
+  --lm-font-display: Inter, Aptos, "Segoe UI", sans-serif;
+  --lm-font-editorial: Georgia, "Times New Roman", serif;
+  --lm-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --lm-ink: #17324f;
+  --lm-ink-strong: #102943;
+  --lm-muted: #71849a;
+  --lm-canvas: #f4f7fb;
+  --lm-surface: #ffffff;
+  --lm-surface-soft: #f8fafc;
+  --lm-line: #e4eaf1;
+  --lm-brand: #0b477d;
+  --lm-brand-strong: #082e5c;
+  --lm-teal: #21a99f;
+  --lm-teal-soft: #e3f6f2;
+  --lm-sun: #f4b64a;
+  --lm-rose: #df7685;
+  --lm-violet: #7868d7;
+  --lm-success: #15846f;
+  --lm-warning: #a66a0b;
+  --lm-danger: #b64040;
+
+  --lm-space-1: 4px;
+  --lm-space-2: 8px;
+  --lm-space-3: 12px;
+  --lm-space-4: 16px;
+  --lm-space-5: 20px;
+  --lm-space-6: 24px;
+  --lm-space-8: 32px;
+  --lm-space-10: 40px;
+  --lm-space-12: 48px;
+
+  --lm-radius-sm: 8px;
+  --lm-radius-md: 14px;
+  --lm-radius-lg: 20px;
+  --lm-radius-pill: 999px;
+  --lm-shadow-soft: 0 8px 28px rgba(19, 47, 77, .08);
+  --lm-shadow-lifted: 0 18px 46px rgba(19, 47, 77, .14);
+}
