@@ -3567,6 +3567,80 @@ lumira-page-part {
 }
 
 /* A criação de story fica dentro do fluxo da publicação, sem cobrir a página. */
+.lm-story-quick-composer {
+  display: grid;
+  width: min(100%, 720px);
+  gap: 11px;
+  margin: 12px auto 2px;
+  padding: 13px 15px;
+  border: 1px solid #deded9;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 5px 18px #1415120c;
+}
+.lm-story-quick-composer>header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.lm-story-quick-avatar {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #183f70;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+.lm-story-quick-composer>header>div { display: grid; gap: 3px; }
+.lm-story-quick-composer>header strong { color: #171817; font-size: 12px; }
+.lm-story-quick-composer>header small { color: #858780; font-size: 9px; }
+.lm-story-quick-composer>header button {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  margin-left: auto;
+  place-items: center;
+  border: 1px solid #deded9;
+  border-radius: 50%;
+  background: white;
+  color: #52534f;
+  font-size: 16px;
+  cursor: pointer;
+}
+.lm-story-quick-composer>textarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 11px;
+  border: 1px solid #e4e4df;
+  border-radius: 6px;
+  background: #fbfbf9;
+  color: #242521;
+  font: 12px/1.5 var(--lm-font-body);
+  resize: vertical;
+}
+.lm-story-quick-composer>footer { display: flex; justify-content: space-between; gap: 8px; }
+.lm-story-quick-composer>footer button {
+  min-height: 34px;
+  padding: 7px 11px;
+  border: 0;
+  border-radius: 4px;
+  background: #141512;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.lm-story-quick-composer>footer button span { margin-left: 5px; }
+.lm-story-quick-composer>footer .lm-story-expand-option {
+  border: 1px solid #deded9;
+  background: white;
+  color: #363732;
+  font-weight: 600;
+}
 .lm-story-editor {
   position: static;
   z-index: auto;
@@ -3586,7 +3660,7 @@ lumira-page-part {
 }
 .lm-story-editor-header {
   min-height: 52px;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
+  grid-template-columns: 34px minmax(0, 1fr) auto auto;
   gap: 10px;
   padding: 8px 12px;
 }
@@ -3689,7 +3763,11 @@ lumira-page-part {
 .lm-story-editor-footer button { min-height: 35px; font-size: 9px; }
 @media (max-width: 680px) {
   .lm-story-editor { width: 100%; margin-top: 10px; }
-  .lm-story-editor-header { grid-template-columns: 31px minmax(0, 1fr) auto; gap: 7px; padding: 7px 9px; }
+  .lm-story-quick-composer { gap: 9px; margin-top: 10px; padding: 11px; }
+  .lm-story-quick-composer>header small { font-size: 8px; }
+  .lm-story-quick-composer>textarea { min-height: 65px; font-size: 11px; }
+  .lm-story-quick-composer>footer button { min-height: 32px; padding: 6px 8px; font-size: 9px; }
+  .lm-story-editor-header { grid-template-columns: 31px minmax(0, 1fr) auto auto; gap: 6px; padding: 7px 9px; }
   .lm-story-editor-header strong { font-size: 13px; }
   .lm-story-editor-header>div>span { font-size: 7px; }
   .lm-story-editor-draft { height: 29px; padding: 0 6px; font-size: 8px; }

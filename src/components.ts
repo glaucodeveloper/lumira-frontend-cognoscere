@@ -595,6 +595,7 @@ type DemoPagePartInteraction = {
   }>;
   selectedStory: number | null;
   storyComposerOpen: boolean;
+  storyComposerExpanded: boolean;
   storyComposerTool: string;
   storyOrientation: 'portrait' | 'landscape';
   storyFilter: string;
@@ -1007,7 +1008,7 @@ export function registerComponentElements(): void {
           prototypeParameters: {},
           interaction: {
             groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, localStories: [],
-            selectedStory: null, storyComposerOpen: false, storyComposerTool: 'text', storyOrientation: 'portrait',
+            selectedStory: null, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, feedback: '',
           },
         });
@@ -1263,6 +1264,12 @@ export function registerComponentElements(): void {
         const tool = interaction.storyComposerTool;
         const creatorName = this.state.id === 'student-stories' ? 'Caio Almeida' : 'Ana Beatriz Silva';
         const creatorInitial = creatorName.slice(0, 1).toLocaleUpperCase();
+        if (!interaction.storyComposerExpanded) {
+          return '<form class="lm-story-quick-composer" data-story-composer aria-label="Criar novo story">'
+            + '<header><span class="lm-story-quick-avatar" aria-hidden="true">' + e(creatorInitial) + '</span><div><strong>Criar story</strong><small>Compartilhe um momento com a comunidade</small></div><button type="button" data-story-action="cancel" aria-label="Fechar criação de story">×</button></header>'
+            + '<textarea name="body" data-story-field="body" rows="3" maxlength="360" aria-label="Texto do story" placeholder="O que você quer compartilhar?"></textarea>'
+            + '<footer><button type="button" class="lm-story-expand-option" data-story-action="expand">＋ Abrir editor expandido</button><button type="submit">Compartilhar story <span>↗</span></button></footer></form>';
+        }
         const field = (name: string, label: string, placeholder: string, type = 'text', maxlength = 120): string =>
           '<label>' + e(label) + '<input type="' + e(type) + '" name="' + e(name) + '" data-story-field="' + e(name) + '" maxlength="' + maxlength + '" placeholder="' + e(placeholder) + '"></label>';
         const area = (name: string, label: string, placeholder: string, rows = 3, maxlength = 240): string =>
@@ -1290,7 +1297,7 @@ export function registerComponentElements(): void {
         const filterOptions: Array<[string, string]> = [['original', 'Original'], ['warm', 'Quente'], ['cool', 'Frio'], ['mono', 'P&B'], ['soft', 'Suave']];
         const filterButtons = filterOptions.map(([key, label]) => '<button type="button" class="lm-story-filter-option' + (interaction.storyFilter === key ? ' active' : '') + '" data-story-filter="' + e(key) + '" aria-pressed="' + String(interaction.storyFilter === key) + '"><span class="lm-story-filter-swatch ' + e(key) + '"></span>' + e(label) + '</button>').join('');
         return '<form class="lm-story-editor" data-story-composer aria-label="Criar novo story">'
-          + '<header class="lm-story-editor-header"><button type="button" class="lm-story-editor-close" data-story-action="cancel" aria-label="Fechar editor">×</button><div><span>NOVA PUBLICAÇÃO</span><strong>Criar story</strong></div><button type="button" class="lm-story-editor-draft" data-story-action="draft">Salvar rascunho</button></header>'
+          + '<header class="lm-story-editor-header"><button type="button" class="lm-story-editor-close" data-story-action="cancel" aria-label="Fechar editor">×</button><div><span>NOVA PUBLICAÇÃO</span><strong>Criar story</strong></div><button type="button" class="lm-story-editor-draft" data-story-action="compact">← Versão simples</button><button type="button" class="lm-story-editor-draft" data-story-action="draft">Salvar rascunho</button></header>'
           + '<div class="lm-story-editor-layout"><aside class="lm-story-tools" aria-label="Adicionais do story"><span class="lm-story-editor-label">ADICIONAIS</span>' + toolButtons + '</aside>'
           + '<section class="lm-story-editor-stage"><div class="lm-story-preview-toolbar"><div><span class="lm-story-editor-label">FORMATO</span><button type="button" class="' + (interaction.storyOrientation === 'portrait' ? 'active' : '') + '" data-story-orientation="portrait" aria-pressed="' + String(interaction.storyOrientation === 'portrait') + '">Vertical · 9:16</button><button type="button" class="' + (interaction.storyOrientation === 'landscape' ? 'active' : '') + '" data-story-orientation="landscape" aria-pressed="' + String(interaction.storyOrientation === 'landscape') + '">Horizontal · 16:9</button></div></div>'
           + '<div class="lm-story-preview lm-story-preview--' + e(interaction.storyOrientation) + '"><img data-story-preview-image class="lm-story-filter-' + e(interaction.storyFilter) + '" src="' + e(interaction.storyImage || profileCoverAsset) + '" alt="Prévia da foto do story"><div class="lm-story-preview-shade"></div><div class="lm-story-preview-content">'
@@ -1373,9 +1380,9 @@ export function registerComponentElements(): void {
           return;
         }
         if (button.hasAttribute('data-story-create')) {
-          this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: true, feedback: '' }));
+          this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: true, storyComposerExpanded: false, feedback: '' }));
           this.render();
-          this.querySelector<HTMLButtonElement>('[data-story-composer] [data-story-action="cancel"]')?.focus();
+          this.querySelector<HTMLTextAreaElement>('[data-story-composer] [data-story-field="body"]')?.focus();
           return;
         }
         const storyAction = button.dataset.storyAction;
@@ -1395,10 +1402,20 @@ export function registerComponentElements(): void {
                 feedback: storyAction === 'like' ? (active ? 'Curtida registrada neste story.' : 'Curtida removida deste story.') : (active ? 'Story salvo nesta demonstração.' : 'Story removido dos salvos.'),
               };
             });
+          } else if (storyAction === 'expand') {
+            this.transitionInteraction(interaction => ({ ...interaction, storyComposerExpanded: true, feedback: '' }));
+            this.render();
+            this.querySelector<HTMLButtonElement>('[data-story-composer] [data-story-action="compact"]')?.focus();
+            return;
+          } else if (storyAction === 'compact') {
+            this.transitionInteraction(interaction => ({ ...interaction, storyComposerExpanded: false, feedback: '' }));
+            this.render();
+            this.querySelector<HTMLButtonElement>('[data-story-composer] [data-story-action="expand"]')?.focus();
+            return;
           } else if (storyAction === 'cancel') {
-            this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: false, feedback: 'Editor fechado; rascunho mantido nesta demonstração.' }));
+            this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: false, storyComposerExpanded: false, feedback: 'Editor fechado; rascunho mantido nesta demonstração.' }));
           } else if (storyAction === 'draft') {
-            this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: false, feedback: 'Rascunho salvo nesta demonstração local.' }));
+            this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: false, storyComposerExpanded: false, feedback: 'Rascunho salvo nesta demonstração local.' }));
           } else if (storyAction === 'clear-photo') {
             this.transitionInteraction(interaction => ({ ...interaction, storyImage: '', feedback: 'Foto removida; a imagem de demonstração voltou.' }));
           }
@@ -1513,9 +1530,9 @@ export function registerComponentElements(): void {
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
         if (form?.matches('[data-story-composer]')) {
           const readField = (name: string): string => form.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-story-field="' + name + '"]')?.value.trim() ?? '';
-          const title = readField('title') || 'Novo story';
-          const caption = readField('caption') || 'Novo momento';
           const body = readField('body') || readField('overlayText') || readField('pollQuestion') || 'Story visual compartilhado com a comunidade.';
+          const caption = readField('caption') || body.slice(0, 96) || 'Novo momento';
+          const title = readField('title') || caption.slice(0, 48) || 'Novo story';
           const visibility = readField('visibility') || 'Público';
           const music = readField('music');
           const activity = readField('activity');
@@ -1537,6 +1554,7 @@ export function registerComponentElements(): void {
             }],
             selectedStory: baseCount + interaction.localStories.length,
             storyComposerOpen: false,
+            storyComposerExpanded: false,
             storyImage: '', storyOrientation: 'portrait', storyFilter: 'original', storyComposerTool: 'text',
             fields: Object.fromEntries(Object.entries(interaction.fields).filter(([key]) => !key.startsWith(fieldPrefix))),
             feedback: 'Story publicado e aberto nesta demonstração local.',
