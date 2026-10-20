@@ -3216,6 +3216,7 @@ lumira-page-part {
 .lm-story-preview-top>b { margin-left: auto; font-size: 15px; }
 .lm-story-preview-avatar { display: grid; width: 27px; height: 27px; place-items: center; border: 1px solid white; border-radius: 50%; background: #123d40; font-family: var(--lm-font-display); }
 .lm-story-preview-stickers { display: grid; justify-items: center; gap: 7px; max-height: 72%; overflow: hidden; }
+.lm-story-preview-stickers [hidden] { display: none !important; }
 .lm-story-preview-overlay-text { max-width: 93%; padding: 8px 12px; border-radius: 4px; background: #111a; color: white; font-family: var(--lm-font-display); font-size: clamp(17px, 2.4vw, 25px); font-weight: 700; line-height: 1.18; text-align: center; overflow-wrap: anywhere; text-shadow: 0 1px 4px #0008; }
 .lm-story-preview-text--highlight { background: #fff; color: #171817; text-shadow: none; }
 .lm-story-preview-text--outline { background: #1115; -webkit-text-stroke: .5px white; text-shadow: 0 2px 0 #111, 1px 0 0 #111, -1px 0 0 #111; }
