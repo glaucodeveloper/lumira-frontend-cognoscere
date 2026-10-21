@@ -3,6 +3,9 @@
 import type { AppSnapshot, CommunityEvent, SessionUser } from './types';
 import profileCoverAsset from './assets/profile/serra-dourada-cover.webp';
 import communityPostAsset from './assets/community/sala-colaborativa.webp';
+import studentRampStoryAsset from './assets/stories/student-ramp-experiment.webp';
+import studentReadingStoryAsset from './assets/stories/student-reading-evidence.webp';
+import studentWaterStoryAsset from './assets/stories/student-water-project.webp';
 
 // Primitivas HTML tipadas
 
@@ -583,16 +586,19 @@ export const initialComponentData: Record<string, unknown> = {
       {
         category: 'Experimento', caption: 'O que muda quando alteramos uma variável?',
         body: 'No experimento da rampa, mantive o carrinho e a distância iguais e mudei a inclinação. Comparei as tentativas para perceber como a velocidade se relaciona com a altura.',
+        image: studentRampStoryAsset, imageAlt: 'Mãos ajustam uma rampa de madeira para testar o movimento de um carrinho, com régua e caderno sobre a mesa.',
         publishedAt: 'Hoje, 10:24', likes: 5, replies: ['Boa comparação entre as tentativas!'],
       },
       {
         category: 'Leitura', caption: 'Uma pista importante estava no segundo parágrafo.',
         body: 'Li o texto procurando evidências para a hipótese inicial. A ideia mudou quando relacionei a descrição do ambiente com a decisão da personagem.',
+        image: studentReadingStoryAsset, imageAlt: 'Estudante acompanha um parágrafo de um livro aberto e registra observações em um caderno.',
         publishedAt: 'Ontem, 16:40', likes: 3, replies: [],
       },
       {
         category: 'Projeto', caption: 'Clube de ciências: pergunta da semana.',
         body: 'Nosso grupo está investigando como reduzir o desperdício de água na escola. Primeiro vamos observar os usos; depois, comparar propostas com os mesmos critérios.',
+        image: studentWaterStoryAsset, imageAlt: 'Estudantes medem a água usada na horta escolar com um recipiente graduado.',
         publishedAt: 'Há 3 dias', likes: 8, replies: ['Vamos registrar os horários também?'],
       },
     ],
@@ -998,7 +1004,12 @@ function renderStories(id: string, data: ComponentFixture, selectedId: string): 
     const likes = typeof detail.likes === 'number' ? detail.likes : 0;
     const replies = Array.isArray(detail.replies) ? detail.replies.map(String) : [];
     const storyVisibility = typeof detail.visibility === 'string' ? detail.visibility : 'Público';
-    return '<button type="button" class="lm-story-card" data-story-index="' + index + '" data-story-title="' + e(title) + '" data-story-caption="' + e(caption) + '" data-story-body="' + e(body) + '" data-story-category="' + e(category) + '" data-story-time="' + e(publishedAt) + '" data-story-visibility="' + e(storyVisibility) + '" data-story-likes="' + likes + '" data-story-replies="' + e(JSON.stringify(replies)) + '"><span class="lm-story-ring tone-' + (index % 5) + '">' + LabAvatar(title, ['teal', 'blue', 'violet', 'rose', 'sun'][index % 5], 'story-avatar') + '</span><b>' + e(title) + '</b><small>' + e(publishedAt) + '</small></button>';
+    const image = typeof detail.image === 'string' ? detail.image : '';
+    const imageAlt = typeof detail.imageAlt === 'string' ? detail.imageAlt : 'Imagem do story ' + title;
+    const thumbnail = image
+      ? '<img class="lm-story-thumb" src="' + e(image) + '" alt="">'
+      : LabAvatar(title, ['teal', 'blue', 'violet', 'rose', 'sun'][index % 5], 'story-avatar');
+    return '<button type="button" class="lm-story-card" data-story-index="' + index + '" data-story-title="' + e(title) + '" data-story-caption="' + e(caption) + '" data-story-body="' + e(body) + '" data-story-category="' + e(category) + '" data-story-time="' + e(publishedAt) + '" data-story-visibility="' + e(storyVisibility) + '" data-story-likes="' + likes + '" data-story-image="' + e(image) + '" data-story-image-alt="' + e(imageAlt) + '" data-story-replies="' + e(JSON.stringify(replies)) + '"><span class="lm-story-ring tone-' + (index % 5) + '">' + thumbnail + '</span><b>' + e(title) + '</b><small>' + e(publishedAt) + '</small></button>';
   }).join('');
   const createCard = allowCreate
     ? '<button type="button" class="lm-story-card lm-new-story" data-story-create><span class="lm-new-story-icon">＋</span><b>Novo story</b><small>Compartilhar</small></button>'
@@ -1587,8 +1598,10 @@ export function registerComponentElements(): void {
           card.dataset.storyTime = 'Agora';
           card.dataset.storyVisibility = story.visibility;
           card.dataset.storyLikes = String(story.likes);
+          card.dataset.storyImage = story.image;
+          card.dataset.storyImageAlt = 'Imagem do story ' + story.title;
           card.dataset.storyReplies = '[]';
-          card.innerHTML = '<span class="lm-story-ring tone-' + (storyIndex % 5) + '">' + LabAvatar(story.title, ['teal', 'blue', 'violet', 'rose', 'sun'][storyIndex % 5], 'story-avatar') + '</span><b>' + e(story.title) + '</b><small>Agora</small>';
+          card.innerHTML = '<span class="lm-story-ring tone-' + (storyIndex % 5) + '">' + (story.image ? '<img class="lm-story-thumb" src="' + e(story.image) + '" alt="">' : LabAvatar(story.title, ['teal', 'blue', 'violet', 'rose', 'sun'][storyIndex % 5], 'story-avatar')) + '</span><b>' + e(story.title) + '</b><small>Agora</small>';
           return card;
         });
         const nextButton = track.querySelector('.lm-story-next');
@@ -1615,6 +1628,8 @@ export function registerComponentElements(): void {
           const body = card.dataset.storyBody ?? '';
           const category = card.dataset.storyCategory ?? 'Momento';
           const publishedAt = card.dataset.storyTime ?? 'Agora';
+          const storyImage = card.dataset.storyImage ?? '';
+          const storyImageAlt = card.dataset.storyImageAlt ?? 'Imagem do story ' + storyTitle;
           const baseLikes = Number(card.dataset.storyLikes ?? 0);
           const replyKey = String(selectedStory);
           let initialReplies: string[] = [];
@@ -1652,12 +1667,14 @@ export function registerComponentElements(): void {
           const publishedArtwork = localStory ? '<div class="lm-story-published-art lm-story-published-art--' + e(localStory.orientation) + '">'
             + '<img class="lm-story-filter-' + e(localStory.filter) + '" src="' + e(localStory.image || profileCoverAsset) + '" alt="Imagem publicada em ' + e(storyTitle) + '">'
             + '<div class="lm-story-art-content">' + (localStory.overlayText ? '<div class="lm-story-art-text lm-story-art-text--' + e(localStory.textStyle) + '">' + e(localStory.overlayText) + '</div>' : '') + storyStickers
-            + '<div class="lm-story-art-caption"><strong>' + e(localStory.title) + '</strong><span>' + e(localStory.caption) + '</span></div></div></div>' : '';
+            + '<div class="lm-story-art-caption"><strong>' + e(localStory.title) + '</strong><span>' + e(localStory.caption) + '</span></div></div></div>' : storyImage
+              ? '<figure class="lm-story-published-art lm-story-published-art--portrait lm-story-published-art--fixture"><img src="' + e(storyImage) + '" alt="' + e(storyImageAlt) + '"><div class="lm-story-art-content"><div class="lm-story-art-caption"><strong>' + e(category) + '</strong><span>' + e(caption) + '</span></div></div></figure>'
+              : '';
           stage.innerHTML = '<article class="lm-story-viewer" aria-label="Story ' + e(storyTitle) + '">'
             + '<header class="lm-story-viewer-header"><div><span class="lm-story-category">' + e(category) + '</span><b>' + e(storyTitle) + '</b><small>' + e(publishedAt) + ' · ' + e(visibility) + '</small></div>'
             + '<div class="lm-story-viewer-nav"><button type="button" data-story-action="previous" aria-label="Story anterior" ' + (selectedStory === 0 ? 'disabled' : '') + '>‹</button><span>' + (selectedStory + 1) + ' / ' + stories.length + '</span><button type="button" data-story-action="next" aria-label="Próximo story" ' + (selectedStory >= stories.length - 1 ? 'disabled' : '') + '>›</button></div></header>'
             + '<div class="lm-story-progress" aria-hidden="true"><i style="width:' + Math.round(((selectedStory + 1) / stories.length) * 100) + '%"></i></div>'
-            + publishedArtwork + '<h3>' + e(caption) + '</h3><p class="lm-story-body">' + e(body) + '</p>'
+            + publishedArtwork + (storyImage && !localStory ? '<p class="lm-story-body">' + e(body) + '</p>' : '<h3>' + e(caption) + '</h3><p class="lm-story-body">' + e(body) + '</p>')
             + '<footer class="lm-story-actions"><button type="button" data-story-action="like" aria-pressed="' + String(liked) + '">' + (liked ? '♥ Curtido' : '♡ Curtir') + ' · ' + (baseLikes + (liked ? 1 : 0)) + '</button><button type="button" data-story-action="save" aria-pressed="' + String(saved) + '">' + (saved ? '✓ Salvo' : '＋ Salvar') + '</button><span>Visibilidade: ' + e(visibility) + '</span></footer>'
             + replyItems + replyForm + '</article>';
         }

@@ -13,6 +13,23 @@
       "alt": "Professora e estudantes trabalhando juntos em uma atividade"
     }
   },
+  "studentStories": {
+    "rampExperiment": {
+      "path": "./stories/student-ramp-experiment.webp",
+      "source": "Generated with ImageGen for the student story demonstration",
+      "alt": "Mãos ajustam uma rampa de madeira para testar o movimento de um carrinho, com régua e caderno sobre a mesa"
+    },
+    "readingEvidence": {
+      "path": "./stories/student-reading-evidence.webp",
+      "source": "Generated with ImageGen for the student story demonstration",
+      "alt": "Estudante acompanha um parágrafo de um livro aberto e registra observações em um caderno"
+    },
+    "waterProject": {
+      "path": "./stories/student-water-project.webp",
+      "source": "Generated with ImageGen for the student story demonstration",
+      "alt": "Estudantes medem a água usada na horta escolar com um recipiente graduado"
+    }
+  },
   "legacy": {
     "educationHero": {
       "path": "./hero-professores.jpg",
