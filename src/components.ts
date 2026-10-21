@@ -879,18 +879,37 @@ function labPart(id: string, content: string, selectedId: string, className = ''
   const part = activePageComposition.existing.get(id) ?? document.createElement('lumira-page-part') as DemoPagePartElement;
   const situation = activePageComposition.situation;
   const region = referenceScreenSpecs.find(screen => screen.id === situation.screenId)?.regions.find(item => item.id === id);
+  const title = region?.title ?? id.replaceAll('-', ' ');
+  const presentation = region?.presentation ?? '';
+  const evidence = region?.evidence ?? 'derived';
   part.configure({
     id,
-    title: region?.title ?? id.replaceAll('-', ' '),
+    title,
     content,
-    presentation: region?.presentation ?? '',
-    evidence: region?.evidence ?? 'derived',
+    presentation,
+    evidence,
     selectedId,
     className,
     situation: { ...situation, status: situation.componentStates?.[id] ?? situation.status },
     prototypeParameters: activePageComposition.prototypeParameters[id] ?? {},
   });
   const slot = activePageComposition.parts.push(part) - 1;
+  if (situation.presentationMode === 'continuous-list') {
+    const evidenceLabels: Record<ReferenceEvidence, string> = {
+      observed: 'Referência observada',
+      derived: 'Composição derivada',
+      'navigation-only': 'Mapa de navegação',
+    };
+    const screenSpec = referenceScreenSpecs.find(screen => screen.id === situation.screenId);
+    const partIndex = screenSpec?.regions.findIndex(item => item.id === id) ?? -1;
+    const contextHeading = '<header class="lm-flow-element-heading"><span class="lm-component-index">'
+      + String(partIndex + 1).padStart(2, '0') + '</span><h2>' + e(title)
+      + '</h2><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>';
+    const contextText = presentation ? '<p class="lm-part-responsibility">' + e(presentation) + '</p>' : '';
+    return '<section class="lm-part-session" id="lab-point-' + e(id) + '" data-scrollpoint="' + e(id)
+      + '" aria-label="' + e(title) + '"><div class="lm-part-context">'
+      + contextHeading + contextText + '</div><span data-demo-part-slot="' + slot + '"></span></section>';
+  }
   return '<span data-demo-part-slot="' + slot + '"></span>';
 }
 
@@ -2638,7 +2657,7 @@ export function registerComponentElements(): void {
         this.render();
       }
       private render(): void {
-        const { id, title, content, presentation, evidence, selectedId, className, situation, prototypeParameters } = this.state;
+        const { id, title, content, selectedId, className, situation, prototypeParameters } = this.state;
         this.className = 'lm-page-part ' + e(className) + (id === selectedId ? ' is-selected' : '');
         this.dataset.componentId = id;
         this.setAttribute('aria-label', title);
@@ -2651,32 +2670,12 @@ export function registerComponentElements(): void {
         this.dataset.prototypeVisible = String(prototypeParameters.visible !== false);
         this.dataset.prototypeDensity = typeof prototypeParameters.density === 'string' ? prototypeParameters.density : 'regular';
         this.dataset.prototypeAccent = typeof prototypeParameters.accent === 'string' ? prototypeParameters.accent : 'teal';
-        const evidenceLabels: Record<ReferenceEvidence, string> = {
-          observed: 'Referência observada',
-          derived: 'Composição derivada',
-          'navigation-only': 'Mapa de navegação',
-        };
-        const screenSpec = referenceScreenSpecs.find(screen => screen.id === situation.screenId);
-        const partIndex = screenSpec?.regions.findIndex(region => region.id === id) ?? -1;
-        const flowHeading = situation.presentationMode === 'continuous-list'
-          ? '<header class="lm-flow-element-heading"><span class="lm-component-index">' + String(partIndex + 1).padStart(2, '0')
-            + '</span><h2>' + e(title) + '</h2><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>'
-          : '';
-        if (situation.presentationMode === 'continuous-list') {
-          this.id = 'lab-point-' + id;
-          this.dataset.scrollpoint = id;
-        } else {
-          this.removeAttribute('id');
-          delete this.dataset.scrollpoint;
-        }
-        const presentationBlock = situation.presentationMode === 'continuous-list' && presentation
-          ? '<aside class="lm-part-presentation"><header><span class="lm-eyebrow">CONTEXTO DA PARTE</span><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>'
-            + '<h3>' + e(title) + '</h3><p>' + e(presentation) + '</p></aside>'
-          : '';
+        this.removeAttribute('id');
+        delete this.dataset.scrollpoint;
         const visibleContent = prototypeParameters.visible === false
           ? '<div class="lm-prototype-hidden" role="status"><strong>Componente oculto</strong><span>Ative “Exibir componente” nos parâmetros para mostrar a peça.</span></div>'
           : content;
-        this.innerHTML = flowHeading + presentationBlock + visibleContent + componentStateLayer(situation.status);
+        this.innerHTML = visibleContent + componentStateLayer(situation.status);
         this.prepareControls();
         this.restoreInteraction();
       }

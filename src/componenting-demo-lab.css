@@ -862,9 +862,6 @@ lumira-page-part {
 .lm-page-part[data-prototype-accent="blue"] { --lm-prototype-accent: #3477bb; }
 .lm-page-part[data-prototype-accent="violet"] { --lm-prototype-accent: #7959b7; }
 .lm-page-part[data-prototype-accent="rose"] { --lm-prototype-accent: #ca6482; }
-.lm-page-part .lm-part-presentation {
-  border-left-color: var(--lm-prototype-accent);
-}
 .lm-page-part .lm-primary-button,
 .lm-page-part .lm-small-primary,
 .lm-page-part .lm-calendar-new {
@@ -922,47 +919,19 @@ lumira-page-part {
   font-size: 9px;
   line-height: 1.45;
 }
-.lm-part-presentation {
-  position: relative;
-  z-index: 9;
-  display: grid;
-  gap: 7px;
-  margin: 12px 14px 16px;
-  padding: 12px 14px;
-  border: 1px solid #d8e4ef;
-  border-left: 3px solid var(--lm-brand);
-  border-radius: 7px;
-  background: #f8fbfe;
-  color: var(--lm-ink);
+.lm-part-session {
+  min-width: 0;
 }
-.lm-part-presentation>header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+.lm-part-context {
+  padding: 16px 14px 0;
 }
-.lm-part-presentation .lm-eyebrow {
-  color: var(--lm-muted);
-  font-size: 8px;
-  letter-spacing: .12em;
-}
-.lm-part-presentation .lm-evidence-badge {
-  padding: 4px 6px;
-  font-size: 7px;
-}
-.lm-part-presentation>h3 {
+.lm-part-responsibility {
   margin: 0;
-  color: var(--lm-ink-strong);
-  font-family: var(--lm-font-display);
-  font-size: 14px;
-  font-weight: 650;
-  letter-spacing: -.02em;
-}
-.lm-part-presentation>p {
-  margin: 0;
-  color: #586879;
+  padding: 0 33px 12px;
+  color: #58616a;
   font-size: 10px;
-  line-height: 1.55;
+  line-height: 1.65;
+  white-space: pre-line;
 }
 .lm-page-part.is-selected::after {
   position: absolute;
@@ -4105,6 +4074,14 @@ lumira-page-part {
   background: #fff;
   scroll-margin-block: 16px;
 }
+.lm-demo-flow .lm-part-context {
+  padding: 17px 14px 0;
+}
+.lm-demo-flow .lm-part-responsibility {
+  padding: 0 47px 12px;
+  font-size: 11px;
+  line-height: 1.65;
+}
 .lm-demo-flow lumira-page-part.is-selected {
   background: #fbfefe;
 }
@@ -4222,10 +4199,6 @@ lumira-page-part {
   z-index: auto;
   width: auto;
 }
-.lm-demo-flow .lm-part-presentation {
-  margin: 0 0 12px;
-}
-
 @media (max-width: 1120px) {
   .componenting-lab-shell {
     grid-template-columns: 190px minmax(0, 1fr) 292px;
