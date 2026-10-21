@@ -188,6 +188,9 @@ const presentationNotes: Record<string, string> = {
   'competency-question-response': 'A página percorre cinco contextos para a mesma competência, preserva o rascunho por questão e registra cada envio separadamente. A leitura demonstrativa não pontua nem define domínio.',
   'student-hero': 'Apresente a identidade pública do estudante com o mesmo vocabulário visual do perfil docente, adaptado a um papel discente.',
   'student-stories': 'Mostre projetos e momentos que o estudante escolhe compartilhar. A proposta preserva a natureza social dos stories sem expor registros escolares.',
+  'student-skills': 'Apresente temas e competências que o estudante escolheu explorar, sem transformar interesse em nota ou avaliação pública.',
+  'student-activity': 'Destaque uma experiência ou publicação escolhida pelo estudante para compartilhar com a comunidade.',
+  'student-projects': 'Reúna projetos e conquistas que o estudante autorizou para apresentação pública.',
   'student-tabs': 'As abas separam apresentação pública, percurso autorizado e publicações para que cada área mantenha seu contexto.',
   'student-progress': 'Demonstre apenas indicadores explicitamente liberados para o perfil. O estado vazio ou restrito ajuda a discutir consentimento e privacidade.',
   'student-achievements': 'Apresente conquistas como itens públicos escolhidos pelo estudante. A demonstração não inclui notas, respostas ou pareceres pedagógicos.',
@@ -232,6 +235,9 @@ const platformResponsibilities: Record<string, string> = {
   'competency-question-response': 'O estudante percorre cinco perguntas contextualizadas, uma por vez, e mantém um rascunho próprio em cada item. O envio guarda a resposta e apresenta uma reflexão estática de demonstração, claramente separada de uma análise real do modelo.\n\nA síntese mostra quais itens foram respondidos e encaminha o conjunto para revisão. Ela não calcula nota, não declara domínio e não muda automaticamente o próximo conteúdo.',
   'student-hero': 'O perfil apresenta a pessoa estudante, suas produções e aspectos de seu percurso que podem ser compartilhados. Ele permite reconhecer autoria e participação sem converter a identidade pública em prontuário de aprendizagem.\n\nRespostas da sondagem, hipóteses, dificuldades observadas e interpretações da IA pertencem ao acompanhamento reservado e não devem aparecer no perfil por padrão. A pessoa pode mostrar o que escolheu produzir enquanto o trabalho pedagógico conserva seu contexto e suas permissões.',
   'student-stories': 'Os stories abrem espaço para o estudante compartilhar trabalhos, descobertas e produções que escolheu divulgar. Uma representação, explicação ou projeto pode convidar outras pessoas a conhecer o raciocínio que ela expressa.\n\nEssa participação não publica automaticamente respostas de sondagem ou dificuldades individuais. Assim, a comunidade circula conhecimento e o acompanhamento formativo mantém privadas as devolutivas dirigidas a quem aprende e a quem orienta.',
+  'student-skills': 'Esta parte reúne temas e competências que o estudante escolheu explorar. A escolha orienta descobertas, projetos e conversas com a comunidade, mas não afirma domínio nem funciona como resultado de avaliação.\n\nA compreensão continua sendo acompanhada no espaço pedagógico por evidências contextualizadas e devolutivas reservadas. O perfil torna visíveis interesses autorizados sem expor respostas, hipóteses ou pareceres individuais.',
+  'student-activity': 'Experiências compartilhadas mostram o que o estudante decidiu apresentar à comunidade: uma investigação, uma leitura, uma produção ou uma pergunta que convide outras pessoas a pensar.\n\nA publicação conserva autoria e contexto. Respostas de sondagem e interpretações pedagógicas ficam no ambiente reservado; compartilhar uma experiência não transfere para o perfil o histórico individual de aprendizagem.',
+  'student-projects': 'Projetos e conquistas dão visibilidade a produções, colaboração e participação autorizadas pelo estudante. Cada item informa o que foi feito e em qual contexto, sem representar um nível curricular.\n\nUma medalha ou resultado pertence às regras do evento; evidências de competência dependem de atividades contextualizadas e revisão pedagógica. O perfil reúne experiências escolhidas, não um prontuário de avaliação.',
   'student-tabs': 'As abas distinguem a apresentação pública, as áreas do percurso de aprendizagem e as produções que o estudante compartilha. Essa organização ajuda a entender para que serve cada informação e quem pode acessá-la.\n\nTambém evita confundir uma atividade social com a sondagem usada para compreender hipóteses e competências. O histórico reservado de respostas e devolutivas conserva seu propósito formativo e não se mistura com o perfil público.',
   'student-progress': 'Esta parte comunica aspectos autorizados do percurso e trata cada indicador como uma pista, não como uma conclusão automática de domínio. O Capítulo 01 propõe observar a compreensão em contextos variados, considerar idade e série e distinguir as evidências que cada resposta realmente apresenta.\n\nUma questão isolada pode revelar uma hipótese ou dificuldade específica, mas não determina sozinha o nível de uma competência. O resumo precisa ser compreensível para o estudante e coerente com a leitura pedagógica que o acompanha.',
   'student-achievements': 'As conquistas destacam participações, produções e marcos que o estudante escolheu apresentar. Elas podem reconhecer esforço ou contribuição e dar visibilidade ao que foi compartilhado com a comunidade.\n\nUma posição em evento ou medalha descreve aquela atividade e suas regras; não equivale ao nível curricular demonstrado. A compreensão de uma competência depende de evidências contextualizadas em diferentes situações e da interpretação pedagógica, não de um selo isolado.',
@@ -258,8 +264,9 @@ const prototypeFieldsByRegion: Record<string, readonly PrototypeParameterSpec[]>
   'teacher-hero': [
     { id: 'name', label: 'Nome', type: 'text', targetPath: 'name' },
     { id: 'role', label: 'Função', type: 'text', targetPath: 'role' },
+    { id: 'school', label: 'Escola', type: 'text', targetPath: 'school' },
     { id: 'quote', label: 'Frase de perfil', type: 'textarea', targetPath: 'quote' },
-    { id: 'music', label: 'Status musical', type: 'text', targetPath: 'music' },
+    { id: 'musicUrl', label: 'Link de música do Spotify', type: 'text', targetPath: 'musicUrl' },
     { id: 'competencies', label: 'Competências', type: 'list', targetPath: 'competencies', hint: 'Uma competência por linha.' },
   ],
   'teacher-stories': [
@@ -314,6 +321,7 @@ const prototypeFieldsByRegion: Record<string, readonly PrototypeParameterSpec[]>
     { id: 'role', label: 'Função', type: 'text', targetPath: 'role' },
     { id: 'school', label: 'Escola', type: 'text', targetPath: 'school' },
     { id: 'competencies', label: 'Interesses', type: 'list', targetPath: 'competencies', hint: 'Um interesse por linha.' },
+    { id: 'musicUrl', label: 'Link de música do Spotify', type: 'text', targetPath: 'musicUrl' },
   ],
   'student-stories': [
     { id: 'stories', label: 'Stories', type: 'list', targetPath: 'stories', hint: 'Um story por linha; aplicar atualiza a faixa.' },
@@ -328,6 +336,12 @@ const prototypeFieldsByRegion: Record<string, readonly PrototypeParameterSpec[]>
     { id: 'allowReplies', label: 'Permitir respostas', type: 'toggle', defaultValue: true },
     { id: 'allowCreate', label: 'Exibir criação de story', type: 'toggle', defaultValue: true },
   ],
+  'student-skills': [{ id: 'competencies', label: 'Interesses e competências escolhidas', type: 'list', targetPath: 'competencies', hint: 'Um tema por linha.' }],
+  'student-activity': [
+    { id: 'activityTitle', label: 'Experiência em destaque', type: 'text', targetPath: 'activityTitle' },
+    { id: 'activityText', label: 'Descrição compartilhada', type: 'textarea', targetPath: 'activityText' },
+  ],
+  'student-projects': [{ id: 'projects', label: 'Projetos e conquistas visíveis', type: 'count', targetPath: 'projects', min: 0, max: 10 }],
   'student-tabs': [{ id: 'tabs', label: 'Abas', type: 'list', targetPath: 'tabs', hint: 'Uma aba por linha.' }],
   'student-progress': [
     { id: 'progress', label: 'Percurso autorizado', type: 'range', targetPath: 'progress', min: 0, max: 100, step: 1 },
@@ -448,9 +462,12 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
       partSpec('student-hero', 'Hero do aluno', 'Identidade pública discente e escola.', 'derived', 'student'),
       partSpec('student-stories', 'Stories do aluno', 'Momentos e projetos compartilhados.', 'derived', 'student'),
       partSpec('student-tabs', 'Abas do aluno', 'Visão geral, percurso e publicações.', 'derived', 'student'),
+      partSpec('student-skills', 'Competências escolhidas', 'Temas e competências de interesse, sem notas ou níveis públicos.', 'derived', 'student'),
       partSpec('student-progress', 'Percurso autorizado', 'Indicadores liberados pelo estudante.', 'derived', 'student'),
       partSpec('student-achievements', 'Conquistas', 'Conquistas demonstrativas autorizadas.', 'derived', 'student'),
       partSpec('student-privacy', 'Apresentação e privacidade', 'Texto público e limites de visibilidade.', 'derived', 'student'),
+      partSpec('student-activity', 'Experiências compartilhadas', 'Produções públicas escolhidas pelo estudante.', 'derived', 'student'),
+      partSpec('student-projects', 'Projetos em destaque', 'Projetos e conquistas autorizados para exibição.', 'derived', 'student'),
     ],
   },
   {
@@ -628,6 +645,14 @@ export const initialComponentData: Record<string, unknown> = {
       { title: 'Investigação científica', value: 76, tone: 'teal' },
       { title: 'Leitura e interpretação', value: 67, tone: 'blue' },
       { title: 'Colaboração', value: 83, tone: 'violet' },
+    ],
+    activityTitle: 'Uma investigação sobre movimento',
+    activityText: 'Na experiência da rampa, mantive o carrinho e o percurso iguais e mudei a inclinação. Comparei as tentativas para entender o que mudou e compartilhei a pergunta com o clube de ciências.',
+    activityTags: ['Ciências', 'Investigação', 'Clube de ciências'],
+    projects: [
+      { title: 'Energia na escola', status: 'Investigação', progress: 'Registro em andamento' },
+      { title: 'Clube de leitura', status: 'Compartilhado', progress: 'Leituras e conversas' },
+      { title: 'Horta com menos desperdício', status: 'Projeto coletivo', progress: 'Observação da irrigação' },
     ],
     achievements: ['Projeto energia da escola', 'Clube de leitura', 'Feira de ciências'],
     bio: 'Aprendo investigando e gosto de transformar perguntas em projetos com a turma.',
@@ -953,8 +978,37 @@ function LabAvatar(name: string, tone = 'teal', className = ''): string {
   return '<span class="lm-avatar lm-avatar-' + e(tone) + ' ' + e(className) + '" aria-label="' + e(name) + '">' + e(labInitials(name)) + '</span>';
 }
 function LabPill(text: string, tone = ''): string { return '<span class="lm-pill ' + e(tone) + '">' + e(text) + '</span>'; }
-type EditableProfile = { name: string; role: string; school: string; intro: string; competencies: string[] };
+type EditableProfile = { name: string; role: string; school: string; intro: string; bio: string; competencies: string[]; musicUrl: string };
 const DEMO_PROFILE_STORAGE_KEY = 'lumira.profile-demo.v1';
+function spotifyEmbedUrl(value: string): string {
+  const input = value.trim();
+  const uri = input.match(/^spotify:(track|album|playlist):([A-Za-z0-9]{22})$/);
+  if (uri) return 'https://open.spotify.com/embed/' + uri[1] + '/' + uri[2] + '?utm_source=generator';
+  try {
+    const url = new URL(input);
+    if (url.hostname !== 'open.spotify.com' && url.hostname !== 'www.open.spotify.com') return '';
+    const parts = url.pathname.split('/').filter(Boolean);
+    const typeIndex = parts.findIndex(part => ['track', 'album', 'playlist'].includes(part));
+    const type = parts[typeIndex];
+    const id = parts[typeIndex + 1] ?? '';
+    if (!type || !/^[A-Za-z0-9]{22}$/.test(id)) return '';
+    return 'https://open.spotify.com/embed/' + type + '/' + id + '?utm_source=generator';
+  } catch {
+    return '';
+  }
+}
+function spotifyEmbedFrame(value: string): string {
+  const src = spotifyEmbedUrl(value);
+  return src ? '<iframe class="lm-spotify-embed" src="' + e(src) + '" title="Spotify player para a música do perfil" width="100%" height="152" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe>' : '';
+}
+function renderProfileMusic(profile: EditableProfile): string {
+  const player = spotifyEmbedFrame(profile.musicUrl);
+  return '<div class="lm-profile-music-card" data-profile-music>'
+    + (player
+      ? '<div class="lm-profile-music-heading"><span class="lm-spotify-mark" aria-hidden="true">♫</span><span><b>Música do perfil</b><small>Escolhida no Spotify</small></span><button type="button" class="lm-profile-music-edit" data-profile-edit data-profile-focus-field="musicUrl">Trocar</button></div>' + player
+      : '<div class="lm-profile-music-empty"><span class="lm-spotify-mark" aria-hidden="true">♫</span><span><b>Escolha uma música</b><small>Adicione uma faixa, álbum ou playlist do Spotify.</small></span><button type="button" class="lm-profile-music-edit" data-profile-edit data-profile-focus-field="musicUrl">Escolher</button></div>')
+    + '</div>';
+}
 function readSavedProfile(screenId: string): Partial<EditableProfile> {
   if (!screenId || typeof localStorage === 'undefined') return {};
   try {
@@ -968,7 +1022,9 @@ function readSavedProfile(screenId: string): Partial<EditableProfile> {
       ...(typeof values.role === 'string' ? { role: values.role } : {}),
       ...(typeof values.school === 'string' ? { school: values.school } : {}),
       ...(typeof values.intro === 'string' ? { intro: values.intro } : {}),
+      ...(typeof values.bio === 'string' ? { bio: values.bio } : {}),
       ...(Array.isArray(values.competencies) ? { competencies: values.competencies.map(String).slice(0, 4) } : {}),
+      ...(typeof values.musicUrl === 'string' ? { musicUrl: values.musicUrl } : {}),
     };
   } catch {
     return {};
@@ -979,8 +1035,10 @@ function profileValues(screenId: string, data: ComponentFixture, student: boolea
     name: labText(data, 'name', student ? 'Caio Almeida' : 'Ana Beatriz Silva'),
     role: labText(data, 'role', student ? 'Estudante · 8º ano' : 'Professora de Língua Portuguesa'),
     school: labText(data, 'school', 'Escola Municipal Nova Esperança'),
-    intro: labText(data, student ? 'bio' : 'quote', student ? 'Aprendo investigando e gosto de transformar perguntas em projetos com a turma.' : 'Educação é caminho, colaboração e destino.'),
+    intro: labText(data, 'quote', student ? 'Curiosidade abre novos caminhos.' : 'Educação é caminho, colaboração e destino.'),
+    bio: labText(data, 'bio', student ? 'Aprendo investigando e gosto de transformar perguntas em projetos com a turma.' : 'Educadora, apaixonada por aprendizagem, projetos e comunidade.'),
     competencies: labList<string>(data, 'competencies').slice(0, 4).map(String),
+    musicUrl: labText(data, 'musicUrl', ''),
   };
   return { ...fallback, ...readSavedProfile(screenId) };
 }
@@ -1057,17 +1115,16 @@ function renderProfileHero(id: string, data: ComponentFixture, selectedId: strin
   const profile = profileValues(screenId, data, student);
   const chips = profile.competencies.map(item => LabPill(item, 'glass')).join('');
   const summary = student
-    ? '<p class="lm-profile-school" data-profile-value="school">' + e(profile.school) + '</p>'
-    : '<p class="lm-profile-quote" data-profile-value="intro">' + e(profile.intro) + '</p>';
+    ? '<p class="lm-profile-school"><span data-profile-value="school">' + e(profile.school) + '</span><button type="button" class="lm-profile-field-edit" data-profile-field-focus="school" aria-label="Editar escola">✎</button></p>'
+    : '<p class="lm-profile-quote"><span data-profile-value="intro">' + e(profile.intro) + '</span><button type="button" class="lm-profile-field-edit" data-profile-field-focus="intro" aria-label="Editar frase do perfil">✎</button></p>';
   const roleAndSchool = student
-    ? '<p><span data-profile-value="role">' + e(profile.role) + '</span></p>'
-    : '<p><span data-profile-value="role">' + e(profile.role) + '</span><span aria-hidden="true">·</span><span data-profile-value="school">' + e(profile.school) + '</span></p>';
-  const music = student ? '' : '<div class="lm-music-status"><span>♫</span><span><b>' + e(labText(data, 'music', 'Boa Energia · Jota.Pê')) + '</b><small>NO PERFIL</small></span><button type="button" aria-label="Tocar música">▶</button></div>';
+    ? '<p><span data-profile-value="role">' + e(profile.role) + '</span><button type="button" class="lm-profile-field-edit" data-profile-field-focus="role" aria-label="Editar função">✎</button></p>'
+    : '<p><span data-profile-value="role">' + e(profile.role) + '</span><button type="button" class="lm-profile-field-edit" data-profile-field-focus="role" aria-label="Editar função">✎</button><span aria-hidden="true">·</span><span data-profile-value="school">' + e(profile.school) + '</span><button type="button" class="lm-profile-field-edit" data-profile-field-focus="school" aria-label="Editar escola">✎</button></p>';
   const image = "url('" + profileCoverAsset + "')";
   const content = '<div class="lm-profile-cover" style="background-image:linear-gradient(90deg,rgba(7,35,67,.65),rgba(8,39,72,.17)),' + image + '">'
-    + '<div class="lm-profile-cover-top"><span class="lm-eyebrow">PERFIL · ' + (student ? 'ESTUDANTE' : 'EDUCADORA') + '</span><button type="button" class="lm-cover-more">•••</button></div>'
-    + '<div class="lm-profile-identity"><span class="lm-avatar lm-avatar-' + (student ? 'blue' : 'teal') + ' portrait" data-profile-avatar aria-hidden="true">' + e(labInitials(profile.name)) + '</span><div class="lm-profile-name"><h1><span data-profile-value="name">' + e(profile.name) + '</span> <span class="lm-verified">✓</span></h1>' + roleAndSchool + summary + (student ? '<p class="lm-profile-quote" data-profile-value="intro">' + e(profile.intro) + '</p>' : '') + '<div class="lm-profile-pills" data-profile-value="competencies">' + chips + '</div></div>'
-    + '<div class="lm-profile-actions">' + music + '<button type="button" class="lm-light-button" data-profile-edit>✎ <span>Editar perfil</span></button><button type="button" class="lm-icon-button" aria-label="Compartilhar perfil">↗</button></div></div></div>';
+    + '<div class="lm-profile-cover-top"><span class="lm-eyebrow">PERFIL · ' + (student ? 'ESTUDANTE' : 'EDUCADORA') + '</span><button type="button" class="lm-cover-more" aria-label="Opções do perfil">•••</button></div>'
+    + '<div class="lm-profile-identity"><span class="lm-avatar lm-avatar-' + (student ? 'blue' : 'teal') + ' portrait" data-profile-avatar aria-hidden="true">' + e(labInitials(profile.name)) + '</span><div class="lm-profile-name"><h1><span data-profile-value="name">' + e(profile.name) + '</span><button type="button" class="lm-profile-field-edit" data-profile-field-focus="name" aria-label="Editar nome">✎</button> <span class="lm-verified">✓</span></h1>' + roleAndSchool + summary + (student ? '<p class="lm-profile-quote"><span data-profile-value="intro">' + e(profile.intro) + '</span><button type="button" class="lm-profile-field-edit" data-profile-field-focus="intro" aria-label="Editar apresentação">✎</button></p>' : '') + '<div class="lm-profile-pills" data-profile-value="competencies">' + chips + '<button type="button" class="lm-profile-field-edit" data-profile-field-focus="competencies" aria-label="Editar interesses e competências">✎</button></div></div>'
+    + '<div class="lm-profile-actions">' + renderProfileMusic(profile) + '<button type="button" class="lm-profile-edit-button" data-profile-edit-primary aria-expanded="false">✎ <span>Editar perfil</span></button><button type="button" class="lm-profile-share-button" aria-label="Compartilhar perfil">↗ <span>Compartilhar</span></button></div></div></div>';
   return labPart(id, content, selectedId, 'lm-profile-hero-part');
 }
 function renderStories(id: string, data: ComponentFixture, selectedId: string): string {
@@ -1139,16 +1196,16 @@ function renderSkillsPanel(data: ComponentFixture, selectedId: string): string {
     const tone = labText(skill, 'tone', 'teal');
     return '<div class="lm-skill-row"><span>' + e(title) + '</span><div class="lm-skill-track"><i class="tone-' + e(tone) + '" style="width:' + value + '%"></i></div><b>' + value + '%</b></div>';
   }).join('');
-  const content = '<article class="lm-panel lm-skills-panel"><header><h2>Competências principais</h2><button type="button" class="lm-text-action">Ver todas →</button></header><div class="lm-skill-list">' + skills + '</div></article>';
+  const content = '<article class="lm-panel lm-skills-panel"><header><h2>Competências principais</h2><div><button type="button" class="lm-profile-field-edit" data-profile-edit data-profile-focus-field="competencies" aria-label="Editar competências">✎</button><button type="button" class="lm-text-action">Ver todas →</button></div></header><div class="lm-skill-list">' + skills + '</div></article>';
   return labPart('teacher-skills', content, selectedId, 'lm-profile-card-part');
 }
 function renderAboutPanel(data: ComponentFixture, selectedId: string, student = false): string {
   data = prototypeData(student ? 'student-privacy' : 'teacher-about', data);
   const screenId = activePageComposition?.situation.screenId ?? (student ? 'student-profile' : 'teacher-profile');
-  const bio = student ? profileValues(screenId, data, true).intro : labText(data, 'bio', 'Uma apresentação pública sobre aprendizagem, projetos e comunidade.');
+  const bio = profileValues(screenId, data, student).bio;
   const affiliations = labList<string>(data, 'affiliations');
   const socials = labList<string>(data, 'socials');
-  const content = '<article class="lm-panel lm-about-panel"><header><h2>' + (student ? 'Sobre mim' : 'Sobre mim') + '</h2><button type="button" class="lm-panel-edit" aria-label="Editar sobre mim">✎</button></header>'
+  const content = '<article class="lm-panel lm-about-panel"><header><h2>Sobre mim</h2><button type="button" class="lm-panel-edit" data-profile-edit data-profile-focus-field="bio" aria-label="Editar sobre mim">✎</button></header>'
     + '<p data-profile-about>' + e(bio) + '</p>'
     + (student ? '<div class="lm-privacy-notice">' + e(labText(data, 'privacy', 'Este perfil exibe somente informações autorizadas para publicação.')) + '</div>' : '')
     + (student ? '' : '<div class="lm-affiliations">' + affiliations.map(item => '<span>⌂ ' + e(item) + '</span>').join('') + '</div>')
@@ -1207,6 +1264,37 @@ function renderStudentAchievements(data: ComponentFixture, selectedId: string): 
   const content = '<article class="lm-panel lm-student-achievements"><header><h2>Conquistas compartilhadas</h2><span>3 itens</span></header><div>' + rows + '</div></article>';
   return labPart('student-achievements', content, selectedId, 'lm-profile-card-part');
 }
+function renderStudentSkillRows(interests: string[]): string {
+  const tones = ['teal', 'blue', 'violet', 'sun'];
+  return interests.map((item, index) => '<div class="lm-student-skill"><span class="lm-student-skill-mark tone-' + tones[index % tones.length] + '" aria-hidden="true">✦</span><div><b>' + e(item) + '</b><small>Interesse escolhido pelo estudante</small></div><span class="lm-student-skill-check" aria-label="Interesse público">✓</span></div>').join('');
+}
+function renderStudentSkillsPanel(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('student-skills', data);
+  const screenId = activePageComposition?.situation.screenId ?? 'student-profile';
+  const interests = profileValues(screenId, data, true).competencies;
+  const rows = renderStudentSkillRows(interests);
+  const content = '<article class="lm-panel lm-student-skills"><header><div><h2>Competências escolhidas</h2><small>O que quero explorar</small></div><div><button type="button" class="lm-profile-field-edit" data-profile-edit data-profile-focus-field="competencies" aria-label="Editar interesses escolhidos">✎</button><span class="lm-public-choice">PÚBLICO</span></div></header>'
+    + (rows || '<div class="empty">Nenhum interesse selecionado.</div>')
+    + '<p class="lm-student-skills-note">Interesses orientam novos projetos; não são notas nem avaliação de domínio.</p></article>';
+  return labPart('student-skills', content, selectedId, 'lm-profile-card-part');
+}
+function renderStudentActivityCard(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('student-activity', data);
+  const content = '<article class="lm-panel lm-student-experience-card"><header><div><h2>Experiência compartilhada</h2><small>Escolhida para aparecer no perfil</small></div><button type="button" class="lm-text-action">Ver publicações</button></header>'
+    + '<img class="lm-student-activity-image" src="' + studentRampStoryAsset + '" alt="Estudante compara carrinhos em uma rampa de investigação científica">'
+    + '<div class="lm-student-activity-copy"><span class="lm-eyebrow">CIÊNCIAS · INVESTIGAÇÃO</span><h3>' + e(labText(data, 'activityTitle', 'Uma investigação sobre movimento')) + '</h3><p>' + e(labText(data, 'activityText', 'Uma experiência escolhida para compartilhar com a comunidade.')) + '</p>'
+    + '<div class="lm-activity-tags">' + labList<string>(data, 'activityTags').map(tag => LabPill(tag)).join('') + '</div><footer><button type="button" class="lm-like-action" aria-label="Curtir experiência">♡ 12</button><span>Produção pública autorizada</span></footer></div></article>';
+  return labPart('student-activity', content, selectedId, 'lm-feed-card-part');
+}
+function renderStudentProjectsPanel(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('student-projects', data);
+  const projects = labList<ComponentFixture>(data, 'projects');
+  const rows = projects.map((project, index) => '<article class="lm-project-row"><span class="lm-project-art art-' + index + '">✦</span><div><b>' + e(labText(project, 'title', 'Projeto')) + '</b><small>' + e(labText(project, 'progress', 'Produção compartilhada')) + '</small></div>' + LabPill(labText(project, 'status', 'Em andamento'), ['mint', 'lilac', 'gray'][index % 3]) + '</article>').join('');
+  const content = '<article class="lm-panel lm-student-projects"><header><div><h2>Projetos em destaque</h2><small>Produções autorizadas</small></div><button type="button" class="lm-text-action">Ver todos</button></header>'
+    + (rows || '<div class="empty">Nenhum projeto escolhido para exibição.</div>')
+    + '<button type="button" class="lm-outline-action">＋ Compartilhar um projeto</button></article>';
+  return labPart('student-projects', content, selectedId, 'lm-profile-card-part');
+}
 function renderStudentProfilePage(props: ComponentPageProps): string {
   const { data, situation } = props, selectedId = situation.selectedRegionId;
   return '<div class="lm-product-page lm-student-profile" data-page-id="student-profile"' + mockAttributes(situation) + '>'
@@ -1214,7 +1302,8 @@ function renderStudentProfilePage(props: ComponentPageProps): string {
     + '<div class="lm-product-main">' + renderWorkspaceTopbar(data, selectedId)
     + '<main class="lm-profile-canvas">' + renderProfileHero('student-hero', data, selectedId, true)
     + renderStories('student-stories', data, selectedId) + renderProfileTabs('student-tabs', data, selectedId)
-    + '<div class="lm-student-overview">' + renderProgressCard(data, selectedId, true) + renderStudentAchievements(data, selectedId) + renderAboutPanel(data, selectedId, true) + '</div>'
+    + '<div class="lm-student-overview">' + renderStudentSkillsPanel(data, selectedId) + renderProgressCard(data, selectedId, true) + renderStudentAchievements(data, selectedId) + renderAboutPanel(data, selectedId, true) + '</div>'
+    + '<div class="lm-student-lower">' + renderStudentActivityCard(data, selectedId) + renderStudentProjectsPanel(data, selectedId) + '</div>'
     + '</main></div></div>';
 }
 
@@ -1537,6 +1626,11 @@ export function registerComponentElements(): void {
         this.addEventListener('input', event => this.onInput(event));
         this.addEventListener('change', event => this.onChange(event));
         this.addEventListener('submit', event => this.onSubmit(event));
+        this.addEventListener('profile-edit-command', event => {
+          if (this.state.id !== 'teacher-hero' && this.state.id !== 'student-hero') return;
+          const detail = (event as CustomEvent<{ field?: string }>).detail;
+          this.openProfileEditor(detail?.field);
+        });
       }
       configure(props: DemoPagePartProps): void {
         const snapshot = structuredClone(props);
@@ -1683,34 +1777,82 @@ export function registerComponentElements(): void {
           name: text('[data-profile-value="name"]', student ? 'Caio Almeida' : 'Ana Beatriz Silva'),
           role: text('[data-profile-value="role"]', student ? 'Estudante · 8º ano' : 'Professora de Língua Portuguesa'),
           school: text('[data-profile-value="school"]', 'Escola Municipal Nova Esperança'),
-          intro: student ? page.querySelector<HTMLElement>('[data-profile-about]')?.textContent?.trim() ?? '' : text('[data-profile-value="intro"]'),
+          intro: text('[data-profile-value="intro"]', student ? 'Curiosidade abre novos caminhos.' : 'Educação é caminho, colaboração e destino.'),
+          bio: page.querySelector<HTMLElement>('[data-profile-about]')?.textContent?.trim() ?? 'Uma apresentação pública sobre aprendizagem, projetos e comunidade.',
           competencies: [...(this.querySelector('.lm-profile-pills')?.querySelectorAll<HTMLElement>('.lm-pill') ?? [])].map(item => item.textContent?.trim() ?? '').filter(Boolean),
+          musicUrl: this.querySelector<HTMLIFrameElement>('.lm-spotify-embed')?.getAttribute('src') ?? '',
         };
         Object.assign(profile, readSavedProfile(screenId));
         this.querySelector<HTMLElement>('[data-profile-value="name"]')?.replaceChildren(document.createTextNode(profile.name));
         this.querySelector<HTMLElement>('[data-profile-value="role"]')?.replaceChildren(document.createTextNode(profile.role));
         this.querySelector<HTMLElement>('[data-profile-value="school"]')?.replaceChildren(document.createTextNode(profile.school));
         this.querySelector<HTMLElement>('[data-profile-value="intro"]')?.replaceChildren(document.createTextNode(profile.intro));
+        page.querySelector<HTMLElement>('[data-profile-about]')?.replaceChildren(document.createTextNode(profile.bio));
         this.querySelector<HTMLElement>('[data-profile-avatar]')?.replaceChildren(document.createTextNode(labInitials(profile.name)));
         const pills = this.querySelector<HTMLElement>('.lm-profile-pills');
-        if (pills) pills.innerHTML = profile.competencies.map(item => LabPill(item, 'glass')).join('');
-        if (student) page.querySelector<HTMLElement>('[data-profile-about]')?.replaceChildren(document.createTextNode(profile.intro));
+        if (pills) pills.innerHTML = profile.competencies.map(item => LabPill(item, 'glass')).join('')
+          + '<button type="button" class="lm-profile-field-edit" data-profile-field-focus="competencies" aria-label="Editar interesses e competências">✎</button>';
+        const musicMount = this.querySelector<HTMLElement>('[data-profile-music]');
+        if (musicMount) musicMount.outerHTML = renderProfileMusic(profile);
         page.querySelector<HTMLElement>('.lm-side-account strong')?.replaceChildren(document.createTextNode(profile.name));
-        page.querySelector<HTMLElement>('.lm-side-account .lm-avatar')?.replaceChildren(document.createTextNode(labInitials(profile.name)));
+        const sidebarAvatar = page.querySelector<HTMLElement>('.lm-side-account .lm-avatar');
+        if (sidebarAvatar) {
+          sidebarAvatar.setAttribute('aria-label', profile.name);
+          sidebarAvatar.replaceChildren(document.createTextNode(labInitials(profile.name)));
+        }
         page.querySelector<HTMLElement>('.lm-user-menu > span:not(.lm-avatar)')?.replaceChildren(document.createTextNode(profile.name));
-        page.querySelector<HTMLElement>('.lm-user-menu .lm-avatar')?.replaceChildren(document.createTextNode(labInitials(profile.name)));
+        const menuAvatar = page.querySelector<HTMLElement>('.lm-user-menu .lm-avatar');
+        if (menuAvatar) {
+          menuAvatar.setAttribute('aria-label', profile.name);
+          menuAvatar.replaceChildren(document.createTextNode(labInitials(profile.name)));
+        }
+        const studentSkills = page.querySelector<HTMLElement>('.lm-student-skills');
+        if (studentSkills) {
+          studentSkills.querySelectorAll('.lm-student-skill, .empty, .lm-student-skills-note').forEach(item => item.remove());
+          studentSkills.querySelector('header')?.insertAdjacentHTML('afterend', (renderStudentSkillRows(profile.competencies)
+            || '<div class="empty">Nenhum interesse selecionado.</div>')
+            + '<p class="lm-student-skills-note">Interesses orientam novos projetos; não são notas nem avaliação de domínio.</p>');
+        }
 
-        this.querySelector('[data-profile-editor-overlay]')?.remove();
-        if (this.state.interaction.groups['profile-editor-open'] !== 'yes') return;
-        const modal = '<div class="lm-profile-editor-overlay" data-profile-editor-overlay><section class="lm-profile-editor" role="dialog" aria-modal="true" aria-labelledby="lm-profile-editor-title">'
-          + '<header><div><span class="lm-eyebrow">PERFIL · ' + (student ? 'ESTUDANTE' : 'EDUCADORA') + '</span><h2 id="lm-profile-editor-title">Editar perfil</h2></div><button type="button" data-profile-close aria-label="Fechar edição">×</button></header>'
-          + '<form data-profile-editor><label>Nome<input name="name" required maxlength="80" value="' + e(profile.name) + '"></label>'
-          + '<div class="lm-profile-editor-grid"><label>Função<input name="role" required maxlength="90" value="' + e(profile.role) + '"></label><label>Escola<input name="school" required maxlength="100" value="' + e(profile.school) + '"></label></div>'
-          + '<label>' + (student ? 'Sobre mim' : 'Frase do perfil') + '<textarea name="intro" rows="3" maxlength="320">' + e(profile.intro) + '</textarea></label>'
-          + '<label>' + (student ? 'Interesses' : 'Competências') + '<textarea name="competencies" rows="3" maxlength="320">' + e(profile.competencies.join('\n')) + '</textarea><small>Uma por linha. Até quatro itens aparecem no perfil.</small></label>'
-          + '<p class="lm-profile-editor-note">Salvar atualiza esta demonstração neste navegador.</p>'
-          + '<footer><button type="button" class="lm-secondary-button" data-profile-close>Cancelar</button><button type="submit" class="lm-primary-button">Salvar perfil</button></footer></form></section></div>';
-        this.insertAdjacentHTML('beforeend', modal);
+        const editing = this.state.interaction.groups['profile-editor-open'] === 'yes';
+        this.classList.toggle('lm-profile-editing', editing);
+        page.classList.toggle('lm-profile-editing', editing);
+        const primaryEdit = this.querySelector<HTMLButtonElement>('[data-profile-edit-primary]');
+        if (primaryEdit) {
+          primaryEdit.setAttribute('aria-expanded', String(editing));
+          primaryEdit.innerHTML = editing ? '✓ <span>Concluir edição</span>' : '✎ <span>Editar perfil</span>';
+        }
+        this.querySelector('[data-profile-editor-inline]')?.remove();
+        if (!editing) return;
+        const editor = '<section class="lm-profile-editor-inline" data-profile-editor-inline aria-labelledby="lm-profile-editor-title">'
+          + '<header><div><span class="lm-eyebrow">MODO DE EDIÇÃO · ' + (student ? 'ESTUDANTE' : 'EDUCADORA') + '</span><h2 id="lm-profile-editor-title">Edite os itens do seu perfil</h2><p>Os campos abaixo atualizam a apresentação pública. O acompanhamento pedagógico permanece reservado.</p></div><button type="button" class="lm-profile-close-button" data-profile-close aria-label="Concluir edição">×</button></header>'
+          + '<form data-profile-editor><div class="lm-profile-editor-fields">'
+          + '<label>Nome<input name="name" required maxlength="80" value="' + e(profile.name) + '"></label>'
+          + '<label>Função ou etapa<input name="role" required maxlength="90" value="' + e(profile.role) + '"></label>'
+          + '<label>Escola ou comunidade<input name="school" required maxlength="100" value="' + e(profile.school) + '"></label>'
+          + '<label>' + (student ? 'Frase de apresentação' : 'Frase do perfil') + '<input name="intro" maxlength="180" value="' + e(profile.intro) + '"></label>'
+          + '<label class="lm-profile-editor-bio">Sobre mim<textarea name="bio" rows="3" maxlength="500">' + e(profile.bio) + '</textarea></label>'
+          + '<label class="lm-profile-editor-interests">' + (student ? 'Interesses escolhidos' : 'Competências em destaque') + '<textarea name="competencies" rows="3" maxlength="320">' + e(profile.competencies.join('\n')) + '</textarea><small>Um item por linha. Até quatro aparecem na capa.</small></label>'
+          + '</div><section class="lm-profile-music-picker"><header><div><span class="lm-eyebrow">SPOTIFY</span><h3>Escolha a música do perfil</h3><p>Busque no Spotify, copie o link de uma faixa, álbum ou playlist e cole aqui.</p></div><a href="https://open.spotify.com/search/" target="_blank" rel="noopener noreferrer">Buscar no Spotify ↗</a></header>'
+          + '<label>Link do Spotify<input name="musicUrl" data-profile-music-url type="text" inputmode="url" autocomplete="url" placeholder="https://open.spotify.com/track/…" value="' + e(profile.musicUrl) + '"></label>'
+          + '<div class="lm-profile-spotify-preview" data-profile-spotify-preview aria-live="polite">' + (spotifyEmbedFrame(profile.musicUrl) || '<p>Prévia incorporada aparece aqui depois de colar um link válido do Spotify.</p>') + '</div>'
+          + '<small class="lm-profile-editor-note">A reprodução usa o player incorporado pelo Spotify. A escolha e os demais campos são salvos neste navegador.</small></section>'
+          + '<p class="lm-profile-edit-error" data-profile-edit-error role="alert" hidden></p>'
+          + '<footer><button type="button" class="lm-profile-cancel-button" data-profile-close>Descartar alterações</button><button type="submit" class="lm-profile-save-button">Salvar alterações</button></footer></form></section>';
+        this.insertAdjacentHTML('beforeend', editor);
+        this.querySelectorAll<HTMLElement>('[data-profile-field-focus]').forEach(button => button.title = 'Clique para editar este item');
+      }
+      private openProfileEditor(field?: string): void {
+        this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'profile-editor-open': 'yes' }, feedback: '' }));
+        this.render();
+        const name = field || 'name';
+        const control = this.querySelector<HTMLFormElement>('[data-profile-editor]')?.elements.namedItem(name);
+        if (control instanceof HTMLElement) control.focus();
+      }
+      private closeProfileEditor(): void {
+        this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'profile-editor-open': '' } }));
+        this.render();
+        this.querySelector<HTMLButtonElement>('[data-profile-edit-primary]')?.focus();
       }
       private restoreStories(): void {
         const track = this.querySelector<HTMLElement>('.lm-stories-track');
@@ -2144,16 +2286,27 @@ export function registerComponentElements(): void {
         // Deixe a navegação entre telas chegar ao Componenting Demo Lab, que
         // controla a montagem da página e a URL selecionada.
         if (button.hasAttribute('data-screen-select')) return;
-        if (button.hasAttribute('data-profile-edit')) {
-          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'profile-editor-open': 'yes' }, feedback: '' }));
-          this.render();
-          this.querySelector<HTMLInputElement>('[data-profile-editor] input[name="name"]')?.focus();
+        if (button.hasAttribute('data-profile-edit-primary')) {
+          if (this.state.id !== 'teacher-hero' && this.state.id !== 'student-hero') {
+            const page = this.closest<HTMLElement>('.lm-product-page');
+            const hero = page?.querySelector<HTMLElement>('[data-component-id="teacher-hero"], [data-component-id="student-hero"]');
+            hero?.dispatchEvent(new CustomEvent('profile-edit-command', { bubbles: true, detail: {} }));
+          } else if (this.state.interaction.groups['profile-editor-open'] === 'yes') this.closeProfileEditor();
+          else this.openProfileEditor();
+          return;
+        }
+        if (button.hasAttribute('data-profile-edit') || button.hasAttribute('data-profile-field-focus')) {
+          const field = button.dataset.profileFocusField ?? button.dataset.profileFieldFocus;
+          if (this.state.id === 'teacher-hero' || this.state.id === 'student-hero') this.openProfileEditor(field);
+          else {
+            const page = this.closest<HTMLElement>('.lm-product-page');
+            const hero = page?.querySelector<HTMLElement>('[data-component-id="teacher-hero"], [data-component-id="student-hero"]');
+            hero?.dispatchEvent(new CustomEvent('profile-edit-command', { bubbles: true, detail: { field } }));
+          }
           return;
         }
         if (button.hasAttribute('data-profile-close')) {
-          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'profile-editor-open': '' } }));
-          this.render();
-          this.querySelector<HTMLButtonElement>('[data-profile-edit]')?.focus();
+          this.closeProfileEditor();
           return;
         }
         if (button.dataset.questFilter) {
@@ -2403,6 +2556,13 @@ export function registerComponentElements(): void {
       private onInput(event: Event): void {
         if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) return;
         const field = event.target;
+        if (field.hasAttribute('data-profile-music-url')) {
+          const preview = this.querySelector<HTMLElement>('[data-profile-spotify-preview]');
+          const frame = spotifyEmbedFrame(field.value);
+          if (preview) preview.innerHTML = frame || '<p>' + (field.value.trim() ? 'Cole um link válido de faixa, álbum ou playlist do Spotify para conferir a prévia.' : 'Prévia incorporada aparece aqui depois de colar um link do Spotify.') + '</p>';
+          field.removeAttribute('aria-invalid');
+          return;
+        }
         const key = field.dataset.interactionField;
         if (field instanceof HTMLInputElement && (field.type === 'checkbox' || field.type === 'radio')) return;
         if (field.dataset.storyField) {
@@ -2473,20 +2633,37 @@ export function registerComponentElements(): void {
           const role = String(values.get('role') ?? '').trim();
           const school = String(values.get('school') ?? '').trim();
           const intro = String(values.get('intro') ?? '').trim();
+          const bio = String(values.get('bio') ?? '').trim();
           const competencies = String(values.get('competencies') ?? '').split(/\r?\n/).map(item => item.trim()).filter(Boolean).slice(0, 4);
+          const musicUrl = String(values.get('musicUrl') ?? '').trim();
+          const musicField = form.querySelector<HTMLInputElement>('[name="musicUrl"]');
+          const editError = form.querySelector<HTMLElement>('[data-profile-edit-error]');
           if (!name || !role || !school) {
-            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Preencha nome, função e escola antes de salvar.' }));
-            this.render();
+            if (editError) {
+              editError.textContent = 'Preencha nome, função e escola antes de salvar.';
+              editError.hidden = false;
+            }
+            return;
+          }
+          if (musicUrl && !spotifyEmbedUrl(musicUrl)) {
+            if (musicField) {
+              musicField.setAttribute('aria-invalid', 'true');
+              musicField.focus();
+            }
+            if (editError) {
+              editError.textContent = 'O link não parece ser uma faixa, álbum ou playlist do Spotify. Confira o endereço copiado.';
+              editError.hidden = false;
+            }
             return;
           }
           try {
-            persistProfileValues(this.state.situation.screenId || (this.state.id === 'student-hero' ? 'student-profile' : 'teacher-profile'), { name, role, school, intro, competencies });
+            persistProfileValues(this.state.situation.screenId || (this.state.id === 'student-hero' ? 'student-profile' : 'teacher-profile'), { name, role, school, intro, bio, competencies, musicUrl });
             this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'profile-editor-open': '' }, feedback: 'Perfil salvo neste navegador.' }));
           } catch {
             this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Não foi possível salvar neste navegador. Verifique o espaço de armazenamento disponível.' }));
           }
           this.render();
-          this.querySelector<HTMLButtonElement>('[data-profile-edit]')?.focus();
+          this.querySelector<HTMLButtonElement>('[data-profile-edit-primary]')?.focus();
           return;
         }
         if (form?.matches('[data-leveling-enrollment-form]') && this.state.id === 'leveling-confirmation') {

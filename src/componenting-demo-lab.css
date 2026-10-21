@@ -4806,3 +4806,202 @@ lumira-page-part {
   .lm-profile-editor form>footer { flex-direction: column-reverse; }
   .lm-profile-editor form>footer button { width: 100%; }
 }
+
+/* Perfil: edição junto aos campos e player oficial do Spotify. */
+.lm-profile-cover-top .lm-cover-more {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #d8ebf4;
+  border-radius: 9px;
+  background: rgba(6, 36, 62, .82);
+  color: #fff;
+  font-size: 14px;
+}
+.lm-profile-actions {
+  display: grid;
+  grid-template-columns: minmax(170px, 240px);
+  justify-items: stretch;
+  gap: 7px;
+  align-self: end;
+}
+.lm-profile-edit-button,
+.lm-profile-share-button,
+.lm-profile-music-edit {
+  display: inline-flex;
+  min-height: 35px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border: 1px solid #99c9dc;
+  border-radius: 7px;
+  background: #0b4b76;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.lm-profile-share-button {
+  border-color: #ffffff8a;
+  background: rgba(7, 30, 54, .82);
+}
+.lm-profile-edit-button:hover,
+.lm-profile-share-button:hover,
+.lm-profile-music-edit:hover { background: #063655; }
+.lm-profile-music-card {
+  display: grid;
+  min-width: 170px;
+  max-width: 240px;
+  gap: 7px;
+  padding: 8px;
+  border: 1px solid #ffffff66;
+  border-radius: 10px;
+  background: rgba(7, 29, 49, .78);
+  color: white;
+  backdrop-filter: blur(8px);
+}
+.lm-profile-music-heading,
+.lm-profile-music-empty { display: flex; align-items: center; gap: 8px; }
+.lm-profile-music-heading>span:nth-child(2),
+.lm-profile-music-empty>span:nth-child(2) { display: grid; min-width: 0; gap: 2px; }
+.lm-profile-music-heading b,
+.lm-profile-music-empty b { color: white; font-size: 9px; }
+.lm-profile-music-heading small,
+.lm-profile-music-empty small { color: #d5e6ef; font-size: 8px; line-height: 1.4; }
+.lm-spotify-mark {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: #1ed760;
+  color: #102c20;
+  font-size: 17px;
+}
+.lm-profile-music-edit { min-height: 28px; margin-left: auto; padding: 4px 8px; border-color: #ffffff70; font-size: 8px; }
+.lm-spotify-embed { display: block; width: 100%; height: 152px; border: 0; border-radius: 8px; background: #121212; }
+.lm-profile-field-edit {
+  display: none;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+  border: 1px solid #e4f3fb;
+  border-radius: 50%;
+  background: #0b4b76;
+  color: #fff;
+  font-size: 10px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.lm-profile-editing .lm-profile-field-edit { display: inline-flex; }
+.lm-profile-field-edit:hover { background: #062d4b; }
+.lm-profile-card-part .lm-about-panel .lm-panel-edit { display: none; }
+.lm-profile-editing .lm-profile-card-part .lm-about-panel .lm-panel-edit { display: grid; }
+.lm-profile-editor-inline {
+  display: grid;
+  gap: 14px;
+  margin: 12px 12px 4px;
+  padding: 17px;
+  border: 1px solid #cbdce7;
+  border-radius: 12px;
+  background: #fff;
+  color: #18344f;
+  box-shadow: 0 5px 18px #12365212;
+}
+.lm-profile-editor-inline>header,
+.lm-profile-music-picker>header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.lm-profile-editor-inline>header h2 { margin: 4px 0; color: #143752; font-size: 17px; }
+.lm-profile-editor-inline>header p,
+.lm-profile-music-picker>header p { margin: 0; color: #5b7184; font-size: 10px; line-height: 1.5; }
+.lm-profile-close-button {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border: 1px solid #c7d7e2;
+  border-radius: 8px;
+  background: #f2f7fa;
+  color: #183b58;
+  font-size: 19px;
+}
+.lm-profile-editor-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.lm-profile-editor-inline label { display: grid; min-width: 0; gap: 5px; color: #35536b; font-size: 10px; font-weight: 750; }
+.lm-profile-editor-inline input,
+.lm-profile-editor-inline textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 1px solid #ccdbe5;
+  border-radius: 7px;
+  background: #fbfdfe;
+  color: #17324b;
+  font: 400 11px/1.5 var(--lm-font-ui);
+}
+.lm-profile-editor-inline textarea { min-height: 65px; resize: vertical; }
+.lm-profile-editor-inline input:focus-visible,
+.lm-profile-editor-inline textarea:focus-visible { outline: 2px solid #168d98; outline-offset: 2px; }
+.lm-profile-editor-bio,
+.lm-profile-editor-interests { grid-column: 1 / -1; }
+.lm-profile-editor-inline label small,
+.lm-profile-editor-note { color: #60788c; font-size: 9px; line-height: 1.45; }
+.lm-profile-music-picker { display: grid; gap: 10px; padding: 13px; border: 1px solid #d8e6ed; border-radius: 10px; background: #f6fafc; }
+.lm-profile-music-picker h3 { margin: 3px 0; color: #143752; font-size: 14px; }
+.lm-profile-music-picker>header>a { color: #08724a; font-size: 10px; font-weight: 800; white-space: nowrap; }
+.lm-profile-spotify-preview { min-height: 65px; overflow: hidden; border-radius: 9px; background: #141414; }
+.lm-profile-spotify-preview>p { margin: 0; padding: 17px; color: #e4ece7; font-size: 10px; line-height: 1.5; }
+.lm-profile-spotify-preview .lm-spotify-embed { height: 152px; }
+.lm-profile-edit-error { margin: 0; padding: 9px 11px; border-radius: 7px; background: #fff0ed; color: #a8352c; font-size: 10px; }
+.lm-profile-editor-inline>form>footer { display: flex; justify-content: flex-end; gap: 8px; }
+.lm-profile-cancel-button,
+.lm-profile-save-button { min-height: 36px; padding: 8px 12px; border: 1px solid #b8cad7; border-radius: 7px; background: #fff; color: #284b65; font-size: 10px; font-weight: 750; }
+.lm-profile-save-button { border-color: #0e5b84; background: #0e5b84; color: #fff; }
+.lm-profile-cancel-button:hover { background: #f3f7f9; }
+.lm-profile-save-button:hover { background: #0a4669; }
+.lm-student-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lm-student-overview .lm-about-panel { grid-column: 1 / -1; }
+.lm-student-lower { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(260px, .95fr); align-items: start; gap: 10px; padding: 0 12px 12px; }
+.lm-student-skill { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid #edf1f5; }
+.lm-student-skill-mark { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 8px; background: #eaf5f5; color: #148a88; font-size: 12px; }
+.lm-student-skill-mark.tone-blue { background: #eaf1fb; color: #3574bc; }
+.lm-student-skill-mark.tone-violet { background: #f0ebfb; color: #7a5bb6; }
+.lm-student-skill-mark.tone-sun { background: #fbf4df; color: #a47817; }
+.lm-student-skill>div { display: grid; min-width: 0; gap: 2px; }
+.lm-student-skill b { color: #24435c; font-size: 9px; }
+.lm-student-skill small { color: #718394; font-size: 8px; }
+.lm-student-skill-check { margin-left: auto; color: #19885d; font-size: 11px; }
+.lm-student-skills>header small,
+.lm-student-activity>header small,
+.lm-student-projects>header small { display: block; margin-top: 3px; color: #748697; font-size: 8px; }
+.lm-public-choice { padding: 4px 6px; border-radius: 99px; background: #e5f5ec; color: #187548; font-size: 7px; font-weight: 800; letter-spacing: .08em; }
+.lm-student-skills>p { margin: 9px 0 0; color: #687e8f; font-size: 8px; line-height: 1.5; }
+.lm-student-experience-card { overflow: hidden; padding: 0; }
+.lm-student-experience-card>header { padding: 12px 13px 9px; }
+.lm-student-activity-image { display: block; width: 100%; height: 136px; object-fit: cover; }
+.lm-student-activity-copy { padding: 12px 13px; }
+.lm-student-activity-copy h3 { margin: 4px 0; color: #173b58; font-size: 13px; }
+.lm-student-activity-copy p { margin: 0 0 9px; color: #536b7e; font-size: 9px; line-height: 1.55; }
+.lm-student-activity-copy .lm-activity-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.lm-student-activity-copy>footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 9px; padding-top: 8px; border-top: 1px solid #edf1f5; color: #728597; font-size: 8px; }
+.lm-student-projects .lm-project-row { min-height: 48px; }
+.lm-student-projects .lm-outline-action { margin-top: 8px; }
+@media(max-width:850px) {
+  .lm-profile-identity { grid-template-columns: 66px minmax(0, 1fr); align-items: center; }
+  .lm-profile-actions { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 100%; }
+  .lm-profile-music-card { max-width: none; }
+  .lm-profile-editor-inline { margin-right: 8px; margin-left: 8px; }
+}
+@media(max-width:560px) {
+  .lm-profile-editor-fields,
+  .lm-student-overview,
+  .lm-student-lower { grid-template-columns: 1fr; }
+  .lm-profile-editor-bio,
+  .lm-profile-editor-interests,
+  .lm-student-overview .lm-about-panel { grid-column: auto; }
+  .lm-profile-editor-inline>header,
+  .lm-profile-music-picker>header { flex-direction: column; }
+  .lm-profile-editor-inline>form>footer { flex-direction: column-reverse; }
+  .lm-profile-editor-inline>form>footer button { width: 100%; }
+}

@@ -8,7 +8,7 @@ O PDF [Apresentação inicial — edição de perfil e partes da plataforma](../
 
 A apresentação pede uma chave PTA compartilhada separadamente. Depois de entrar, a autorização fica na sessão desta aba. A chave funciona como barreira de entrada visual: o GitHub Pages e o repositório são públicos, portanto isso não equivale a autenticação no servidor nem impede alguém de inspecionar o código publicado.
 
-Nos perfis de professor e aluno, **Editar perfil** abre um formulário para nome, função, escola, apresentação e competências ou interesses. **Salvar perfil** atualiza o hero, os identificadores relacionados e, no perfil discente, a seção “Sobre mim”. Os valores ficam no `localStorage` deste navegador; não são enviados a um servidor nem sincronizados entre dispositivos.
+Nos perfis de professor e aluno, **Editar perfil** abre o modo de edição junto ao conteúdo. Os ícones de lápis levam ao campo correspondente; a pessoa pode alterar nome, função, escola, apresentação, biografia e competências ou interesses. A edição do perfil também permite buscar no Spotify, colar um link de faixa, álbum ou playlist, conferir o player incorporado e salvar a escolha. **Salvar alterações** atualiza a apresentação e os identificadores relacionados. Os valores ficam no `localStorage` deste navegador; não são enviados a um servidor nem sincronizados entre dispositivos. O player é incorporado pelo Spotify e depende de conexão e disponibilidade do serviço.
 
 ## Como conduzir a apresentação
 
@@ -63,7 +63,10 @@ Variação derivada do perfil docente. Não havia captura discente nas referênc
 | Hero do aluno | Identidade pública e vínculo escolar. | Derivada | [Ver parte](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/?screen=student-profile&part=student-hero) |
 | Stories do aluno | Projetos e momentos que o estudante escolhe compartilhar. | Derivada | [Ver parte](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/?screen=student-profile&part=student-stories) |
 | Abas do aluno | Separação entre apresentação, percurso e publicações. | Derivada | [Ver parte](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/?screen=student-profile&part=student-tabs) |
+| Competências escolhidas | Interesses públicos escolhidos pelo estudante, sem nota ou afirmação de domínio. | Derivada | [Ver parte](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/?screen=student-profile&part=student-skills) |
 | Percurso autorizado | Indicadores liberados para exibição pública. | Derivada | [Ver parte](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/?screen=student-profile&part=student-progress) |
+| Experiências compartilhadas | Uma produção escolhida para apresentar autoria e contexto à comunidade. | Derivada | [Ver parte](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/?screen=student-profile&part=student-activity) |
+| Projetos em destaque | Projetos e participação pública autorizados pelo estudante. | Derivada | [Ver parte](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/?screen=student-profile&part=student-projects) |
 | Conquistas | Itens escolhidos pelo estudante para o perfil. | Derivada | [Ver parte](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/?screen=student-profile&part=student-achievements) |
 | Apresentação e privacidade | Limites entre o perfil social e o espaço pedagógico reservado. | Derivada | [Ver parte](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/?screen=student-profile&part=student-privacy) |
 
