@@ -2,6 +2,14 @@
 
 Explore as telas da Lumira pela [apresentação ao vivo](https://glaucodeveloper.github.io/lumira-frontend-cognoscere/). A página mantém a prévia completa e o laboratório de componentes: o índice troca de tela, a lista lateral abre cada parte e o inspetor ajusta seu estado e seus parâmetros de demonstração.
 
+O PDF [Apresentação inicial — edição de perfil e partes da plataforma](../output/pdf/Lumira_Apresentacao_Inicial_Perfil_e_Componentes.pdf) apresenta o fluxo de edição, capturas anotadas das telas e a conexão de produto com o Documento 01 — Filosofia e Visão.
+
+## Acesso e edição de perfil
+
+A apresentação pede uma chave PTA compartilhada separadamente. Depois de entrar, a autorização fica na sessão desta aba. A chave funciona como barreira de entrada visual: o GitHub Pages e o repositório são públicos, portanto isso não equivale a autenticação no servidor nem impede alguém de inspecionar o código publicado.
+
+Nos perfis de professor e aluno, **Editar perfil** abre um formulário para nome, função, escola, apresentação e competências ou interesses. **Salvar perfil** atualiza o hero, os identificadores relacionados e, no perfil discente, a seção “Sobre mim”. Os valores ficam no `localStorage` deste navegador; não são enviados a um servidor nem sincronizados entre dispositivos.
+
 ## Como conduzir a apresentação
 
 1. Escolha **Acesso**, **Perfil professor**, **Perfil aluno** ou **Comunidade** no índice à esquerda.

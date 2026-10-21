@@ -126,6 +126,8 @@ function stateIterator<T>(initial: T): LabStateIterator<T> {
 }
 interface DemoDataEditorElement extends HTMLElement { configure(key: string, value: unknown): void; }
 const DEMO_LOADING_DURATION_MS = 1100;
+const DEMO_ACCESS_KEY_SHA256 = '577354857eae071767721a0f07cd8d9663502309f08bfd341bdc12f10d0ae94f';
+const DEMO_ACCESS_SESSION_KEY = 'lumira.presentation.pta-access.v1';
 
 export function componentingDemoLab({ screens, fixtures }: { screens: readonly ReferenceScreenSpec[]; fixtures: Record<string, unknown> }): HTMLElement {
   registerComponentElements();
@@ -721,6 +723,79 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
   return lab;
 }
 
+type AccessGateState = { page: HTMLElement | null; error: string; authorized: boolean };
+function accessKeyDigest(value: string): Promise<string> {
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)).then(buffer =>
+    Array.from(new Uint8Array(buffer), byte => byte.toString(16).padStart(2, '0')).join(''));
+}
+function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
+  interface AccessGateElement extends HTMLElement { configure(page: HTMLElement): void; }
+  if (!customElements.get('lumira-access-gate')) {
+    class LumiraAccessGate extends HTMLElement implements AccessGateElement {
+      private transitions: LabStateIterator<AccessGateState>;
+      private state: AccessGateState;
+      constructor() {
+        super();
+        this.transitions = stateIterator<AccessGateState>({ page: null, error: '', authorized: false });
+        this.state = this.transitions.next().value;
+        this.addEventListener('submit', event => { void this.onSubmit(event); });
+      }
+      configure(content: HTMLElement): void {
+        this.state = this.transitions.next(state => ({ ...state, page: content })).value;
+        this.render();
+      }
+      private async onSubmit(event: Event): Promise<void> {
+        const form = event.target instanceof HTMLFormElement ? event.target : undefined;
+        if (!form?.matches('[data-demo-access-form]')) return;
+        event.preventDefault();
+        const input = form.querySelector<HTMLInputElement>('[name="accessKey"]');
+        const candidate = input?.value.trim().toLocaleUpperCase() ?? '';
+        if (!candidate) {
+          this.state = this.transitions.next(state => ({ ...state, error: 'Digite a chave PTA para continuar.' })).value;
+          this.render();
+          this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
+          return;
+        }
+        try {
+          const digest = await accessKeyDigest(candidate);
+          let difference = 0;
+          for (let index = 0; index < DEMO_ACCESS_KEY_SHA256.length; index++) {
+            difference |= digest.charCodeAt(index) ^ DEMO_ACCESS_KEY_SHA256.charCodeAt(index);
+          }
+          if (difference !== 0) {
+            this.state = this.transitions.next(state => ({ ...state, error: 'Chave não reconhecida. Confira o código de acesso.' })).value;
+            this.render();
+            this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
+            return;
+          }
+          try { sessionStorage.setItem(DEMO_ACCESS_SESSION_KEY, 'authorized'); } catch { /* Acesso vale nesta aba mesmo sem sessão persistente. */ }
+          this.state = this.transitions.next(state => ({ ...state, error: '', authorized: true })).value;
+          this.render();
+        } catch {
+          this.state = this.transitions.next(state => ({ ...state, error: 'A conferência da chave exige uma conexão segura HTTPS.' })).value;
+          this.render();
+        }
+      }
+      private render(): void {
+        let sessionAuthorized = false;
+        try { sessionAuthorized = sessionStorage.getItem(DEMO_ACCESS_SESSION_KEY) === 'authorized'; } catch { /* Sessão indisponível. */ }
+        if (this.state.page && (this.state.authorized || sessionAuthorized)) {
+          this.replaceChildren(this.state.page);
+          return;
+        }
+        this.innerHTML = '<main class="lm-access-gate"><section class="lm-access-gate-intro"><span class="lm-access-gate-mark">L</span><span class="lm-eyebrow">LUMIRA · COMPONENTING DEMO LAB</span><h1>Uma plataforma que torna o raciocínio visível.</h1><p>Explore as telas, as partes de página e suas interações demonstrativas.</p><small>Apresentação de produto · acesso por convite</small></section>'
+          + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">CHAVE DE APRESENTAÇÃO</span><h2>Digite a chave PTA</h2><p>Use o código que acompanha o convite para abrir a demonstração.</p><label for="lm-presentation-key">Chave de acesso</label><input id="lm-presentation-key" name="accessKey" type="password" autocomplete="current-password" spellcheck="false" required aria-describedby="lm-presentation-key-help" placeholder="PTA-XXXX-XXXX-…">'
+          + (this.state.error ? '<p class="lm-access-gate-error" role="alert">' + e(this.state.error) + '</p>' : '<small id="lm-presentation-key-help">A chave diferencia esta apresentação das páginas públicas de referência.</small>')
+          + '<button type="submit" class="lm-access-gate-submit">Abrir apresentação <span aria-hidden="true">↗</span></button></form><small class="lm-access-gate-note">O código é compartilhado separadamente.</small></section></main>';
+      }
+    }
+    customElements.define('lumira-access-gate', LumiraAccessGate);
+  }
+  const gate = document.createElement('lumira-access-gate') as AccessGateElement;
+  gate.configure(page);
+  return gate;
+}
+
 export interface ProgramGeneratorOptions {
   /** Pontos de injeção para inicialização controlada; o boot normal usa DOM/URL. */
   mount?: HTMLElement;
@@ -748,7 +823,8 @@ export function* programGenerator(
       screens: referenceScreenSpecs,
       fixtures: initialComponentData,
     });
-    renderView = () => demoPage;
+    const protectedDemo = protectDemoWithAccessKey(demoPage);
+    renderView = () => protectedDemo;
   }
 
   // O system API continua disponível, mas no demo toda renderização usa a

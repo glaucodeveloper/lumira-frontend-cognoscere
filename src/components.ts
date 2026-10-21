@@ -934,6 +934,43 @@ function LabAvatar(name: string, tone = 'teal', className = ''): string {
   return '<span class="lm-avatar lm-avatar-' + e(tone) + ' ' + e(className) + '" aria-label="' + e(name) + '">' + e(labInitials(name)) + '</span>';
 }
 function LabPill(text: string, tone = ''): string { return '<span class="lm-pill ' + e(tone) + '">' + e(text) + '</span>'; }
+type EditableProfile = { name: string; role: string; school: string; intro: string; competencies: string[] };
+const DEMO_PROFILE_STORAGE_KEY = 'lumira.profile-demo.v1';
+function readSavedProfile(screenId: string): Partial<EditableProfile> {
+  if (!screenId || typeof localStorage === 'undefined') return {};
+  try {
+    const stored: unknown = JSON.parse(localStorage.getItem(DEMO_PROFILE_STORAGE_KEY) ?? '{}');
+    if (!stored || typeof stored !== 'object' || Array.isArray(stored)) return {};
+    const saved = (stored as Record<string, unknown>)[screenId];
+    if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return {};
+    const values = saved as Record<string, unknown>;
+    return {
+      ...(typeof values.name === 'string' ? { name: values.name } : {}),
+      ...(typeof values.role === 'string' ? { role: values.role } : {}),
+      ...(typeof values.school === 'string' ? { school: values.school } : {}),
+      ...(typeof values.intro === 'string' ? { intro: values.intro } : {}),
+      ...(Array.isArray(values.competencies) ? { competencies: values.competencies.map(String).slice(0, 4) } : {}),
+    };
+  } catch {
+    return {};
+  }
+}
+function profileValues(screenId: string, data: ComponentFixture, student: boolean): EditableProfile {
+  const fallback: EditableProfile = {
+    name: labText(data, 'name', student ? 'Caio Almeida' : 'Ana Beatriz Silva'),
+    role: labText(data, 'role', student ? 'Estudante · 8º ano' : 'Professora de Língua Portuguesa'),
+    school: labText(data, 'school', 'Escola Municipal Nova Esperança'),
+    intro: labText(data, student ? 'bio' : 'quote', student ? 'Aprendo investigando e gosto de transformar perguntas em projetos com a turma.' : 'Educação é caminho, colaboração e destino.'),
+    competencies: labList<string>(data, 'competencies').slice(0, 4).map(String),
+  };
+  return { ...fallback, ...readSavedProfile(screenId) };
+}
+function persistProfileValues(screenId: string, values: EditableProfile): void {
+  if (typeof localStorage === 'undefined') throw new Error('Armazenamento local indisponível neste navegador.');
+  const stored: Record<string, unknown> = JSON.parse(localStorage.getItem(DEMO_PROFILE_STORAGE_KEY) ?? '{}');
+  stored[screenId] = values;
+  localStorage.setItem(DEMO_PROFILE_STORAGE_KEY, JSON.stringify(stored));
+}
 function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, selectedId: string): string {
   data = prototypeData('workspace-sidebar', data);
   const community = screenId === 'community';
@@ -943,7 +980,7 @@ function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, select
   const questPage = screenId === 'quests';
   const competencyQuestions = screenId === 'competency-questions';
   const student = screenId === 'student-profile' || learnerActivity || levelingEnrollment || questPage || competencyQuestions;
-  const name = labText(data, 'name', student ? 'Caio Almeida' : 'Ana Beatriz Silva');
+  const name = profileValues(activePageComposition?.situation.screenId ?? screenId, data, student).name;
   const labels = community ? ['Feed', 'Meus círculos', 'Explorar', 'Mensagens', 'Salvos']
     : teachingSpace ? ['Início', 'Matérias e turmas', 'Competências', 'Sondagem', 'Evidências', 'Cursos', 'Comunidade']
       : learnerActivity ? ['Início', 'Sondagem', 'Atividade', 'Cursos', 'Meu percurso', 'Comunidade']
@@ -963,7 +1000,8 @@ function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, select
 }
 function renderWorkspaceTopbar(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('workspace-topbar', data);
-  const name = labText(data, 'name', 'Ana Beatriz Silva');
+  const screenId = activePageComposition?.situation.screenId ?? 'teacher-profile';
+  const name = profileValues(screenId, data, screenId === 'student-profile').name;
   const content = '<div class="lm-search"><span aria-hidden="true">⌕</span><input aria-label="Buscar" placeholder="Buscar áreas, cursos, pessoas, conteúdos..." /></div>'
     + '<div class="lm-top-actions"><button type="button" class="lm-top-action">＋ <span>Criar</span></button><button type="button" class="lm-top-action">♧ <span>Notificações</span><i>3</i></button><button type="button" class="lm-user-menu">' + LabAvatar(name, 'teal', 'tiny') + '<span>' + e(name) + '</span><b>⌄</b></button></div>';
   return labPart('workspace-topbar', content, selectedId, 'lm-product-topbar');
@@ -996,17 +1034,21 @@ function renderAccessPage(props: ComponentPageProps): string {
 }
 function renderProfileHero(id: string, data: ComponentFixture, selectedId: string, student = false): string {
   data = prototypeData(id, data);
-  const name = labText(data, 'name', student ? 'Caio Almeida' : 'Ana Beatriz Silva');
-  const role = labText(data, 'role', student ? 'Estudante · 8º ano' : 'Professora de Língua Portuguesa');
-  const chips = labList<string>(data, 'competencies').slice(0, 4).map(item => LabPill(item, 'glass')).join('');
-  const school = labText(data, 'school', 'Escola Municipal Nova Esperança');
-  const summary = student ? '<p class="lm-profile-school">' + e(school) + '</p>' : '<p class="lm-profile-quote">“' + e(labText(data, 'quote', 'Educação é caminho, colaboração e destino.')) + '”</p>';
+  const screenId = activePageComposition?.situation.screenId ?? (student ? 'student-profile' : 'teacher-profile');
+  const profile = profileValues(screenId, data, student);
+  const chips = profile.competencies.map(item => LabPill(item, 'glass')).join('');
+  const summary = student
+    ? '<p class="lm-profile-school" data-profile-value="school">' + e(profile.school) + '</p>'
+    : '<p class="lm-profile-quote" data-profile-value="intro">' + e(profile.intro) + '</p>';
+  const roleAndSchool = student
+    ? '<p><span data-profile-value="role">' + e(profile.role) + '</span></p>'
+    : '<p><span data-profile-value="role">' + e(profile.role) + '</span><span aria-hidden="true">·</span><span data-profile-value="school">' + e(profile.school) + '</span></p>';
   const music = student ? '' : '<div class="lm-music-status"><span>♫</span><span><b>' + e(labText(data, 'music', 'Boa Energia · Jota.Pê')) + '</b><small>NO PERFIL</small></span><button type="button" aria-label="Tocar música">▶</button></div>';
   const image = "url('" + profileCoverAsset + "')";
   const content = '<div class="lm-profile-cover" style="background-image:linear-gradient(90deg,rgba(7,35,67,.65),rgba(8,39,72,.17)),' + image + '">'
     + '<div class="lm-profile-cover-top"><span class="lm-eyebrow">PERFIL · ' + (student ? 'ESTUDANTE' : 'EDUCADORA') + '</span><button type="button" class="lm-cover-more">•••</button></div>'
-    + '<div class="lm-profile-identity">' + LabAvatar(name, student ? 'blue' : 'teal', 'portrait') + '<div class="lm-profile-name"><h1>' + e(name) + ' <span class="lm-verified">✓</span></h1><p>' + e(role) + ' <span>·</span> ' + e(school) + '</p>' + summary + '<div class="lm-profile-pills">' + chips + '</div></div>'
-    + '<div class="lm-profile-actions">' + music + '<button type="button" class="lm-light-button">✎ <span>Editar perfil</span></button><button type="button" class="lm-icon-button" aria-label="Compartilhar perfil">↗</button></div></div></div>';
+    + '<div class="lm-profile-identity"><span class="lm-avatar lm-avatar-' + (student ? 'blue' : 'teal') + ' portrait" data-profile-avatar aria-hidden="true">' + e(labInitials(profile.name)) + '</span><div class="lm-profile-name"><h1><span data-profile-value="name">' + e(profile.name) + '</span> <span class="lm-verified">✓</span></h1>' + roleAndSchool + summary + (student ? '<p class="lm-profile-quote" data-profile-value="intro">' + e(profile.intro) + '</p>' : '') + '<div class="lm-profile-pills" data-profile-value="competencies">' + chips + '</div></div>'
+    + '<div class="lm-profile-actions">' + music + '<button type="button" class="lm-light-button" data-profile-edit>✎ <span>Editar perfil</span></button><button type="button" class="lm-icon-button" aria-label="Compartilhar perfil">↗</button></div></div></div>';
   return labPart(id, content, selectedId, 'lm-profile-hero-part');
 }
 function renderStories(id: string, data: ComponentFixture, selectedId: string): string {
@@ -1083,10 +1125,12 @@ function renderSkillsPanel(data: ComponentFixture, selectedId: string): string {
 }
 function renderAboutPanel(data: ComponentFixture, selectedId: string, student = false): string {
   data = prototypeData(student ? 'student-privacy' : 'teacher-about', data);
+  const screenId = activePageComposition?.situation.screenId ?? (student ? 'student-profile' : 'teacher-profile');
+  const bio = student ? profileValues(screenId, data, true).intro : labText(data, 'bio', 'Uma apresentação pública sobre aprendizagem, projetos e comunidade.');
   const affiliations = labList<string>(data, 'affiliations');
   const socials = labList<string>(data, 'socials');
   const content = '<article class="lm-panel lm-about-panel"><header><h2>' + (student ? 'Sobre mim' : 'Sobre mim') + '</h2><button type="button" class="lm-panel-edit" aria-label="Editar sobre mim">✎</button></header>'
-    + '<p>' + e(labText(data, 'bio', 'Uma apresentação pública sobre aprendizagem, projetos e comunidade.')) + '</p>'
+    + '<p data-profile-about>' + e(bio) + '</p>'
     + (student ? '<div class="lm-privacy-notice">' + e(labText(data, 'privacy', 'Este perfil exibe somente informações autorizadas para publicação.')) + '</div>' : '')
     + (student ? '' : '<div class="lm-affiliations">' + affiliations.map(item => '<span>⌂ ' + e(item) + '</span>').join('') + '</div>')
     + (student ? '' : '<div class="lm-social-links">' + socials.map((item, index) => '<button type="button" class="tone-' + (index % 4) + '" aria-label="' + e(item) + '">' + ['◎', 'in', 'f', '▶'][index % 4] + '</button>').join('') + '</div>');
@@ -1600,6 +1644,7 @@ export function registerComponentElements(): void {
           if (kind === 'sort' && active) button.textContent = 'Mais recentes⌄';
         });
         this.restoreStories();
+        this.restoreProfileEditor();
         this.restorePedagogyDemo();
         if (interaction.feedback) {
           const feedback = document.createElement('p');
@@ -1608,6 +1653,45 @@ export function registerComponentElements(): void {
           feedback.textContent = interaction.feedback;
           this.append(feedback);
         }
+      }
+      private restoreProfileEditor(): void {
+        if (this.state.id !== 'teacher-hero' && this.state.id !== 'student-hero') return;
+        const student = this.state.id === 'student-hero';
+        const screenId = this.state.situation.screenId || (student ? 'student-profile' : 'teacher-profile');
+        const page = this.closest<HTMLElement>('.lm-product-page') ?? this;
+        const text = (selector: string, fallback = ''): string => this.querySelector<HTMLElement>(selector)?.textContent?.trim() ?? fallback;
+        const profile: EditableProfile = {
+          name: text('[data-profile-value="name"]', student ? 'Caio Almeida' : 'Ana Beatriz Silva'),
+          role: text('[data-profile-value="role"]', student ? 'Estudante · 8º ano' : 'Professora de Língua Portuguesa'),
+          school: text('[data-profile-value="school"]', 'Escola Municipal Nova Esperança'),
+          intro: student ? page.querySelector<HTMLElement>('[data-profile-about]')?.textContent?.trim() ?? '' : text('[data-profile-value="intro"]'),
+          competencies: [...(this.querySelector('.lm-profile-pills')?.querySelectorAll<HTMLElement>('.lm-pill') ?? [])].map(item => item.textContent?.trim() ?? '').filter(Boolean),
+        };
+        Object.assign(profile, readSavedProfile(screenId));
+        this.querySelector<HTMLElement>('[data-profile-value="name"]')?.replaceChildren(document.createTextNode(profile.name));
+        this.querySelector<HTMLElement>('[data-profile-value="role"]')?.replaceChildren(document.createTextNode(profile.role));
+        this.querySelector<HTMLElement>('[data-profile-value="school"]')?.replaceChildren(document.createTextNode(profile.school));
+        this.querySelector<HTMLElement>('[data-profile-value="intro"]')?.replaceChildren(document.createTextNode(profile.intro));
+        this.querySelector<HTMLElement>('[data-profile-avatar]')?.replaceChildren(document.createTextNode(labInitials(profile.name)));
+        const pills = this.querySelector<HTMLElement>('.lm-profile-pills');
+        if (pills) pills.innerHTML = profile.competencies.map(item => LabPill(item, 'glass')).join('');
+        if (student) page.querySelector<HTMLElement>('[data-profile-about]')?.replaceChildren(document.createTextNode(profile.intro));
+        page.querySelector<HTMLElement>('.lm-side-account strong')?.replaceChildren(document.createTextNode(profile.name));
+        page.querySelector<HTMLElement>('.lm-side-account .lm-avatar')?.replaceChildren(document.createTextNode(labInitials(profile.name)));
+        page.querySelector<HTMLElement>('.lm-user-menu > span:not(.lm-avatar)')?.replaceChildren(document.createTextNode(profile.name));
+        page.querySelector<HTMLElement>('.lm-user-menu .lm-avatar')?.replaceChildren(document.createTextNode(labInitials(profile.name)));
+
+        this.querySelector('[data-profile-editor-overlay]')?.remove();
+        if (this.state.interaction.groups['profile-editor-open'] !== 'yes') return;
+        const modal = '<div class="lm-profile-editor-overlay" data-profile-editor-overlay><section class="lm-profile-editor" role="dialog" aria-modal="true" aria-labelledby="lm-profile-editor-title">'
+          + '<header><div><span class="lm-eyebrow">PERFIL · ' + (student ? 'ESTUDANTE' : 'EDUCADORA') + '</span><h2 id="lm-profile-editor-title">Editar perfil</h2></div><button type="button" data-profile-close aria-label="Fechar edição">×</button></header>'
+          + '<form data-profile-editor><label>Nome<input name="name" required maxlength="80" value="' + e(profile.name) + '"></label>'
+          + '<div class="lm-profile-editor-grid"><label>Função<input name="role" required maxlength="90" value="' + e(profile.role) + '"></label><label>Escola<input name="school" required maxlength="100" value="' + e(profile.school) + '"></label></div>'
+          + '<label>' + (student ? 'Sobre mim' : 'Frase do perfil') + '<textarea name="intro" rows="3" maxlength="320">' + e(profile.intro) + '</textarea></label>'
+          + '<label>' + (student ? 'Interesses' : 'Competências') + '<textarea name="competencies" rows="3" maxlength="320">' + e(profile.competencies.join('\n')) + '</textarea><small>Uma por linha. Até quatro itens aparecem no perfil.</small></label>'
+          + '<p class="lm-profile-editor-note">Salvar atualiza esta demonstração neste navegador.</p>'
+          + '<footer><button type="button" class="lm-secondary-button" data-profile-close>Cancelar</button><button type="submit" class="lm-primary-button">Salvar perfil</button></footer></form></section></div>';
+        this.insertAdjacentHTML('beforeend', modal);
       }
       private restoreStories(): void {
         const track = this.querySelector<HTMLElement>('.lm-stories-track');
@@ -2041,6 +2125,18 @@ export function registerComponentElements(): void {
         // Deixe a navegação entre telas chegar ao Componenting Demo Lab, que
         // controla a montagem da página e a URL selecionada.
         if (button.hasAttribute('data-screen-select')) return;
+        if (button.hasAttribute('data-profile-edit')) {
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'profile-editor-open': 'yes' }, feedback: '' }));
+          this.render();
+          this.querySelector<HTMLInputElement>('[data-profile-editor] input[name="name"]')?.focus();
+          return;
+        }
+        if (button.hasAttribute('data-profile-close')) {
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'profile-editor-open': '' } }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-profile-edit]')?.focus();
+          return;
+        }
         if (button.dataset.questFilter) {
           const filter = button.dataset.questFilter;
           const cards = [...this.querySelectorAll<HTMLButtonElement>('[data-quest-select]')];
@@ -2352,6 +2448,28 @@ export function registerComponentElements(): void {
       private onSubmit(event: Event): void {
         event.preventDefault();
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
+        if (form?.matches('[data-profile-editor]') && (this.state.id === 'teacher-hero' || this.state.id === 'student-hero')) {
+          const values = new FormData(form);
+          const name = String(values.get('name') ?? '').trim();
+          const role = String(values.get('role') ?? '').trim();
+          const school = String(values.get('school') ?? '').trim();
+          const intro = String(values.get('intro') ?? '').trim();
+          const competencies = String(values.get('competencies') ?? '').split(/\r?\n/).map(item => item.trim()).filter(Boolean).slice(0, 4);
+          if (!name || !role || !school) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Preencha nome, função e escola antes de salvar.' }));
+            this.render();
+            return;
+          }
+          try {
+            persistProfileValues(this.state.situation.screenId || (this.state.id === 'student-hero' ? 'student-profile' : 'teacher-profile'), { name, role, school, intro, competencies });
+            this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'profile-editor-open': '' }, feedback: 'Perfil salvo neste navegador.' }));
+          } catch {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Não foi possível salvar neste navegador. Verifique o espaço de armazenamento disponível.' }));
+          }
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-profile-edit]')?.focus();
+          return;
+        }
         if (form?.matches('[data-leveling-enrollment-form]') && this.state.id === 'leveling-confirmation') {
           const code = form.querySelector<HTMLInputElement>('[name="invitationCode"]')?.value.trim() ?? '';
           const expectedCode = form.dataset.invitationCode ?? '';
