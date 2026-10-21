@@ -723,10 +723,17 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
   return lab;
 }
 
-type AccessGateState = { page: HTMLElement | null; error: string; authorized: boolean };
+type AccessGateState = { page: HTMLElement | null; error: string; entry: string; authorized: boolean };
 function accessKeyDigest(value: string): Promise<string> {
   return crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)).then(buffer =>
     Array.from(new Uint8Array(buffer), byte => byte.toString(16).padStart(2, '0')).join(''));
+}
+function normalizeAccessKey(value: string): string {
+  return value.normalize('NFKC').trim().toLocaleUpperCase()
+    .replace(/[\u2010-\u2015\u2212]/g, '-')
+    .replace(/\s*-\s*/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
 }
 function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
   interface AccessGateElement extends HTMLElement { configure(page: HTMLElement): void; }
@@ -736,7 +743,7 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
       private state: AccessGateState;
       constructor() {
         super();
-        this.transitions = stateIterator<AccessGateState>({ page: null, error: '', authorized: false });
+        this.transitions = stateIterator<AccessGateState>({ page: null, error: '', entry: '', authorized: false });
         this.state = this.transitions.next().value;
         this.addEventListener('submit', event => { void this.onSubmit(event); });
       }
@@ -749,9 +756,10 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
         if (!form?.matches('[data-demo-access-form]')) return;
         event.preventDefault();
         const input = form.querySelector<HTMLInputElement>('[name="accessKey"]');
-        const candidate = input?.value.trim().toLocaleUpperCase() ?? '';
+        const entry = input?.value ?? '';
+        const candidate = normalizeAccessKey(entry);
         if (!candidate) {
-          this.state = this.transitions.next(state => ({ ...state, error: 'Digite a chave PTA para continuar.' })).value;
+          this.state = this.transitions.next(state => ({ ...state, entry, error: 'Digite a chave PTA para continuar.' })).value;
           this.render();
           this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
           return;
@@ -763,16 +771,16 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
             difference |= digest.charCodeAt(index) ^ DEMO_ACCESS_KEY_SHA256.charCodeAt(index);
           }
           if (difference !== 0) {
-            this.state = this.transitions.next(state => ({ ...state, error: 'Chave não reconhecida. Confira o código de acesso.' })).value;
+            this.state = this.transitions.next(state => ({ ...state, entry, error: 'Chave não reconhecida. Confira o código de acesso.' })).value;
             this.render();
             this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
             return;
           }
           try { sessionStorage.setItem(DEMO_ACCESS_SESSION_KEY, 'authorized'); } catch { /* Acesso vale nesta aba mesmo sem sessão persistente. */ }
-          this.state = this.transitions.next(state => ({ ...state, error: '', authorized: true })).value;
+          this.state = this.transitions.next(state => ({ ...state, error: '', entry: '', authorized: true })).value;
           this.render();
         } catch {
-          this.state = this.transitions.next(state => ({ ...state, error: 'A conferência da chave exige uma conexão segura HTTPS.' })).value;
+          this.state = this.transitions.next(state => ({ ...state, entry, error: 'A conferência da chave exige uma conexão segura HTTPS.' })).value;
           this.render();
         }
       }
@@ -783,9 +791,10 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
           this.replaceChildren(this.state.page);
           return;
         }
+        const helpId = this.state.error ? 'lm-presentation-key-error' : 'lm-presentation-key-help';
         this.innerHTML = '<main class="lm-access-gate"><section class="lm-access-gate-intro"><span class="lm-access-gate-mark">L</span><span class="lm-eyebrow">LUMIRA · COMPONENTING DEMO LAB</span><h1>Uma plataforma que torna o raciocínio visível.</h1><p>Explore as telas, as partes de página e suas interações demonstrativas.</p><small>Apresentação de produto · acesso por convite</small></section>'
-          + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">CHAVE DE APRESENTAÇÃO</span><h2>Digite a chave PTA</h2><p>Use o código que acompanha o convite para abrir a demonstração.</p><label for="lm-presentation-key">Chave de acesso</label><input id="lm-presentation-key" name="accessKey" type="password" autocomplete="current-password" spellcheck="false" required aria-describedby="lm-presentation-key-help" placeholder="PTA-XXXX-XXXX-…">'
-          + (this.state.error ? '<p class="lm-access-gate-error" role="alert">' + e(this.state.error) + '</p>' : '<small id="lm-presentation-key-help">A chave diferencia esta apresentação das páginas públicas de referência.</small>')
+          + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">CHAVE DE APRESENTAÇÃO</span><h2>Digite a chave PTA</h2><p>Use o código que acompanha o convite para abrir a demonstração.</p><label for="lm-presentation-key">Chave de acesso</label><input id="lm-presentation-key" name="accessKey" type="password" autocomplete="current-password" spellcheck="false" required aria-invalid="' + String(Boolean(this.state.error)) + '" aria-describedby="' + helpId + '" value="' + e(this.state.entry) + '" placeholder="PTA-XXXX-XXXX-…">'
+          + (this.state.error ? '<p id="lm-presentation-key-error" class="lm-access-gate-error" role="alert">' + e(this.state.error) + '</p>' : '<small id="lm-presentation-key-help">A chave diferencia esta apresentação das páginas públicas de referência.</small>')
           + '<button type="submit" class="lm-access-gate-submit">Abrir apresentação <span aria-hidden="true">↗</span></button></form><small class="lm-access-gate-note">O código é compartilhado separadamente.</small></section></main>';
       }
     }
