@@ -1654,6 +1654,95 @@ lumira-page-part {
   font-size: 10px;
   line-height: 1.6;
 }
+.lm-story-question {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #dce7e7;
+  border-radius: 8px;
+  background: #f7fbfa;
+}
+.lm-story-question-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.lm-story-question-heading>span {
+  color: var(--lm-brand);
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+.lm-story-question-heading>small {
+  color: var(--lm-muted);
+  font-size: 8px;
+}
+.lm-story-question h4 {
+  margin: 0;
+  color: var(--lm-ink-strong);
+  font-family: var(--lm-font-display);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.lm-story-question-options {
+  display: grid;
+  gap: 6px;
+}
+.lm-story-question-option {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 9px;
+  border: 1px solid #dce2e4;
+  border-radius: 6px;
+  background: white;
+  color: #344454;
+  font: inherit;
+  font-size: 9px;
+  line-height: 1.45;
+  text-align: left;
+  cursor: pointer;
+}
+.lm-story-question-option:hover,
+.lm-story-question-option:focus-visible { border-color: var(--lm-brand); outline: none; }
+.lm-story-question-option.is-correct { border-color: #4b9a7b; background: #edf8f2; }
+.lm-story-question-option.is-incorrect { border-color: #ca7a70; background: #fff3f1; }
+.lm-story-question-option-copy {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 8px;
+}
+.lm-story-question-option-copy>i {
+  display: grid;
+  width: 19px;
+  height: 19px;
+  flex: 0 0 19px;
+  place-items: center;
+  border: 1px solid #dce2e4;
+  border-radius: 50%;
+  color: var(--lm-brand);
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 750;
+}
+.lm-story-question-option>small {
+  flex: 0 0 auto;
+  color: var(--lm-muted);
+  font-size: 7px;
+}
+.lm-story-question-feedback {
+  margin: 0;
+  color: var(--lm-muted);
+  font-size: 8px;
+  line-height: 1.5;
+}
+.lm-story-question-feedback.is-correct { color: #28704f; }
+.lm-story-question-feedback.is-incorrect { color: #9a473d; }
 .lm-story-actions {
   display: flex;
   align-items: center;

@@ -587,18 +587,39 @@ export const initialComponentData: Record<string, unknown> = {
         category: 'Experimento', caption: 'O que muda quando alteramos uma variável?',
         body: 'No experimento da rampa, mantive o carrinho e a distância iguais e mudei a inclinação. Comparei as tentativas para perceber como a velocidade se relaciona com a altura.',
         image: studentRampStoryAsset, imageAlt: 'Mãos ajustam uma rampa de madeira para testar o movimento de um carrinho, com régua e caderno sobre a mesa.',
+        challenge: {
+          subject: 'Ciências · movimento',
+          prompt: 'A rampa fica mais inclinada, mantendo o mesmo carrinho e o percurso. O que a hipótese prevê?',
+          options: ['O carrinho tende a ganhar velocidade mais rapidamente.', 'O carrinho precisa de mais tempo para percorrer a rampa.'],
+          correctOption: 0,
+          explanation: 'Com maior inclinação, a componente da gravidade no sentido da rampa aumenta. Repetir o teste sem mudar os outros fatores ajuda a comparar as tentativas.',
+        },
         publishedAt: 'Hoje, 10:24', likes: 5, replies: ['Boa comparação entre as tentativas!'],
       },
       {
         category: 'Leitura', caption: 'Uma pista importante estava no segundo parágrafo.',
         body: 'Li o texto procurando evidências para a hipótese inicial. A ideia mudou quando relacionei a descrição do ambiente com a decisão da personagem.',
         image: studentReadingStoryAsset, imageAlt: 'Estudante acompanha um parágrafo de um livro aberto e registra observações em um caderno.',
+        challenge: {
+          subject: 'Leitura · evidência textual',
+          prompt: 'Qual pista apoia a leitura de que o ambiente influenciou a decisão da personagem?',
+          options: ['Um trecho que relaciona o ambiente à decisão.', 'O fato de o texto ter dois parágrafos.'],
+          correctOption: 0,
+          explanation: 'Uma interpretação precisa se apoiar em evidências do texto. A quantidade de parágrafos não confirma, por si só, uma hipótese de leitura.',
+        },
         publishedAt: 'Ontem, 16:40', likes: 3, replies: [],
       },
       {
         category: 'Projeto', caption: 'Clube de ciências: pergunta da semana.',
         body: 'Nosso grupo está investigando como reduzir o desperdício de água na escola. Primeiro vamos observar os usos; depois, comparar propostas com os mesmos critérios.',
         image: studentWaterStoryAsset, imageAlt: 'Estudantes medem a água usada na horta escolar com um recipiente graduado.',
+        challenge: {
+          subject: 'Ciências · uso da água',
+          prompt: 'Para comparar dois métodos de rega, qual registro mostra melhor qual deles usa menos água?',
+          options: ['O volume usado por cada método no mesmo intervalo.', 'A cor das folhas sem medir a água.'],
+          correctOption: 0,
+          explanation: 'Comparar volumes no mesmo intervalo controla o tempo observado e ajuda a relacionar os dados ao objetivo de reduzir o desperdício.',
+        },
         publishedAt: 'Há 3 dias', likes: 8, replies: ['Vamos registrar os horários também?'],
       },
     ],
@@ -769,6 +790,7 @@ type DemoPagePartInteraction = {
     question: string; countdown: string; mention: string; location: string;
   }>;
   selectedStory: number | null;
+  storyAnswers: Record<string, number>;
   storyComposerOpen: boolean;
   storyComposerExpanded: boolean;
   storyComposerTool: string;
@@ -1006,10 +1028,21 @@ function renderStories(id: string, data: ComponentFixture, selectedId: string): 
     const storyVisibility = typeof detail.visibility === 'string' ? detail.visibility : 'Público';
     const image = typeof detail.image === 'string' ? detail.image : '';
     const imageAlt = typeof detail.imageAlt === 'string' ? detail.imageAlt : 'Imagem do story ' + title;
+    const challenge = typeof detail.challenge === 'object' && detail.challenge !== null
+      ? detail.challenge as Record<string, unknown>
+      : {};
+    const challengePrompt = typeof challenge.prompt === 'string' ? challenge.prompt : '';
+    const challengeSubject = typeof challenge.subject === 'string' ? challenge.subject : 'Questão do story';
+    const challengeOptions = Array.isArray(challenge.options) ? challenge.options.map(String).slice(0, 4) : [];
+    const challengeAnswer = typeof challenge.correctOption === 'number' ? challenge.correctOption : -1;
+    const challengeExplanation = typeof challenge.explanation === 'string' ? challenge.explanation : '';
     const thumbnail = image
       ? '<img class="lm-story-thumb" src="' + e(image) + '" alt="">'
       : LabAvatar(title, ['teal', 'blue', 'violet', 'rose', 'sun'][index % 5], 'story-avatar');
-    return '<button type="button" class="lm-story-card" data-story-index="' + index + '" data-story-title="' + e(title) + '" data-story-caption="' + e(caption) + '" data-story-body="' + e(body) + '" data-story-category="' + e(category) + '" data-story-time="' + e(publishedAt) + '" data-story-visibility="' + e(storyVisibility) + '" data-story-likes="' + likes + '" data-story-image="' + e(image) + '" data-story-image-alt="' + e(imageAlt) + '" data-story-replies="' + e(JSON.stringify(replies)) + '"><span class="lm-story-ring tone-' + (index % 5) + '">' + thumbnail + '</span><b>' + e(title) + '</b><small>' + e(publishedAt) + '</small></button>';
+    const challengeAttributes = challengePrompt && challengeOptions.length
+      ? ' data-story-question-subject="' + e(challengeSubject) + '" data-story-question-prompt="' + e(challengePrompt) + '" data-story-question-options="' + e(JSON.stringify(challengeOptions)) + '" data-story-question-answer="' + challengeAnswer + '" data-story-question-explanation="' + e(challengeExplanation) + '"'
+      : '';
+    return '<button type="button" class="lm-story-card" data-story-index="' + index + '" data-story-title="' + e(title) + '" data-story-caption="' + e(caption) + '" data-story-body="' + e(body) + '" data-story-category="' + e(category) + '" data-story-time="' + e(publishedAt) + '" data-story-visibility="' + e(storyVisibility) + '" data-story-likes="' + likes + '" data-story-image="' + e(image) + '" data-story-image-alt="' + e(imageAlt) + '" data-story-replies="' + e(JSON.stringify(replies)) + '"' + challengeAttributes + '><span class="lm-story-ring tone-' + (index % 5) + '">' + thumbnail + '</span><b>' + e(title) + '</b><small>' + e(publishedAt) + '</small></button>';
   }).join('');
   const createCard = allowCreate
     ? '<button type="button" class="lm-story-card lm-new-story" data-story-create><span class="lm-new-story-icon">＋</span><b>Novo story</b><small>Compartilhar</small></button>'
@@ -1431,7 +1464,7 @@ export function registerComponentElements(): void {
           prototypeParameters: {},
           interaction: {
             groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, localStories: [], aiGenerated: {},
-            selectedStory: null, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
+            selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
             reviewFeedback: '', shareFeedback: '', responseFeedback: '', enrollmentFeedback: '', questFeedback: '', questionFeedback: '', feedback: '',
           },
@@ -1600,6 +1633,19 @@ export function registerComponentElements(): void {
           card.dataset.storyLikes = String(story.likes);
           card.dataset.storyImage = story.image;
           card.dataset.storyImageAlt = 'Imagem do story ' + story.title;
+          const quizOptions = [story.quizOptionA, story.quizOptionB].filter(Boolean);
+          const pollOptions = [story.pollOptionA, story.pollOptionB].filter(Boolean);
+          const challengeOptions = story.quizQuestion ? quizOptions : pollOptions;
+          const challengePrompt = story.quizQuestion || story.pollQuestion;
+          if (challengePrompt && challengeOptions.length) {
+            card.dataset.storyQuestionSubject = story.quizQuestion ? 'Quiz do story' : 'Enquete do story';
+            card.dataset.storyQuestionPrompt = challengePrompt;
+            card.dataset.storyQuestionOptions = JSON.stringify(challengeOptions);
+            card.dataset.storyQuestionAnswer = story.quizQuestion ? (story.quizAnswer === 'Alternativa B' ? '1' : '0') : '-1';
+            card.dataset.storyQuestionExplanation = story.quizQuestion
+              ? 'Resposta indicada na criação do quiz: ' + (story.quizAnswer === 'Alternativa B' ? story.quizOptionB : story.quizOptionA)
+              : 'Enquete sem resposta certa. A escolha fica registrada nesta demonstração.';
+          }
           card.dataset.storyReplies = '[]';
           card.innerHTML = '<span class="lm-story-ring tone-' + (storyIndex % 5) + '">' + (story.image ? '<img class="lm-story-thumb" src="' + e(story.image) + '" alt="">' : LabAvatar(story.title, ['teal', 'blue', 'violet', 'rose', 'sun'][storyIndex % 5], 'story-avatar')) + '</span><b>' + e(story.title) + '</b><small>Agora</small>';
           return card;
@@ -1630,8 +1676,18 @@ export function registerComponentElements(): void {
           const publishedAt = card.dataset.storyTime ?? 'Agora';
           const storyImage = card.dataset.storyImage ?? '';
           const storyImageAlt = card.dataset.storyImageAlt ?? 'Imagem do story ' + storyTitle;
+          const questionPrompt = card.dataset.storyQuestionPrompt ?? '';
+          const questionSubject = card.dataset.storyQuestionSubject ?? 'Questão do story';
+          let questionOptions: string[] = [];
+          try {
+            const decoded: unknown = JSON.parse(card.dataset.storyQuestionOptions ?? '[]');
+            if (Array.isArray(decoded)) questionOptions = decoded.map(String).slice(0, 4);
+          } catch { questionOptions = []; }
+          const questionAnswer = Number(card.dataset.storyQuestionAnswer ?? -1);
+          const questionExplanation = card.dataset.storyQuestionExplanation ?? '';
           const baseLikes = Number(card.dataset.storyLikes ?? 0);
           const replyKey = String(selectedStory);
+          const storyAnswer = this.state.interaction.storyAnswers?.[replyKey];
           let initialReplies: string[] = [];
           try {
             const decoded: unknown = JSON.parse(card.dataset.storyReplies ?? '[]');
@@ -1670,11 +1726,31 @@ export function registerComponentElements(): void {
             + '<div class="lm-story-art-caption"><strong>' + e(localStory.title) + '</strong><span>' + e(localStory.caption) + '</span></div></div></div>' : storyImage
               ? '<figure class="lm-story-published-art lm-story-published-art--portrait lm-story-published-art--fixture"><img src="' + e(storyImage) + '" alt="' + e(storyImageAlt) + '"><div class="lm-story-art-content"><div class="lm-story-art-caption"><strong>' + e(category) + '</strong><span>' + e(caption) + '</span></div></div></figure>'
               : '';
+          const questionOptionsMarkup = questionPrompt && questionOptions.length
+            ? '<section class="lm-story-question" role="group" aria-labelledby="story-question-' + e(this.state.id) + '-' + selectedStory + '">'
+              + '<header class="lm-story-question-heading"><span>' + (questionAnswer >= 0 ? 'QUESTÃO DO STORY' : 'ENQUETE DO STORY') + '</span><small>' + e(questionSubject) + '</small></header>'
+              + '<h4 id="story-question-' + e(this.state.id) + '-' + selectedStory + '">' + e(questionPrompt) + '</h4>'
+              + '<div class="lm-story-question-options">' + questionOptions.map((option, index) => {
+                const selected = storyAnswer === index;
+                const expected = questionAnswer === index;
+                const answerClass = storyAnswer === undefined ? '' : expected ? ' is-correct' : selected ? ' is-incorrect' : '';
+                const marker = storyAnswer === undefined ? '' : expected ? 'Resposta esperada' : selected ? 'Sua escolha' : '';
+                return '<button type="button" class="lm-story-question-option' + answerClass + '" data-story-question-option="' + index + '" aria-pressed="' + String(selected) + '"><span class="lm-story-question-option-copy"><i>' + String.fromCharCode(65 + index) + '</i>' + e(option) + '</span><small>' + e(marker) + '</small></button>';
+              }).join('') + '</div>'
+              + '<p class="lm-story-question-feedback' + (storyAnswer === undefined ? '' : questionAnswer < 0 || storyAnswer === questionAnswer ? ' is-correct' : ' is-incorrect') + '" role="status">'
+              + (storyAnswer === undefined
+                ? (questionAnswer < 0 ? 'Escolha uma opção para registrar seu voto.' : 'Escolha a resposta que melhor explica a situação.')
+                : questionAnswer < 0
+                  ? 'Voto registrado: ' + e(questionOptions[storyAnswer] ?? '') + '. ' + e(questionExplanation)
+                  : (storyAnswer === questionAnswer ? 'Resposta correta. ' : 'Essa não é a resposta esperada. ') + e(questionExplanation))
+              + '</p></section>'
+            : '';
           stage.innerHTML = '<article class="lm-story-viewer" aria-label="Story ' + e(storyTitle) + '">'
             + '<header class="lm-story-viewer-header"><div><span class="lm-story-category">' + e(category) + '</span><b>' + e(storyTitle) + '</b><small>' + e(publishedAt) + ' · ' + e(visibility) + '</small></div>'
             + '<div class="lm-story-viewer-nav"><button type="button" data-story-action="previous" aria-label="Story anterior" ' + (selectedStory === 0 ? 'disabled' : '') + '>‹</button><span>' + (selectedStory + 1) + ' / ' + stories.length + '</span><button type="button" data-story-action="next" aria-label="Próximo story" ' + (selectedStory >= stories.length - 1 ? 'disabled' : '') + '>›</button></div></header>'
             + '<div class="lm-story-progress" aria-hidden="true"><i style="width:' + Math.round(((selectedStory + 1) / stories.length) * 100) + '%"></i></div>'
             + publishedArtwork + (storyImage && !localStory ? '<p class="lm-story-body">' + e(body) + '</p>' : '<h3>' + e(caption) + '</h3><p class="lm-story-body">' + e(body) + '</p>')
+            + questionOptionsMarkup
             + '<footer class="lm-story-actions"><button type="button" data-story-action="like" aria-pressed="' + String(liked) + '">' + (liked ? '♥ Curtido' : '♡ Curtir') + ' · ' + (baseLikes + (liked ? 1 : 0)) + '</button><button type="button" data-story-action="save" aria-pressed="' + String(saved) + '">' + (saved ? '✓ Salvo' : '＋ Salvar') + '</button><span>Visibilidade: ' + e(visibility) + '</span></footer>'
             + replyItems + replyForm + '</article>';
         }
@@ -2118,6 +2194,17 @@ export function registerComponentElements(): void {
           this.transitionInteraction(interaction => ({ ...interaction, storyComposerOpen: true, storyComposerExpanded: false, feedback: '' }));
           this.render();
           this.querySelector<HTMLTextAreaElement>('[data-story-composer] [data-story-field="body"]')?.focus();
+          return;
+        }
+        if (button.dataset.storyQuestionOption !== undefined) {
+          const selected = String(this.state.interaction.selectedStory ?? 0);
+          const answer = Number(button.dataset.storyQuestionOption);
+          if (!Number.isInteger(answer) || answer < 0) return;
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            storyAnswers: { ...(interaction.storyAnswers ?? {}), [selected]: answer },
+          }));
+          this.render();
           return;
         }
         const storyAction = button.dataset.storyAction;
