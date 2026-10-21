@@ -94,6 +94,7 @@ export interface ComponentMockSituation {
   role: ComponentMockRole;
   status: ComponentMockStatus;
   presentationMode?: 'continuous-list';
+  flowIndexOffset?: number;
   componentStates?: Record<string, ComponentMockStatus>;
 }
 
@@ -927,11 +928,12 @@ function labPart(id: string, content: string, selectedId: string, className = ''
     };
     const screenSpec = referenceScreenSpecs.find(screen => screen.id === situation.screenId);
     const partIndex = screenSpec?.regions.findIndex(item => item.id === id) ?? -1;
+    const sequenceIndex = Math.max(0, (situation.flowIndexOffset ?? 0) + partIndex + 1);
     const contextHeading = '<header class="lm-flow-element-heading"><span class="lm-component-index">'
-      + String(partIndex + 1).padStart(2, '0') + '</span><h2>' + e(title)
+      + String(situation.flowIndexOffset === undefined ? partIndex + 1 : sequenceIndex).padStart(2, '0') + '</span><h2>' + e(title)
       + '</h2><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>';
     const contextText = presentation ? '<p class="lm-part-responsibility">' + e(presentation) + '</p>' : '';
-    return '<section class="lm-part-session" id="lab-point-' + e(id) + '" data-scrollpoint="' + e(id)
+    return '<section class="lm-part-session" id="lab-point-' + e(situation.screenId) + '-' + e(id) + '" data-screen-id="' + e(situation.screenId) + '" data-scrollpoint="' + e(id)
       + '" aria-label="' + e(title) + '"><div class="lm-part-context">'
       + contextHeading + contextText + '</div><span data-demo-part-slot="' + slot + '"></span></section>';
   }
@@ -2837,6 +2839,7 @@ export function registerComponentElements(): void {
         const { id, title, content, selectedId, className, situation, prototypeParameters } = this.state;
         this.className = 'lm-page-part ' + e(className) + (id === selectedId ? ' is-selected' : '');
         this.dataset.componentId = id;
+        this.dataset.screenId = situation.screenId;
         this.setAttribute('aria-label', title);
         this.setAttribute('role', 'region');
         this.dataset.mockScreen = situation.screenId;

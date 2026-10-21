@@ -251,6 +251,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
     private loadingTimer: number | undefined;
     private lastRenderedScreenId = '';
     private componentLoadingTimers = new Map<string, number>();
+    private pageElements = new Map<string, ComponentPageElement>();
     private scrollpointObserver: IntersectionObserver | undefined;
     private popStateHandler = (): void => this.restoreSelectionFromLocation();
 
@@ -290,50 +291,96 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         const current = entries
           .filter(entry => entry.isIntersecting)
           .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top)[0];
-        const componentId = (current?.target as HTMLElement | undefined)?.dataset.scrollpoint;
-        if (!componentId) return;
-        const selectionChanged = componentId !== this.state.componentId;
-        if (selectionChanged) {
-          this.selectComponent(componentId, true);
-          return;
-        }
-        this.querySelectorAll<HTMLButtonElement>('.lm-scrollpoint-button').forEach(button => {
-          const active = button.dataset.componentSelect === componentId;
-          button.classList.toggle('active', active);
-          button.setAttribute('aria-current', active ? 'location' : 'false');
-        });
+        const point = current?.target as HTMLElement | undefined;
+        const componentId = point?.dataset.scrollpoint;
+        const screenId = point?.dataset.screenId ?? this.state.screenId;
+        if (componentId && screenId) this.selectLocation(screenId, componentId, true);
       }, { root: scroller, rootMargin: '-12% 0px -72% 0px', threshold: 0 });
       this.querySelectorAll<HTMLElement>('[data-scrollpoint]').forEach(point => this.scrollpointObserver?.observe(point));
     }
-    private scrollToComponent(componentId: string): void {
+    private focusedScrollpoint(): { screenId: string; componentId: string } | undefined {
+      const scroller = this.querySelector<HTMLElement>('.lm-page-scroll');
+      if (!scroller) return undefined;
+      const bounds = scroller.getBoundingClientRect();
+      const focusY = bounds.top + Math.max(1, bounds.height * 0.2);
+      const points = [...this.querySelectorAll<HTMLElement>('[data-scrollpoint]')];
+      const point = points.find(item => {
+        const rect = item.getBoundingClientRect();
+        return rect.top <= focusY && rect.bottom >= focusY;
+      }) ?? points
+        .map(item => {
+          const rect = item.getBoundingClientRect();
+          const distance = rect.bottom < focusY ? focusY - rect.bottom : rect.top - focusY;
+          return { item, distance };
+        })
+        .sort((left, right) => left.distance - right.distance)[0]?.item;
+      const screenId = point?.dataset.screenId;
+      const componentId = point?.dataset.scrollpoint;
+      return screenId && componentId ? { screenId, componentId } : undefined;
+    }
+    private captureExpandedLocation(): void {
+      if (!this.state.fullView) return;
+      const focused = this.focusedScrollpoint();
+      if (focused) this.selectLocation(focused.screenId, focused.componentId, true);
+    }
+    private scrollToComponent(componentId: string, screenId = this.state.screenId): void {
       requestAnimationFrame(() => {
         const scroller = this.querySelector<HTMLElement>('.lm-page-scroll');
-        const point = this.querySelector<HTMLElement>('[data-scrollpoint="' + e(componentId) + '"]');
+        const point = [...this.querySelectorAll<HTMLElement>('[data-scrollpoint]')]
+          .find(item => item.dataset.scrollpoint === componentId && item.dataset.screenId === screenId);
         if (!scroller || !point) return;
         const top = scroller.scrollTop + point.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 12;
         scroller.scrollTop = Math.max(0, top);
       });
     }
     private selectComponent(componentId: string, replaceUrl: boolean): void {
-      const screen = this.state.screens.find(item => item.id === this.state.screenId);
+      this.selectLocation(this.state.screenId, componentId, replaceUrl);
+    }
+    private roleForScreen(screenId: string): LabRole {
+      return ['student-profile', 'student-activity', 'leveling-enrollment', 'quests', 'competency-questions'].includes(screenId)
+        ? 'aluno'
+        : screenId === 'access' ? 'visitante' : 'professor';
+    }
+    private selectLocation(screenId: string, componentId: string, replaceUrl: boolean): void {
+      const screen = this.state.screens.find(item => item.id === screenId);
       const region = screen?.regions.find(item => item.id === componentId);
-      if (!screen || !region || componentId === this.state.componentId) return;
-      this.state = this.transitions.next(state => ({ ...state, componentId, inspectorTab: 'part' })).value;
+      if (!screen || !region) return;
+      const selectionChanged = screenId !== this.state.screenId || componentId !== this.state.componentId;
+      if (!selectionChanged) return;
+      this.state = this.transitions.next(state => ({
+        ...state,
+        screenId,
+        componentId,
+        role: screenId === state.screenId ? state.role : this.roleForScreen(screenId),
+        screenState: screenId === state.screenId ? state.screenState : 'ready',
+        inspectorTab: state.fullView ? state.inspectorTab : 'part',
+      })).value;
       this.syncInspectorTabs();
       this.writeSelectionToLocation(replaceUrl);
 
       this.querySelectorAll<HTMLElement>('[data-component-id]').forEach(part => {
-        part.classList.toggle('is-selected', part.dataset.componentId === componentId);
-        part.dataset.selectedRegion = componentId;
+        const belongsToScreen = part.dataset.screenId === screenId;
+        part.classList.toggle('is-selected', belongsToScreen && part.dataset.componentId === componentId);
+        if (belongsToScreen) part.dataset.selectedRegion = componentId;
       });
       this.querySelectorAll<HTMLButtonElement>('.lm-scrollpoint-button').forEach(button => {
-        const active = button.dataset.componentSelect === componentId;
+        const active = button.dataset.screenId === screenId && button.dataset.componentSelect === componentId;
         button.classList.toggle('active', active);
         button.setAttribute('aria-current', active ? 'location' : 'false');
       });
+      this.querySelectorAll<HTMLButtonElement>('.lm-page-nav [data-screen-select]').forEach(button => {
+        const active = button.dataset.screenSelect === screenId;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-current', active ? 'page' : 'false');
+      });
+      const toolbarTitle = this.querySelector<HTMLElement>('[data-current-screen-title]');
+      if (toolbarTitle) toolbarTitle.textContent = screen.title;
+      const roleLabel = this.querySelector<HTMLElement>('[data-current-role]');
+      if (roleLabel) roleLabel.textContent = this.state.role;
       const responsibility = region.responsibility ?? region.description;
       const paragraphs = responsibility.split(/\n\s*\n/).map(paragraph => '<p>' + e(paragraph.trim()) + '</p>').join('');
-      const responsibilityPanel = this.querySelector<HTMLElement>('.lm-page-responsibility');
+      const responsibilityPanel = [...this.querySelectorAll<HTMLElement>('.lm-page-responsibility')]
+        .find(item => !item.dataset.screenId || item.dataset.screenId === screenId);
       if (responsibilityPanel) {
         responsibilityPanel.innerHTML = '<span class="lm-eyebrow">RESPONSABILIDADE NA PLATAFORMA · ' + e(region.title) + '</span>' + paragraphs;
       }
@@ -358,7 +405,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const prototypeEditor = this.querySelector<DemoPrototypeEditor>('demo-prototype-editor');
       const activeParameters = this.state.componentParameters[componentStateKey(screen.id, componentId)] ?? {};
       prototypeEditor?.configure(screen.id, region, labRecord(this.state.fixtures[screen.fixtureKey]), activeParameters);
-      const page = this.querySelector<HTMLElement>('[data-page-id]');
+      const page = this.pageElements.get(screenId) as HTMLElement | undefined;
       if (page) page.dataset.selectedRegion = componentId;
     }
     private clearLoadingTimer(): void {
@@ -449,8 +496,11 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       }
       const fullViewButton = target.closest<HTMLButtonElement>('[data-full-view-toggle]');
       if (fullViewButton && this.contains(fullViewButton)) {
-        this.state = this.transitions.next(state => ({ ...state, fullView: !state.fullView })).value;
+        this.captureExpandedLocation();
+        const enteringFullView = !this.state.fullView;
+        this.state = this.transitions.next(state => ({ ...state, fullView: enteringFullView })).value;
         this.render();
+        this.scrollToComponent(this.state.componentId, this.state.screenId);
         this.querySelector<HTMLButtonElement>('[data-full-view-toggle]')?.focus();
         return;
       }
@@ -458,8 +508,13 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       if (screenButton && this.contains(screenButton)) {
         const screen = this.state.screens.find(item => item.id === screenButton.dataset.screenSelect);
         if (screen) {
+          if (this.state.fullView) {
+            this.selectLocation(screen.id, screen.defaultComponentId, true);
+            this.scrollToComponent(screen.defaultComponentId, screen.id);
+            return;
+          }
           this.clearLoadingTimer();
-          const role: LabRole = ['student-profile', 'student-activity', 'leveling-enrollment', 'quests', 'competency-questions'].includes(screen.id) ? 'aluno' : screen.id === 'access' ? 'visitante' : 'professor';
+          const role = this.roleForScreen(screen.id);
           this.state = this.transitions.next(state => ({
             ...state,
             screenId: screen.id,
@@ -495,9 +550,12 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         ?? event.composedPath().find((item): item is HTMLElement => item instanceof HTMLElement && item.hasAttribute('data-component-id'));
       const componentId = componentButton?.dataset.componentSelect ?? pageComponent?.dataset.componentId;
       const selectedElement = componentButton ?? pageComponent;
-      if (componentId && componentId !== this.state.componentId && selectedElement && this.contains(selectedElement)) {
-        this.selectComponent(componentId, false);
-        if (componentButton) this.scrollToComponent(componentId);
+      if (componentId && selectedElement && this.contains(selectedElement)) {
+        const screenId = componentButton?.dataset.screenId ?? pageComponent?.dataset.screenId ?? this.state.screenId;
+        if (componentId !== this.state.componentId || screenId !== this.state.screenId) {
+          this.selectLocation(screenId, componentId, false);
+        }
+        if (componentButton) this.scrollToComponent(componentId, screenId);
       }
     }
     private onKeyDown(event: KeyboardEvent): void {
@@ -521,8 +579,10 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       }
       if (event.key !== 'Escape' || !this.state.fullView) return;
       event.preventDefault();
+      this.captureExpandedLocation();
       this.state = this.transitions.next(state => ({ ...state, fullView: false })).value;
       this.render();
+      this.scrollToComponent(this.state.componentId, this.state.screenId);
       this.querySelector<HTMLButtonElement>('[data-full-view-toggle]')?.focus();
     }
     private onChange(event: Event): void {
@@ -617,35 +677,52 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const selectedResponsibility = selectedRegion?.responsibility ?? selectedRegion?.description ?? screen.presentation;
       const responsibilityParagraphs = selectedResponsibility.split(/\n\s*\n/).map(paragraph => '<p>' + e(paragraph.trim()) + '</p>').join('');
       const data = labRecord(this.state.fixtures[screen.fixtureKey]);
-      const componentStates: Record<string, DemoScreenState> = {};
-      screen.regions.forEach(region => {
-        const status = this.state.componentStates[componentStateKey(screen.id, region.id)];
-        if (status) componentStates[region.id] = status;
-      });
-      const prototypeParameters: Record<string, PrototypeParameterValues> = {};
-      screen.regions.forEach(region => {
-        const values = this.state.componentParameters[componentStateKey(screen.id, region.id)];
-        if (values) prototypeParameters[region.id] = values;
-      });
-      const situation: ComponentMockSituation = {
-        screenId: screen.id,
-        fixtureKey: screen.fixtureKey,
-        selectedRegionId: selectedId,
-        role: this.state.role,
-        status: this.state.screenState,
-        presentationMode: 'continuous-list',
-        componentStates,
-      };
-      const existingPage = this.querySelector<ComponentPageElement>(
-        'lumira-access-page, lumira-teacher-profile-page, lumira-teacher-workspace-page, lumira-student-profile-page, lumira-student-activity-page, lumira-leveling-enrollment-page, lumira-quests-page, lumira-competency-questions-page, lumira-community-page',
-      ) ?? undefined;
-      const pageElement = componentingPage(screen, { data, situation, prototypeParameters }, existingPage);
-      pageElement.classList.add('lm-demo-flow');
+      const pageMounts: Array<[string, HTMLElement]> = [];
+      const screensToMount = this.state.fullView ? this.state.screens : [screen];
+      const pageMarkup = screensToMount.map((item, screenIndex) => {
+        const isActive = item.id === screen.id;
+        const flowIndexOffset = this.state.screens.slice(0, screenIndex)
+          .reduce((total, preceding) => total + preceding.regions.length, 0);
+        const itemRegion = isActive
+          ? selectedRegion
+          : item.regions.find(region => region.id === item.defaultComponentId) ?? item.regions[0];
+        const itemSelectedId = itemRegion?.id ?? item.defaultComponentId;
+        const itemData = labRecord(this.state.fixtures[item.fixtureKey]);
+        const itemComponentStates: Record<string, DemoScreenState> = {};
+        item.regions.forEach(region => {
+          const status = this.state.componentStates[componentStateKey(item.id, region.id)];
+          if (status) itemComponentStates[region.id] = status;
+        });
+        const itemPrototypeParameters: Record<string, PrototypeParameterValues> = {};
+        item.regions.forEach(region => {
+          const values = this.state.componentParameters[componentStateKey(item.id, region.id)];
+          if (values) itemPrototypeParameters[region.id] = values;
+        });
+        const situation: ComponentMockSituation = {
+          screenId: item.id,
+          fixtureKey: item.fixtureKey,
+          selectedRegionId: itemSelectedId,
+          role: isActive ? this.state.role : this.roleForScreen(item.id),
+          status: isActive ? this.state.screenState : 'ready',
+          presentationMode: 'continuous-list',
+          ...(this.state.fullView ? { flowIndexOffset } : {}),
+          componentStates: itemComponentStates,
+        };
+        const page = componentingPage(item, { data: itemData, situation, prototypeParameters: itemPrototypeParameters }, this.pageElements.get(item.id));
+        page.classList.add('lm-demo-flow');
+        this.pageElements.set(item.id, page);
+        const marker = this.state.fullView
+          ? '<span class="lm-flow-page-mount" data-flow-page-mount="' + e(item.id) + '"></span>'
+          : '<div class="lm-page-component-mount"></div>';
+        pageMounts.push([marker, page]);
+        if (!this.state.fullView) return marker;
+        return marker;
+      }).join('');
       const statuses: DemoScreenState[] = ['ready', 'loading', 'empty', 'error', 'forbidden'];
       const labels: Record<DemoScreenState, string> = { ready: 'Pronto', loading: 'Carregando', empty: 'Vazio', error: 'Erro', forbidden: 'Restrito' };
-      const pageButtons = this.state.screens.map(item => '<button type="button" data-screen-select="' + e(item.id) + '" class="' + (item.id === screen.id ? 'active' : '') + '"><span class="lm-page-icon">' + (item.id === 'community' ? '◌' : item.id === 'teacher-profile' ? '◎' : item.id === 'student-profile' ? '◇' : item.id === 'teacher-workspace' ? '▤' : item.id === 'student-activity' ? '✎' : item.id === 'leveling-enrollment' ? '＋' : item.id === 'quests' ? '⚑' : item.id === 'competency-questions' ? '▤' : '↗') + '</span><span><b>' + e(item.title) + '</b><small>' + e(item.evidence === 'observed' ? 'TELA DE REFERÊNCIA' : item.evidence === 'derived' ? 'PROPOSTA DERIVADA' : 'MAPA DE NAVEGAÇÃO') + '</small></span><i>→</i></button>').join('');
+      const pageButtons = this.state.screens.map(item => '<button type="button" data-screen-select="' + e(item.id) + '" class="' + (item.id === screen.id ? 'active' : '') + '" aria-current="' + (item.id === screen.id ? 'page' : 'false') + '"><span class="lm-page-icon">' + (item.id === 'community' ? '◌' : item.id === 'teacher-profile' ? '◎' : item.id === 'student-profile' ? '◇' : item.id === 'teacher-workspace' ? '▤' : item.id === 'student-activity' ? '✎' : item.id === 'leveling-enrollment' ? '＋' : item.id === 'quests' ? '⚑' : item.id === 'competency-questions' ? '▤' : '↗') + '</span><span><b>' + e(item.title) + '</b><small>' + e(item.evidence === 'observed' ? 'TELA DE REFERÊNCIA' : item.evidence === 'derived' ? 'PROPOSTA DERIVADA' : 'MAPA DE NAVEGAÇÃO') + '</small></span><i>→</i></button>').join('');
       const componentButtons = screen.regions.map((region, index) =>
-        '<button type="button" data-component-select="' + e(region.id) + '" class="lm-scrollpoint-button ' + (region.id === selectedId ? 'active' : '') + '" aria-current="' + (region.id === selectedId ? 'location' : 'false') + '">'
+        '<button type="button" data-component-select="' + e(region.id) + '" data-screen-id="' + e(screen.id) + '" class="lm-scrollpoint-button ' + (region.id === selectedId ? 'active' : '') + '" aria-current="' + (region.id === selectedId ? 'location' : 'false') + '">'
         + '<span class="lm-component-index">' + String(index + 1).padStart(2, '0') + '</span><span><b>' + e(region.title) + '</b><small>' + e(region.evidence === 'observed' ? 'REFERÊNCIA' : region.evidence === 'derived' ? 'DERIVADA' : 'NAVEGAÇÃO') + '</small></span></button>',
       ).join('');
       const selectedState = this.state.componentStates[componentStateKey(screen.id, selectedId)] ?? 'inherit';
@@ -665,12 +742,14 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         + '<div class="lm-rail-label">TELAS DE REFERÊNCIA</div><nav class="lm-page-nav">' + pageButtons + '</nav>'
         + '<div class="lm-rail-label lm-scrollpoint-label">PONTOS DA PÁGINA</div><nav class="lm-scrollpoint-nav" aria-label="Navegação por partes da página">' + componentButtons + '</nav>'
         + '<div class="lm-rail-bottom"><span>ROTEIRO DE APRESENTAÇÃO</span><b>' + String(this.state.screens.length).padStart(2, '0') + ' TELAS · ESTADOS INTERATIVOS</b></div></aside>'
-        + '<section class="lm-preview-column"><header class="lm-preview-toolbar"><div><span class="lm-live-dot"></span><span>APRESENTAÇÃO LUMIRA</span><i>/</i><b>' + e(screen.title) + '</b></div><div class="lm-viewport-controls"><button type="button" class="lm-share-link" data-copy-demo-link><span aria-hidden="true">↗</span><span data-copy-demo-label>Compartilhar esta parte</span></button><button type="button" class="lm-full-view-toggle" data-full-view-toggle aria-pressed="' + String(this.state.fullView) + '" aria-label="' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '"><span aria-hidden="true">' + (this.state.fullView ? '⤡' : '⤢') + '</span><span>' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '</span></button></div></header>'
-        + '<div class="lm-page-scroll"><div class="lm-page-caption"><div><span class="lm-eyebrow">LUMIRA · EXPERIÊNCIA DE PÁGINA</span><h1>' + e(screen.title) + '</h1>'
-        + '<div class="lm-page-responsibility"><span class="lm-eyebrow">RESPONSABILIDADE NA PLATAFORMA · ' + e(selectedRegion?.title ?? screen.title) + '</span>' + responsibilityParagraphs + '</div>'
-        + '<p class="lm-page-description">' + e(screen.description) + '</p></div><span class="lm-evidence-badge ' + e(screen.evidence) + '">' + e(screen.evidence) + '</span></div>'
-        + '<div class="lm-continuous-component-list" data-screen-state="' + e(this.state.screenState) + '"><div class="lm-page-component-mount"></div></div></div>'
-        + '<footer class="lm-preview-footer"><span>Dados demonstrativos · papel <b>' + e(this.state.role) + '</b></span><span>Selecione uma parte para abrir seu contexto de apresentação</span></footer></section>'
+        + '<section class="lm-preview-column"><header class="lm-preview-toolbar"><div><span class="lm-live-dot"></span><span>APRESENTAÇÃO LUMIRA</span><i>/</i><b data-current-screen-title>' + e(screen.title) + '</b></div><div class="lm-viewport-controls"><button type="button" class="lm-share-link" data-copy-demo-link><span aria-hidden="true">↗</span><span data-copy-demo-label>Compartilhar esta parte</span></button><button type="button" class="lm-full-view-toggle" data-full-view-toggle aria-pressed="' + String(this.state.fullView) + '" aria-label="' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '"><span aria-hidden="true">' + (this.state.fullView ? '⤡' : '⤢') + '</span><span>' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '</span></button></div></header>'
+        + '<div class="lm-page-scroll">' + (this.state.fullView
+          ? '<div class="lm-continuous-component-list lm-full-flow-list" data-screen-id="' + e(screen.id) + '" data-screen-state="' + e(this.state.screenState) + '">' + pageMarkup + '</div>'
+          : '<div class="lm-page-caption"><div><span class="lm-eyebrow">LUMIRA · EXPERIÊNCIA DE PÁGINA</span><h1>' + e(screen.title) + '</h1>'
+            + '<div class="lm-page-responsibility" data-screen-id="' + e(screen.id) + '"><span class="lm-eyebrow">RESPONSABILIDADE NA PLATAFORMA · ' + e(selectedRegion?.title ?? screen.title) + '</span>' + responsibilityParagraphs + '</div>'
+            + '<p class="lm-page-description">' + e(screen.description) + '</p></div><span class="lm-evidence-badge ' + e(screen.evidence) + '">' + e(screen.evidence) + '</span></div>'
+            + '<div class="lm-continuous-component-list" data-screen-id="' + e(screen.id) + '" data-screen-state="' + e(this.state.screenState) + '">' + pageMarkup + '</div>') + '</div>'
+        + '<footer class="lm-preview-footer"><span>Dados demonstrativos · papel <b data-current-role>' + e(this.state.role) + '</b></span><span>Selecione uma parte para abrir seu contexto de apresentação</span></footer></section>'
         + '<aside class="lm-inspector"><header class="lm-inspector-heading"><div><span class="lm-eyebrow">CONTROLES DA DEMONSTRAÇÃO</span><h2>Estado e propriedades</h2></div><span class="lm-inspector-mark">L</span></header>'
         + '<nav class="lm-inspector-tabs" role="tablist" aria-label="Propriedades da demonstração">' + inspectorTabButtons + '</nav>'
         + '<section class="lm-inspector-panel" id="inspector-panel-part" role="tabpanel" aria-labelledby="inspector-tab-part" data-inspector-panel="part" tabindex="0"' + (this.state.inspectorTab === 'part' ? '' : ' hidden') + '>'
@@ -691,7 +770,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const selectedParameters = this.state.componentParameters[componentStateKey(screen.id, selectedId)] ?? {};
       prototypeEditor.configure(screen.id, selectedRegion ?? null, data, selectedParameters);
       const slots: Array<[string, HTMLElement]> = [
-        ['<div class="lm-page-component-mount"></div>', pageElement],
+        ...pageMounts,
         ['<div class="lm-prototype-mount"></div>', prototypeEditor],
         ['<div class="lm-fixture-mount"></div>', editor],
       ];

@@ -3102,6 +3102,18 @@ lumira-page-part {
   grid-column: 1;
   grid-row: 1;
 }
+.componenting-lab-shell.is-full-view .lm-page-scroll {
+  padding: 0 clamp(18px, 5vw, 72px) 48px;
+  scroll-behavior: smooth;
+}
+.lm-continuous-component-list.lm-full-flow-list {
+  border-top: 0;
+  background: transparent;
+}
+.lm-flow-page-mount,
+.lm-demo-flow {
+  display: contents;
+}
 @media (max-width: 1120px) {
   .componenting-lab-shell {
     grid-template-columns: 190px minmax(0, 1fr) 300px;
@@ -4047,9 +4059,8 @@ lumira-page-part {
   background: #fff;
 }
 .lm-demo-flow .lm-product-page {
-  display: flex;
+  display: contents;
   min-height: 0;
-  flex-direction: column;
   background: transparent;
 }
 .lm-demo-flow .lm-product-main,
@@ -4057,10 +4068,16 @@ lumira-page-part {
 .lm-demo-flow .lm-profile-overview,
 .lm-demo-flow .lm-profile-lower,
 .lm-demo-flow .lm-student-overview,
+.lm-demo-flow .lm-student-lower,
 .lm-demo-flow .lm-community-canvas,
 .lm-demo-flow .lm-community-columns,
+.lm-demo-flow .lm-pedagogy-canvas,
+.lm-demo-flow .lm-learner-canvas,
 .lm-demo-flow .lm-access-page {
   display: contents;
+}
+.lm-demo-flow .lm-learner-heading {
+  display: none;
 }
 .lm-demo-flow .lm-community-canvas {
   overflow: visible;
