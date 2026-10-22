@@ -498,6 +498,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       if (fullViewButton && this.contains(fullViewButton)) {
         this.captureExpandedLocation();
         const enteringFullView = !this.state.fullView;
+        if (!enteringFullView) this.clearWorkspaceSearch();
         this.state = this.transitions.next(state => ({ ...state, fullView: enteringFullView })).value;
         this.render();
         this.scrollToComponent(this.state.componentId, this.state.screenId);
@@ -508,9 +509,13 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       if (screenButton && this.contains(screenButton)) {
         const screen = this.state.screens.find(item => item.id === screenButton.dataset.screenSelect);
         if (screen) {
+          const requestedComponent = screenButton.dataset.componentSelect;
+          const componentId = screen.regions.some(region => region.id === requestedComponent)
+            ? requestedComponent as string
+            : screen.defaultComponentId;
           if (this.state.fullView) {
-            this.selectLocation(screen.id, screen.defaultComponentId, true);
-            this.scrollToComponent(screen.defaultComponentId, screen.id);
+            this.selectLocation(screen.id, componentId, true);
+            this.scrollToComponent(componentId, screen.id);
             return;
           }
           this.clearLoadingTimer();
@@ -518,14 +523,16 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
           this.state = this.transitions.next(state => ({
             ...state,
             screenId: screen.id,
-            componentId: screen.defaultComponentId,
+            componentId,
             role,
             screenState: 'ready',
             inspectorTab: 'part',
           })).value;
           this.writeSelectionToLocation(false);
+          this.render();
+          this.scrollToComponent(componentId, screen.id);
+          return;
         }
-        this.render();
         return;
       }
       const stateButton = target.closest<HTMLButtonElement>('[data-state-select]');
@@ -559,6 +566,20 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       }
     }
     private onKeyDown(event: KeyboardEvent): void {
+      const search = event.target instanceof Element
+        ? event.target.closest<HTMLInputElement>('[data-workspace-search]')
+        : null;
+      if (search && this.contains(search) && event.key === 'Enter') {
+        const match = this.querySelector<HTMLElement>('.lm-part-session.lm-search-match[data-scrollpoint]');
+        const screenId = match?.dataset.screenId;
+        const componentId = match?.dataset.scrollpoint;
+        if (screenId && componentId) {
+          event.preventDefault();
+          this.selectLocation(screenId, componentId, true);
+          this.scrollToComponent(componentId, screenId);
+        }
+        return;
+      }
       const currentTab = event.target instanceof Element
         ? event.target.closest<HTMLButtonElement>('[data-inspector-tab]')
         : null;
@@ -580,10 +601,18 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       if (event.key !== 'Escape' || !this.state.fullView) return;
       event.preventDefault();
       this.captureExpandedLocation();
+      this.clearWorkspaceSearch();
       this.state = this.transitions.next(state => ({ ...state, fullView: false })).value;
       this.render();
       this.scrollToComponent(this.state.componentId, this.state.screenId);
       this.querySelector<HTMLButtonElement>('[data-full-view-toggle]')?.focus();
+    }
+    private clearWorkspaceSearch(): void {
+      this.querySelectorAll<HTMLInputElement>('[data-workspace-search]').forEach(input => { input.value = ''; });
+      this.querySelectorAll<HTMLOutputElement>('[data-workspace-search-count]').forEach(output => { output.textContent = ''; });
+      this.querySelectorAll<HTMLElement>('.lm-part-session').forEach(point => {
+        point.classList.remove('lm-search-match', 'lm-search-muted');
+      });
     }
     private onChange(event: Event): void {
       if (!(event.target instanceof HTMLSelectElement)) return;

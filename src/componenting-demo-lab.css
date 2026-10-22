@@ -1186,6 +1186,69 @@ lumira-page-part {
   align-items: center;
   gap: 8px;
 }
+.lm-top-menu-wrap {
+  position: relative;
+}
+.lm-workspace-popover {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  width: min(240px, 80vw);
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--lm-line);
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 14px 36px #17354c20;
+  color: var(--lm-ink);
+  font-size: 10px;
+}
+.lm-workspace-popover[hidden] {
+  display: none !important;
+}
+.lm-workspace-popover strong {
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--lm-line);
+  font-size: 10px;
+}
+.lm-workspace-popover p {
+  margin: 0;
+  padding: 5px 0;
+  color: var(--lm-muted);
+  line-height: 1.45;
+}
+.lm-workspace-popover button {
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 5px;
+  background: #f5f8fa;
+  color: var(--lm-ink);
+  text-align: left;
+  font-size: 9px;
+}
+.lm-workspace-popover button:hover,
+.lm-workspace-popover button:focus-visible {
+  background: #e9f3f8;
+}
+.lm-workspace-popover button:disabled {
+  color: var(--lm-muted);
+}
+.lm-search output {
+  flex: 0 0 auto;
+  color: var(--lm-brand-strong);
+  font-size: 8px;
+  white-space: nowrap;
+}
+.lm-part-session.lm-search-muted {
+  opacity: .38;
+}
+.lm-part-session.lm-search-match {
+  outline: 2px solid var(--lm-brand);
+  outline-offset: -2px;
+  background: #eef8fc;
+}
 .lm-top-action,
 .lm-user-menu {
   display: flex;
@@ -2524,8 +2587,29 @@ lumira-page-part {
 }
 .lm-calendar-actions {
   display: flex;
+  align-items: flex-start;
   gap: 5px;
 }
+.lm-calendar-notification-wrap { position: relative; }
+.lm-calendar-notifications {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  width: min(260px, calc(100vw - 40px));
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--lm-line);
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 10px 28px #071e332b;
+  color: var(--lm-ink-strong);
+}
+.lm-calendar-notifications[hidden] { display: none !important; }
+.lm-calendar-notifications strong { font-size: 10px; }
+.lm-calendar-notifications p { margin: 0; padding-bottom: 7px; border-bottom: 1px solid var(--lm-line); color: var(--lm-muted); font-size: 9px; line-height: 1.45; }
+.lm-calendar-notifications button { justify-self: start; }
 .lm-calendar-actions button,
 .lm-calendar-toolbar button {
   position: relative;
@@ -2582,6 +2666,48 @@ lumira-page-part {
   background: #0b2d4c22;
   backdrop-filter: blur(4px);
 }
+.lm-calendar-grid.is-agenda-view {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: none;
+  align-content: start;
+  gap: 0;
+  overflow: auto;
+  padding: 4px 10px;
+}
+.lm-calendar-agenda-row {
+  display: grid;
+  grid-template-columns: minmax(88px, .35fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  border-bottom: 1px solid #ffffff35;
+  color: white;
+  font-size: 8px;
+}
+.lm-calendar-agenda-row time { color: #dce8f2; }
+.lm-calendar-agenda-row b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lm-calendar-agenda-row button { padding: 4px 7px; border: 1px solid #ffffff7a; border-radius: 4px; background: white; color: var(--lm-brand-strong); font-size: 7px; }
+.lm-calendar-no-events { margin: 8px 0; color: #f2f6fa; font-size: 9px; }
+.lm-calendar-event-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(170px, .8fr) auto;
+  align-items: end;
+  gap: 8px;
+  margin-top: 9px;
+  padding: 10px;
+  border: 1px solid #ffffff70;
+  border-radius: 7px;
+  background: #ffffffee;
+  color: var(--lm-ink-strong);
+}
+.lm-calendar-event-form[hidden] { display: none !important; }
+.lm-calendar-event-form label { display: grid; gap: 4px; color: var(--lm-muted); font-size: 8px; font-weight: 700; }
+.lm-calendar-event-form input { width: 100%; min-width: 0; padding: 6px 7px; border: 1px solid var(--lm-line); border-radius: 4px; background: white; color: var(--lm-ink-strong); font-size: 9px; }
+.lm-calendar-event-form>div { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.lm-calendar-event-form footer { display: flex; align-items: center; gap: 5px; }
+.lm-calendar-event-form footer button { padding: 6px 8px; border: 1px solid var(--lm-line); border-radius: 4px; background: white; color: var(--lm-brand); font-size: 8px; font-weight: 700; white-space: nowrap; }
+.lm-calendar-event-form footer .lm-calendar-new { border-color: var(--lm-brand); background: var(--lm-brand); color: white; }
+.lm-calendar-feedback { min-height: 12px; margin: 5px 0 0; color: #f2f6fa; font-size: 8px; }
 .lm-weekday {
   display: grid;
   place-items: center;
@@ -3411,6 +3537,11 @@ lumira-page-part {
   .lm-story-editor-stage { padding-right: 12px; padding-left: 12px; }
 }
 @media (max-width: 680px) {
+  .lm-calendar-event-form { grid-template-columns: 1fr; }
+  .lm-calendar-event-form>div { grid-template-columns: 1fr 1fr; }
+  .lm-calendar-event-form footer { justify-content: flex-end; }
+  .lm-calendar-agenda-row { grid-template-columns: 1fr auto; }
+  .lm-calendar-agenda-row time { grid-column: 1 / -1; }
   .lm-story-editor { grid-template-rows: 56px minmax(0, 1fr); }
   .lm-story-editor-header { grid-template-columns: 36px 1fr auto; gap: 9px; padding: 0 10px; }
   .lm-story-editor-header strong { font-size: 14px; }

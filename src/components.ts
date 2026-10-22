@@ -808,6 +808,7 @@ type DemoPagePartInteraction = {
   fields: Record<string, string>;
   publications: string[];
   actions: Record<string, number>;
+  communityEvents: Array<{ title: string; date: string; time: string; color: string }>;
   localStories: Array<{
     title: string; caption: string; body: string; category: string; visibility: string; likes: number;
     image: string; orientation: 'portrait' | 'landscape'; filter: string; overlayText: string; textStyle: string; music: string;
@@ -1069,11 +1070,32 @@ function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, select
         : ['Perfil', 'Áreas', 'Cursos', 'Fórum', 'IA pedagógica'];
   const active = community ? 'Feed' : teachingSpace ? 'Matérias e turmas' : learnerActivity ? 'Atividade'
     : levelingEnrollment ? 'Matrícula' : questPage ? 'Quests' : competencyQuestions ? 'Questões' : 'Perfil';
-  const links = labels.map(label => '<button type="button" class="lm-side-link ' + (label === active ? 'active' : '') + '"><span aria-hidden="true">' + (label === active ? '◉' : '◇') + '</span>' + e(label) + (label === 'Mensagens' ? '<i>3</i>' : '') + '</button>').join('');
+  const sidebarTargets: Record<string, Record<string, [string, string]>> = {
+    community: { Feed: ['community', 'community-feed'], 'Meus círculos': ['community', 'community-aside'], Explorar: ['community', 'community-topics'], Mensagens: ['community', 'community-feed'], Salvos: ['community', 'community-feed'] },
+    'teacher-profile': { Perfil: ['teacher-profile', 'teacher-hero'], Áreas: ['teacher-workspace', 'pedagogy-context'], Cursos: ['teacher-workspace', 'pedagogy-course-sequence'], Fórum: ['community', 'community-feed'], 'IA pedagógica': ['teacher-workspace', 'pedagogy-activity-builder'] },
+    'student-profile': { Perfil: ['student-profile', 'student-hero'], Áreas: ['student-activity', 'learner-activity-brief'], Cursos: ['competency-questions', 'competency-question-context'], Fórum: ['community', 'community-feed'], 'IA pedagógica': ['student-activity', 'learner-reflection'] },
+    'teacher-workspace': { Início: ['teacher-workspace', 'pedagogy-context'], 'Matérias e turmas': ['teacher-workspace', 'pedagogy-context'], Competências: ['teacher-workspace', 'pedagogy-competency'], Sondagem: ['leveling-enrollment', 'leveling-scope'], Evidências: ['teacher-workspace', 'pedagogy-evidence-review'], Cursos: ['teacher-workspace', 'pedagogy-course-sequence'], Comunidade: ['community', 'community-feed'] },
+    'student-activity': { Início: ['student-profile', 'student-hero'], Sondagem: ['leveling-enrollment', 'leveling-scope'], Atividade: ['student-activity', 'learner-activity-brief'], Cursos: ['competency-questions', 'competency-question-context'], 'Meu percurso': ['student-profile', 'student-progress'], Comunidade: ['community', 'community-feed'] },
+    'leveling-enrollment': { Início: ['student-profile', 'student-hero'], Matrícula: ['leveling-enrollment', 'leveling-invitation'], Nivelamento: ['competency-questions', 'competency-question-context'], Quests: ['quests', 'quest-board'], 'Meu percurso': ['student-profile', 'student-progress'] },
+    quests: { Início: ['student-profile', 'student-hero'], Quests: ['quests', 'quest-board'], Nivelamento: ['competency-questions', 'competency-question-context'], Cursos: ['student-activity', 'learner-activity-brief'], 'Meu percurso': ['student-profile', 'student-progress'] },
+    'competency-questions': { Início: ['student-profile', 'student-hero'], Matrícula: ['leveling-enrollment', 'leveling-invitation'], Questões: ['competency-questions', 'competency-question-context'], Atividade: ['student-activity', 'learner-activity-brief'], 'Meu percurso': ['student-profile', 'student-progress'] },
+  };
+  const links = labels.map(label => {
+    const [targetScreen, targetComponent] = sidebarTargets[screenId]?.[label] ?? [screenId, selectedId];
+    return '<button type="button" class="lm-side-link ' + (label === active ? 'active' : '') + '" data-screen-select="' + e(targetScreen) + '" data-component-select="' + e(targetComponent) + '" data-screen-id="' + e(targetScreen) + '" aria-label="Abrir ' + e(label) + '"><span aria-hidden="true">' + (label === active ? '◉' : '◇') + '</span>' + e(label) + (label === 'Mensagens' ? '<i>3</i>' : '') + '</button>';
+  }).join('');
+  const promoTarget = teachingSpace ? ['leveling-enrollment', 'leveling-scope'] as const
+    : learnerActivity ? ['student-profile', 'student-progress'] as const
+      : levelingEnrollment ? ['competency-questions', 'competency-question-context'] as const
+        : questPage ? ['student-profile', 'student-progress'] as const
+          : competencyQuestions ? ['leveling-enrollment', 'leveling-invitation'] as const
+            : community ? ['community', 'community-calendar'] as const
+              : student ? ['student-activity', 'learner-activity-brief'] as const
+                : ['teacher-workspace', 'pedagogy-context'] as const;
   const content = '<div class="lm-brand"><span class="lm-brand-symbol">✳</span><span>Lumira</span></div>'
     + '<div class="lm-side-account">' + LabAvatar(name, student ? 'blue' : 'teal', 'small') + '<div><strong>' + e(name) + '</strong><small>' + e(student ? 'Estudante' : 'Professora') + '</small></div></div>'
     + '<nav class="lm-side-nav" aria-label="Navegação de demonstração">' + links + '</nav>'
-    + '<aside class="lm-sidebar-promo"><span class="lm-sidebar-promo-mark">✦</span><p>' + e(community ? 'Professores que inspiram professores.' : teachingSpace ? 'Planeje experiências que tornam o conhecimento observável.' : learnerActivity ? 'Responda com suas próprias estratégias.' : levelingEnrollment ? 'Um convite claro para começar seu percurso.' : questPage ? 'Investigue situações e conte como chegou à sua ideia.' : competencyQuestions ? 'Cinco contextos para mostrar seu raciocínio.' : 'Educação que se conecta com o real.') + '</p><button type="button">' + (community ? 'Criar evento' : teachingSpace ? 'Abrir sondagem' : learnerActivity ? 'Ver meu percurso' : levelingEnrollment ? 'Ver as questões' : questPage ? 'Ver meu percurso' : competencyQuestions ? 'Voltar à matrícula' : 'Explorar áreas') + ' →</button></aside>'
+    + '<aside class="lm-sidebar-promo"><span class="lm-sidebar-promo-mark">✦</span><p>' + e(community ? 'Professores que inspiram professores.' : teachingSpace ? 'Planeje experiências que tornam o conhecimento observável.' : learnerActivity ? 'Responda com suas próprias estratégias.' : levelingEnrollment ? 'Um convite claro para começar seu percurso.' : questPage ? 'Investigue situações e conte como chegou à sua ideia.' : competencyQuestions ? 'Cinco contextos para mostrar seu raciocínio.' : 'Educação que se conecta com o real.') + '</p><button type="button" data-screen-select="' + e(promoTarget[0]) + '" data-component-select="' + e(promoTarget[1]) + '" data-screen-id="' + e(promoTarget[0]) + '">' + (community ? 'Ver calendário' : teachingSpace ? 'Abrir sondagem' : learnerActivity ? 'Ver meu percurso' : levelingEnrollment ? 'Ver as questões' : questPage ? 'Ver meu percurso' : competencyQuestions ? 'Voltar à matrícula' : 'Explorar áreas') + ' →</button></aside>'
     + '<footer class="lm-sidebar-footer">LUMIRA · COMPONENTING LAB</footer>';
   return labPart('workspace-sidebar', content, selectedId, 'lm-product-sidebar');
 }
@@ -1081,8 +1103,27 @@ function renderWorkspaceTopbar(data: ComponentFixture, selectedId: string): stri
   data = prototypeData('workspace-topbar', data);
   const screenId = activePageComposition?.situation.screenId ?? 'teacher-profile';
   const name = profileValues(screenId, data, screenId === 'student-profile').name;
-  const content = '<div class="lm-search"><span aria-hidden="true">⌕</span><input aria-label="Buscar" placeholder="Buscar áreas, cursos, pessoas, conteúdos..." /></div>'
-    + '<div class="lm-top-actions"><button type="button" class="lm-top-action">＋ <span>Criar</span></button><button type="button" class="lm-top-action">♧ <span>Notificações</span><i>3</i></button><button type="button" class="lm-user-menu">' + LabAvatar(name, 'teal', 'tiny') + '<span>' + e(name) + '</span><b>⌄</b></button></div>';
+  const quickActions: Record<string, Array<[string, string, string]>> = {
+    access: [['Abrir perfil docente', 'teacher-profile', 'teacher-hero'], ['Abrir perfil aluno', 'student-profile', 'student-hero']],
+    'teacher-profile': [['Novo story', 'teacher-profile', 'teacher-stories'], ['Preparar atividade', 'teacher-workspace', 'pedagogy-activity-builder']],
+    'teacher-workspace': [['Revisar evidências', 'teacher-workspace', 'pedagogy-evidence-review'], ['Criar sequência', 'teacher-workspace', 'pedagogy-course-sequence']],
+    'student-profile': [['Criar story', 'student-profile', 'student-stories'], ['Responder atividade', 'student-activity', 'learner-response']],
+    'student-activity': [['Ver questões', 'competency-questions', 'competency-question-response'], ['Ver meu percurso', 'student-profile', 'student-progress']],
+    'leveling-enrollment': [['Começar sondagem', 'competency-questions', 'competency-question-response'], ['Ver quests', 'quests', 'quest-board']],
+    quests: [['Abrir questões', 'competency-questions', 'competency-question-response'], ['Ver matrícula', 'leveling-enrollment', 'leveling-confirmation']],
+    'competency-questions': [['Abrir atividade', 'student-activity', 'learner-response'], ['Ver meu percurso', 'student-profile', 'student-progress']],
+    community: [['Criar publicação', 'community', 'community-feed'], ['Abrir calendário', 'community', 'community-calendar']],
+  };
+  const actionButtons = (quickActions[screenId] ?? quickActions.community).map(([label, targetScreen, componentId]) =>
+    '<button type="button" data-screen-select="' + e(targetScreen) + '" data-component-select="' + e(componentId) + '" data-screen-id="' + e(targetScreen) + '">' + e(label) + ' →</button>',
+  ).join('');
+  const profileTarget: [string, string] = screenId === 'student-profile' || screenId === 'student-activity' || screenId === 'leveling-enrollment' || screenId === 'quests' || screenId === 'competency-questions'
+    ? ['student-profile', 'student-hero']
+    : ['teacher-profile', 'teacher-hero'];
+  const content = '<div class="lm-search"><span aria-hidden="true">⌕</span><input data-workspace-search aria-label="Buscar em todas as partes" placeholder="Buscar áreas, cursos, pessoas, conteúdos..." /><output data-workspace-search-count aria-live="polite"></output></div>'
+    + '<div class="lm-top-actions"><div class="lm-top-menu-wrap"><button type="button" class="lm-top-action" data-workspace-menu-toggle="create" aria-expanded="false" aria-controls="workspace-create-menu">＋ <span>Criar</span></button><div class="lm-workspace-popover" id="workspace-create-menu" data-workspace-menu="create" hidden><strong>Abrir uma área</strong>' + actionButtons + '</div></div>'
+    + '<div class="lm-top-menu-wrap"><button type="button" class="lm-top-action" data-workspace-menu-toggle="notifications" aria-expanded="false" aria-controls="workspace-notifications-menu">♧ <span>Notificações</span><i>3</i></button><div class="lm-workspace-popover lm-notification-popover" id="workspace-notifications-menu" data-workspace-menu="notifications" hidden><strong data-notification-heading>Notificações</strong><p>Uma resposta nova no story “Sala de aula”.</p><p>O encontro de leitura acontece nesta semana.</p><p>Uma pessoa começou a seguir seu perfil.</p><button type="button" data-notification-read>Todas como lidas</button></div></div>'
+    + '<div class="lm-top-menu-wrap"><button type="button" class="lm-user-menu" data-workspace-menu-toggle="profile" aria-expanded="false" aria-controls="workspace-profile-menu">' + LabAvatar(name, 'teal', 'tiny') + '<span>' + e(name) + '</span><b>⌄</b></button><div class="lm-workspace-popover lm-profile-popover" id="workspace-profile-menu" data-workspace-menu="profile" hidden><strong>' + e(name) + '</strong><button type="button" data-screen-select="' + e(profileTarget[0]) + '" data-component-select="' + e(profileTarget[1]) + '" data-screen-id="' + e(profileTarget[0]) + '">Ver perfil →</button></div></div></div>';
   return labPart('workspace-topbar', content, selectedId, 'lm-product-topbar');
 }
 function renderAccessBrand(data: ComponentFixture, selectedId: string): string {
@@ -1178,7 +1219,12 @@ function renderStories(id: string, data: ComponentFixture, selectedId: string): 
 function renderProfileTabs(id: string, data: ComponentFixture, selectedId: string): string {
   data = prototypeData(id, data);
   const tabs = labList<string>(data, 'tabs');
-  const content = '<nav class="lm-profile-tabs" aria-label="Seções do perfil">' + tabs.map((label, index) => '<button type="button" class="' + (index === 0 ? 'active' : '') + '">' + (index === 0 ? '<span>✦</span>' : '') + e(label) + '</button>').join('') + '</nav>';
+  const student = id === 'student-tabs';
+  const targets = student
+    ? ['student-hero', 'student-progress', 'student-activity', 'student-achievements']
+    : ['teacher-hero', 'teacher-skills', 'teacher-projects', 'teacher-activity', 'teacher-activity', 'teacher-projects', 'teacher-progress'];
+  const screenId = student ? 'student-profile' : 'teacher-profile';
+  const content = '<nav class="lm-profile-tabs" aria-label="Seções do perfil">' + tabs.map((label, index) => '<button type="button" class="' + (index === 0 ? 'active' : '') + '" data-component-select="' + e(targets[index] ?? targets[0]) + '" data-screen-id="' + screenId + '" aria-label="Abrir seção ' + e(label) + '">' + (index === 0 ? '<span>✦</span>' : '') + e(label) + '</button>').join('') + '</nav>';
   return labPart(id, content, selectedId, 'lm-tabs-part');
 }
 function renderProgressCard(data: ComponentFixture, selectedId: string, student = false): string {
@@ -1532,25 +1578,20 @@ type CommunityEventFixture = { day: number; title: string; time: string; color: 
 function renderCommunityCalendar(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('community-calendar', data);
   const events = labList<CommunityEventFixture>(data, 'events');
-  const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-  const offset = 4, daysInMonth = 31;
-  const cells = Array.from({ length: offset + daysInMonth }, (_, index) => {
-    const day = index - offset + 1;
-    if (day < 1) return '<div class="lm-calendar-day empty"></div>';
-    const dayEvents = events.filter(event => event.day === day);
-    return '<div class="lm-calendar-day"><b>' + day + '</b>' + dayEvents.map(event => '<span class="lm-calendar-event tone-' + e(event.color) + '">' + e(event.title) + '</span>').join('') + '</div>';
-  });
   const image = "url('" + profileCoverAsset + "')";
   const content = '<section class="lm-community-cover" style="background-image:linear-gradient(180deg,rgba(5,32,60,.2),rgba(7,32,57,.78)),' + image + '">'
-    + '<div class="lm-community-heading"><div><span class="lm-eyebrow">LUMIRA · COMUNIDADE</span><h1>' + e(labText(data, 'title', 'Eventos e encontros')) + '</h1><p>' + e(labText(data, 'subtitle', 'Compartilhe práticas e construa a comunidade.')) + '</p></div><div class="lm-calendar-actions"><button type="button">＋ Criar</button><button type="button">♧ Notificações <i>3</i></button></div></div>'
-    + '<div class="lm-calendar-toolbar"><div><button type="button">‹</button><button type="button">›</button><b>' + e(labText(data, 'month', 'Outubro 2026')) + '</b><button type="button">Hoje</button></div><div><button type="button" class="active">Mês</button><button type="button">Semana</button><button type="button">Agenda</button><button type="button" class="lm-calendar-new">＋ Novo evento</button></div></div>'
-    + '<div class="lm-calendar-grid">' + weekdays.map(label => '<span class="lm-weekday">' + label + '</span>').join('') + cells.join('') + '</div></section>';
+    + '<div class="lm-community-heading"><div><span class="lm-eyebrow">LUMIRA · COMUNIDADE</span><h1>' + e(labText(data, 'title', 'Eventos e encontros')) + '</h1><p>' + e(labText(data, 'subtitle', 'Compartilhe práticas e construa a comunidade.')) + '</p></div><div class="lm-calendar-actions"><button type="button" data-calendar-action="create">＋ Criar evento</button><div class="lm-calendar-notification-wrap"><button type="button" data-calendar-action="notifications" aria-expanded="false" aria-controls="community-calendar-notifications">♧ Notificações <i>3</i></button><div class="lm-calendar-notifications" id="community-calendar-notifications" data-calendar-notifications hidden><strong data-calendar-notification-heading>Notificações da comunidade</strong><p>O encontro de leitura acontece nesta semana.</p><p>Uma nova prática foi compartilhada no feed.</p><p>Há uma resposta nova em uma conversa.</p><button type="button" data-notification-read>Marcar todas como lidas</button></div></div></div></div>'
+    + '<div class="lm-calendar-toolbar"><div><button type="button" data-calendar-step="-1" aria-label="Mês anterior">‹</button><button type="button" data-calendar-step="1" aria-label="Próximo mês">›</button><b data-calendar-month-label>' + e(labText(data, 'month', 'Outubro 2026')) + '</b><button type="button" data-calendar-today>Hoje</button></div><div><button type="button" class="active" data-calendar-view="month" aria-pressed="true">Mês</button><button type="button" data-calendar-view="week" aria-pressed="false">Semana</button><button type="button" data-calendar-view="agenda" aria-pressed="false">Agenda</button><button type="button" class="lm-calendar-new" data-calendar-action="create">＋ Novo evento</button></div></div>'
+    + '<div class="lm-calendar-grid" data-calendar-events="' + e(JSON.stringify(events)) + '" aria-label="Calendário de eventos"></div>'
+    + '<form class="lm-calendar-event-form" data-calendar-event-form hidden><label>Nome do evento<input name="eventTitle" data-interaction-field="calendar-event-title" required maxlength="90" placeholder="Ex.: Mostra de projetos"></label><div><label>Data<input name="eventDate" data-interaction-field="calendar-event-date" type="date" value="2026-10-21" required></label><label>Horário<input name="eventTime" data-interaction-field="calendar-event-time" type="time" value="14:00" required></label></div><footer><button type="button" data-calendar-action="cancel">Cancelar</button><button type="submit" class="lm-calendar-new">Adicionar evento local</button></footer></form>'
+    + '<p class="lm-calendar-feedback" data-calendar-feedback role="status"></p></section>';
   return labPart('community-calendar', content, selectedId, 'lm-community-calendar-part');
 }
 function renderCommunityTabs(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('community-tabs', data);
   const tabs = labList<string>(data, 'tabs');
-  const content = '<nav class="lm-community-tabs">' + tabs.map((label, index) => '<button type="button" class="' + (index === 0 ? 'active' : '') + '">' + e(label) + '</button>').join('') + '<button type="button" class="lm-community-sort">Mais relevantes⌄</button></nav>';
+  const targets = ['community-feed', 'community-feed', 'community-feed', 'community-aside', 'community-feed', 'community-calendar'];
+  const content = '<nav class="lm-community-tabs" aria-label="Seções da comunidade">' + tabs.map((label, index) => '<button type="button" class="' + (index === 0 ? 'active' : '') + '" data-component-select="' + e(targets[index] ?? 'community-feed') + '" data-screen-id="community" aria-label="Abrir ' + e(label) + '">' + e(label) + '</button>').join('') + '<button type="button" class="lm-community-sort">Mais relevantes⌄</button></nav>';
   return labPart('community-tabs', content, selectedId, 'lm-community-tabs-part');
 }
 function renderTopicsPanel(data: ComponentFixture, selectedId: string): string {
@@ -1583,9 +1624,9 @@ function renderCommunityAside(data: ComponentFixture, selectedId: string): strin
   const eventRows = events.map(event => '<div class="lm-upcoming-event"><span class="lm-date-badge"><b>' + event.day + '</b><small>OUT</small></span><div><b>' + e(event.title) + '</b><small>Online · ' + e(event.time) + '</small><button type="button" class="lm-event-register">Inscrever-se →</button></div></div>').join('');
   const peopleRows = people.map(person => '<div class="lm-suggested-person">' + LabAvatar(labText(person, 'name', 'Educador'), labText(person, 'tone', 'teal'), 'tiny') + '<div><b>' + e(labText(person, 'name', 'Educador')) + '</b><small>' + e(labText(person, 'role', 'Comunidade')) + '</small></div><button type="button">Seguir</button></div>').join('');
   const groupRows = groups.map(group => '<div class="lm-suggested-group"><span class="lm-group-thumb">✳</span><div><b>' + e(labText(group, 'name', 'Grupo')) + '</b><small>' + e(labText(group, 'members', '0 membros')) + '</small></div><button type="button">＋</button></div>').join('');
-  const content = '<div class="lm-community-stack"><article class="lm-panel lm-upcoming-panel"><header><h2>Próximos eventos</h2><button class="lm-text-action">Ver agenda →</button></header>' + eventRows + '</article>'
-    + '<article class="lm-panel lm-people-panel"><header><h2>Pessoas para seguir</h2><button class="lm-text-action">Ver mais →</button></header>' + peopleRows + '</article>'
-    + '<article class="lm-panel lm-groups-panel"><header><h2>Comunidades e grupos</h2><button class="lm-text-action">Ver todas →</button></header>' + groupRows + '</article></div>';
+  const content = '<div class="lm-community-stack"><article class="lm-panel lm-upcoming-panel"><header><h2>Próximos eventos</h2><button type="button" class="lm-text-action" data-component-select="community-calendar" data-screen-id="community" aria-label="Abrir calendário de eventos">Ver agenda →</button></header>' + eventRows + '</article>'
+    + '<article class="lm-panel lm-people-panel"><header><h2>Pessoas para seguir</h2><button type="button" class="lm-text-action" data-component-select="community-topics" data-screen-id="community" aria-label="Explorar pessoas e assuntos">Explorar →</button></header>' + peopleRows + '</article>'
+    + '<article class="lm-panel lm-groups-panel"><header><h2>Comunidades e grupos</h2><button type="button" class="lm-text-action" data-component-select="community-topics" data-screen-id="community" aria-label="Explorar comunidades e assuntos">Ver temas →</button></header>' + groupRows + '</article></div>';
   return labPart('community-aside', content, selectedId, 'lm-community-column-part');
 }
 function renderCommunityPage(props: ComponentPageProps): string {
@@ -1617,7 +1658,7 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-            groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, localStories: [], aiGenerated: {},
+            groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
             reviewFeedback: '', shareFeedback: '', responseFeedback: '', enrollmentFeedback: '', questFeedback: '', questionFeedback: '', feedback: '',
@@ -1659,15 +1700,23 @@ export function registerComponentElements(): void {
       private prepareControls(): void {
         const { id } = this.state;
         const groups = this.querySelectorAll<HTMLElement>('.lm-side-nav, .lm-profile-tabs, .lm-community-tabs, .lm-personalization-tabs, .lm-filter-pills, .lm-compose-options, .lm-cover-choices, .lm-color-choices>div');
+        const initialGroupSelections: Record<string, string> = {};
         groups.forEach((group, index) => {
           const key = id + ':group:' + index;
           group.dataset.interactionGroup = key;
           const buttons = [...group.querySelectorAll<HTMLButtonElement>('button')].filter(button => !button.classList.contains('lm-community-sort'));
+          const activeButton = buttons.find(button => button.classList.contains('active'));
+          const selected = this.state.interaction.groups[key] ?? (activeButton ? String(buttons.indexOf(activeButton)) : undefined);
+          if (this.state.interaction.groups[key] === undefined && selected !== undefined) initialGroupSelections[key] = selected;
           buttons.forEach((button, buttonIndex) => {
             button.dataset.interactionGroup = key;
             button.dataset.interactionValue = String(buttonIndex);
+            if (selected !== undefined) button.setAttribute('aria-pressed', String(button.dataset.interactionValue === selected));
           });
         });
+        if (Object.keys(initialGroupSelections).length) {
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, ...initialGroupSelections } }));
+        }
         const storyTrack = this.querySelector<HTMLElement>('.lm-stories-track');
         if (storyTrack) {
           storyTrack.querySelectorAll<HTMLButtonElement>('.lm-story-card:not(.lm-new-story):not(.lm-story-next)').forEach((button, index) => {
@@ -1682,9 +1731,9 @@ export function registerComponentElements(): void {
         });
         this.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea').forEach((field, index) => {
           const fieldName = field.name || field.getAttribute('aria-label') || field.getAttribute('placeholder') || 'field-' + index;
-          field.dataset.interactionField = id + ':' + fieldName;
+          if (!field.dataset.interactionField) field.dataset.interactionField = id + ':' + fieldName;
           if (field instanceof HTMLInputElement && (field.type === 'checkbox' || field.type === 'radio')) {
-            field.dataset.interactionToggle = id + ':toggle:' + fieldName;
+            if (!field.dataset.interactionToggle) field.dataset.interactionToggle = id + ':toggle:' + fieldName;
           }
         });
         this.querySelectorAll<HTMLButtonElement>('button').forEach((button, index) => {
@@ -1701,6 +1750,44 @@ export function registerComponentElements(): void {
           else if (button.closest('.lm-suggested-group') && label.includes('＋')) button.dataset.interactionKind = 'join';
           else if (button.classList.contains('lm-story-next')) button.dataset.interactionKind = 'story-next';
           else if (button.classList.contains('lm-community-sort')) button.dataset.interactionKind = 'sort';
+        });
+      }
+      private restoreWorkspaceMenus(): void {
+        const openMenu = this.state.interaction.groups['workspace-menu'] ?? '';
+        this.querySelectorAll<HTMLElement>('[data-workspace-menu]').forEach(menu => {
+          const open = menu.dataset.workspaceMenu === openMenu;
+          menu.hidden = !open;
+        });
+        this.querySelectorAll<HTMLButtonElement>('[data-workspace-menu-toggle]').forEach(button => {
+          button.setAttribute('aria-expanded', String(button.dataset.workspaceMenuToggle === openMenu));
+        });
+        const read = this.state.interaction.toggles['notifications-read'] === true;
+        const badge = this.querySelector<HTMLElement>('[data-workspace-menu-toggle="notifications"] i');
+        if (badge) badge.hidden = read;
+        const heading = this.querySelector<HTMLElement>('[data-notification-heading]');
+        if (heading && read) heading.textContent = 'Você leu todas as notificações';
+        const readButton = this.querySelector<HTMLButtonElement>('[data-notification-read]');
+        if (readButton) {
+          readButton.disabled = read;
+          if (read) readButton.textContent = 'Tudo lido';
+        }
+      }
+      private updateWorkspaceSearch(value: string): void {
+        const root = this.closest('componenting-demo-lab') ?? document;
+        const query = value.trim().toLocaleLowerCase();
+        const points = [...root.querySelectorAll<HTMLElement>('.lm-part-session[data-scrollpoint]')];
+        let count = 0;
+        points.forEach(point => {
+          const matches = !query || (point.textContent ?? '').toLocaleLowerCase().includes(query);
+          point.classList.toggle('lm-search-match', Boolean(query && matches));
+          point.classList.toggle('lm-search-muted', Boolean(query && !matches));
+          if (query && matches) count += 1;
+        });
+        root.querySelectorAll<HTMLInputElement>('[data-workspace-search]').forEach(input => {
+          if (input !== this.querySelector('[data-workspace-search]')) input.value = value;
+        });
+        root.querySelectorAll<HTMLOutputElement>('[data-workspace-search-count]').forEach(output => {
+          output.textContent = query ? count + (count === 1 ? ' parte encontrada' : ' partes encontradas') : '';
         });
       }
       private restoreInteraction(): void {
@@ -1761,6 +1848,8 @@ export function registerComponentElements(): void {
         this.restoreStories();
         this.restoreProfileEditor();
         this.restorePedagogyDemo();
+        this.restoreWorkspaceMenus();
+        this.restoreCommunityCalendar();
         if (interaction.feedback) {
           const feedback = document.createElement('p');
           feedback.className = 'lm-component-feedback';
@@ -1843,6 +1932,93 @@ export function registerComponentElements(): void {
           + '<footer><button type="button" class="lm-profile-cancel-button" data-profile-close>Descartar alterações</button><button type="submit" class="lm-profile-save-button">Salvar alterações</button></footer></form></section>';
         this.insertAdjacentHTML('beforeend', editor);
         this.querySelectorAll<HTMLElement>('[data-profile-field-focus]').forEach(button => button.title = 'Clique para editar este item');
+      }
+      private restoreCommunityCalendar(): void {
+        if (this.state.id !== 'community-calendar') return;
+        const grid = this.querySelector<HTMLElement>('[data-calendar-events]');
+        if (!grid) return;
+        type CalendarEvent = { title: string; date: string; time: string; color: string };
+        let source: Array<{ day?: number; title?: string; time?: string; color?: string }> = [];
+        try { source = JSON.parse(grid.dataset.calendarEvents ?? '[]') as typeof source; } catch { source = []; }
+        const monthOffset = Number(this.state.interaction.groups['calendar-month-offset'] ?? '0');
+        const firstOfMonth = new Date(2026, 9 + (Number.isFinite(monthOffset) ? monthOffset : 0), 1);
+        const year = firstOfMonth.getFullYear(), month = firstOfMonth.getMonth();
+        const monthKey = year + '-' + String(month + 1).padStart(2, '0');
+        const baseEvents: CalendarEvent[] = source.map(event => ({
+          title: String(event.title ?? 'Encontro da comunidade'),
+          date: '2026-10-' + String(event.day ?? 1).padStart(2, '0'),
+          time: String(event.time ?? '14:00'),
+          color: String(event.color ?? 'blue'),
+        }));
+        const allEvents = [...baseEvents, ...(this.state.interaction.communityEvents ?? [])];
+        const events = allEvents.filter(event => event.date.startsWith(monthKey));
+        let displayedEvents = events;
+        const view = this.state.interaction.groups['community-calendar:calendar-view'] ?? 'Mês';
+        const monthLabel = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(firstOfMonth);
+        const monthOutput = this.querySelector<HTMLElement>('[data-calendar-month-label]');
+        if (monthOutput) monthOutput.textContent = monthLabel.charAt(0).toLocaleUpperCase() + monthLabel.slice(1);
+        const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        const renderDay = (date: Date): string => {
+          const iso = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+          const dayEvents = displayedEvents.filter(event => event.date === iso);
+          return '<div class="lm-calendar-day"><b>' + date.getDate() + '</b>' + dayEvents.map(event => '<button type="button" class="lm-calendar-event tone-' + e(event.color) + '" data-calendar-event="' + e(event.title + ' · ' + event.time) + '">' + e(event.title) + '</button>').join('') + '</div>';
+        };
+        grid.classList.toggle('is-week-view', view === 'Semana');
+        grid.classList.toggle('is-agenda-view', view === 'Agenda');
+        grid.setAttribute('aria-label', 'Agenda em ' + view.toLocaleLowerCase() + ' de ' + monthLabel);
+        if (view === 'Agenda') {
+          grid.innerHTML = events.length
+            ? events.slice().sort((left, right) => left.date.localeCompare(right.date) || left.time.localeCompare(right.time)).map(event => {
+              const date = new Date(event.date + 'T12:00:00');
+              return '<article class="lm-calendar-agenda-row"><time>' + date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) + ' · ' + e(event.time) + '</time><b>' + e(event.title) + '</b><button type="button" data-calendar-event="' + e(event.title + ' · ' + event.time) + '">Ver detalhes</button></article>';
+            }).join('')
+            : '<p class="lm-calendar-no-events">Nenhum evento neste mês. Use “Novo evento” para adicionar um cenário demonstrativo.</p>';
+        } else if (view === 'Semana') {
+          const anchorDay = Math.min(14, new Date(year, month + 1, 0).getDate());
+          const anchor = new Date(year, month, anchorDay);
+          const firstDay = new Date(year, month, anchorDay - anchor.getDay());
+          const lastDay = new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate() + 6);
+          const firstIso = firstDay.getFullYear() + '-' + String(firstDay.getMonth() + 1).padStart(2, '0') + '-' + String(firstDay.getDate()).padStart(2, '0');
+          const lastIso = lastDay.getFullYear() + '-' + String(lastDay.getMonth() + 1).padStart(2, '0') + '-' + String(lastDay.getDate()).padStart(2, '0');
+          displayedEvents = allEvents.filter(event => event.date >= firstIso && event.date <= lastIso);
+          grid.style.gridTemplateRows = '20px minmax(90px, 1fr)';
+          grid.innerHTML = weekdays.map(label => '<span class="lm-weekday">' + label + '</span>').join('')
+            + Array.from({ length: 7 }, (_, index) => renderDay(new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate() + index))).join('');
+        } else {
+          const dayCount = new Date(year, month + 1, 0).getDate();
+          const weekCount = Math.ceil((firstOfMonth.getDay() + dayCount) / 7);
+          grid.style.gridTemplateRows = '20px repeat(' + weekCount + ', minmax(37px, 1fr))';
+          const blanks = Array.from({ length: firstOfMonth.getDay() }, () => '<div class="lm-calendar-day empty" aria-hidden="true"></div>').join('');
+          grid.innerHTML = weekdays.map(label => '<span class="lm-weekday">' + label + '</span>').join('')
+            + blanks + Array.from({ length: dayCount }, (_, index) => renderDay(new Date(year, month, index + 1))).join('');
+        }
+        if (view === 'Agenda') grid.style.gridTemplateRows = '';
+        const form = this.querySelector<HTMLFormElement>('[data-calendar-event-form]');
+        const eventFormOpen = this.state.interaction.toggles['calendar-event-open'] === true;
+        if (form) form.hidden = !eventFormOpen;
+        this.querySelectorAll<HTMLButtonElement>('[data-calendar-action="create"]').forEach(button => button.setAttribute('aria-expanded', String(eventFormOpen)));
+        const feedback = this.querySelector<HTMLElement>('[data-calendar-feedback]');
+        if (feedback) feedback.textContent = this.state.interaction.fields['calendar-feedback'] ?? '';
+        const notificationPanel = this.querySelector<HTMLElement>('[data-calendar-notifications]');
+        const notificationButton = this.querySelector<HTMLButtonElement>('[data-calendar-action="notifications"]');
+        const notificationsOpen = this.state.interaction.groups['calendar-notifications-open'] === 'yes';
+        if (notificationPanel) notificationPanel.hidden = !notificationsOpen;
+        if (notificationButton) notificationButton.setAttribute('aria-expanded', String(notificationsOpen));
+        const notificationsRead = this.state.interaction.toggles['notifications-read'] === true;
+        const notificationBadge = notificationButton?.querySelector<HTMLElement>('i');
+        if (notificationBadge) notificationBadge.hidden = notificationsRead;
+        const notificationHeading = this.querySelector<HTMLElement>('[data-calendar-notification-heading]');
+        if (notificationHeading && notificationsRead) notificationHeading.textContent = 'Você leu todas as notificações';
+        const notificationReadButton = notificationPanel?.querySelector<HTMLButtonElement>('[data-notification-read]');
+        if (notificationReadButton && notificationsRead) {
+          notificationReadButton.disabled = true;
+          notificationReadButton.textContent = 'Tudo lido';
+        }
+        this.querySelectorAll<HTMLButtonElement>('[data-calendar-view]').forEach(button => {
+          const active = button.textContent?.trim() === view;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-pressed', String(active));
+        });
       }
       private openProfileEditor(field?: string): void {
         this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'profile-editor-open': 'yes' }, feedback: '' }));
@@ -2285,9 +2461,83 @@ export function registerComponentElements(): void {
         const button = event.target.closest<HTMLButtonElement>('button');
         if (!button || button.disabled || !this.contains(button)) return;
         if (button.type === 'submit') return;
+        if (button.dataset.calendarStep) {
+          const delta = Number(button.dataset.calendarStep);
+          const current = Number(this.state.interaction.groups['calendar-month-offset'] ?? '0');
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            groups: { ...interaction.groups, 'calendar-month-offset': String((Number.isFinite(current) ? current : 0) + (delta < 0 ? -1 : 1)) },
+            fields: { ...interaction.fields, 'calendar-feedback': '' },
+          }));
+          this.render();
+          return;
+        }
+        if (button.hasAttribute('data-calendar-today')) {
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'calendar-month-offset': '0' }, fields: { ...interaction.fields, 'calendar-feedback': 'Calendário voltou a outubro de 2026.' } }));
+          this.render();
+          return;
+        }
+        if (button.dataset.calendarView) {
+          const view = button.dataset.calendarView === 'week' ? 'Semana' : button.dataset.calendarView === 'agenda' ? 'Agenda' : 'Mês';
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'community-calendar:calendar-view': view }, fields: { ...interaction.fields, 'calendar-feedback': 'Visualização: ' + view.toLocaleLowerCase() + '.' } }));
+          this.render();
+          return;
+        }
+        if (button.dataset.calendarAction) {
+          if (button.dataset.calendarAction === 'notifications') {
+            const open = this.state.interaction.groups['calendar-notifications-open'] !== 'yes';
+            this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'calendar-notifications-open': open ? 'yes' : '' } }));
+            this.render();
+            return;
+          }
+          const open = button.dataset.calendarAction === 'create';
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            toggles: { ...interaction.toggles, 'calendar-event-open': open },
+            fields: { ...interaction.fields, 'calendar-feedback': open ? '' : 'Criação de evento cancelada.' },
+          }));
+          this.render();
+          if (open) this.querySelector<HTMLInputElement>('[data-calendar-event-form] [name="eventTitle"]')?.focus();
+          return;
+        }
+        if (button.dataset.calendarEvent) {
+          this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, 'calendar-feedback': 'Evento selecionado: ' + button.dataset.calendarEvent + '.' } }));
+          this.render();
+          return;
+        }
+        if (button.dataset.workspaceMenuToggle) {
+          const requested = button.dataset.workspaceMenuToggle;
+          const openMenu = this.state.interaction.groups['workspace-menu'] === requested ? '' : requested;
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'workspace-menu': openMenu }, feedback: '' }));
+          this.render();
+          return;
+        }
+        if (button.hasAttribute('data-notification-read')) {
+          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, 'notifications-read': true }, feedback: 'Notificações marcadas como lidas nesta demonstração.' }));
+          this.render();
+          return;
+        }
         // Deixe a navegação entre telas chegar ao Componenting Demo Lab, que
         // controla a montagem da página e a URL selecionada.
-        if (button.hasAttribute('data-screen-select')) return;
+        if (button.hasAttribute('data-screen-select') || button.hasAttribute('data-component-select')) {
+          const groupKey = button.dataset.interactionGroup;
+          const selectedValue = button.dataset.interactionValue;
+          const navigation = button.closest<HTMLElement>('.lm-side-nav, .lm-profile-tabs, .lm-community-tabs');
+          if (groupKey && selectedValue !== undefined && navigation) {
+            this.transitionInteraction(interaction => ({
+              ...interaction,
+              groups: { ...interaction.groups, [groupKey]: selectedValue },
+            }));
+            navigation.querySelectorAll<HTMLButtonElement>('button[data-interaction-value]').forEach(item => {
+              const active = item.dataset.interactionGroup === groupKey && item.dataset.interactionValue === selectedValue;
+              item.classList.toggle('active', active);
+              item.classList.toggle('selected', active);
+              item.classList.toggle('is-interaction-active', active);
+              item.setAttribute('aria-pressed', String(active));
+            });
+          }
+          return;
+        }
         if (button.hasAttribute('data-profile-edit-primary')) {
           if (this.state.id !== 'teacher-hero' && this.state.id !== 'student-hero') {
             const page = this.closest<HTMLElement>('.lm-product-page');
@@ -2558,6 +2808,10 @@ export function registerComponentElements(): void {
       private onInput(event: Event): void {
         if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) return;
         const field = event.target;
+        if (field.hasAttribute('data-workspace-search')) {
+          this.updateWorkspaceSearch(field.value);
+          return;
+        }
         if (field.hasAttribute('data-profile-music-url')) {
           const preview = this.querySelector<HTMLElement>('[data-profile-spotify-preview]');
           const frame = spotifyEmbedFrame(field.value);
@@ -2629,6 +2883,25 @@ export function registerComponentElements(): void {
       private onSubmit(event: Event): void {
         event.preventDefault();
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
+        if (form?.matches('[data-calendar-event-form]') && this.state.id === 'community-calendar') {
+          const values = new FormData(form);
+          const title = String(values.get('eventTitle') ?? '').trim();
+          const date = String(values.get('eventDate') ?? '').trim();
+          const time = String(values.get('eventTime') ?? '').trim();
+          if (!title || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(time)) {
+            this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, 'calendar-feedback': 'Preencha nome, data e horário do evento.' } }));
+          } else {
+            this.transitionInteraction(interaction => ({
+              ...interaction,
+              communityEvents: [...(interaction.communityEvents ?? []), { title, date, time, color: 'teal' }],
+              groups: { ...interaction.groups, 'calendar-month-offset': String((Number(date.slice(0, 4)) - 2026) * 12 + (Number(date.slice(5, 7)) - 10)) },
+              toggles: { ...interaction.toggles, 'calendar-event-open': false },
+              fields: { ...interaction.fields, 'calendar-event-title': '', 'calendar-event-date': date, 'calendar-event-time': time, 'calendar-feedback': '“' + title + '” adicionado ao calendário desta demonstração.' },
+            }));
+          }
+          this.render();
+          return;
+        }
         if (form?.matches('[data-profile-editor]') && (this.state.id === 'teacher-hero' || this.state.id === 'student-hero')) {
           const values = new FormData(form);
           const name = String(values.get('name') ?? '').trim();
