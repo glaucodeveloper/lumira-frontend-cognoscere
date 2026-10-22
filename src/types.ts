@@ -189,3 +189,51 @@ export interface LumiraSystem {
   info(): { mode: Gateway['mode']; role: Role | null; pending: boolean };
   destroy(): void;
 }
+
+export interface ProjectAssistantContext {
+  title: string;
+  goal: string;
+  summary: string;
+  audience: string;
+  competencies: string[];
+  milestones: Array<{ title: string; date: string }>;
+}
+
+export interface ProjectAssistantMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ProjectAssistantRequest {
+  requestId: string;
+  partId: 'teacher-projects' | 'student-projects';
+  prompt: string;
+  context: ProjectAssistantContext;
+  conversation: ProjectAssistantMessage[];
+}
+
+export interface CognoscereStatus {
+  available: boolean;
+  configured: boolean;
+  systemModelConfigured: boolean;
+  model: string;
+  endpoint: string;
+  message: string;
+}
+
+export interface PresentationKeyResult {
+  configured: boolean;
+  valid: boolean;
+}
+
+export interface LumiraDesktopBridge {
+  getCognoscereStatus(): Promise<CognoscereStatus>;
+  converseAboutProject(request: ProjectAssistantRequest): Promise<{ reply: string }>;
+  verifyPresentationKey(candidate: string): Promise<PresentationKeyResult>;
+}
+
+declare global {
+  interface Window {
+    lumiraDesktop?: LumiraDesktopBridge;
+  }
+}

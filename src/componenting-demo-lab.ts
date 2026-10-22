@@ -13,7 +13,7 @@ import type {
   ReferenceScreenSpec,
 } from './components';
 import './componenting-demo-lab.css';
-import type { LumiraSystem } from './types';
+import type { LumiraSystem, PresentationKeyResult } from './types';
 
 type Part = string | HTMLElement;
 function add(parts: Part[], part: Part): Part[] { parts.push(part); return parts; }
@@ -873,12 +873,25 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
           return;
         }
         try {
-          const digest = await accessKeyDigest(candidate);
-          let difference = 0;
-          for (let index = 0; index < DEMO_ACCESS_KEY_SHA256.length; index++) {
-            difference |= digest.charCodeAt(index) ^ DEMO_ACCESS_KEY_SHA256.charCodeAt(index);
+          let authorized = false;
+          if (window.lumiraDesktop) {
+            const result: PresentationKeyResult = await window.lumiraDesktop.verifyPresentationKey(candidate);
+            if (!result.configured) {
+              this.state = this.transitions.next(state => ({ ...state, entry, error: 'Configure LUMIRA_PTA_KEY no arquivo .env do app Electron.' })).value;
+              this.render();
+              this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
+              return;
+            }
+            authorized = result.valid;
+          } else {
+            const digest = await accessKeyDigest(candidate);
+            let difference = 0;
+            for (let index = 0; index < DEMO_ACCESS_KEY_SHA256.length; index++) {
+              difference |= digest.charCodeAt(index) ^ DEMO_ACCESS_KEY_SHA256.charCodeAt(index);
+            }
+            authorized = difference === 0;
           }
-          if (difference !== 0) {
+          if (!authorized) {
             this.state = this.transitions.next(state => ({ ...state, entry, error: 'Chave não reconhecida. Confira o código de acesso.' })).value;
             this.render();
             this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
@@ -900,9 +913,12 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
           return;
         }
         const helpId = this.state.error ? 'lm-presentation-key-error' : 'lm-presentation-key-help';
+        const helpText = window.lumiraDesktop
+          ? 'A PTA do desktop é validada a partir de LUMIRA_PTA_KEY no arquivo .env local.'
+          : 'A chave diferencia esta apresentação das páginas públicas de referência.';
         this.innerHTML = '<main class="lm-access-gate"><section class="lm-access-gate-intro"><span class="lm-access-gate-mark">L</span><span class="lm-eyebrow">LUMIRA · COMPONENTING DEMO LAB</span><h1>Uma plataforma que torna o raciocínio visível.</h1><p>Explore as telas, as partes de página e suas interações demonstrativas.</p><small>Apresentação de produto · acesso por convite</small></section>'
           + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">CHAVE DE APRESENTAÇÃO</span><h2>Digite a chave PTA</h2><p>Use o código que acompanha o convite para abrir a demonstração.</p><label for="lm-presentation-key">Chave de acesso</label><input id="lm-presentation-key" name="accessKey" type="password" autocomplete="current-password" spellcheck="false" required aria-invalid="' + String(Boolean(this.state.error)) + '" aria-describedby="' + helpId + '" value="' + e(this.state.entry) + '" placeholder="PTA-XXXX-XXXX-…">'
-          + (this.state.error ? '<p id="lm-presentation-key-error" class="lm-access-gate-error" role="alert">' + e(this.state.error) + '</p>' : '<small id="lm-presentation-key-help">A chave diferencia esta apresentação das páginas públicas de referência.</small>')
+          + (this.state.error ? '<p id="lm-presentation-key-error" class="lm-access-gate-error" role="alert">' + e(this.state.error) + '</p>' : '<small id="lm-presentation-key-help">' + e(helpText) + '</small>')
           + '<button type="submit" class="lm-access-gate-submit">Abrir apresentação <span aria-hidden="true">↗</span></button></form><small class="lm-access-gate-note">O código é compartilhado separadamente.</small></section></main>';
       }
     }

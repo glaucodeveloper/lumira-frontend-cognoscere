@@ -1,6 +1,6 @@
 /** Componentes, páginas e dados iniciais da plataforma e do Componenting Demo Lab. */
 
-import type { AppSnapshot, CommunityEvent, SessionUser } from './types';
+import type { AppSnapshot, CognoscereStatus, CommunityEvent, ProjectAssistantRequest, SessionUser } from './types';
 import profileCoverAsset from './assets/profile/serra-dourada-cover.webp';
 import communityPostAsset from './assets/community/sala-colaborativa.webp';
 import studentRampStoryAsset from './assets/stories/student-ramp-experiment.webp';
@@ -834,6 +834,8 @@ type DemoPagePartInteraction = {
   profileActivityItems: ProfileActivityItem[];
   profileProjects: ProfileProjectItem[];
   projectChatMessages: ProjectChatMessage[];
+  projectChatStatus: CognoscereStatus | null;
+  projectChatPending: boolean;
   projectMilestones: ProfileProjectMilestone[];
   actions: Record<string, number>;
   communityEvents: Array<{ title: string; date: string; time: string; color: string }>;
@@ -878,8 +880,7 @@ type ProfileActivityItem = {
   imageAlt?: string;
 };
 type ProfileProjectMilestone = { id: string; title: string; date: string };
-type ProfileProjectProposal = { title: string; goal: string; summary: string; competencies: string[] };
-type ProjectChatMessage = { id: string; role: 'student' | 'assistant'; text: string; proposal?: ProfileProjectProposal };
+type ProjectChatMessage = { id: string; role: 'student' | 'assistant'; text: string; status?: 'pending' | 'error' };
 type ProfileProjectItem = {
   id: string; title: string; goal: string; summary: string; audience: string;
   competencies: string[]; milestones: ProfileProjectMilestone[]; socialDraft: boolean; createdAt: string;
@@ -891,26 +892,6 @@ function projectDateLabel(date: string): string {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
   const [year, month, day] = date.split('-').map(Number);
   return new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short' }).format(new Date(year, month - 1, day));
-}
-function suggestStudentProject(message: string): ProfileProjectProposal {
-  const idea = message.trim().replace(/^(oi[,! ]*)?(quero|queremos|gostaria de|vamos|me ajude a|ajude a)\s+/i, '').replace(/[.!?]+$/, '');
-  const compactIdea = idea ? idea.charAt(0).toLocaleUpperCase('pt-BR') + idea.slice(1) : 'uma ideia da turma';
-  const titleSource = idea.replace(/^(criar|desenvolver|planejar|organizar|fazer|montar|produzir|investigar)\s+/i, '').replace(/^(um|uma|o|a)\s+/i, '');
-  const titleWords = titleSource.split(/\s+/).slice(0, 6).join(' ').replace(/[\s,;:]+$/, '');
-  const competencies = PROJECT_COMPETENCIES.filter((competency) => {
-    if (competency === 'Comunicação') return true;
-    if (competency === 'Colaboração') return /grupo|comunidade|junto|coletiv|entrevist|campanha/i.test(message);
-    if (competency === 'Pensamento crítico') return /investig|pesquis|compar|problema|água|ambiente|história|dados/i.test(message);
-    if (competency === 'Criatividade') return /criar|produz|desenh|arte|podcast|vídeo|campanha|história/i.test(message);
-    if (competency === 'Cultura digital') return /digital|podcast|vídeo|site|rede|mapa/i.test(message);
-    return /leitura|texto|história|livro|podcast|entrevist|campanha/i.test(message);
-  });
-  return {
-    title: titleWords ? titleWords.charAt(0).toLocaleUpperCase('pt-BR') + titleWords.slice(1) : compactIdea,
-    goal: 'Transformar “' + compactIdea + '” em uma ação criada pela turma e compartilhada com a comunidade escolar.',
-    summary: 'Investigar a ideia com colegas, reunir relatos e referências, planejar uma produção coletiva e apresentar o resultado no Social para convidar a comunidade a participar.',
-    competencies: competencies.length ? competencies : ['Comunicação', 'Colaboração', 'Criatividade'],
-  };
 }
 function renderProjectCalendar(monthKey: string, milestones: ProfileProjectMilestone[], selectedDate: string): string {
   const [yearPart, monthPart] = monthKey.split('-').map(Number);
@@ -935,10 +916,9 @@ function renderProfileProjectCard(project: ProfileProjectItem): string {
   return '<article class="lm-project-row lm-project-row-local"><span class="lm-project-art art-3">✦</span><div><b>' + e(project.title) + '</b><small>' + milestoneCount + (milestoneCount === 1 ? ' marco' : ' marcos') + ' · ' + e(project.audience) + '</small><div class="lm-project-tag-row">' + project.competencies.slice(0, 3).map(item => LabPill(item, 'mint')).join('') + '</div></div>' + LabPill(project.socialDraft ? 'Rascunho para Social' : 'Privado', project.socialDraft ? 'lilac' : 'gray') + '</article>';
 }
 function renderProjectChatMessages(messages: ProjectChatMessage[]): string {
-  const greeting = '<article class="lm-project-chat-message assistant"><small>LUMIRA · PLANEJAMENTO</small><p>Conte uma ideia que você gostaria de desenvolver com colegas. Posso ajudar a organizar objetivo, etapas e competências. Esta conversa é uma simulação local.</p></article>';
-  return greeting + messages.map(message => '<article class="lm-project-chat-message ' + message.role + '"><small>' + (message.role === 'student' ? 'VOCÊ' : 'LUMIRA · PROPOSTA') + '</small><p>' + e(message.text) + '</p>'
-    + (message.proposal ? '<div class="lm-project-proposal"><b>' + e(message.proposal.title) + '</b><p>' + e(message.proposal.goal) + '</p><div>' + message.proposal.competencies.map(item => LabPill(item, 'mint')).join('') + '</div><button type="button" data-project-proposal-apply="' + e(message.id) + '">Usar proposta na ficha</button></div>' : '')
-    + '</article>').join('');
+  const greeting = '<article class="lm-project-chat-message assistant"><small>COGNOSCERE · METIS</small><p>Conte a ideia do grupo. O assistente considera a ficha, as competências e o calendário para conversar sobre o projeto.</p></article>';
+  return greeting + messages.map(message => '<article class="lm-project-chat-message ' + message.role + (message.status === 'error' ? ' error' : '') + '"' + (message.status === 'pending' ? ' aria-live="polite" aria-busy="true"' : '') + '><small>' + (message.role === 'student' ? 'VOCÊ' : 'COGNOSCERE · METIS') + '</small><p>'
+    + (message.status === 'pending' ? '<span class="lm-project-chat-spinner" aria-hidden="true"></span>Consultando Cognoscere…' : e(message.text)) + '</p></article>').join('');
 }
 const PROFILE_ACTIVITY_LABELS: Record<ProfileActivityKind, string> = {
   post: 'Post', activity: 'Atividade', video: 'Vídeo', project: 'Projeto',
@@ -1444,7 +1424,7 @@ function renderProjectBuilder(scope: 'teacher-projects' | 'student-projects'): s
     + '<label class="lm-project-social-choice"><input type="checkbox" name="projectSocialDraft" value="yes" checked data-interaction-toggle="project-social-draft"><span><b>Preparar para o Social</b><small>O projeto será salvo como rascunho compartilhável; esta demonstração não publica conteúdo.</small></span></label>'
     + '</div><section class="lm-project-calendar"><div><span class="lm-eyebrow">ORGANIZAÇÃO</span><h4>Calendário de marcos</h4><p>Escolha uma data e registre o próximo passo do grupo.</p></div><div data-project-calendar></div><div class="lm-project-milestone-add"><label>Nome do marco<input name="projectMilestoneTitle" data-interaction-field="' + fieldKey('projectMilestoneTitle') + '" maxlength="70" placeholder="Ex.: Entrevistar moradores"></label><label>Data<input type="date" name="projectMilestoneDate" data-interaction-field="' + fieldKey('projectMilestoneDate') + '" value="2026-10-21"></label><button type="button" class="lm-project-add-milestone" data-project-milestone-add>＋ Adicionar marco</button></div></section>'
     + '<footer><button type="button" class="lm-activity-cancel" data-project-cancel>Cancelar</button><button type="submit" class="lm-small-primary">Salvar projeto →</button></footer></form>'
-    + '<aside class="lm-project-planner"><header><div><span class="lm-eyebrow">IDEIA E PLANEJAMENTO</span><h4>Chat do projeto</h4></div><span class="lm-project-local-tag">DEMO LOCAL</span></header><div class="lm-project-chat-messages" data-project-chat-messages></div><form class="lm-project-chat-form" data-project-chat-form><label for="' + scope + '-chat-prompt">Converse sobre o que vocês querem criar</label><textarea id="' + scope + '-chat-prompt" name="projectChatPrompt" data-interaction-field="' + fieldKey('projectChatPrompt') + '" rows="3" maxlength="500" placeholder="Ex.: queremos registrar histórias do bairro em um mapa…" required></textarea><button type="submit" class="lm-small-primary">Pedir uma ideia →</button><small>As sugestões ajudam a preencher a ficha; revise tudo antes de salvar.</small></form></aside></div></section>';
+    + '<aside class="lm-project-planner"><header><div><span class="lm-eyebrow">IDEIA E PLANEJAMENTO</span><h4>Chat do projeto</h4></div><span class="lm-project-local-tag" data-project-assistant-status aria-live="polite">VERIFICANDO COGNOSCERE</span></header><div class="lm-project-chat-messages" data-project-chat-messages aria-live="polite"></div><form class="lm-project-chat-form" data-project-chat-form><label for="' + scope + '-chat-prompt">Converse sobre o que vocês querem criar</label><textarea id="' + scope + '-chat-prompt" name="projectChatPrompt" data-interaction-field="' + fieldKey('projectChatPrompt') + '" rows="3" maxlength="500" placeholder="Ex.: queremos registrar histórias do bairro em um mapa…" required></textarea><button type="submit" class="lm-small-primary">Conversar com Cognoscere →</button><small>As respostas vêm do Forge local. Revise e aplique manualmente na ficha.</small></form></aside></div></section>';
 }
 function renderAgendaPanel(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('teacher-agenda', data);
@@ -1828,7 +1808,8 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-            groups: {}, toggles: {}, fields: {}, publications: [], profileActivityItems: [], profileProjects: [], projectChatMessages: [], projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
+          groups: {}, toggles: {}, fields: {}, publications: [], profileActivityItems: [], profileProjects: [], projectChatMessages: [], projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
+          projectChatStatus: null, projectChatPending: false,
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
             reviewFeedback: '', shareFeedback: '', responseFeedback: '', enrollmentFeedback: '', questFeedback: '', questionFeedback: '', feedback: '',
@@ -1843,6 +1824,28 @@ export function registerComponentElements(): void {
           if (this.state.id !== 'teacher-hero' && this.state.id !== 'student-hero') return;
           const detail = (event as CustomEvent<{ field?: string }>).detail;
           this.openProfileEditor(detail?.field);
+        });
+        this.addEventListener('lumira-project-assistant-status', event => {
+          if (!isProfileProjectPart(this.state.id)) return;
+          const detail = (event as CustomEvent<CognoscereStatus>).detail;
+          this.transitionInteraction(interaction => ({ ...interaction, projectChatStatus: detail }));
+          this.render();
+        });
+        this.addEventListener('lumira-project-assistant-result', event => {
+          if (!isProfileProjectPart(this.state.id)) return;
+          const detail = (event as CustomEvent<{ requestId: string; reply?: string; error?: string }>).detail;
+          if (!detail?.requestId) return;
+          const exists = this.state.interaction.projectChatMessages.some(message => message.id === detail.requestId && message.status === 'pending');
+          if (!exists) return;
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            projectChatPending: false,
+            projectChatMessages: interaction.projectChatMessages.map(message => message.id === detail.requestId
+              ? { id: message.id, role: 'assistant', text: detail.reply ?? detail.error ?? 'O Cognoscere não retornou uma resposta.', ...(detail.error ? { status: 'error' as const } : {}) }
+              : message),
+          }));
+          this.render();
+          this.querySelector<HTMLTextAreaElement>('[data-project-chat-form] textarea')?.focus();
         });
       }
       configure(props: DemoPagePartProps): void {
@@ -2090,6 +2093,21 @@ export function registerComponentElements(): void {
         if (messages) {
           messages.innerHTML = renderProjectChatMessages(interaction.projectChatMessages ?? []);
           messages.scrollTop = messages.scrollHeight;
+        }
+        const statusBadge = this.querySelector<HTMLElement>('[data-project-assistant-status]');
+        if (statusBadge) {
+          const status = interaction.projectChatStatus;
+          statusBadge.textContent = !status ? 'VERIFICANDO COGNOSCERE'
+            : status.available && status.configured ? 'COGNOSCERE ONLINE'
+              : status.available ? 'FORGE ONLINE · MODELOS OFFLINE' : 'COGNOSCERE OFFLINE';
+          statusBadge.title = status?.message ?? 'Verificando o endpoint local do Cognoscere.';
+          statusBadge.classList.toggle('is-online', Boolean(status?.available && status.configured));
+          statusBadge.classList.toggle('is-offline', Boolean(status && (!status.available || !status.configured)));
+        }
+        const chatSubmit = this.querySelector<HTMLButtonElement>('[data-project-chat-form] button[type="submit"]');
+        if (chatSubmit) {
+          chatSubmit.disabled = interaction.projectChatPending;
+          chatSubmit.textContent = interaction.projectChatPending ? 'Aguardando Cognoscere…' : 'Conversar com Cognoscere →';
         }
         const dateField = this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneDate"]');
         const selectedDate = interaction.fields[fieldKey('projectMilestoneDate')] ?? '2026-10-21';
@@ -2763,6 +2781,7 @@ export function registerComponentElements(): void {
         if (isProfileProjectPart(this.state.id) && button.hasAttribute('data-project-create')) {
           this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, 'profile-project-builder-open': true }, feedback: '' }));
           this.render();
+          this.dispatchEvent(new CustomEvent('lumira-project-assistant-status-request', { bubbles: true, composed: true, detail: { partId: this.state.id } }));
           this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectTitle"]')?.focus();
           return;
         }
@@ -2791,23 +2810,6 @@ export function registerComponentElements(): void {
         if (isProfileProjectPart(this.state.id) && button.dataset.projectMilestoneRemove) {
           const milestoneId = button.dataset.projectMilestoneRemove;
           this.transitionInteraction(interaction => ({ ...interaction, projectMilestones: interaction.projectMilestones.filter(item => item.id !== milestoneId), feedback: 'Marco removido do calendário do projeto.' }));
-          this.render();
-          return;
-        }
-        if (isProfileProjectPart(this.state.id) && button.dataset.projectProposalApply) {
-          const message = this.state.interaction.projectChatMessages.find(item => item.id === button.dataset.projectProposalApply);
-          if (!message?.proposal) return;
-          const proposal = message.proposal;
-          const prefix = this.state.id + ':';
-          const fields = {
-            ...this.state.interaction.fields,
-            [prefix + 'projectTitle']: proposal.title,
-            [prefix + 'projectGoal']: proposal.goal,
-            [prefix + 'projectSummary']: proposal.summary,
-          };
-          const toggles: Record<string, boolean> = { ...this.state.interaction.toggles, 'project-social-draft': true };
-          PROJECT_COMPETENCIES.forEach((competency, index) => { toggles['project-competency-' + index] = proposal.competencies.includes(competency); });
-          this.transitionInteraction(interaction => ({ ...interaction, fields, toggles, feedback: 'Proposta copiada para a ficha. Revise os campos e complete o calendário.' }));
           this.render();
           return;
         }
@@ -3220,6 +3222,7 @@ export function registerComponentElements(): void {
         event.preventDefault();
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
         if (form?.matches('[data-project-chat-form]') && isProfileProjectPart(this.state.id)) {
+          if (this.state.interaction.projectChatPending) return;
           const values = new FormData(form);
           const prompt = String(values.get('projectChatPrompt') ?? '').trim();
           if (!prompt) {
@@ -3228,21 +3231,39 @@ export function registerComponentElements(): void {
             this.querySelector<HTMLTextAreaElement>('[data-project-chat-form] textarea')?.focus();
             return;
           }
-          const proposal = suggestStudentProject(prompt);
-          const studentMessage: ProjectChatMessage = { id: projectId(), role: 'student', text: prompt };
-          const assistantMessage: ProjectChatMessage = {
-            id: projectId(), role: 'assistant',
-            text: 'Podemos começar com uma ação coletiva, dividir a pesquisa e compartilhar o resultado com a comunidade. Montei uma proposta inicial; confira objetivo e competências antes de usar.',
-            proposal,
+          const requestId = projectId();
+          const studentMessage: ProjectChatMessage = { id: requestId + '-user', role: 'student', text: prompt };
+          const assistantMessage: ProjectChatMessage = { id: requestId, role: 'assistant', text: '', status: 'pending' };
+          const projectForm = this.querySelector<HTMLFormElement>('[data-project-create-form]');
+          const projectValues = projectForm ? new FormData(projectForm) : null;
+          const conversation = this.state.interaction.projectChatMessages
+            .filter(message => !message.status && message.text.trim())
+            .slice(-8)
+            .map(message => ({ role: message.role === 'student' ? 'user' as const : 'assistant' as const, content: message.text }));
+          const request: ProjectAssistantRequest = {
+            requestId,
+            partId: this.state.id as ProjectAssistantRequest['partId'],
+            prompt,
+            context: {
+              title: String(projectValues?.get('projectTitle') ?? ''),
+              goal: String(projectValues?.get('projectGoal') ?? ''),
+              summary: String(projectValues?.get('projectSummary') ?? ''),
+              audience: String(projectValues?.get('projectAudience') ?? ''),
+              competencies: projectValues?.getAll('projectCompetency').map(String) ?? [],
+              milestones: this.state.interaction.projectMilestones.map(({ title, date }) => ({ title, date })),
+            },
+            conversation,
           };
           const fieldKey = this.state.id + ':projectChatPrompt';
           this.transitionInteraction(interaction => ({
             ...interaction,
             projectChatMessages: [...interaction.projectChatMessages, studentMessage, assistantMessage],
             fields: { ...interaction.fields, [fieldKey]: '' },
+            projectChatPending: true,
             feedback: '',
           }));
           this.render();
+          this.dispatchEvent(new CustomEvent('lumira-project-assistant-request', { bubbles: true, composed: true, detail: request }));
           this.querySelector<HTMLTextAreaElement>('[data-project-chat-form] textarea')?.focus();
           return;
         }

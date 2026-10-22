@@ -6,7 +6,11 @@ O PDF [Apresentação inicial — edição de perfil e partes da plataforma](../
 
 ## Acesso e edição de perfil
 
-A apresentação pede uma chave PTA compartilhada separadamente. Depois de entrar, a autorização fica na sessão desta aba. A chave funciona como barreira de entrada visual: o GitHub Pages e o repositório são públicos, portanto isso não equivale a autenticação no servidor nem impede alguém de inspecionar o código publicado.
+A apresentação no GitHub Pages pede uma chave PTA compartilhada separadamente. Depois de entrar, a autorização fica na sessão desta aba. A chave funciona como barreira de entrada visual: o GitHub Pages e o repositório são públicos, portanto isso não equivale a autenticação no servidor nem impede alguém de inspecionar o código publicado. No Electron, a PTA é lida de `LUMIRA_PTA_KEY` no arquivo `.env` local e validada pelo processo principal.
+
+## Chat de projetos com Cognoscere
+
+No desktop Electron, abrir **Projetos em andamento** consulta o health check do Forge. A conversa envia a ideia, a ficha atual, competências, marcos e turnos anteriores para `POST /v1/chat/completions`; a resposta real do Cognoscere aparece no chat. Ela não altera campos nem salva o projeto sem revisão. Para endpoint por túnel, o processo principal envia `X-Port-Router-Key` usando `PORT_ROUTER_KEY` de `.env` ou de `~/.config/port-router/router.env`. No GitHub Pages, não há ponte local e a interface informa que o chat requer o aplicativo Electron.
 
 Nos perfis de professor e aluno, **Editar perfil** abre o modo de edição junto ao conteúdo. Os ícones de lápis levam ao campo correspondente; a pessoa pode alterar nome, função, escola, apresentação, biografia e competências ou interesses. A edição do perfil também permite buscar no Spotify, colar um link de faixa, álbum ou playlist, conferir o player incorporado e salvar a escolha. **Salvar alterações** atualiza a apresentação e os identificadores relacionados. Os valores ficam no `localStorage` deste navegador; não são enviados a um servidor nem sincronizados entre dispositivos. O player é incorporado pelo Spotify e depende de conexão e disponibilidade do serviço.
 
@@ -20,7 +24,7 @@ Nos perfis de professor e aluno, **Editar perfil** abre o modo de edição junto
 6. Use **Compartilhar esta parte** para copiar um link direto. A seleção também aparece no endereço e responde aos comandos voltar/avançar do navegador.
 7. Expanda a prévia para apresentar somente a tela; pressione Escape ou volte ao laboratório para continuar a exploração.
 
-Os controles são parte do formato de demonstração: não indicam persistência, autenticação ou serviço ativo. Os dados são fictícios. Ações e alterações ficam no navegador.
+Os controles são parte do formato de demonstração: a maioria não indica persistência ou serviço ativo. Os dados são fictícios. A exceção é o chat de projetos no Electron, que usa o Cognoscere local; a resposta continua sem persistência. Ações e alterações do protótipo ficam no navegador.
 
 ## Telas e partes
 

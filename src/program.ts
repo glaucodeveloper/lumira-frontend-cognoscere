@@ -1,6 +1,6 @@
 /** Monólito interno dos programas: domínios, gateways e API operacional da plataforma. */
 import { shell, landing, access, page, createHtmlIterator } from './components';
-import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CommunityEvent, CommunityPost, Competency, Contracts, Gateway, LoginInput, LumiraSystem, Material, Preview, Role, SessionUser, SondagemPlan, SocialProfile } from './types';
+import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CognoscereStatus, CommunityEvent, CommunityPost, Competency, Contracts, Gateway, LoginInput, LumiraSystem, Material, Preview, ProjectAssistantRequest, Role, SessionUser, SondagemPlan, SocialProfile } from './types';
 
 /** Domain policy stays private to this program module. */
 export interface ProgramRenderContext {
@@ -327,7 +327,55 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     }
   }
 
+  function projectAssistantOrigin(event: Event, partId: unknown): HTMLElement | null {
+    if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
+    if (partId !== 'teacher-projects' && partId !== 'student-projects') return null;
+    return event.target.dataset.componentId === partId ? event.target : null;
+  }
+
+  function dispatchProjectAssistantEvent(origin: HTMLElement, name: string, detail: unknown): void {
+    origin.dispatchEvent(new CustomEvent(name, { detail }));
+  }
+
+  async function onProjectAssistantStatus(event: Event): Promise<void> {
+    const detail = (event as CustomEvent<{ partId?: string }>).detail;
+    const origin = projectAssistantOrigin(event, detail?.partId);
+    if (!origin) return;
+    let status: CognoscereStatus;
+    try {
+      status = window.lumiraDesktop
+        ? await window.lumiraDesktop.getCognoscereStatus()
+        : { available: false, configured: false, systemModelConfigured: false, model: '', endpoint: '', message: 'A conversa com o serviço local exige abrir o app Electron Lumira.' };
+    } catch (error) {
+      status = { available: false, configured: false, systemModelConfigured: false, model: '', endpoint: '', message: error instanceof Error ? error.message : String(error) };
+    }
+    if (origin.isConnected) dispatchProjectAssistantEvent(origin, 'lumira-project-assistant-status', status);
+  }
+
+  async function onProjectAssistantRequest(event: Event): Promise<void> {
+    const detail = (event as CustomEvent<ProjectAssistantRequest>).detail;
+    const origin = projectAssistantOrigin(event, detail?.partId);
+    if (!origin || !detail || typeof detail.prompt !== 'string') return;
+    try {
+      if (!window.lumiraDesktop) throw new Error('Abra o app Electron Lumira para conversar com o Cognoscere local.');
+      const result = await window.lumiraDesktop.converseAboutProject(detail);
+      dispatchProjectAssistantEvent(origin, 'lumira-project-assistant-result', { requestId: detail.requestId, reply: result.reply });
+    } catch (error) {
+      dispatchProjectAssistantEvent(origin, 'lumira-project-assistant-result', {
+        requestId: detail.requestId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
   // startUI pertence ao próprio program e conecta a interface ao sistema retornado.
+  mount.addEventListener('lumira-project-assistant-status-request', onProjectAssistantStatus);
+  mount.addEventListener('lumira-project-assistant-request', onProjectAssistantRequest);
+  removeListeners.push(
+    () => mount.removeEventListener('lumira-project-assistant-status-request', onProjectAssistantStatus),
+    () => mount.removeEventListener('lumira-project-assistant-request', onProjectAssistantRequest),
+  );
+
   function startUI(): void {
     if (!bindEvents) {
       render();
