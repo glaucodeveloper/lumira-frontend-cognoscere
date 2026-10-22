@@ -30,6 +30,8 @@ cp .env.example .env
 npm run desktop:dev
 ```
 
+Para criar o instalador Windows x64 (`release/Lumira Cognoscere-Setup-0.2.0-x64.exe`), use `npm run dist:win`. Em Linux, o empacotamento NSIS requer Wine. No primeiro início, o app copia `.env.example` para o arquivo `.env` da pasta de dados do usuário do Electron; preencha `LUMIRA_PTA_KEY` ali e reinicie o app. O instalador não leva o `.env` local nem chaves.
+
 O chat dentro de **Projetos em andamento** envia o rascunho atual, competências, marcos e histórico recente para `POST /v1/chat/completions` do Cognoscere Forge. A resposta aparece no chat e não altera campos nem salva o projeto automaticamente. Use `npm run desktop` para compilar e abrir a versão local. GitHub Pages não lê `.env` nem acessa a ponte Electron; ali o chat explica que precisa do desktop.
 
 Forge, Metis e MiniCPM precisam estar iniciados. O estado do endpoint e dos modelos aparece no cabeçalho do chat.

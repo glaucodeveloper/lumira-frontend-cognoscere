@@ -8,6 +8,7 @@
     "dev": "vite --host 127.0.0.1",
     "desktop:dev": "node scripts/electron-dev.mjs",
     "desktop": "vite build && electron .",
+    "dist:win": "npm run typecheck && vite build && electron-builder --win nsis --x64",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test tests/*.test.ts",
     "check": "npm run typecheck && npm test",
@@ -17,11 +18,50 @@
   "devDependencies": {
     "@types/node": "^22.13.0",
     "electron": "^45.0.0",
+    "electron-builder": "^26.15.3",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "vite": "^6.1.0"
   },
   "dependencies": {
     "dotenv": "^18.0.9"
+  },
+  "build": {
+    "appId": "br.glaucodeveloper.lumira.cognoscere",
+    "productName": "Lumira Cognoscere",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": ".env.example",
+        "to": ".env.example"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-Setup-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Lumira Cognoscere"
+    }
   }
 }

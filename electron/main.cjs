@@ -19,6 +19,15 @@ function loadConfiguration() {
   const envPath = app.isPackaged
     ? path.join(app.getPath('userData'), '.env')
     : path.join(app.getAppPath(), '.env');
+  if (!fs.existsSync(envPath)) {
+    const templatePath = app.isPackaged
+      ? path.join(process.resourcesPath, '.env.example')
+      : path.join(app.getAppPath(), '.env.example');
+    if (fs.existsSync(templatePath)) {
+      fs.mkdirSync(path.dirname(envPath), { recursive: true });
+      fs.copyFileSync(templatePath, envPath, fs.constants.COPYFILE_EXCL);
+    }
+  }
   dotenv.config({ path: envPath });
 
   const routerEnvPath = expandHome(process.env.PORT_ROUTER_ENV_FILE

@@ -30,6 +30,8 @@ The request uses `mode: document_update` to keep Forge in its text-reflection pa
 
 `npm run desktop:dev` starts one local Vite server and one Electron window. `npm run desktop` builds the static renderer and opens it in Electron. Electron does not start or manage Cognoscere systemd services; Forge, Metis, and MiniCPM must already be available. The demo project form remains browser-local and is not persisted to Cognoscere.
 
+`npm run dist:win` typechecks, builds the renderer, and creates a per-user NSIS installer for Windows x64 under `release/`. The installer packages only the renderer and Electron entrypoints; `.env.example` is copied to Electron's user data on first launch, while `.env` is never included. Set `LUMIRA_PTA_KEY` in that user-data `.env` and restart the app.
+
 ## Verificação desta implementação
 
 - Percurso Electron real: PTA temporária de execução liberou a tela; o builder docente consultou status e mostrou Forge online; uma solicitação contextual sobre desperdício de água chegou ao Cognoscere local e a resposta do Metis apareceu no chat após cerca de 60 s.
