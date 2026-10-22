@@ -582,6 +582,30 @@ export const initialComponentData: Record<string, unknown> = {
     activityText: 'Aplicação de uma sequência didática sobre crônicas urbanas. Os estudantes trouxeram relatos da própria cidade e a sala virou um mapa de histórias.',
     activityTags: ['Língua Portuguesa', 'Crônicas', 'Cidade', 'Sequência didática'],
     likes: '24', comments: '8',
+    activityItems: [
+      {
+        id: 'city-chronicles', kind: 'post', title: 'Linguagem conecta realidades',
+        text: 'Aplicação de uma sequência didática sobre crônicas urbanas. Os estudantes trouxeram relatos da própria cidade e a sala virou um mapa de histórias.',
+        tags: ['Língua Portuguesa', 'Crônicas', 'Cidade', 'Sequência didática'], publishedAt: 'Há 2 dias', likes: 24, comments: 8,
+        image: communityPostAsset, imageAlt: 'Professora e estudantes trabalhando juntos em uma atividade',
+      },
+      {
+        id: 'reading-activity', kind: 'activity', title: 'Roda de leitura: diferentes pontos de vista',
+        text: 'A turma comparou duas crônicas sobre a mesma praça e marcou as escolhas de linguagem que mudam a perspectiva de cada narrador.',
+        tags: ['Leitura', 'Interpretação', '7º ano'], publishedAt: 'Ontem', likes: 16, comments: 5,
+      },
+      {
+        id: 'class-podcast', kind: 'video', title: 'Bastidores do podcast da turma',
+        text: 'Um trecho da gravação mostra como os grupos revisam a pergunta-guia antes de apresentar suas histórias da cidade.',
+        tags: ['Vídeo', 'Podcast', 'Produção dos estudantes'], publishedAt: 'Há 3 dias', likes: 31, comments: 11,
+        image: communityPostAsset, imageAlt: 'Prévia do registro audiovisual de uma atividade colaborativa',
+      },
+      {
+        id: 'reading-territory', kind: 'project', title: 'Leitura e Território',
+        text: 'Projeto em andamento: reunir narrativas locais, entrevistar moradores e montar um mapa de histórias produzido pela turma.',
+        tags: ['Projeto', 'Comunidade', 'Em andamento'], publishedAt: 'Esta semana', likes: 12, comments: 3,
+      },
+    ],
     projects: [
       { title: 'Leitura e Território', status: 'Em andamento', progress: '8/12 atividades' },
       { title: 'Podcast da Turma', status: 'Planejamento', progress: '2/6 atividades' },
@@ -807,6 +831,7 @@ type DemoPagePartInteraction = {
   toggles: Record<string, boolean>;
   fields: Record<string, string>;
   publications: string[];
+  profileActivityItems: ProfileActivityItem[];
   actions: Record<string, number>;
   communityEvents: Array<{ title: string; date: string; time: string; color: string }>;
   localStories: Array<{
@@ -836,6 +861,37 @@ type DemoPagePartInteraction = {
   questionFeedback: string;
   feedback: string;
 };
+type ProfileActivityKind = 'post' | 'activity' | 'video' | 'project';
+type ProfileActivityItem = {
+  id: string;
+  kind: ProfileActivityKind;
+  title: string;
+  text: string;
+  tags: string[];
+  publishedAt: string;
+  likes: number;
+  comments: number;
+  image?: string;
+  imageAlt?: string;
+};
+const PROFILE_ACTIVITY_LABELS: Record<ProfileActivityKind, string> = {
+  post: 'Post', activity: 'Atividade', video: 'Vídeo', project: 'Projeto',
+};
+function renderProfileActivityItem(item: ProfileActivityItem, local = false, author = 'Ana Beatriz Silva'): string {
+  const image = item.image
+    ? '<img class="lm-activity-image" src="' + e(item.image) + '" alt="' + e(item.imageAlt ?? '') + '" loading="lazy" />'
+    : '';
+  const tags = item.tags.map(tag => LabPill(tag)).join('');
+  const key = 'profile-activity:' + item.id;
+  return '<article class="lm-profile-activity-card' + (local ? ' lm-profile-activity-local' : '') + '" data-profile-activity-type="' + e(item.kind) + '">'
+    + '<div class="lm-activity-author">' + LabAvatar(author, 'teal', 'tiny') + '<div><b>' + e(author) + '</b><small>' + e(PROFILE_ACTIVITY_LABELS[item.kind]) + ' · ' + e(item.publishedAt) + '</small></div>'
+    + '<span class="lm-activity-kind lm-activity-kind-' + e(item.kind) + '">' + e(PROFILE_ACTIVITY_LABELS[item.kind]) + '</span></div>'
+    + '<h3>' + e(item.title) + '</h3><p>' + e(item.text) + '</p>'
+    + (tags ? '<div class="lm-activity-tags">' + tags + '</div>' : '') + image
+    + '<footer class="lm-post-actions"><button type="button" class="lm-like-action" data-interaction-key="' + e(key + ':like') + '" data-interaction-kind="like" data-action-label="♡ ' + String(item.likes) + '" aria-label="Curtir publicação">♡ ' + String(item.likes) + '</button>'
+    + '<span>◯ ' + String(item.comments) + ' comentários</span><button type="button" data-interaction-key="' + e(key + ':share') + '" data-action-label="↗ Compartilhar">↗ Compartilhar</button>'
+    + '<button type="button" data-interaction-key="' + e(key + ':save') + '" data-interaction-kind="save" data-action-label="♧ Salvar">♧ Salvar</button></footer></article>';
+}
 type DemoPagePartState = DemoPagePartProps & { interaction: DemoPagePartInteraction };
 type ComponentStateIterator<T> = Generator<T, never, (state: T) => T>;
 interface DemoPagePartElement extends HTMLElement {
@@ -1262,12 +1318,43 @@ function renderAboutPanel(data: ComponentFixture, selectedId: string, student = 
 }
 function renderActivityCard(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('teacher-activity', data);
-  const content = '<article class="lm-panel lm-activity-panel"><header><h2>Posts e atividades</h2><div class="lm-filter-pills"><button class="active">Todos</button><button>Posts</button><button>Vídeos</button><button>Projetos</button></div><button type="button" class="lm-small-primary">Criar post</button></header>'
-    + '<div class="lm-activity-author">' + LabAvatar(labText(data, 'name', 'Ana Beatriz Silva'), 'teal', 'tiny') + '<div><b>' + e(labText(data, 'name', 'Ana Beatriz Silva')) + '</b><small>Professora · há 2 dias</small></div><button type="button" class="lm-panel-more">⌄</button></div>'
-    + '<h3>' + e(labText(data, 'activityTitle', 'Linguagem conecta realidades')) + '</h3><p>' + e(labText(data, 'activityText', 'Uma atividade compartilhada com a comunidade escolar.')) + '</p>'
-    + '<div class="lm-activity-tags">' + labList<string>(data, 'activityTags').map(tag => LabPill(tag)).join('') + '</div>'
-    + '<img class="lm-activity-image" src="' + communityPostAsset + '" alt="Professora e estudantes trabalhando juntos em uma atividade" />'
-    + '<footer class="lm-post-actions"><button type="button" class="lm-like-action" aria-label="Curtir publicação">♡ ' + e(labText(data, 'likes', '24')) + '</button><span>◯ ' + e(labText(data, 'comments', '8')) + '</span><button type="button">↗ Compartilhar</button><button type="button">♧ Salvar</button></footer></article>';
+  const fixtures = labList<ComponentFixture>(data, 'activityItems');
+  const items: ProfileActivityItem[] = fixtures.map((fixture, index) => {
+    const kindText = labText(fixture, 'kind', 'post');
+    const kind: ProfileActivityKind = kindText === 'activity' || kindText === 'video' || kindText === 'project' ? kindText : 'post';
+    const tags = Array.isArray(fixture.tags) ? fixture.tags.map(String) : [];
+    return {
+      id: labText(fixture, 'id', 'activity-' + index), kind,
+      title: index === 0 ? labText(data, 'activityTitle', labText(fixture, 'title', 'Linguagem conecta realidades')) : labText(fixture, 'title', 'Publicação'),
+      text: index === 0 ? labText(data, 'activityText', labText(fixture, 'text', '')) : labText(fixture, 'text', ''),
+      tags: index === 0 ? labList<string>(data, 'activityTags') : tags,
+      publishedAt: labText(fixture, 'publishedAt', 'Hoje'), likes: labNumber(fixture, 'likes'), comments: labNumber(fixture, 'comments'),
+      image: typeof fixture.image === 'string' ? fixture.image : undefined,
+      imageAlt: labText(fixture, 'imageAlt', ''),
+    };
+  });
+  const counts: Record<ProfileActivityKind | 'all', number> = {
+    all: items.length, post: items.filter(item => item.kind === 'post').length,
+    activity: items.filter(item => item.kind === 'activity').length,
+    video: items.filter(item => item.kind === 'video').length,
+    project: items.filter(item => item.kind === 'project').length,
+  };
+  const filters: Array<{ id: 'all' | ProfileActivityKind; label: string }> = [
+    { id: 'all', label: 'Todos' }, { id: 'post', label: 'Posts' }, { id: 'activity', label: 'Atividades' },
+    { id: 'video', label: 'Vídeos' }, { id: 'project', label: 'Projetos' },
+  ];
+  const filterButtons = filters.map(filter => '<button type="button" class="' + (filter.id === 'all' ? 'active' : '') + '" data-profile-activity-filter="' + filter.id + '" aria-pressed="' + String(filter.id === 'all') + '">' + e(filter.label) + '<span data-profile-activity-count="' + filter.id + '">' + String(counts[filter.id]) + '</span></button>').join('');
+  const cards = items.map(item => renderProfileActivityItem(item, false, labText(data, 'name', 'Ana Beatriz Silva'))).join('');
+  const content = '<article class="lm-panel lm-activity-panel"><header class="lm-activity-heading"><div><span class="lm-eyebrow">PERFIL · PUBLICAÇÕES</span><h2>Posts e atividades</h2></div><button type="button" class="lm-small-primary" data-profile-activity-create>＋ Criar novo</button></header>'
+    + '<nav class="lm-filter-pills lm-activity-filters" aria-label="Filtrar posts e atividades">' + filterButtons + '</nav>'
+    + '<form class="lm-profile-activity-composer" data-profile-activity-composer hidden novalidate><header><div><span class="lm-eyebrow">NOVA PUBLICAÇÃO</span><h3>Criar conteúdo</h3></div><button type="button" class="lm-panel-more" data-profile-activity-cancel aria-label="Fechar criação">×</button></header>'
+    + '<label class="lm-activity-composer-type">Tipo de conteúdo<select name="activityKind"><option value="post">Post</option><option value="activity">Atividade</option><option value="video">Vídeo</option><option value="project">Projeto</option></select></label>'
+    + '<label>Título<input name="activityTitle" maxlength="100" placeholder="Dê um título ao conteúdo" required></label>'
+    + '<label>Descrição<textarea name="activityText" rows="4" maxlength="1000" placeholder="Conte o que a turma fez, descobriu ou está planejando…" required></textarea></label>'
+    + '<label>Assuntos <small>(separe por vírgulas)</small><input name="activityTags" maxlength="180" placeholder="Leitura, investigação, 8º ano"></label>'
+    + '<footer><button type="button" class="lm-activity-cancel" data-profile-activity-cancel>Cancelar</button><button type="submit" class="lm-small-primary">Publicar conteúdo</button></footer></form>'
+    + '<div class="lm-profile-activity-list" data-profile-activity-list>' + cards + '</div>'
+    + '<p class="lm-activity-empty" data-profile-activity-empty hidden>Nenhum conteúdo neste filtro. Escolha outro badge ou crie uma nova publicação.</p></article>';
   return labPart('teacher-activity', content, selectedId, 'lm-feed-card-part');
 }
 function renderProjectsPanel(data: ComponentFixture, selectedId: string): string {
@@ -1658,7 +1745,7 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-            groups: {}, toggles: {}, fields: {}, publications: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
+            groups: {}, toggles: {}, fields: {}, publications: [], profileActivityItems: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
             reviewFeedback: '', shareFeedback: '', responseFeedback: '', enrollmentFeedback: '', questFeedback: '', questionFeedback: '', feedback: '',
@@ -1739,8 +1826,8 @@ export function registerComponentElements(): void {
         this.querySelectorAll<HTMLButtonElement>('button').forEach((button, index) => {
           const scope = button.closest<HTMLElement>('.lm-suggested-person, .lm-suggested-group, .lm-upcoming-event, .lm-community-post, .lm-activity-author, .lm-project-row, .lm-story-card');
           const scopeName = scope?.querySelector('b')?.textContent?.trim() || '';
-          button.dataset.interactionKey = id + ':button:' + index + ':' + scopeName;
-          button.dataset.actionLabel = button.textContent?.trim() ?? '';
+          if (!button.dataset.interactionKey) button.dataset.interactionKey = id + ':button:' + index + ':' + scopeName;
+          if (!button.dataset.actionLabel) button.dataset.actionLabel = button.textContent?.trim() ?? '';
           const label = (button.getAttribute('aria-label') || button.textContent || '').trim();
           if (/\b(seguir|seguindo)\b/i.test(label)) button.dataset.interactionKind = 'follow';
           else if (/\b(salvar|salvo)\b/i.test(label)) button.dataset.interactionKind = 'save';
@@ -1825,6 +1912,7 @@ export function registerComponentElements(): void {
             if (interaction.toggles[toggle] !== undefined) field.checked = interaction.toggles[toggle];
           } else if (interaction.fields[key] !== undefined) field.value = interaction.fields[key];
         });
+        this.restoreProfileActivities();
         this.querySelectorAll<HTMLButtonElement>('[data-interaction-kind]').forEach(button => {
           const active = interaction.toggles[button.dataset.interactionKey ?? ''] === true;
           const kind = button.dataset.interactionKind;
@@ -1857,6 +1945,39 @@ export function registerComponentElements(): void {
           feedback.textContent = interaction.feedback;
           this.append(feedback);
         }
+      }
+      private restoreProfileActivities(): void {
+        if (this.state.id !== 'teacher-activity') return;
+        const list = this.querySelector<HTMLElement>('[data-profile-activity-list]');
+        if (!list) return;
+        list.querySelectorAll('.lm-profile-activity-local').forEach(item => item.remove());
+        const staticCards = [...list.querySelectorAll<HTMLElement>(':scope > [data-profile-activity-type]')];
+        const localItems = this.state.interaction.profileActivityItems ?? [];
+        const selected = this.state.interaction.groups['teacher-activity-filter'] ?? 'all';
+        const countByKind = (kind: string): number => staticCards.filter(card => card.dataset.profileActivityType === kind).length
+          + localItems.filter(item => item.kind === kind).length;
+        const counts: Record<string, number> = {
+          all: staticCards.length + localItems.length,
+          post: countByKind('post'), activity: countByKind('activity'),
+          video: countByKind('video'), project: countByKind('project'),
+        };
+        this.querySelectorAll<HTMLButtonElement>('[data-profile-activity-filter]').forEach(button => {
+          const filter = button.dataset.profileActivityFilter ?? 'all';
+          const active = filter === selected;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-pressed', String(active));
+          const count = button.querySelector<HTMLElement>('[data-profile-activity-count]');
+          if (count) count.textContent = String(counts[filter] ?? 0);
+        });
+        for (const card of staticCards) card.hidden = selected !== 'all' && card.dataset.profileActivityType !== selected;
+        for (const item of localItems) list.insertAdjacentHTML('beforeend', renderProfileActivityItem(item, true));
+        const localCards = [...list.querySelectorAll<HTMLElement>('.lm-profile-activity-local')];
+        for (const card of localCards) card.hidden = selected !== 'all' && card.dataset.profileActivityType !== selected;
+        const visibleCount = staticCards.filter(card => !card.hidden).length + localCards.filter(card => !card.hidden).length;
+        const empty = this.querySelector<HTMLElement>('[data-profile-activity-empty]');
+        if (empty) empty.hidden = visibleCount > 0;
+        const composer = this.querySelector<HTMLFormElement>('[data-profile-activity-composer]');
+        if (composer) composer.hidden = this.state.interaction.toggles['profile-activity-composer-open'] !== true;
       }
       private restoreProfileEditor(): void {
         if (this.state.id !== 'teacher-hero' && this.state.id !== 'student-hero') return;
@@ -2517,6 +2638,24 @@ export function registerComponentElements(): void {
           this.render();
           return;
         }
+        if (button.dataset.profileActivityFilter && this.state.id === 'teacher-activity') {
+          const filter = button.dataset.profileActivityFilter;
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'teacher-activity-filter': filter }, feedback: '' }));
+          this.render();
+          return;
+        }
+        if (button.hasAttribute('data-profile-activity-create') && this.state.id === 'teacher-activity') {
+          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, 'profile-activity-composer-open': true }, feedback: '' }));
+          this.render();
+          this.querySelector<HTMLInputElement>('[data-profile-activity-composer] [name="activityTitle"]')?.focus();
+          return;
+        }
+        if (button.hasAttribute('data-profile-activity-cancel') && this.state.id === 'teacher-activity') {
+          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, 'profile-activity-composer-open': false }, feedback: '' }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-profile-activity-create]')?.focus();
+          return;
+        }
         // Deixe a navegação entre telas chegar ao Componenting Demo Lab, que
         // controla a montagem da página e a URL selecionada.
         if (button.hasAttribute('data-screen-select') || button.hasAttribute('data-component-select')) {
@@ -2827,7 +2966,12 @@ export function registerComponentElements(): void {
           return;
         }
         if (!key) return;
-        this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, [key]: field.value } }));
+        const creatingActivity = this.state.id === 'teacher-activity' && Boolean(field.closest('[data-profile-activity-composer]'));
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          fields: { ...interaction.fields, [key]: field.value },
+          ...(creatingActivity && interaction.feedback ? { feedback: '' } : {}),
+        }));
       }
       private onChange(event: Event): void {
         if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) return;
@@ -2883,6 +3027,38 @@ export function registerComponentElements(): void {
       private onSubmit(event: Event): void {
         event.preventDefault();
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
+        if (form?.matches('[data-profile-activity-composer]') && this.state.id === 'teacher-activity') {
+          const values = new FormData(form);
+          const title = String(values.get('activityTitle') ?? '').trim();
+          const text = String(values.get('activityText') ?? '').trim();
+          const rawKind = String(values.get('activityKind') ?? 'post');
+          const kind: ProfileActivityKind = rawKind === 'activity' || rawKind === 'video' || rawKind === 'project' ? rawKind : 'post';
+          const tags = String(values.get('activityTags') ?? '').split(/[,;\n]/).map(tag => tag.trim()).filter(Boolean).slice(0, 8);
+          if (!title || !text) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Preencha o título e a descrição para publicar.' }));
+            this.render();
+            this.querySelector<HTMLInputElement>('[data-profile-activity-composer] [name="activityTitle"]')?.focus();
+            return;
+          }
+          const item: ProfileActivityItem = {
+            id: Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7), kind, title, text, tags,
+            publishedAt: 'Agora', likes: 0, comments: 0,
+          };
+          const fieldPrefix = 'teacher-activity:';
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            profileActivityItems: [...(interaction.profileActivityItems ?? []), item],
+            groups: { ...interaction.groups, 'teacher-activity-filter': kind },
+            toggles: { ...interaction.toggles, 'profile-activity-composer-open': false },
+            fields: Object.fromEntries(Object.entries(interaction.fields).filter(([key]) => ![
+              fieldPrefix + 'activityKind', fieldPrefix + 'activityTitle', fieldPrefix + 'activityText', fieldPrefix + 'activityTags',
+            ].includes(key))),
+            feedback: PROFILE_ACTIVITY_LABELS[kind] + ' adicionado ao perfil nesta demonstração local.',
+          }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-profile-activity-create]')?.focus();
+          return;
+        }
         if (form?.matches('[data-calendar-event-form]') && this.state.id === 'community-calendar') {
           const values = new FormData(form);
           const title = String(values.get('eventTitle') ?? '').trim();

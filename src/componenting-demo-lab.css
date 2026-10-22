@@ -5135,6 +5135,64 @@ lumira-page-part {
 .lm-student-activity-copy>footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 9px; padding-top: 8px; border-top: 1px solid #edf1f5; color: #728597; font-size: 8px; }
 .lm-student-projects .lm-project-row { min-height: 48px; }
 .lm-student-projects .lm-outline-action { margin-top: 8px; }
+.lm-activity-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.lm-activity-panel .lm-activity-heading h2 {
+  flex: initial;
+  margin: 3px 0 0;
+  font-size: 13px;
+}
+.lm-activity-heading .lm-eyebrow { color: #718597; font-size: 7px; letter-spacing: .12em; }
+.lm-activity-heading .lm-small-primary { min-height: 29px; padding: 7px 10px; font-size: 8px; }
+.lm-activity-filters { margin: 0 0 10px; padding-bottom: 9px; border-bottom: 1px solid #edf1f4; }
+.lm-activity-filters button { display: inline-flex; align-items: center; gap: 5px; min-height: 25px; padding: 4px 7px; }
+.lm-activity-filters button span { min-width: 15px; padding: 2px 4px; border-radius: 99px; background: #f0f3f6; color: #6b7d8e; font-size: 7px; font-weight: 800; text-align: center; }
+.lm-activity-filters button.active span { background: #d7e9f9; color: var(--lm-brand); }
+.lm-profile-activity-list { display: grid; gap: 9px; }
+.lm-profile-activity-card { min-width: 0; padding: 10px; border: 1px solid #e5ebf0; border-radius: 8px; background: #fff; }
+.lm-profile-activity-card[hidden] { display: none !important; }
+.lm-profile-activity-card .lm-activity-author { margin: 0 0 7px; }
+.lm-profile-activity-card .lm-activity-author>div { flex: 1; }
+.lm-activity-kind { flex: none; padding: 3px 6px; border-radius: 99px; background: #edf3f8; color: #47637d; font-size: 7px; font-weight: 800; }
+.lm-activity-kind-activity { background: #e9f6ef; color: #26714d; }
+.lm-activity-kind-video { background: #f1ecfb; color: #6b4e9b; }
+.lm-activity-kind-project { background: #fff4df; color: #94661c; }
+.lm-activity-panel .lm-profile-activity-card h3 { margin: 5px 0; color: #173b58; font-size: 11px; line-height: 1.4; }
+.lm-activity-panel .lm-profile-activity-card>p { margin: 0 0 8px; color: #536b7e; font-size: 8px; line-height: 1.55; white-space: pre-wrap; }
+.lm-profile-activity-card .lm-activity-tags { margin-bottom: 7px; }
+.lm-profile-activity-card .lm-post-actions { flex-wrap: wrap; }
+.lm-profile-activity-card .lm-post-actions span { color: #617890; }
+.lm-profile-activity-card .lm-post-actions button { min-height: 24px; padding: 4px 5px; cursor: pointer; }
+.lm-profile-activity-composer { display: grid; gap: 8px; margin: 0 0 10px; padding: 11px; border: 1px solid #cbdde8; border-radius: 8px; background: #f7fafc; }
+.lm-profile-activity-composer[hidden],
+.lm-activity-empty[hidden] { display: none !important; }
+.lm-profile-activity-composer>header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.lm-profile-activity-composer>header h3 { margin: 3px 0 0; color: #173b58; font-size: 12px; }
+.lm-profile-activity-composer .lm-eyebrow { color: #718597; font-size: 7px; letter-spacing: .12em; }
+.lm-profile-activity-composer label { display: grid; gap: 4px; color: #35536b; font-size: 8px; font-weight: 750; }
+.lm-profile-activity-composer label small { color: #718597; font-size: 7px; font-weight: 500; }
+.lm-profile-activity-composer input,
+.lm-profile-activity-composer select,
+.lm-profile-activity-composer textarea { width: 100%; min-width: 0; padding: 7px 8px; border: 1px solid #ccdbe5; border-radius: 6px; background: #fff; color: #17324b; font: 400 9px/1.5 var(--lm-font-ui); }
+.lm-profile-activity-composer textarea { min-height: 76px; resize: vertical; }
+.lm-profile-activity-composer input:focus-visible,
+.lm-profile-activity-composer select:focus-visible,
+.lm-profile-activity-composer textarea:focus-visible { outline: 2px solid #168d98; outline-offset: 1px; }
+.lm-profile-activity-composer>footer { display: flex; justify-content: flex-end; gap: 6px; padding-top: 2px; }
+.lm-profile-activity-composer>footer button { min-height: 28px; padding: 6px 9px; border: 1px solid #cad8e2; border-radius: 5px; background: #fff; color: #47637d; font-size: 8px; font-weight: 750; }
+.lm-profile-activity-composer>footer .lm-small-primary { border-color: var(--lm-brand); background: var(--lm-brand); color: #fff !important; }
+.lm-activity-empty { margin: 0; padding: 17px 12px; border: 1px dashed #cbd8e2; border-radius: 7px; color: #60788c; font-size: 9px; line-height: 1.5; text-align: center; }
+@media(max-width:560px) {
+  .lm-activity-heading { align-items: flex-start; }
+  .lm-activity-filters { gap: 4px; }
+  .lm-activity-filters button { padding-inline: 6px; }
+  .lm-profile-activity-card .lm-post-actions { gap: 7px; }
+}
 @media(max-width:850px) {
   .lm-profile-identity { grid-template-columns: 66px minmax(0, 1fr); align-items: center; }
   .lm-profile-actions { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 100%; }
