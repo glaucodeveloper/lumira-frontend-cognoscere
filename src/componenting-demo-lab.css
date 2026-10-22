@@ -5211,3 +5211,93 @@ lumira-page-part {
   .lm-profile-editor-inline>form>footer { flex-direction: column-reverse; }
   .lm-profile-editor-inline>form>footer button { width: 100%; }
 }
+
+/* Project builder: ficha, chat and calendar are one usable planning flow. */
+.lm-profile-lower>.lm-page-part.is-project-builder-open,.lm-student-lower>.lm-page-part.is-project-builder-open { grid-column: 1 / -1; }
+.lm-projects-panel.is-project-builder-open,.lm-student-projects.is-project-builder-open { padding: clamp(14px, 2vw, 24px); }
+.lm-projects-panel.is-project-builder-open>.lm-project-list,.lm-student-projects.is-project-builder-open>.lm-project-list,
+.lm-projects-panel.is-project-builder-open>[data-project-create],.lm-student-projects.is-project-builder-open>[data-project-create] { display: none; }
+.lm-project-builder[hidden] { display: none !important; }
+.lm-projects-panel.is-project-builder-open>.lm-project-builder,.lm-student-projects.is-project-builder-open>.lm-project-builder { display: grid; }
+.lm-projects-panel.is-project-builder-open>.lm-project-builder[hidden],.lm-student-projects.is-project-builder-open>.lm-project-builder[hidden] { display: none !important; }
+.lm-project-builder { display: grid; gap: 16px; margin-top: 18px; padding-top: 17px; border-top: 1px solid #e6ebf0; }
+.lm-project-builder>header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin: 0; }
+.lm-project-builder>header h3 { margin: 5px 0 4px; color: var(--lm-ink-strong); font-family: var(--lm-font-display); font-size: clamp(18px, 2vw, 23px); }
+.lm-project-builder>header p { max-width: 640px; margin: 0; color: #64758a; font-size: 11px; line-height: 1.55; }
+.lm-project-builder-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr); align-items: start; gap: 16px; }
+.lm-project-form,.lm-project-form-fields,.lm-project-calendar,.lm-project-planner,.lm-project-chat-form { display: grid; gap: 11px; }
+.lm-project-form-fields { grid-template-columns: repeat(2,minmax(0,1fr)); padding: 14px; border: 1px solid #e7ebef; border-radius: 10px; background: #fbfcfd; }
+.lm-project-form-fields>label,.lm-project-milestone-add>label { display: grid; align-content: start; gap: 5px; color: #52667b; font-size: 10px; font-weight: 700; }
+.lm-project-form-fields>label:nth-child(2),.lm-project-form-fields>label:nth-child(3),.lm-project-form-fields>.lm-project-competencies,.lm-project-form-fields>.lm-project-social-choice { grid-column: 1 / -1; }
+.lm-project-form-fields input:not([type="checkbox"]),.lm-project-form-fields textarea,.lm-project-form-fields select,.lm-project-milestone-add input,.lm-project-chat-form textarea { width: 100%; min-width: 0; padding: 9px 10px; border: 1px solid #dce3e9; border-radius: 6px; background: white; color: #263a4d; font: 11px var(--lm-font-body); }
+.lm-project-form-fields textarea,.lm-project-chat-form textarea { resize: vertical; line-height: 1.5; }
+.lm-project-form-fields input:focus,.lm-project-form-fields textarea:focus,.lm-project-form-fields select:focus,.lm-project-milestone-add input:focus,.lm-project-chat-form textarea:focus { outline: 2px solid #8fcfc1; outline-offset: 1px; }
+.lm-project-competencies { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin: 0; padding: 10px; border: 1px solid #e2e8ec; border-radius: 7px; }
+.lm-project-competencies legend { padding: 0 4px; color: #34495c; font-size: 10px; font-weight: 750; }
+.lm-project-competencies legend small { color: #8491a0; font-size: 9px; font-weight: 450; }
+.lm-project-competencies label { display: flex; align-items: flex-start; gap: 6px; color: #52667b; font-size: 9px; line-height: 1.4; cursor: pointer; }
+.lm-project-competencies input,.lm-project-social-choice input { accent-color: var(--lm-teal); }
+.lm-project-social-choice { display: flex !important; align-items: flex-start; gap: 8px !important; padding: 10px; border: 1px solid #dcebe7; border-radius: 7px; background: #f1faf7; }
+.lm-project-social-choice span { display: grid; gap: 3px; }
+.lm-project-social-choice b { color: #235f54; font-size: 10px; }
+.lm-project-social-choice small { color: #66847d; font-size: 9px; font-weight: 450; line-height: 1.45; }
+.lm-project-calendar { padding: 14px; border: 1px solid #e7ebef; border-radius: 10px; background: white; }
+.lm-project-calendar h4,.lm-project-planner h4 { margin: 4px 0; color: var(--lm-ink-strong); font-family: var(--lm-font-display); font-size: 15px; }
+.lm-project-calendar>div:first-child p { margin: 0; color: #768696; font-size: 9px; line-height: 1.45; }
+.lm-project-calendar-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.lm-project-calendar-toolbar strong { color: #31485c; font-size: 10px; text-transform: capitalize; }
+.lm-project-calendar-toolbar button { width: 27px; height: 26px; border: 1px solid #e2e7eb; border-radius: 6px; background: white; color: #587086; cursor: pointer; }
+.lm-project-calendar-grid { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 4px; }
+.lm-project-calendar-grid>.weekday { display: grid; min-height: 20px; place-items: center; color: #8a97a3; font-size: 8px; font-weight: 750; }
+.lm-project-calendar-day,.lm-project-calendar-empty { position: relative; display: grid; min-height: 30px; place-items: center; border: 1px solid transparent; border-radius: 6px; background: transparent; color: #40566b; font-size: 9px; cursor: pointer; }
+.lm-project-calendar-day:hover { background: #edf6f3; }
+.lm-project-calendar-day.selected { border-color: #5ba999; background: #e5f5f0; color: #176d5e; font-weight: 800; }
+.lm-project-calendar-day.has-milestone i { position: absolute; bottom: 3px; width: 4px; height: 4px; border-radius: 50%; background: #e7984a; }
+.lm-project-milestone-add { display: grid; grid-template-columns: minmax(0,1fr) 130px auto; align-items: end; gap: 7px; }
+.lm-project-milestone-add>label { font-size: 9px; }
+.lm-project-add-milestone { min-height: 34px; padding: 6px 9px; border: 1px solid #cfe1db; border-radius: 6px; background: #f3faf7; color: #277c6e; font-size: 9px; font-weight: 750; cursor: pointer; white-space: nowrap; }
+.lm-project-milestones { display: grid; gap: 5px; }
+.lm-project-milestone { display: grid; grid-template-columns: 14px 1fr auto; align-items: center; gap: 7px; padding: 7px 8px; border-radius: 6px; background: #f7f9fb; color: #528a7c; }
+.lm-project-milestone>div { display: grid; gap: 2px; }
+.lm-project-milestone b { color: #40566b; font-size: 9px; }
+.lm-project-milestone small { color: #8391a0; font-size: 8px; }
+.lm-project-milestone button { border: 0; background: transparent; color: #8694a0; font-size: 15px; cursor: pointer; }
+.lm-project-no-milestones { margin: 0; color: #8a97a3; font-size: 9px; }
+.lm-project-form>footer { display: flex; justify-content: flex-end; gap: 8px; padding: 0 2px; }
+.lm-project-form>footer button { min-height: 35px; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+.lm-project-planner { position: sticky; top: 12px; padding: 14px; border: 1px solid #e7ebef; border-radius: 10px; background: #f8fafb; }
+.lm-project-planner>header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin: 0; }
+.lm-project-local-tag { padding: 4px 6px; border-radius: 999px; background: #edf0f3; color: #728294; font-size: 7px; font-weight: 800; letter-spacing: .08em; }
+.lm-project-chat-messages { display: grid; max-height: 400px; gap: 9px; overflow-y: auto; padding-right: 2px; }
+.lm-project-chat-message { padding: 10px; border: 1px solid #e5e9ed; border-radius: 8px; background: white; }
+.lm-project-chat-message.student { justify-self: end; width: 90%; border-color: #d3e8e1; background: #edf8f4; }
+.lm-project-chat-message>small { color: #8794a0; font-size: 7px; font-weight: 800; letter-spacing: .08em; }
+.lm-project-chat-message>p { margin: 5px 0 0; color: #485e72; font-size: 10px; line-height: 1.5; }
+.lm-project-proposal { display: grid; gap: 6px; margin-top: 9px; padding: 9px; border-radius: 6px; background: #f5f7f9; }
+.lm-project-proposal>b { color: #31485c; font-size: 10px; }
+.lm-project-proposal>p { margin: 0; color: #687c8d; font-size: 9px; line-height: 1.5; }
+.lm-project-proposal>div { display: flex; flex-wrap: wrap; gap: 4px; }
+.lm-project-proposal .lm-pill { padding: 4px 6px; font-size: 7px; }
+.lm-project-proposal>button { justify-self: start; padding: 6px 8px; border: 1px solid #c9ded8; border-radius: 5px; background: white; color: #277c6e; font-size: 8px; font-weight: 750; cursor: pointer; }
+.lm-project-chat-form { gap: 7px; }
+.lm-project-chat-form>label { color: #52667b; font-size: 9px; font-weight: 700; }
+.lm-project-chat-form>button { justify-self: end; min-height: 32px; padding: 7px 10px; border: 0; border-radius: 5px; background: var(--lm-brand); color: white; font-size: 9px; font-weight: 750; cursor: pointer; }
+.lm-project-chat-form>small { color: #8794a0; font-size: 8px; line-height: 1.4; }
+.lm-project-row-local { grid-template-columns: 35px minmax(0,1fr) auto; }
+.lm-project-row-local .lm-project-tag-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.lm-project-row-local .lm-project-tag-row .lm-pill { padding: 3px 5px; font-size: 7px; }
+.lm-project-row-local>.lm-pill { grid-column: 3; grid-row: 1; }
+.lm-student-projects .lm-project-list>[data-project-empty][hidden] { display: none !important; }
+@media (max-width: 900px) {
+  .lm-project-builder-layout { grid-template-columns: minmax(0,1fr) minmax(250px,.8fr); }
+  .lm-project-milestone-add { grid-template-columns: 1fr 1fr; }
+  .lm-project-add-milestone { grid-column: 1 / -1; }
+}
+@media (max-width: 680px) {
+  .lm-project-builder-layout,.lm-project-form-fields { grid-template-columns: 1fr; }
+  .lm-project-form-fields>label:nth-child(2),.lm-project-form-fields>label:nth-child(3),.lm-project-form-fields>.lm-project-competencies,.lm-project-form-fields>.lm-project-social-choice { grid-column: auto; }
+  .lm-project-competencies { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .lm-project-planner { position: static; }
+  .lm-project-milestone-add { grid-template-columns: 1fr; }
+  .lm-project-add-milestone { grid-column: auto; }
+}

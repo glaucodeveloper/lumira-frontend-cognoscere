@@ -832,6 +832,9 @@ type DemoPagePartInteraction = {
   fields: Record<string, string>;
   publications: string[];
   profileActivityItems: ProfileActivityItem[];
+  profileProjects: ProfileProjectItem[];
+  projectChatMessages: ProjectChatMessage[];
+  projectMilestones: ProfileProjectMilestone[];
   actions: Record<string, number>;
   communityEvents: Array<{ title: string; date: string; time: string; color: string }>;
   localStories: Array<{
@@ -874,6 +877,69 @@ type ProfileActivityItem = {
   image?: string;
   imageAlt?: string;
 };
+type ProfileProjectMilestone = { id: string; title: string; date: string };
+type ProfileProjectProposal = { title: string; goal: string; summary: string; competencies: string[] };
+type ProjectChatMessage = { id: string; role: 'student' | 'assistant'; text: string; proposal?: ProfileProjectProposal };
+type ProfileProjectItem = {
+  id: string; title: string; goal: string; summary: string; audience: string;
+  competencies: string[]; milestones: ProfileProjectMilestone[]; socialDraft: boolean; createdAt: string;
+};
+const PROJECT_COMPETENCIES = ['Comunicação', 'Colaboração', 'Pensamento crítico', 'Criatividade', 'Cultura digital', 'Língua Portuguesa'];
+function isProfileProjectPart(id: string): boolean { return id === 'teacher-projects' || id === 'student-projects'; }
+function projectId(): string { return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7); }
+function projectDateLabel(date: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+  const [year, month, day] = date.split('-').map(Number);
+  return new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short' }).format(new Date(year, month - 1, day));
+}
+function suggestStudentProject(message: string): ProfileProjectProposal {
+  const idea = message.trim().replace(/^(oi[,! ]*)?(quero|queremos|gostaria de|vamos|me ajude a|ajude a)\s+/i, '').replace(/[.!?]+$/, '');
+  const compactIdea = idea ? idea.charAt(0).toLocaleUpperCase('pt-BR') + idea.slice(1) : 'uma ideia da turma';
+  const titleSource = idea.replace(/^(criar|desenvolver|planejar|organizar|fazer|montar|produzir|investigar)\s+/i, '').replace(/^(um|uma|o|a)\s+/i, '');
+  const titleWords = titleSource.split(/\s+/).slice(0, 6).join(' ').replace(/[\s,;:]+$/, '');
+  const competencies = PROJECT_COMPETENCIES.filter((competency) => {
+    if (competency === 'Comunicação') return true;
+    if (competency === 'Colaboração') return /grupo|comunidade|junto|coletiv|entrevist|campanha/i.test(message);
+    if (competency === 'Pensamento crítico') return /investig|pesquis|compar|problema|água|ambiente|história|dados/i.test(message);
+    if (competency === 'Criatividade') return /criar|produz|desenh|arte|podcast|vídeo|campanha|história/i.test(message);
+    if (competency === 'Cultura digital') return /digital|podcast|vídeo|site|rede|mapa/i.test(message);
+    return /leitura|texto|história|livro|podcast|entrevist|campanha/i.test(message);
+  });
+  return {
+    title: titleWords ? titleWords.charAt(0).toLocaleUpperCase('pt-BR') + titleWords.slice(1) : compactIdea,
+    goal: 'Transformar “' + compactIdea + '” em uma ação criada pela turma e compartilhada com a comunidade escolar.',
+    summary: 'Investigar a ideia com colegas, reunir relatos e referências, planejar uma produção coletiva e apresentar o resultado no Social para convidar a comunidade a participar.',
+    competencies: competencies.length ? competencies : ['Comunicação', 'Colaboração', 'Criatividade'],
+  };
+}
+function renderProjectCalendar(monthKey: string, milestones: ProfileProjectMilestone[], selectedDate: string): string {
+  const [yearPart, monthPart] = monthKey.split('-').map(Number);
+  const year = Number.isFinite(yearPart) ? yearPart : 2026;
+  const month = Number.isFinite(monthPart) ? monthPart - 1 : 9;
+  const firstWeekday = new Date(year, month, 1).getDay();
+  const dayCount = new Date(year, month + 1, 0).getDate();
+  const monthTitle = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(new Date(year, month, 1));
+  const cells: string[] = Array.from({ length: firstWeekday }, () => '<span class="lm-project-calendar-empty" aria-hidden="true"></span>');
+  for (let day = 1; day <= dayCount; day++) {
+    const date = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+    const marked = milestones.some(milestone => milestone.date === date);
+    cells.push('<button type="button" class="lm-project-calendar-day' + (selectedDate === date ? ' selected' : '') + (marked ? ' has-milestone' : '') + '" data-project-calendar-date="' + date + '" aria-pressed="' + String(selectedDate === date) + '" aria-label="' + date + (marked ? ', com marco' : '') + '">' + day + (marked ? '<i></i>' : '') + '</button>');
+  }
+  const upcoming = milestones.slice().sort((a, b) => a.date.localeCompare(b.date));
+  return '<div class="lm-project-calendar-toolbar"><button type="button" data-project-calendar-step="-1" aria-label="Mês anterior">←</button><strong>' + e(monthTitle) + '</strong><button type="button" data-project-calendar-step="1" aria-label="Próximo mês">→</button></div>'
+    + '<div class="lm-project-calendar-grid" aria-label="Calendário de marcos">' + ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(day => '<span class="weekday">' + day + '</span>').join('') + cells.join('') + '</div>'
+    + '<div class="lm-project-milestones" data-project-milestone-list>' + (upcoming.length ? upcoming.map(item => '<div class="lm-project-milestone"><span>◆</span><div><b>' + e(item.title) + '</b><small>' + e(projectDateLabel(item.date)) + '</small></div><button type="button" data-project-milestone-remove="' + e(item.id) + '" aria-label="Remover marco ' + e(item.title) + '">×</button></div>').join('') : '<p class="lm-project-no-milestones">Os marcos adicionados aparecem aqui.</p>') + '</div>';
+}
+function renderProfileProjectCard(project: ProfileProjectItem): string {
+  const milestoneCount = project.milestones.length;
+  return '<article class="lm-project-row lm-project-row-local"><span class="lm-project-art art-3">✦</span><div><b>' + e(project.title) + '</b><small>' + milestoneCount + (milestoneCount === 1 ? ' marco' : ' marcos') + ' · ' + e(project.audience) + '</small><div class="lm-project-tag-row">' + project.competencies.slice(0, 3).map(item => LabPill(item, 'mint')).join('') + '</div></div>' + LabPill(project.socialDraft ? 'Rascunho para Social' : 'Privado', project.socialDraft ? 'lilac' : 'gray') + '</article>';
+}
+function renderProjectChatMessages(messages: ProjectChatMessage[]): string {
+  const greeting = '<article class="lm-project-chat-message assistant"><small>LUMIRA · PLANEJAMENTO</small><p>Conte uma ideia que você gostaria de desenvolver com colegas. Posso ajudar a organizar objetivo, etapas e competências. Esta conversa é uma simulação local.</p></article>';
+  return greeting + messages.map(message => '<article class="lm-project-chat-message ' + message.role + '"><small>' + (message.role === 'student' ? 'VOCÊ' : 'LUMIRA · PROPOSTA') + '</small><p>' + e(message.text) + '</p>'
+    + (message.proposal ? '<div class="lm-project-proposal"><b>' + e(message.proposal.title) + '</b><p>' + e(message.proposal.goal) + '</p><div>' + message.proposal.competencies.map(item => LabPill(item, 'mint')).join('') + '</div><button type="button" data-project-proposal-apply="' + e(message.id) + '">Usar proposta na ficha</button></div>' : '')
+    + '</article>').join('');
+}
 const PROFILE_ACTIVITY_LABELS: Record<ProfileActivityKind, string> = {
   post: 'Post', activity: 'Atividade', video: 'Vídeo', project: 'Projeto',
 };
@@ -1360,9 +1426,25 @@ function renderActivityCard(data: ComponentFixture, selectedId: string): string 
 function renderProjectsPanel(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('teacher-projects', data);
   const projects = labList<ComponentFixture>(data, 'projects');
-  const rows = projects.map((project, index) => '<article class="lm-project-row"><span class="lm-project-art art-' + index + '">✦</span><div><b>' + e(labText(project, 'title', 'Projeto')) + '</b><small>' + e(labText(project, 'progress', '0/4 atividades')) + '</small><div class="lm-project-meter"><i style="width:' + [67, 34, 12][index % 3] + '%"></i></div></div>' + LabPill(labText(project, 'status', 'Ideia'), index === 0 ? 'mint' : index === 1 ? 'lilac' : 'gray') + '</article>').join('');
-  const content = '<article class="lm-panel lm-projects-panel"><header><h2>Meus projetos em andamento</h2><button type="button" class="lm-text-action">Ver todos →</button></header><div class="lm-project-list">' + rows + '</div><button type="button" class="lm-outline-action">＋ Criar novo projeto</button></article>';
+  const rows = projects.map((project, index) => '<article class="lm-project-row" data-project-seed-row><span class="lm-project-art art-' + index + '">✦</span><div><b>' + e(labText(project, 'title', 'Projeto')) + '</b><small>' + e(labText(project, 'progress', '0/4 atividades')) + '</small><div class="lm-project-meter"><i style="width:' + [67, 34, 12][index % 3] + '%"></i></div></div>' + LabPill(labText(project, 'status', 'Ideia'), index === 0 ? 'mint' : index === 1 ? 'lilac' : 'gray') + '</article>').join('');
+  const content = '<article class="lm-panel lm-projects-panel"><header><div><span class="lm-eyebrow">PERFIL · PROJETOS</span><h2>Meus projetos em andamento</h2></div><button type="button" class="lm-text-action">Ver todos →</button></header><div class="lm-project-list" data-profile-project-list>' + rows + '</div><button type="button" class="lm-outline-action" data-project-create>＋ Criar novo projeto</button>'
+    + renderProjectBuilder('teacher-projects');
   return labPart('teacher-projects', content, selectedId, 'lm-profile-card-part');
+}
+function renderProjectBuilder(scope: 'teacher-projects' | 'student-projects'): string {
+  const fieldKey = (name: string): string => scope + ':' + name;
+  const competenceOptions = PROJECT_COMPETENCIES.map((name, index) => '<label><input type="checkbox" name="projectCompetency" value="' + e(name) + '" data-interaction-toggle="project-competency-' + index + '"><span>' + e(name) + '</span></label>').join('');
+  return '<section class="lm-project-builder" data-project-builder hidden><header><div><span class="lm-eyebrow">PROJETO COLABORATIVO</span><h3>Planeje algo para o Social</h3><p>Desenhe a ideia com seus colegas, organize marcos e escolha as competências que querem praticar.</p></div><button type="button" class="lm-panel-more" data-project-cancel aria-label="Fechar criação">×</button></header>'
+    + '<div class="lm-project-builder-layout"><form class="lm-project-form" data-project-create-form novalidate><div class="lm-project-form-fields">'
+    + '<label>Nome do projeto<input name="projectTitle" data-interaction-field="' + fieldKey('projectTitle') + '" maxlength="80" placeholder="Ex.: Mapa de histórias do bairro" required></label>'
+    + '<label>O que vocês querem realizar?<textarea name="projectGoal" data-interaction-field="' + fieldKey('projectGoal') + '" rows="2" maxlength="300" placeholder="Qual mudança, pergunta ou criação vai orientar o projeto?" required></textarea></label>'
+    + '<label>Como vão desenvolver a ideia?<textarea name="projectSummary" data-interaction-field="' + fieldKey('projectSummary') + '" rows="3" maxlength="600" placeholder="Conte as etapas e como a comunidade poderá participar." required></textarea></label>'
+    + '<label>Público ou comunidade<select name="projectAudience" data-interaction-field="' + fieldKey('projectAudience') + '"><option>Comunidade escolar</option><option>Famílias</option><option>Meu bairro</option><option>Comunidade online da Lumira</option></select></label>'
+    + '<fieldset class="lm-project-competencies"><legend>Competências relacionadas <small>Escolha uma ou mais</small></legend>' + competenceOptions + '</fieldset>'
+    + '<label class="lm-project-social-choice"><input type="checkbox" name="projectSocialDraft" value="yes" checked data-interaction-toggle="project-social-draft"><span><b>Preparar para o Social</b><small>O projeto será salvo como rascunho compartilhável; esta demonstração não publica conteúdo.</small></span></label>'
+    + '</div><section class="lm-project-calendar"><div><span class="lm-eyebrow">ORGANIZAÇÃO</span><h4>Calendário de marcos</h4><p>Escolha uma data e registre o próximo passo do grupo.</p></div><div data-project-calendar></div><div class="lm-project-milestone-add"><label>Nome do marco<input name="projectMilestoneTitle" data-interaction-field="' + fieldKey('projectMilestoneTitle') + '" maxlength="70" placeholder="Ex.: Entrevistar moradores"></label><label>Data<input type="date" name="projectMilestoneDate" data-interaction-field="' + fieldKey('projectMilestoneDate') + '" value="2026-10-21"></label><button type="button" class="lm-project-add-milestone" data-project-milestone-add>＋ Adicionar marco</button></div></section>'
+    + '<footer><button type="button" class="lm-activity-cancel" data-project-cancel>Cancelar</button><button type="submit" class="lm-small-primary">Salvar projeto →</button></footer></form>'
+    + '<aside class="lm-project-planner"><header><div><span class="lm-eyebrow">IDEIA E PLANEJAMENTO</span><h4>Chat do projeto</h4></div><span class="lm-project-local-tag">DEMO LOCAL</span></header><div class="lm-project-chat-messages" data-project-chat-messages></div><form class="lm-project-chat-form" data-project-chat-form><label for="' + scope + '-chat-prompt">Converse sobre o que vocês querem criar</label><textarea id="' + scope + '-chat-prompt" name="projectChatPrompt" data-interaction-field="' + fieldKey('projectChatPrompt') + '" rows="3" maxlength="500" placeholder="Ex.: queremos registrar histórias do bairro em um mapa…" required></textarea><button type="submit" class="lm-small-primary">Pedir uma ideia →</button><small>As sugestões ajudam a preencher a ficha; revise tudo antes de salvar.</small></form></aside></div></section>';
 }
 function renderAgendaPanel(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('teacher-agenda', data);
@@ -1424,10 +1506,11 @@ function renderStudentActivityCard(data: ComponentFixture, selectedId: string): 
 function renderStudentProjectsPanel(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('student-projects', data);
   const projects = labList<ComponentFixture>(data, 'projects');
-  const rows = projects.map((project, index) => '<article class="lm-project-row"><span class="lm-project-art art-' + index + '">✦</span><div><b>' + e(labText(project, 'title', 'Projeto')) + '</b><small>' + e(labText(project, 'progress', 'Produção compartilhada')) + '</small></div>' + LabPill(labText(project, 'status', 'Em andamento'), ['mint', 'lilac', 'gray'][index % 3]) + '</article>').join('');
-  const content = '<article class="lm-panel lm-student-projects"><header><div><h2>Projetos em destaque</h2><small>Produções autorizadas</small></div><button type="button" class="lm-text-action">Ver todos</button></header>'
-    + (rows || '<div class="empty">Nenhum projeto escolhido para exibição.</div>')
-    + '<button type="button" class="lm-outline-action">＋ Compartilhar um projeto</button></article>';
+  const rows = projects.map((project, index) => '<article class="lm-project-row" data-project-seed-row><span class="lm-project-art art-' + index + '">✦</span><div><b>' + e(labText(project, 'title', 'Projeto')) + '</b><small>' + e(labText(project, 'progress', 'Produção compartilhada')) + '</small></div>' + LabPill(labText(project, 'status', 'Em andamento'), ['mint', 'lilac', 'gray'][index % 3]) + '</article>').join('');
+  const content = '<article class="lm-panel lm-student-projects"><header><div><span class="lm-eyebrow">PERFIL · CRIAÇÃO</span><h2>Projetos em destaque</h2><small>Produções e ideias da turma</small></div><button type="button" class="lm-text-action">Ver todos</button></header><div class="lm-project-list" data-profile-project-list>'
+    + (rows || '<div class="empty" data-project-empty>Nenhum projeto em destaque ainda. Comece uma ideia para o Social.</div>') + '</div>'
+    + '<button type="button" class="lm-outline-action" data-project-create>＋ Planejar projeto para o Social</button>'
+    + renderProjectBuilder('student-projects') + '</article>';
   return labPart('student-projects', content, selectedId, 'lm-profile-card-part');
 }
 function renderStudentProfilePage(props: ComponentPageProps): string {
@@ -1745,7 +1828,7 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-            groups: {}, toggles: {}, fields: {}, publications: [], profileActivityItems: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
+            groups: {}, toggles: {}, fields: {}, publications: [], profileActivityItems: [], profileProjects: [], projectChatMessages: [], projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
             reviewFeedback: '', shareFeedback: '', responseFeedback: '', enrollmentFeedback: '', questFeedback: '', questionFeedback: '', feedback: '',
@@ -1913,6 +1996,7 @@ export function registerComponentElements(): void {
           } else if (interaction.fields[key] !== undefined) field.value = interaction.fields[key];
         });
         this.restoreProfileActivities();
+        this.restoreProfileProjects();
         this.querySelectorAll<HTMLButtonElement>('[data-interaction-kind]').forEach(button => {
           const active = interaction.toggles[button.dataset.interactionKey ?? ''] === true;
           const kind = button.dataset.interactionKind;
@@ -1978,6 +2062,38 @@ export function registerComponentElements(): void {
         if (empty) empty.hidden = visibleCount > 0;
         const composer = this.querySelector<HTMLFormElement>('[data-profile-activity-composer]');
         if (composer) composer.hidden = this.state.interaction.toggles['profile-activity-composer-open'] !== true;
+      }
+      private restoreProfileProjects(): void {
+        if (!isProfileProjectPart(this.state.id)) return;
+        const interaction = this.state.interaction;
+        const fieldKey = (name: string): string => this.state.id + ':' + name;
+        const builder = this.querySelector<HTMLElement>('[data-project-builder]');
+        const panel = this.querySelector<HTMLElement>('.lm-projects-panel, .lm-student-projects');
+        const open = interaction.toggles['profile-project-builder-open'] === true;
+        if (builder) builder.hidden = !open;
+        panel?.classList.toggle('is-project-builder-open', open);
+        this.closest<HTMLElement>('.lm-profile-lower > .lm-page-part, .lm-student-lower > .lm-page-part')?.classList.toggle('is-project-builder-open', open);
+        const list = this.querySelector<HTMLElement>('[data-profile-project-list]');
+        if (list) {
+          list.querySelectorAll('.lm-project-row-local').forEach(row => row.remove());
+          for (const project of interaction.profileProjects ?? []) list.insertAdjacentHTML('beforeend', renderProfileProjectCard(project));
+          const empty = list.querySelector<HTMLElement>('[data-project-empty]');
+          if (empty) empty.hidden = interaction.profileProjects.length > 0;
+        }
+        const calendar = this.querySelector<HTMLElement>('[data-project-calendar]');
+        if (calendar) {
+          const month = interaction.groups['project-calendar-month'] ?? '2026-10';
+          const selectedDate = interaction.fields[fieldKey('projectMilestoneDate')] ?? '2026-10-21';
+          calendar.innerHTML = renderProjectCalendar(month, interaction.projectMilestones ?? [], selectedDate);
+        }
+        const messages = this.querySelector<HTMLElement>('[data-project-chat-messages]');
+        if (messages) {
+          messages.innerHTML = renderProjectChatMessages(interaction.projectChatMessages ?? []);
+          messages.scrollTop = messages.scrollHeight;
+        }
+        const dateField = this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneDate"]');
+        const selectedDate = interaction.fields[fieldKey('projectMilestoneDate')] ?? '2026-10-21';
+        if (dateField && dateField.value !== selectedDate) dateField.value = selectedDate;
       }
       private restoreProfileEditor(): void {
         if (this.state.id !== 'teacher-hero' && this.state.id !== 'student-hero') return;
@@ -2644,6 +2760,82 @@ export function registerComponentElements(): void {
           this.render();
           return;
         }
+        if (isProfileProjectPart(this.state.id) && button.hasAttribute('data-project-create')) {
+          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, 'profile-project-builder-open': true }, feedback: '' }));
+          this.render();
+          this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectTitle"]')?.focus();
+          return;
+        }
+        if (isProfileProjectPart(this.state.id) && button.hasAttribute('data-project-cancel')) {
+          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, 'profile-project-builder-open': false }, feedback: '' }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-project-create]')?.focus();
+          return;
+        }
+        if (isProfileProjectPart(this.state.id) && button.dataset.projectCalendarStep) {
+          const current = this.state.interaction.groups['project-calendar-month'] ?? '2026-10';
+          const [year, month] = current.split('-').map(Number);
+          const next = new Date(year, month - 1 + Number(button.dataset.projectCalendarStep), 1);
+          const monthKey = next.getFullYear() + '-' + String(next.getMonth() + 1).padStart(2, '0');
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-calendar-month': monthKey } }));
+          this.render();
+          return;
+        }
+        if (isProfileProjectPart(this.state.id) && button.dataset.projectCalendarDate) {
+          const date = button.dataset.projectCalendarDate;
+          const fieldKey = this.state.id + ':projectMilestoneDate';
+          this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, [fieldKey]: date } }));
+          this.render();
+          return;
+        }
+        if (isProfileProjectPart(this.state.id) && button.dataset.projectMilestoneRemove) {
+          const milestoneId = button.dataset.projectMilestoneRemove;
+          this.transitionInteraction(interaction => ({ ...interaction, projectMilestones: interaction.projectMilestones.filter(item => item.id !== milestoneId), feedback: 'Marco removido do calendário do projeto.' }));
+          this.render();
+          return;
+        }
+        if (isProfileProjectPart(this.state.id) && button.dataset.projectProposalApply) {
+          const message = this.state.interaction.projectChatMessages.find(item => item.id === button.dataset.projectProposalApply);
+          if (!message?.proposal) return;
+          const proposal = message.proposal;
+          const prefix = this.state.id + ':';
+          const fields = {
+            ...this.state.interaction.fields,
+            [prefix + 'projectTitle']: proposal.title,
+            [prefix + 'projectGoal']: proposal.goal,
+            [prefix + 'projectSummary']: proposal.summary,
+          };
+          const toggles: Record<string, boolean> = { ...this.state.interaction.toggles, 'project-social-draft': true };
+          PROJECT_COMPETENCIES.forEach((competency, index) => { toggles['project-competency-' + index] = proposal.competencies.includes(competency); });
+          this.transitionInteraction(interaction => ({ ...interaction, fields, toggles, feedback: 'Proposta copiada para a ficha. Revise os campos e complete o calendário.' }));
+          this.render();
+          return;
+        }
+        if (isProfileProjectPart(this.state.id) && button.hasAttribute('data-project-milestone-add')) {
+          const titleField = this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneTitle"]');
+          const dateField = this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneDate"]');
+          const title = titleField?.value.trim() ?? '';
+          const date = dateField?.value.trim() ?? '';
+          if (!title || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Informe o nome do marco e escolha uma data no calendário.' }));
+            this.render();
+            this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneTitle"]')?.focus();
+            return;
+          }
+          const milestone: ProfileProjectMilestone = { id: projectId(), title, date };
+          const monthKey = date.slice(0, 7);
+          const fieldKey = this.state.id + ':projectMilestoneTitle';
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            projectMilestones: [...interaction.projectMilestones, milestone],
+            groups: { ...interaction.groups, 'project-calendar-month': monthKey },
+            fields: { ...interaction.fields, [fieldKey]: '' },
+            feedback: 'Marco “' + title + '” adicionado ao calendário do projeto.',
+          }));
+          this.render();
+          this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneTitle"]')?.focus();
+          return;
+        }
         if (button.hasAttribute('data-profile-activity-create') && this.state.id === 'teacher-activity') {
           this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, 'profile-activity-composer-open': true }, feedback: '' }));
           this.render();
@@ -3027,6 +3219,82 @@ export function registerComponentElements(): void {
       private onSubmit(event: Event): void {
         event.preventDefault();
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
+        if (form?.matches('[data-project-chat-form]') && isProfileProjectPart(this.state.id)) {
+          const values = new FormData(form);
+          const prompt = String(values.get('projectChatPrompt') ?? '').trim();
+          if (!prompt) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escreva uma ideia para conversar sobre o projeto.' }));
+            this.render();
+            this.querySelector<HTMLTextAreaElement>('[data-project-chat-form] textarea')?.focus();
+            return;
+          }
+          const proposal = suggestStudentProject(prompt);
+          const studentMessage: ProjectChatMessage = { id: projectId(), role: 'student', text: prompt };
+          const assistantMessage: ProjectChatMessage = {
+            id: projectId(), role: 'assistant',
+            text: 'Podemos começar com uma ação coletiva, dividir a pesquisa e compartilhar o resultado com a comunidade. Montei uma proposta inicial; confira objetivo e competências antes de usar.',
+            proposal,
+          };
+          const fieldKey = this.state.id + ':projectChatPrompt';
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            projectChatMessages: [...interaction.projectChatMessages, studentMessage, assistantMessage],
+            fields: { ...interaction.fields, [fieldKey]: '' },
+            feedback: '',
+          }));
+          this.render();
+          this.querySelector<HTMLTextAreaElement>('[data-project-chat-form] textarea')?.focus();
+          return;
+        }
+        if (form?.matches('[data-project-create-form]') && isProfileProjectPart(this.state.id)) {
+          const values = new FormData(form);
+          const title = String(values.get('projectTitle') ?? '').trim();
+          const goal = String(values.get('projectGoal') ?? '').trim();
+          const summary = String(values.get('projectSummary') ?? '').trim();
+          const audience = String(values.get('projectAudience') ?? 'Comunidade escolar');
+          const competencies = values.getAll('projectCompetency').map(String);
+          const milestones = this.state.interaction.projectMilestones;
+          if (!title || !goal || !summary) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Preencha nome, objetivo e plano antes de salvar o projeto.' }));
+            this.render();
+            this.querySelector<HTMLInputElement | HTMLTextAreaElement>('[data-project-create-form] [name="projectTitle"]')?.focus();
+            return;
+          }
+          if (!competencies.length) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escolha ao menos uma competência relacionada ao projeto.' }));
+            this.render();
+            this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectCompetency"]')?.focus();
+            return;
+          }
+          if (!milestones.length) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Adicione ao menos um marco no calendário para organizar o trabalho.' }));
+            this.render();
+            this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneTitle"]')?.focus();
+            return;
+          }
+          const project: ProfileProjectItem = {
+            id: projectId(), title, goal, summary, audience, competencies, milestones: milestones.map(item => ({ ...item })),
+            socialDraft: values.has('projectSocialDraft'), createdAt: new Date().toISOString(),
+          };
+          const fieldPrefix = this.state.id + ':';
+          const fieldNames = ['projectTitle', 'projectGoal', 'projectSummary', 'projectAudience', 'projectMilestoneTitle', 'projectMilestoneDate'];
+          const clearedFields = { ...this.state.interaction.fields };
+          fieldNames.forEach(name => { delete clearedFields[fieldPrefix + name]; });
+          const clearedToggles: Record<string, boolean> = { ...this.state.interaction.toggles, 'project-social-draft': true };
+          PROJECT_COMPETENCIES.forEach((_, index) => { clearedToggles['project-competency-' + index] = false; });
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            profileProjects: [...interaction.profileProjects, project],
+            projectMilestones: [],
+            projectChatMessages: [],
+            fields: clearedFields,
+            toggles: { ...clearedToggles, 'profile-project-builder-open': false },
+            feedback: 'Projeto “' + title + '” salvo nesta demonstração local como ' + (project.socialDraft ? 'rascunho para o Social.' : 'projeto privado.'),
+          }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-project-create]')?.focus();
+          return;
+        }
         if (form?.matches('[data-profile-activity-composer]') && this.state.id === 'teacher-activity') {
           const values = new FormData(form);
           const title = String(values.get('activityTitle') ?? '').trim();
