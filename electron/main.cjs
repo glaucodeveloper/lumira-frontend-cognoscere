@@ -1,6 +1,5 @@
 'use strict';
 
-const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const { pathToFileURL, fileURLToPath } = require('node:url');
@@ -9,11 +8,8 @@ const dotenv = require('dotenv');
 
 let mainWindow;
 let trustedDevOrigin = '';
+let sessionRouterKey = '';
 const DEV_RENDERER_URL = 'http://127.0.0.1:5173';
-
-function expandHome(value) {
-  return value.replace(/^~(?=\/|$)/, app.getPath('home'));
-}
 
 function loadConfiguration() {
   const envPath = app.isPackaged
@@ -29,17 +25,10 @@ function loadConfiguration() {
     }
   }
   dotenv.config({ path: envPath });
-
-  const routerEnvPath = expandHome(process.env.PORT_ROUTER_ENV_FILE
-    || path.join(app.getPath('home'), '.config/port-router/router.env'));
-  if (!process.env.PORT_ROUTER_KEY?.trim() && fs.existsSync(routerEnvPath)) {
-    const routerEnv = dotenv.parse(fs.readFileSync(routerEnvPath));
-    if (routerEnv.PORT_ROUTER_KEY?.trim()) process.env.PORT_ROUTER_KEY = routerEnv.PORT_ROUTER_KEY.trim();
-  }
 }
 
 function configuration() {
-  const value = (process.env.COGNOSCERE_BASE_URL || 'http://127.0.0.1:19195').trim();
+  const value = (process.env.COGNOSCERE_BASE_URL || 'https://ateliotic-jann-paragonless.ngrok-free.dev/19195').trim();
   let parsed;
   try { parsed = new URL(value); } catch { throw new Error('COGNOSCERE_BASE_URL não contém uma URL válida.'); }
   if (parsed.username || parsed.password || parsed.search || parsed.hash) {
@@ -54,24 +43,14 @@ function configuration() {
     baseUrl: parsed.toString().replace(/\/$/, ''),
     slug: (process.env.COGNOSCERE_SLUG || 'lumira').trim(),
     unitId: (process.env.COGNOSCERE_UNIT_ID || 'lumira-cognoscere-monitor').trim(),
-    routerKey: process.env.PORT_ROUTER_KEY?.trim() || '',
-    ptaKey: normalizeKey(process.env.LUMIRA_PTA_KEY || ''),
     isLocal: local,
   };
-}
-
-function normalizeKey(value) {
-  return String(value).normalize('NFKC').trim().toLocaleUpperCase()
-    .replace(/[\u2010-\u2015\u2212]/g, '-')
-    .replace(/\s*-\s*/g, '-')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
 }
 
 function requestHeaders(config, json = false) {
   const headers = {};
   if (json) headers['Content-Type'] = 'application/json';
-  if (config.routerKey) headers['X-Port-Router-Key'] = config.routerKey;
+  if (!config.isLocal && sessionRouterKey) headers['X-Port-Router-Key'] = sessionRouterKey;
   return headers;
 }
 
@@ -81,8 +60,42 @@ function safeEndpoint(baseUrl) {
 }
 
 function errorFromResponse(status) {
-  if (status === 401 || status === 403) return 'O roteador recusou a chave Router API. Confira PORT_ROUTER_KEY.';
+  if (status === 401 || status === 403) return 'O endpoint Cognoscere recusou a chave Router API.';
   return `Forge respondeu com HTTP ${status}.`;
+}
+
+async function verifyApplicationKey(candidate) {
+  let config;
+  try { config = configuration(); }
+  catch (error) { return { configured: false, valid: false, message: error.message }; }
+  const key = typeof candidate === 'string' ? candidate.trim() : '';
+  if (!key) return { configured: true, valid: false, message: 'Digite a chave Router API.' };
+  if (config.isLocal) {
+    return { configured: true, valid: false, message: 'Configure no .env o endpoint HTTPS do túnel protegido para validar a chave Router API.' };
+  }
+
+  // Drop any prior authorization before checking the newly submitted key.
+  sessionRouterKey = '';
+  try {
+    const headers = { 'X-Port-Router-Key': key };
+    const response = await fetch(`${config.baseUrl}/health`, {
+      headers,
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) return { configured: true, valid: false, message: errorFromResponse(response.status) };
+    const health = await response.json();
+    if (health?.ok !== true || (health?.service && health.service !== 'cognoscere-forge')) {
+      return { configured: true, valid: false, message: 'O endpoint respondeu, mas não confirmou o serviço Cognoscere Forge.' };
+    }
+    sessionRouterKey = key;
+    return { configured: true, valid: true };
+  } catch (error) {
+    return {
+      configured: true,
+      valid: false,
+      message: error instanceof Error ? `Não foi possível validar a chave no endpoint Cognoscere: ${error.message}` : 'Não foi possível validar a chave no endpoint Cognoscere.',
+    };
+  }
 }
 
 async function cognoscereStatus() {
@@ -92,8 +105,8 @@ async function cognoscereStatus() {
     return { available: false, configured: false, systemModelConfigured: false, model: '', endpoint: '', message: error.message };
   }
   const endpoint = safeEndpoint(config.baseUrl);
-  if (!config.isLocal && !config.routerKey) {
-    return { available: false, configured: false, systemModelConfigured: false, model: '', endpoint, message: 'Configure PORT_ROUTER_KEY no .env ou no arquivo local do port-router.' };
+  if (!config.isLocal && !sessionRouterKey) {
+    return { available: false, configured: false, systemModelConfigured: false, model: '', endpoint, message: 'Digite a chave Router API para autenticar o app.' };
   }
   try {
     const response = await fetch(`${config.baseUrl}/health`, {
@@ -160,7 +173,7 @@ function validateProjectRequest(request) {
 async function converseAboutProject(rawRequest) {
   const request = validateProjectRequest(rawRequest);
   const config = configuration();
-  if (!config.isLocal && !config.routerKey) throw new Error('Configure PORT_ROUTER_KEY para acessar o Forge pelo túnel.');
+  if (!config.isLocal && !sessionRouterKey) throw new Error('Digite a chave Router API para autenticar o app.');
 
   const context = request.context;
   const instructions = [
@@ -229,13 +242,8 @@ function addIPCHandlers() {
   };
   handle('lumira:cognoscere-status', () => cognoscereStatus());
   handle('lumira:project-conversation', request => converseAboutProject(request));
-  handle('lumira:verify-pta', candidate => {
-    const config = configuration();
-    if (!config.ptaKey) return { configured: false, valid: false };
-    const expected = crypto.createHash('sha256').update(config.ptaKey).digest();
-    const received = crypto.createHash('sha256').update(normalizeKey(candidate)).digest();
-    return { configured: true, valid: crypto.timingSafeEqual(expected, received) };
-  });
+  handle('lumira:verify-application-key', candidate => verifyApplicationKey(candidate));
+  handle('lumira:application-authenticated', () => Boolean(sessionRouterKey));
 }
 
 function createWindow() {

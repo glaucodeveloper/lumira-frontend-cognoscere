@@ -221,15 +221,17 @@ export interface CognoscereStatus {
   message: string;
 }
 
-export interface PresentationKeyResult {
+export interface ApplicationKeyResult {
   configured: boolean;
   valid: boolean;
+  message?: string;
 }
 
 export interface LumiraDesktopBridge {
   getCognoscereStatus(): Promise<CognoscereStatus>;
   converseAboutProject(request: ProjectAssistantRequest): Promise<{ reply: string }>;
-  verifyPresentationKey(candidate: string): Promise<PresentationKeyResult>;
+  verifyApplicationKey(candidate: string): Promise<ApplicationKeyResult>;
+  isApplicationAuthenticated(): Promise<boolean>;
 }
 
 declare global {

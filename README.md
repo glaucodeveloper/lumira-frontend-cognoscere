@@ -23,14 +23,14 @@ npm run preview # servir o pacote de produção localmente
 
 ## Aplicativo Electron e Cognoscere
 
-Copie `.env.example` para `.env`, configure `LUMIRA_PTA_KEY` e confirme o endpoint Forge. O arquivo real `.env` é ignorado pelo Git. O desktop verifica a PTA no processo principal; a chave nunca vai para o renderer. Para endpoint remoto/tunelado, Electron envia `X-Port-Router-Key` e lê `PORT_ROUTER_KEY` do `PORT_ROUTER_ENV_FILE` (padrão `~/.config/port-router/router.env`). HTTP só é permitido para loopback.
+Copie `.env.example` para `.env` e confirme o endpoint Forge. O arquivo real `.env` é ignorado pelo Git. No Electron, digite a chave Router API na tela de acesso: o processo principal valida a chave no health check do endpoint HTTPS e a mantém somente em memória durante a execução. Cada chamada ao túnel recebe `X-Port-Router-Key`; o app não persiste a chave em `.env`, armazenamento do renderer, logs ou instalador, e nunca a devolve pelo IPC. HTTP só é permitido para loopback no modo de desenvolvimento.
 
 ```sh
 cp .env.example .env
 npm run desktop:dev
 ```
 
-Para criar o instalador Windows x64 (`release/Lumira Cognoscere-Setup-0.2.0-x64.exe`), use `npm run dist:win`. Em Linux, o empacotamento NSIS requer Wine. No primeiro início, o app copia `.env.example` para o arquivo `.env` da pasta de dados do usuário do Electron; preencha `LUMIRA_PTA_KEY` ali e reinicie o app. O instalador não leva o `.env` local nem chaves.
+Para criar o instalador Windows x64 (`release/Lumira-Cognoscere-Setup-0.2.0-x64.exe`), use `npm run dist:win`. Em Linux, o empacotamento NSIS requer Wine. No primeiro início, o app copia `.env.example` para o arquivo `.env` da pasta de dados do usuário do Electron; ajuste ali apenas endpoint, slug, unidade e timeout. O instalador não leva o `.env` local nem chaves. O template aponta para o túnel ngrok atual, que exige a chave Router API na tela de entrada.
 
 O chat dentro de **Projetos em andamento** envia o rascunho atual, competências, marcos e histórico recente para `POST /v1/chat/completions` do Cognoscere Forge. A resposta aparece no chat e não altera campos nem salva o projeto automaticamente. Use `npm run desktop` para compilar e abrir a versão local. GitHub Pages não lê `.env` nem acessa a ponte Electron; ali o chat explica que precisa do desktop.
 

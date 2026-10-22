@@ -13,7 +13,7 @@ import type {
   ReferenceScreenSpec,
 } from './components';
 import './componenting-demo-lab.css';
-import type { LumiraSystem, PresentationKeyResult } from './types';
+import type { ApplicationKeyResult, LumiraSystem } from './types';
 
 type Part = string | HTMLElement;
 function add(parts: Part[], part: Part): Part[] { parts.push(part); return parts; }
@@ -858,6 +858,13 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
       configure(content: HTMLElement): void {
         this.state = this.transitions.next(state => ({ ...state, page: content })).value;
         this.render();
+        if (window.lumiraDesktop) {
+          void window.lumiraDesktop.isApplicationAuthenticated().then(authorized => {
+            if (!authorized || !this.state.page) return;
+            this.state = this.transitions.next(state => ({ ...state, error: '', entry: '', authorized: true })).value;
+            this.render();
+          }).catch(() => {});
+        }
       }
       private async onSubmit(event: Event): Promise<void> {
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
@@ -865,9 +872,10 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
         event.preventDefault();
         const input = form.querySelector<HTMLInputElement>('[name="accessKey"]');
         const entry = input?.value ?? '';
-        const candidate = normalizeAccessKey(entry);
+        const desktop = Boolean(window.lumiraDesktop);
+        const candidate = desktop ? entry.trim() : normalizeAccessKey(entry);
         if (!candidate) {
-          this.state = this.transitions.next(state => ({ ...state, entry, error: 'Digite a chave PTA para continuar.' })).value;
+          this.state = this.transitions.next(state => ({ ...state, entry: '', error: desktop ? 'Digite a chave Router API para continuar.' : 'Digite a chave PTA para continuar.' })).value;
           this.render();
           this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
           return;
@@ -875,14 +883,20 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
         try {
           let authorized = false;
           if (window.lumiraDesktop) {
-            const result: PresentationKeyResult = await window.lumiraDesktop.verifyPresentationKey(candidate);
+            const result: ApplicationKeyResult = await window.lumiraDesktop.verifyApplicationKey(candidate);
             if (!result.configured) {
-              this.state = this.transitions.next(state => ({ ...state, entry, error: 'Configure LUMIRA_PTA_KEY no arquivo .env do app Electron.' })).value;
+              this.state = this.transitions.next(state => ({ ...state, entry: '', error: result.message ?? 'Confira o endpoint Cognoscere no arquivo .env do app Electron.' })).value;
               this.render();
               this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
               return;
             }
-            authorized = result.valid;
+            if (!result.valid) {
+              this.state = this.transitions.next(state => ({ ...state, entry: '', error: result.message ?? 'Chave Router API não reconhecida pelo endpoint Cognoscere.' })).value;
+              this.render();
+              this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
+              return;
+            }
+            authorized = true;
           } else {
             const digest = await accessKeyDigest(candidate);
             let difference = 0;
@@ -892,32 +906,36 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
             authorized = difference === 0;
           }
           if (!authorized) {
-            this.state = this.transitions.next(state => ({ ...state, entry, error: 'Chave não reconhecida. Confira o código de acesso.' })).value;
+            this.state = this.transitions.next(state => ({ ...state, entry: '', error: 'Chave não reconhecida. Confira o código de acesso.' })).value;
             this.render();
             this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
             return;
           }
-          try { sessionStorage.setItem(DEMO_ACCESS_SESSION_KEY, 'authorized'); } catch { /* Acesso vale nesta aba mesmo sem sessão persistente. */ }
+          if (!desktop) {
+            try { sessionStorage.setItem(DEMO_ACCESS_SESSION_KEY, 'authorized'); } catch { /* Acesso vale nesta aba mesmo sem sessão persistente. */ }
+          }
           this.state = this.transitions.next(state => ({ ...state, error: '', entry: '', authorized: true })).value;
           this.render();
-        } catch {
-          this.state = this.transitions.next(state => ({ ...state, entry, error: 'A conferência da chave exige uma conexão segura HTTPS.' })).value;
+        } catch (error) {
+          this.state = this.transitions.next(state => ({ ...state, entry: '', error: error instanceof Error ? error.message : 'Não foi possível validar a chave no endpoint Cognoscere.' })).value;
           this.render();
         }
       }
       private render(): void {
         let sessionAuthorized = false;
-        try { sessionAuthorized = sessionStorage.getItem(DEMO_ACCESS_SESSION_KEY) === 'authorized'; } catch { /* Sessão indisponível. */ }
+        if (!window.lumiraDesktop) {
+          try { sessionAuthorized = sessionStorage.getItem(DEMO_ACCESS_SESSION_KEY) === 'authorized'; } catch { /* Sessão indisponível. */ }
+        }
         if (this.state.page && (this.state.authorized || sessionAuthorized)) {
           this.replaceChildren(this.state.page);
           return;
         }
         const helpId = this.state.error ? 'lm-presentation-key-error' : 'lm-presentation-key-help';
         const helpText = window.lumiraDesktop
-          ? 'A PTA do desktop é validada a partir de LUMIRA_PTA_KEY no arquivo .env local.'
+          ? 'A chave Router API é validada no túnel Cognoscere e usada para autenticar as chamadas do app.'
           : 'A chave diferencia esta apresentação das páginas públicas de referência.';
         this.innerHTML = '<main class="lm-access-gate"><section class="lm-access-gate-intro"><span class="lm-access-gate-mark">L</span><span class="lm-eyebrow">LUMIRA · COMPONENTING DEMO LAB</span><h1>Uma plataforma que torna o raciocínio visível.</h1><p>Explore as telas, as partes de página e suas interações demonstrativas.</p><small>Apresentação de produto · acesso por convite</small></section>'
-          + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">CHAVE DE APRESENTAÇÃO</span><h2>Digite a chave PTA</h2><p>Use o código que acompanha o convite para abrir a demonstração.</p><label for="lm-presentation-key">Chave de acesso</label><input id="lm-presentation-key" name="accessKey" type="password" autocomplete="current-password" spellcheck="false" required aria-invalid="' + String(Boolean(this.state.error)) + '" aria-describedby="' + helpId + '" value="' + e(this.state.entry) + '" placeholder="PTA-XXXX-XXXX-…">'
+          + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">CHAVE DE ACESSO</span><h2>' + (window.lumiraDesktop ? 'Digite a chave Router API' : 'Digite a chave PTA') + '</h2><p>Use a chave de acesso para abrir a demonstração.</p><label for="lm-presentation-key">Chave de acesso</label><input id="lm-presentation-key" name="accessKey" type="password" autocomplete="current-password" spellcheck="false" required aria-invalid="' + String(Boolean(this.state.error)) + '" aria-describedby="' + helpId + '" value="' + e(this.state.entry) + '" placeholder="' + (window.lumiraDesktop ? 'Chave Router API' : 'PTA-XXXX-XXXX-…') + '">'
           + (this.state.error ? '<p id="lm-presentation-key-error" class="lm-access-gate-error" role="alert">' + e(this.state.error) + '</p>' : '<small id="lm-presentation-key-help">' + e(helpText) + '</small>')
           + '<button type="submit" class="lm-access-gate-submit">Abrir apresentação <span aria-hidden="true">↗</span></button></form><small class="lm-access-gate-note">O código é compartilhado separadamente.</small></section></main>';
       }

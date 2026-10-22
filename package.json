@@ -53,7 +53,7 @@
           ]
         }
       ],
-      "artifactName": "${productName}-Setup-${version}-${arch}.${ext}"
+      "artifactName": "Lumira-Cognoscere-Setup-${version}-${arch}.${ext}"
     },
     "nsis": {
       "oneClick": false,
