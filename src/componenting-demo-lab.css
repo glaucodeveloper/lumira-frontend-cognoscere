@@ -6027,3 +6027,127 @@ lumira-page-part {
   .lm-student-dashboard-next { align-items: flex-start; flex-wrap: wrap; }
   .lm-student-dashboard-next>.lm-text-action { width: 100%; margin-left: 35px; }
 }
+
+/* A atividade ocupa uma área de trabalho própria no modo de apresentação expandida. */
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-part-session[data-scrollpoint="pedagogy-activity-builder"] {
+  padding-block: 32px 40px;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-part-session[data-scrollpoint="pedagogy-activity-builder"] .lm-part-context {
+  padding: 28px clamp(18px, 4vw, 58px) 0;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-part-session[data-scrollpoint="pedagogy-activity-builder"] .lm-flow-element-heading {
+  min-height: 44px;
+  gap: 13px;
+  margin-bottom: 19px;
+  padding-bottom: 12px;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-part-session[data-scrollpoint="pedagogy-activity-builder"] .lm-flow-element-heading h2 {
+  font-size: 20px;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-part-session[data-scrollpoint="pedagogy-activity-builder"] .lm-part-responsibility {
+  max-width: 1160px;
+  gap: 15px;
+  padding: 0 clamp(36px, 7vw, 104px) 26px;
+  font-size: 13px;
+  line-height: 1.85;
+}
+.lm-flow-element-heading .lm-component-index-editor {
+  width: auto;
+  min-width: 54px;
+  padding-inline: 8px;
+  border-radius: 999px;
+  font-size: 7px;
+  font-weight: 850;
+  letter-spacing: .07em;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list lumira-page-part[data-component-id="pedagogy-activity-builder"] {
+  margin-block: 14px 26px;
+  padding: 34px clamp(18px, 3.5vw, 48px) 40px;
+  border: 1px solid #e2e8ed;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 12px 36px rgb(26 46 62 / 5%);
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-builder > header {
+  gap: 18px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e8edf0;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-builder > header h2 {
+  margin-top: 8px;
+  font-size: clamp(22px, 2.2vw, 30px);
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-builder > header p {
+  max-width: 760px;
+  margin-top: 9px;
+  font-size: 13px;
+  line-height: 1.75;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-editor {
+  margin-top: 22px;
+  padding: clamp(18px, 2.5vw, 30px);
+  border-radius: 13px;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-stepper {
+  gap: 9px;
+  padding-bottom: 8px;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-stepper button {
+  min-height: 48px;
+  gap: 10px;
+  padding: 10px 13px;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-progress {
+  margin-top: 13px;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-step-count {
+  margin-top: 11px;
+  font-size: 9px;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-step-panel {
+  margin-top: 20px;
+  padding: clamp(18px, 2vw, 26px);
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-field {
+  gap: 8px;
+  margin-top: 17px;
+  font-size: 11px;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-field input,
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-field textarea {
+  padding: 13px 14px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-field textarea {
+  min-height: 132px;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-step-note {
+  margin-top: 17px;
+  font-size: 11px;
+}
+.componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-editor-actions {
+  margin-top: 20px;
+  padding-top: 17px;
+}
+@media (max-width: 680px) {
+  .componenting-lab-shell.is-full-view .lm-full-flow-list .lm-part-session[data-scrollpoint="pedagogy-activity-builder"] {
+    padding-block: 22px 30px;
+  }
+  .componenting-lab-shell.is-full-view .lm-full-flow-list .lm-part-session[data-scrollpoint="pedagogy-activity-builder"] .lm-part-context {
+    padding: 22px 12px 0;
+  }
+  .componenting-lab-shell.is-full-view .lm-full-flow-list .lm-part-session[data-scrollpoint="pedagogy-activity-builder"] .lm-part-responsibility {
+    padding: 0 12px 18px;
+  }
+  .componenting-lab-shell.is-full-view .lm-full-flow-list lumira-page-part[data-component-id="pedagogy-activity-builder"] {
+    margin-block: 10px 18px;
+    padding: 20px 12px 24px;
+  }
+  .componenting-lab-shell.is-full-view .lm-full-flow-list .lm-activity-builder > header {
+    align-items: flex-start;
+    flex-direction: column;
+    padding-bottom: 15px;
+  }
+}

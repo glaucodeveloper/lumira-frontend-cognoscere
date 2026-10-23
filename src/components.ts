@@ -1662,7 +1662,9 @@ function labPart(id: string, content: string, selectedId: string, className = ''
     const sequenceIndex = Math.max(0, (situation.flowIndexOffset ?? 0) + partIndex + 1);
     const componentMarker = id === 'pedagogy-competency'
       ? '<span class="lm-component-index lm-component-index-competency" aria-label="Página de competência">BNCC</span>'
-      : '<span class="lm-component-index" aria-label="Ponto ' + String(situation.flowIndexOffset === undefined ? partIndex + 1 : sequenceIndex).padStart(2, '0') + '">'
+      : id === 'pedagogy-activity-builder'
+        ? '<span class="lm-component-index lm-component-index-editor" aria-label="Editor de atividade">EDITOR</span>'
+        : '<span class="lm-component-index" aria-label="Ponto ' + String(situation.flowIndexOffset === undefined ? partIndex + 1 : sequenceIndex).padStart(2, '0') + '">'
         + String(situation.flowIndexOffset === undefined ? partIndex + 1 : sequenceIndex).padStart(2, '0') + '</span>';
     const contextHeading = '<header class="lm-flow-element-heading">' + componentMarker + '<h2>' + e(title)
       + '</h2><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>';
