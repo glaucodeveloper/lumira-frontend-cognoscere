@@ -28,6 +28,14 @@ The component emits `lumira-subject-foundation-assistant-request` with `{ reques
 
 Metis only reflects and converses in natural language. Its response never edits or saves the form. The teacher must explicitly save the foundation; this prototype keeps the saved foundation in the page part's state iterator for the current demo session. The skill autocomplete remains separate: it requests an explanation for the currently active suggestion, and its results are also bound to request IDs.
 
+## Competency definition, performance, and progression
+
+The `pedagogy-competency` part is a complete three-stage competency page. Its stepper switches among **Definição**, **Desempenho**, and **Progressão** inside the part. The selected stage and criterion readings belong to the `DemoPagePart` state iterator; tab buttons also support arrow-key, Home, and End navigation.
+
+**Definição** joins the BNCC references, the action to observe, the intended understanding, the application context, and the criteria that the teacher selects for the proposal. **Desempenho** presents one clearly fictional answer sample and lets the teacher label each criterion as evidenced, partial, or not yet evidenced. The count summary updates from those selections; it is not a score, student profile, or global competence level. **Progressão** suggests contexts that vary conditions and transfer the reasoning, then links to activity creation, evidence review, and material authoring in the same teaching workspace.
+
+The left scrollpoint navigation continues to open this page part. Its marker reads `BNCC` instead of exposing the component's global list ordinal as if it were a learner level. Stage switching, evidence readings, and criterion selection are local demo state; they do not call Forge, persist a record, grade a student, or advance a curriculum automatically.
+
 ## Activity editor
 
 The `pedagogy-activity-builder` part opens as a step editor. Step one stores the activity title and the overall understanding it should develop. Each question has a separate step with an internal title, context and data, student-facing prompt, and teacher-only description of the understanding that question should reveal. The final step presents the full set, including each question's context, prompt, and expected understanding, then asks the teacher to confirm the review. Questions can be added without a fixed count; removal is available for the current question while at least one remains.
@@ -126,3 +134,5 @@ These event definitions and participation records are demonstration fixtures and
 ## Build and manual review
 
 `npm run dev` serves the web application. `npm run typecheck` checks TypeScript, and `npx vite build` creates the static GitHub Pages bundle. The workflow `.github/workflows/pages.yml` publishes `dist/` on pushes to `main` and manual dispatches.
+
+For the competency page, `npm run typecheck` and `npx vite build` passed on 2026-10-23. Manual browser verification used a temporary localhost key and exercised all three stages, evidence-status changes and live count updates, criterion selection and its progress summary, keyboard arrow navigation, and the three progression links to activity creation, evidence review, and material authoring. Returning through the left scrollpoint navigation preserved the selected stage and evidence reading. No automated test was added or run for this change. The production bundle emitted Vite's existing chunk-size advisory (502 kB JavaScript); build completed successfully. GitHub Pages was not redeployed because the repository's required `PTA_ACCESS_KEY` secret is still absent.

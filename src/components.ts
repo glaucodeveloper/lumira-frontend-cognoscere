@@ -172,7 +172,7 @@ const presentationNotes: Record<string, string> = {
   'teacher-agenda': 'A agenda do perfil reúne compromissos de ensino e encontros sociais. A pessoa escolhe a visibilidade padrão e pode publicar cada compromisso como uma postagem, vinculada a uma questão de competência ou a um desafio social.',
   'teacher-personalization': 'Demonstre os controles de aparência e visibilidade do perfil. Alterações são locais à página de demonstração e podem ser ajustadas nos controles da peça.',
   'pedagogy-context': 'Demonstre como matéria, turma, série e contexto de aplicação delimitam o trabalho antes da geração de qualquer atividade.',
-  'pedagogy-competency': 'Mostre a relação entre habilidade curricular, competência aplicada e critérios observáveis. A seleção orienta a proposta sem substituir a revisão docente.',
+  'pedagogy-competency': 'Esta página organiza uma competência em três telas navegáveis: definição curricular, leitura de desempenho por evidências e progressão em novas situações. A docente revisa cada relação; não existe um nível global calculado automaticamente.',
   'pedagogy-activity-builder': 'A orientação docente alimenta uma geração simulada de atividade contextual. O rascunho volta em campos editáveis para que a professora confira contexto, dados, pergunta e relação de conhecimento antes de aprovar.',
   'pedagogy-evidence-review': 'A revisão reúne respostas fictícias, trechos citados e atribuições por critério. A professora pode aceitar ou contestar a leitura; nenhuma evidência isolada altera automaticamente o percurso.',
   'pedagogy-course-sequence': 'A sequência simulada organiza base conceitual, hipótese inicial, representação, mudança de condição e aplicação independente para ensinar uma relação em mais de um contexto.',
@@ -217,7 +217,7 @@ const platformResponsibilities: Record<string, string> = {
   'teacher-agenda': 'A agenda organiza no tempo o preparo, a condução e a revisão de atividades docentes, além dos encontros da comunidade. Cada compromisso pode apontar para uma questão de competência do histórico ou para um desafio associado a um evento social, preservando o contexto do trabalho.\n\nA docente define a visibilidade padrão da agenda no perfil e escolhe quando transformar um compromisso em postagem. Respostas, hipóteses e devolutivas individuais permanecem reservadas; publicar um evento não publica o histórico de aprendizagem.',
   'teacher-personalization': 'A personalização permite à docente ajustar a apresentação do perfil e escolher quais informações deseja tornar visíveis. Essa escolha dá controle sobre a identidade pública e a autoria de suas produções.\n\nQuando a adaptação alcança uma experiência de aprendizagem, a orientação do Capítulo 01 é variar contexto, perguntas e apoios para tornar outros raciocínios observáveis, sem alterar a finalidade comum de compreender a relação estudada. Personalizar não é repetir o mesmo exercício com outra aparência.',
   'pedagogy-context': 'A matéria começa por uma fundação que explica sua natureza, o entendimento que pretende construir, a abordagem para investigar esse conhecimento e os aspectos que devem aparecer em situações de aprendizagem. Essas descrições dão à IA um contexto pedagógico antes que ela sugira materiais ou atividades.\n\nA professora associa habilidades por nome ou código curricular e revê a interpretação sugerida para cada uma. A matéria e a turma então situam série, finalidade e possibilidades de participação; variar contextos ajuda a observar a mesma relação sem presumir características do estudante pelo lugar onde vive ou pelo grupo a que pertence.',
-  'pedagogy-competency': 'A habilidade curricular funciona como referência; a competência explicita a ação que será exercida sobre um assunto. Só depois dessa relação a equipe escolhe situações, materiais e critérios para observar o trabalho.\n\nUma tarefa pode mobilizar mais de uma habilidade. A revisão precisa indicar que relações aquela questão realmente permite examinar, sem afirmar que a simples presença de códigos comprova aprendizagem.',
+  'pedagogy-competency': 'A página começa pela definição da competência: habilidades de referência, entendimento esperado, contexto de aplicação e critérios observáveis. Essa composição explica o que a turma vai investigar e que ações podem demonstrar compreensão. Os códigos curriculares localizam a proposta; não provam aprendizagem por si mesmos.\n\nEm Desempenho, a professora examina respostas contextualizadas e registra uma leitura para cada critério, distinguindo evidência, evidência parcial e ausência de evidência. A amostra é demonstrativa e não produz nota ou nível geral.\n\nEm Progressão, as evidências ajudam a escolher novas situações, atividade ou material. A próxima etapa é uma decisão docente revisável, não um avanço automático: a mesma competência pode precisar de outros contextos para que o raciocínio apareça.',
   'pedagogy-activity-builder': 'A professora começa pela compreensão que deseja observar e organiza a atividade em uma sequência de questões. Cada etapa oferece um formulário próprio para editar situação, dados, enunciado e a compreensão que aquela questão deve evidenciar; novas questões podem ser incluídas sem um limite fixo.\n\nNa revisão final, a docente percorre o conjunto e confirma se cada pergunta apresenta dados suficientes e pede o raciocínio planejado. O rascunho fica no estado local desta demonstração: aprová-lo registra a revisão na tela, sem publicar nem alterar uma atividade real.',
   'pedagogy-evidence-review': 'A leitura do monitor descreve realizações em relação a critérios específicos e aponta trechos da resposta que sustentam cada atribuição. A professora pode corrigir a leitura ou registrar que o enunciado não produziu evidência suficiente.\n\nUma resposta pode sustentar um critério e não informar outro. A plataforma não transforma um parecer isolado em nota global, progressão curricular ou decisão automática sobre o próximo conteúdo.',
   'pedagogy-course-sequence': 'Um material de compreensão encadeia texto-base, exemplo comentado, prática guiada, tentativa independente e aplicação em outro contexto. Cada segmento explica a ação que pretende exercitar e a evidência que poderá produzir.\n\nA personalização responde a uma necessidade observada: a IA pode sugerir outra representação ou contexto, e a professora revisa a razão da mudança. Concluir uma etapa não basta para declarar a competência consolidada; é preciso observar a ação em uma situação adequada.',
@@ -445,7 +445,7 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
     regions: [
       ...shellParts('teacher-workspace', 'derived'),
       partSpec('pedagogy-context', 'Matéria e turma', 'Especialidade, turma, série e contexto de aplicação.', 'derived', 'teacher-workspace'),
-      partSpec('pedagogy-competency', 'Competência e critérios', 'Referência curricular ligada à ação e às evidências esperadas.', 'derived', 'teacher-workspace'),
+      partSpec('pedagogy-competency', 'Competência', 'Página completa em três etapas: definição, desempenho por evidências e progressão para novas situações.', 'derived', 'teacher-workspace'),
       partSpec('pedagogy-activity-builder', 'Atividade aberta', 'Editor em etapas com questões adicionáveis, compreensão esperada por questão e revisão final.', 'derived', 'teacher-workspace'),
       partSpec('pedagogy-evidence-review', 'Revisão de evidências', 'Resposta demonstrativa, trechos citados e revisão docente por critério.', 'derived', 'teacher-workspace'),
       partSpec('pedagogy-course-sequence', 'Material de compreensão', 'Sequência progressiva com hipótese, representação e aplicação independente.', 'derived', 'teacher-workspace'),
@@ -728,6 +728,18 @@ export const initialComponentData: Record<string, unknown> = {
     competencies: ['Relacionar potência, tempo de uso e consumo elétrico'],
     skills: ['EF08CI03', 'EF08CI04', 'EF08CI05'],
     criteria: ['Considera a potência do conjunto de lâmpadas', 'Incorpora a mudança na duração de uso', 'Justifica a comparação com os dados do contexto'],
+    competencyPerformanceSample: 'As lâmpadas ficam ligadas por seis horas. O ventilador passa de oito para quatro horas; por isso, o tempo menor também muda o consumo. Para comparar, precisamos considerar os aparelhos e as horas de uso.',
+    competencyPerformanceReadings: ['parcial', 'evidenciada', 'parcial'],
+    competencyEvidenceNotes: [
+      'A resposta reconhece a potência dos aparelhos, mas não explicita a quantidade total de lâmpadas.',
+      'Compara oito horas com quatro horas e identifica que a mudança altera o consumo no período.',
+      'A conclusão não mostra como os dados sustentam a comparação entre os dois usos.',
+    ],
+    competencyProgressionSteps: [
+      { title: 'Retomar a relação', description: 'Organize potência, quantidade e duração em uma representação que possa ser comparada.' },
+      { title: 'Variar uma condição', description: 'Altere o tempo de uso ou a quantidade de aparelhos e peça que a turma reveja a conclusão.' },
+      { title: 'Transferir para outro contexto', description: 'Convide a aplicar o raciocínio a uma situação diferente e justificar quais dados sustentam a escolha.' },
+    ],
     prompt: 'Crie uma questão aberta situada na biblioteca escolar. Apresente interpretações divergentes e dados suficientes para confrontá-las. Solicite uma conclusão justificada. Não indique a fórmula e mantenha os critérios de análise fora do enunciado.',
     activityTitle: 'Consumo de energia na biblioteca',
     activityUnderstanding: 'Comparar os usos relacionando potência total e duração. Perceber que reduzir o tempo de funcionamento pode mudar a conclusão baseada apenas na potência dos aparelhos.',
@@ -1648,8 +1660,11 @@ function labPart(id: string, content: string, selectedId: string, className = ''
     const screenSpec = referenceScreenSpecs.find(screen => screen.id === situation.screenId);
     const partIndex = screenSpec?.regions.findIndex(item => item.id === id) ?? -1;
     const sequenceIndex = Math.max(0, (situation.flowIndexOffset ?? 0) + partIndex + 1);
-    const contextHeading = '<header class="lm-flow-element-heading"><span class="lm-component-index">'
-      + String(situation.flowIndexOffset === undefined ? partIndex + 1 : sequenceIndex).padStart(2, '0') + '</span><h2>' + e(title)
+    const componentMarker = id === 'pedagogy-competency'
+      ? '<span class="lm-component-index lm-component-index-competency" aria-label="Página de competência">BNCC</span>'
+      : '<span class="lm-component-index" aria-label="Ponto ' + String(situation.flowIndexOffset === undefined ? partIndex + 1 : sequenceIndex).padStart(2, '0') + '">'
+        + String(situation.flowIndexOffset === undefined ? partIndex + 1 : sequenceIndex).padStart(2, '0') + '</span>';
+    const contextHeading = '<header class="lm-flow-element-heading">' + componentMarker + '<h2>' + e(title)
       + '</h2><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>';
     const contextText = presentation
       ? '<div class="lm-part-responsibility">' + presentation.split(/\n\s*\n/).map(paragraph => '<p>' + e(paragraph.trim()) + '</p>').join('') + '</div>'
@@ -2238,10 +2253,40 @@ function renderPedagogyCompetency(data: ComponentFixture, selectedId: string): s
   data = prototypeData('pedagogy-competency', data);
   const codes = labList<string>(data, 'skills');
   const criteria = labList<string>(data, 'criteria');
-  const content = '<article class="lm-panel lm-pedagogy-competency"><header><div><span class="lm-eyebrow">DA REFERÊNCIA À AÇÃO</span><h2>Competência em foco</h2></div><button type="button" class="lm-text-action">Editar relação</button></header>'
-    + '<div class="lm-competency-summary"><div><small>HABILIDADES DE REFERÊNCIA · BNCC</small><div class="lm-bncc-codes">' + codes.map(code => LabPill(code, 'blue')).join('') + '</div></div><span class="lm-competency-arrow" aria-hidden="true">→</span><div><small>AÇÃO A OBSERVAR</small><strong>' + e(labList<string>(data, 'competencies')[0] ?? 'Relacionar potência, tempo de uso e consumo elétrico') + '</strong></div></div>'
-    + '<div class="lm-observation-criteria"><b>Critérios que orientarão a leitura</b><div>' + criteria.map((criterion, index) => '<label><input type="checkbox" name="criterion-' + index + '" data-ai-field="criterion-' + index + '" ' + (index < 3 ? 'checked' : '') + '><span>' + e(criterion) + '</span></label>').join('') + '</div></div>'
-    + '<p class="lm-pedagogy-note">A atividade pode mobilizar mais de uma habilidade. A professora define quais relações a questão realmente permite observar.</p></article>';
+  const competency = labList<string>(data, 'competencies')[0] ?? 'Relacionar potência, tempo de uso e consumo elétrico';
+  const context = labText(data, 'context') || 'Biblioteca escolar · consumo de energia durante vinte dias letivos.';
+  const understanding = labText(data, 'activityUnderstanding') || 'Comparar os usos relacionando potência total e duração; justificar a conclusão com os dados do contexto.';
+  const sampleResponse = labText(data, 'competencyPerformanceSample', 'A resposta de demonstração ainda não foi preenchida.');
+  const initialReadings = labList<string>(data, 'competencyPerformanceReadings');
+  const evidenceNotes = labList<string>(data, 'competencyEvidenceNotes');
+  const progressionSteps = labList<{ title: string; description: string }>(data, 'competencyProgressionSteps');
+  const statuses = [
+    { value: 'evidenciada', label: 'Evidenciada' },
+    { value: 'parcial', label: 'Parcial' },
+    { value: 'sem-evidencia', label: 'Sem evidência ainda' },
+  ];
+  const evidenceRows = criteria.map((criterion, index) => '<article class="lm-competency-evidence-row"><div><span class="lm-competency-criterion-number">0' + (index + 1) + '</span><div><b>' + e(criterion) + '</b><p>' + e(evidenceNotes[index] ?? 'A professora registra aqui o trecho que sustenta a leitura deste critério.') + '</p></div></div><label><span>Leitura docente da amostra</span><select data-interaction-field="pedagogy-competency:performance:criterion-' + index + '" aria-label="Leitura docente: ' + e(criterion) + '">' + statuses.map(status => '<option value="' + status.value + '" ' + ((initialReadings[index] ?? 'parcial') === status.value ? 'selected' : '') + '>' + status.label + '</option>').join('') + '</select></label></article>').join('');
+  const criteriaMarkup = criteria.map((criterion, index) => '<label><input type="checkbox" name="criterion-' + index + '" data-interaction-toggle="pedagogy-competency:criterion-' + index + '" ' + (index < 3 ? 'checked' : '') + '><span>' + e(criterion) + '</span></label>').join('');
+  const steps = [
+    { label: 'Definição', description: 'O que será compreendido' },
+    { label: 'Desempenho', description: 'O que as evidências mostram' },
+    { label: 'Progressão', description: 'Qual situação vem depois' },
+  ];
+  const stepper = '<nav class="lm-competency-stepper" role="tablist" aria-label="Etapas da página da competência">' + steps.map((step, index) => '<button type="button" role="tab" id="competency-page-tab-' + index + '" data-competency-page-step-select="' + index + '" aria-controls="competency-page-panel-' + index + '" aria-selected="' + String(index === 0) + '" tabindex="' + (index === 0 ? '0' : '-1') + '" class="' + (index === 0 ? 'active' : '') + '"><span>0' + (index + 1) + '</span><b>' + step.label + '</b><small>' + step.description + '</small></button>').join('') + '</nav>';
+  const definitionPanel = '<section class="lm-competency-stage" id="competency-page-panel-0" role="tabpanel" aria-labelledby="competency-page-tab-0" data-competency-page-panel="0"><header class="lm-competency-stage-heading"><div><span class="lm-eyebrow">01 · DEFINIÇÃO</span><h3>O que esta competência pede em ação?</h3><p>Defina a relação entre currículo, entendimento e critérios que orientarão a leitura do trabalho.</p></div><span class="lm-competency-stage-symbol" aria-hidden="true">01</span></header>'
+    + '<div class="lm-competency-definition-grid"><article><span>HABILIDADES DE REFERÊNCIA · BNCC</span><div class="lm-bncc-codes">' + codes.map(code => LabPill(code, 'blue')).join('') + '</div><p>Os códigos situam a expectativa curricular. A competência explicita o que a pessoa fará com esse conhecimento.</p></article><article><span>AÇÃO A OBSERVAR</span><strong>' + e(competency) + '</strong><p>Use um verbo de ação e indique a relação que precisa aparecer no raciocínio.</p></article><article class="lm-competency-definition-wide"><span>ENTENDIMENTO ESPERADO</span><p>' + e(understanding) + '</p></article><article class="lm-competency-definition-wide"><span>CONTEXTO DE APLICAÇÃO</span><p>' + e(context) + '</p></article></div>'
+    + '<div class="lm-observation-criteria"><div class="lm-competency-criteria-heading"><b>Critérios observáveis</b><small>Selecione os critérios que esta proposta consegue examinar.</small></div><div>' + criteriaMarkup + '</div></div>'
+    + '<p class="lm-pedagogy-note">Uma tarefa pode mobilizar várias habilidades. Só mantenha critérios que os dados e o enunciado permitem observar.</p><footer class="lm-competency-stage-footer"><span>Definição curricular · revisada pela professora</span><button type="button" class="lm-primary-button" data-competency-page-step-select="1">Ir para desempenho →</button></footer></section>';
+  const performancePanel = '<section class="lm-competency-stage" id="competency-page-panel-1" role="tabpanel" aria-labelledby="competency-page-tab-1" data-competency-page-panel="1" hidden><header class="lm-competency-stage-heading"><div><span class="lm-eyebrow">02 · DESEMPENHO</span><h3>O que esta amostra permite observar?</h3><p>Leia cada critério a partir de uma resposta situada. A classificação descreve a amostra, não o estudante inteiro.</p></div><span class="lm-competency-stage-symbol" aria-hidden="true">02</span></header>'
+    + '<div class="lm-competency-sample"><div><span class="lm-competency-sample-label">AMOSTRA FICTÍCIA · RESPOSTA 01</span><small>' + e(context) + '</small></div><blockquote>“' + e(sampleResponse) + '”</blockquote><p>Trecho inventado para demonstração. Não é resposta de estudante nem registro escolar.</p></div>'
+    + '<div class="lm-competency-performance-summary" data-competency-performance-summary role="status" aria-live="polite"></div><div class="lm-competency-evidence-list">' + evidenceRows + '</div>'
+    + '<p class="lm-pedagogy-note">Evidência parcial ou ausente pede outra situação ou uma pergunta mais adequada. Não gera nota, nível global nem decisão automática.</p><footer class="lm-competency-stage-footer"><button type="button" class="lm-secondary-button" data-competency-page-step-select="0">← Voltar à definição</button><button type="button" class="lm-primary-button" data-competency-page-step-select="2">Ir para progressão →</button></footer></section>';
+  const progressionPanel = '<section class="lm-competency-stage" id="competency-page-panel-2" role="tabpanel" aria-labelledby="competency-page-tab-2" data-competency-page-panel="2" hidden><header class="lm-competency-stage-heading"><div><span class="lm-eyebrow">03 · PROGRESSÃO</span><h3>Escolha a próxima oportunidade de aprendizagem</h3><p>Use a leitura dos critérios para preparar novos contextos. A decisão continua com a professora.</p></div><span class="lm-competency-stage-symbol" aria-hidden="true">03</span></header>'
+    + '<div class="lm-competency-progression-path">' + progressionSteps.map((item, index) => '<article><span>0' + (index + 1) + '</span><div><b>' + e(item.title) + '</b><p>' + e(item.description) + '</p></div><i>' + (index === 0 ? '✓' : index === 1 ? '→' : '○') + '</i></article>').join('') + '</div>'
+    + '<div class="lm-competency-next-actions"><span class="lm-eyebrow">CONTINUAR O TRABALHO</span><p><b data-competency-selected-criteria>3 critérios</b> selecionados para orientar a próxima proposta.</p><div><button type="button" class="lm-secondary-button" data-screen-select="teacher-workspace" data-component-select="pedagogy-activity-builder" data-screen-id="teacher-workspace">Preparar atividade →</button><button type="button" class="lm-secondary-button" data-screen-select="teacher-workspace" data-component-select="pedagogy-evidence-review" data-screen-id="teacher-workspace">Revisar evidências →</button><button type="button" class="lm-secondary-button" data-screen-select="teacher-workspace" data-component-select="pedagogy-course-sequence" data-screen-id="teacher-workspace">Montar material →</button></div></div>'
+    + '<p class="lm-pedagogy-note">Progressão é uma proposta de próximos contextos, não um nível calculado. A professora pode rever o percurso ou retornar à definição.</p><footer class="lm-competency-stage-footer"><button type="button" class="lm-secondary-button" data-competency-page-step-select="1">← Voltar ao desempenho</button><button type="button" class="lm-primary-button" data-competency-page-step-select="0">Rever definição</button></footer></section>';
+  const content = '<article class="lm-panel lm-pedagogy-competency"><header class="lm-competency-page-header"><div><span class="lm-eyebrow">PLANEJAMENTO DE COMPETÊNCIA · ' + e(labText(data, 'grade') || '8º ano') + '</span><h2>Definição completa da competência</h2><p>' + e(competency) + '</p></div><span class="lm-competency-page-tag">' + codes.length + ' referências curriculares</span></header>'
+    + stepper + '<div class="lm-competency-stage-stack">' + definitionPanel + performancePanel + progressionPanel + '</div></article>';
   return labPart('pedagogy-competency', content, selectedId, 'lm-pedagogy-panel-part');
 }
 
@@ -3799,6 +3844,7 @@ export function registerComponentElements(): void {
       private restorePedagogyDemo(): void {
         this.restoreLevelingAssessment();
         const interaction = this.state.interaction;
+        this.restoreCompetencyPage();
         if (this.state.id === 'pedagogy-activity-builder') this.restoreActivityEditor();
         const sequenceGenerated = interaction.aiGenerated.sequence === true;
         const sequence = this.querySelector<HTMLElement>('[data-sequence-generated]');
@@ -4178,6 +4224,44 @@ export function registerComponentElements(): void {
         if (matches.length) return matches.slice(0, 6);
         if (selected.has(normalized)) return [];
         return [{ name: query.trim(), understanding: 'Habilidade livre desta matéria. A IA poderá usar o nome junto das quatro descrições da fundação; acrescente uma explicação mais específica se este nome não deixar o objetivo claro.' }];
+      }
+      private restoreCompetencyPage(): void {
+        if (this.state.id !== 'pedagogy-competency') return;
+        const interaction = this.state.interaction;
+        const rawStep = Number(interaction.groups['competency-page-step'] ?? '0');
+        const step = Number.isInteger(rawStep) ? Math.max(0, Math.min(2, rawStep)) : 0;
+        this.querySelectorAll<HTMLButtonElement>('[role="tab"][data-competency-page-step-select]').forEach(tab => {
+          const active = Number(tab.dataset.competencyPageStepSelect) === step;
+          tab.setAttribute('aria-selected', String(active));
+          tab.tabIndex = active ? 0 : -1;
+          tab.classList.toggle('active', active);
+        });
+        this.querySelectorAll<HTMLElement>('[data-competency-page-panel]').forEach(panel => {
+          panel.hidden = Number(panel.dataset.competencyPagePanel) !== step;
+        });
+        const criteria = [...this.querySelectorAll<HTMLInputElement>('[data-interaction-toggle^="pedagogy-competency:criterion-"]')];
+        const selectedCount = criteria.filter(field => field.checked).length;
+        const selectedSummary = this.querySelector<HTMLElement>('[data-competency-selected-criteria]');
+        if (selectedSummary) selectedSummary.textContent = selectedCount + (selectedCount === 1 ? ' critério' : ' critérios');
+        const readings = [...this.querySelectorAll<HTMLSelectElement>('[data-interaction-field^="pedagogy-competency:performance:criterion-"]')];
+        const counts = { evidenciada: 0, parcial: 0, 'sem-evidencia': 0 };
+        readings.forEach((field, index) => {
+          const value = interaction.fields[field.dataset.interactionField ?? ''] ?? field.value;
+          if (value in counts) counts[value as keyof typeof counts] += 1;
+          field.closest<HTMLElement>('.lm-competency-evidence-row')?.setAttribute('data-evidence-reading', value);
+          const indicator = field.closest<HTMLElement>('.lm-competency-evidence-row')?.querySelector<HTMLElement>('.lm-competency-criterion-number');
+          if (indicator) indicator.textContent = String(index + 1).padStart(2, '0');
+        });
+        const summary = this.querySelector<HTMLElement>('[data-competency-performance-summary]');
+        if (summary) {
+          const total = readings.length;
+          summary.innerHTML = [
+            '<span><b>' + total + '</b> critérios lidos</span>',
+            '<span><b>' + counts.evidenciada + '</b> evidenciados</span>',
+            '<span><b>' + counts.parcial + '</b> parciais</span>',
+            '<span><b>' + counts['sem-evidencia'] + '</b> sem evidência ainda</span>',
+          ].join('');
+        }
       }
       private restoreSubjectFoundation(): void {
         if (this.state.id !== 'pedagogy-context') return;
@@ -4776,6 +4860,14 @@ export function registerComponentElements(): void {
         const button = event.target.closest<HTMLButtonElement>('button');
         if (!button || button.disabled || !this.contains(button)) return;
         if (button.type === 'submit') return;
+        if (this.state.id === 'pedagogy-competency' && button.hasAttribute('data-competency-page-step-select')) {
+          const requestedStep = Number(button.dataset.competencyPageStepSelect ?? '0');
+          const step = Number.isInteger(requestedStep) ? Math.max(0, Math.min(2, requestedStep)) : 0;
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'competency-page-step': String(step) } }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[role="tab"][data-competency-page-step-select="' + step + '"]')?.focus();
+          return;
+        }
         if (this.state.id === 'competency-question-response' && button.hasAttribute('data-question-finalize')) {
           const questionForms = [...this.querySelectorAll<HTMLFormElement>('[data-competency-question-form]')];
           const answerCount = questionForms.filter(form => this.state.interaction.toggles['competency-submitted:' + (form.dataset.questionId ?? '')] === true).length;
@@ -5514,6 +5606,25 @@ export function registerComponentElements(): void {
             this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-wizard-step': step } }));
             this.render();
             this.querySelector<HTMLButtonElement>('[data-project-wizard-step-select="' + step + '"]')?.focus();
+            return;
+          }
+        }
+        if (this.state.id === 'pedagogy-competency') {
+          const current = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('[role="tab"][data-competency-page-step-select]') : null;
+          if (current && this.contains(current)) {
+            const tabs = [...this.querySelectorAll<HTMLButtonElement>('[role="tab"][data-competency-page-step-select]')];
+            const currentIndex = tabs.indexOf(current);
+            let nextIndex = currentIndex;
+            if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = Math.min(tabs.length - 1, currentIndex + 1);
+            else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = Math.max(0, currentIndex - 1);
+            else if (event.key === 'Home') nextIndex = 0;
+            else if (event.key === 'End') nextIndex = tabs.length - 1;
+            else return;
+            event.preventDefault();
+            const step = tabs[nextIndex]?.dataset.competencyPageStepSelect ?? '0';
+            this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'competency-page-step': step } }));
+            this.render();
+            this.querySelector<HTMLButtonElement>('[role="tab"][data-competency-page-step-select="' + step + '"]')?.focus();
             return;
           }
         }
