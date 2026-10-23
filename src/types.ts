@@ -192,10 +192,13 @@ export interface LumiraSystem {
 
 export interface ProjectAssistantContext {
   title: string;
+  authors: string;
   goal: string;
+  justification: string;
   summary: string;
   audience: string;
   competencies: string[];
+  learningEvidence: string;
   socialDraft: boolean;
   milestones: Array<{ title: string; date: string }>;
 }
@@ -208,7 +211,7 @@ export interface ProjectAssistantMessage {
 export interface ProjectAssistantRequest {
   requestId: string;
   partId: 'teacher-projects' | 'student-projects';
-  kind: 'conversation' | 'reflection';
+  kind: 'conversation' | 'reflection' | 'review';
   prompt: string;
   context: ProjectAssistantContext;
   conversation: ProjectAssistantMessage[];

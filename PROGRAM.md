@@ -2,7 +2,7 @@
 
 ## Ownership
 
-- `src/components.ts` owns page parts, form controls, the project chat transcript and reflection state, safe Markdown rendering, the sample student progress dashboard, and typed bubbling events.
+- `src/components.ts` owns page parts, expandable project publications, the project authoring stepper and review/confirmation state, chat transcript and reflection state, safe Markdown rendering, sample dashboards, and typed bubbling events.
 - `src/program.ts` owns the local Cognoscere client and service orchestration. It talks only to Forge at `http://127.0.0.1:19195` and returns status or assistant results to the originating page part.
 - `src/componenting-demo-lab.ts` owns the single demo page generator, selection state, and the PTA presentation gate.
 - GitHub Pages hosts the web application. There is no Electron process, remote model provider, or secret embedded in the published bundle.
@@ -18,6 +18,23 @@
 
 The project form remains a browser-local draft. Saving in this prototype adds it only to the current page state; the chat response is advice and reflection, not a persisted project record.
 
+## Project narrative, authorship, and AI review
+
+The project part explains how a learning idea becomes collaborative work. Existing projects are expandable publication cards: opening one reveals authorship, audience, goal, justification, learning evidence, competencies, milestones, and its Social draft or private state. Teacher and student project lists use this same narrative structure.
+
+Creating a project proceeds through four validated steps:
+
+1. **Authorship and context:** project name, group authorship, and audience.
+2. **Justification:** intended change or question, plus why it matters.
+3. **Learning and assessment:** related competencies, what the group will produce or demonstrate, and how it will develop the idea.
+4. **Plan:** calendar milestones and an optional Social draft.
+
+The final step sends the whole current proposal to local Forge as a `review` conversation. Metis returns a natural-language Markdown review; the local Forge system model checks the response. The review discusses coherence, evidence, gaps, risks, and concrete adjustments, then asks whether the group confirms or wants to revise. The response appears above the stepper and focus returns to step one. A visible **Confirmar projeto** action is available only after a successful review. It creates a local draft only after the person confirms.
+
+Any edit after review marks that review stale, disables confirmation, and asks for a new reading. If a user edits while the review is pending, its pending response is discarded so a late result cannot approve an older version. Review errors offer retry. The assistant never changes fields, saves, creates, or publishes a project by itself. The demo does not persist projects beyond the current page state and does not publish to the Social.
+
+The project page narrative describes these responsibilities outside the component. The publication card and stepper remain focused on their own content, while the chat stays beside the authoring flow as a contextual aid.
+
 ## Local service boundary and web publication
 
 - The browser calls only loopback Forge at `127.0.0.1:19195`. Forge calls local Metis and MiniCPM. The Lumira web client has no NVIDIA provider path and does not use ngrok or a remote model endpoint.
@@ -32,6 +49,13 @@ The project-creation controls belong in a future **Administração da IA** page;
 ## Student profile progress dashboard
 
 The student profile's Competencies part starts with the student's public interests. `Ver todos` switches that part to an in-place progress dashboard, and `Competências` returns to the public list. Its counts, week chart, and step bars are hard-coded demonstration data in `src/components.ts`; labels state that they are samples, not a live student record, grade, or proficiency assessment. The open/closed state belongs to the part's state iterator and is not persisted.
+
+## Activity posts and opinion circles
+
+- Teacher activity posts and community feed posts must include an activity ID, activity title, and the related criterion. The community composer requires the user to choose an activity; its displayed post repeats that activity and criterion so the social feed stays tied to actual learning work.
+- The opinion-circle demo switches between named groups, places their avatars around a shared table, and shows the discussion as a scrollable sequence of message cards in the center. New messages and community posts live only in the page part's state iterator; they are not sent to Forge or persisted.
+- The part presentation describes the platform's moderation responsibility: review a student's post for respectful expression, privacy, and contribution to the activity or academic discussion, while preserving the student's authorship. This prototype displays that policy but does not implement a real moderation queue, automated classifier, or approval service. Its local posts and messages are clearly labeled as demonstration content.
+- Private assessment answers, student-specific feedback, and enrollment data do not enter the public feed or opinion circles.
 
 ## Build and manual review
 

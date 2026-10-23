@@ -167,8 +167,8 @@ const presentationNotes: Record<string, string> = {
   'teacher-progress': 'Apresente os números como um resumo de participação da docente. Os valores são fixture de demonstração e não representam avaliação institucional.',
   'teacher-skills': 'Mostre competências como indicadores visuais de um percurso profissional. Os percentuais são ilustrativos, não uma medida calculada pela plataforma.',
   'teacher-about': 'Este painel reúne biografia, vínculos e redes públicas para explicar como a docente escolhe se apresentar à comunidade.',
-  'teacher-activity': 'Use a publicação para mostrar a passagem de uma prática pedagógica para uma narrativa compartilhável, com contexto e reações locais.',
-  'teacher-projects': 'Apresente projetos com estados e avanço legíveis para dar visão rápida do trabalho em andamento, sem transformar a lista em relatório privado de turma.',
+  'teacher-activity': 'Mostre publicações ligadas a uma atividade e ao critério que orientou o trabalho. Antes de uma publicação estudantil aparecer no perfil, a plataforma faz uma vistoria de respeito, privacidade e contribuição para a atividade, preservando a expressão e a autoria de quem publicou.',
+  'teacher-projects': 'A lista funciona como um conjunto de publicações de projeto: cada cartão abre autoria, objetivo, justificativa, aprendizagem esperada, competências e próximos marcos. Ao criar, a docente percorre um stepper de autoria, justificativa, avaliação da aprendizagem e plano. No fim, o Cognoscere local comenta a proposta e devolve a pessoa ao primeiro passo; só a confirmação humana cria o rascunho.',
   'teacher-agenda': 'A agenda aproxima compromissos e horários da rotina docente. Os itens servem como cenário de apresentação, sem integração com calendário externo.',
   'teacher-personalization': 'Demonstre os controles de aparência e visibilidade do perfil. Alterações são locais à página de demonstração e podem ser ajustadas nos controles da peça.',
   'pedagogy-context': 'Demonstre como matéria, turma, série e contexto de aplicação delimitam o trabalho antes da geração de qualquer atividade.',
@@ -191,7 +191,7 @@ const presentationNotes: Record<string, string> = {
   'student-stories': 'Mostre projetos e momentos que o estudante escolhe compartilhar. A proposta preserva a natureza social dos stories sem expor registros escolares.',
   'student-skills': 'Apresente temas e competências que o estudante escolheu explorar, sem transformar interesse em nota ou avaliação pública.',
   'student-activity': 'Destaque uma experiência ou publicação escolhida pelo estudante para compartilhar com a comunidade.',
-  'student-projects': 'Reúna projetos e conquistas que o estudante autorizou para apresentação pública.',
+  'student-projects': 'Os projetos aparecem como publicações expansíveis para que autoria, motivo, aprendizagem, competências e próximos passos tenham contexto. Ao criar uma ideia para o Social, o estudante percorre autoria, justificativa, avaliação e plano; o Cognoscere local comenta a proposta e pede confirmação antes de criar o rascunho. A escolha de publicar permanece separada.',
   'student-tabs': 'As abas separam apresentação pública, percurso autorizado e publicações para que cada área mantenha seu contexto.',
   'student-progress': 'Demonstre apenas indicadores explicitamente liberados para o perfil. O estado vazio ou restrito ajuda a discutir consentimento e privacidade.',
   'student-achievements': 'Apresente conquistas como itens públicos escolhidos pelo estudante. A demonstração não inclui notas, respostas ou pareceres pedagógicos.',
@@ -199,7 +199,7 @@ const presentationNotes: Record<string, string> = {
   'community-calendar': 'Abra a página social pelo calendário: eventos e datas dão orientação temporal antes da leitura do feed.',
   'community-tabs': 'A navegação distingue feed, eventos e espaços de participação, mantendo cada conversa no contexto adequado.',
   'community-topics': 'Apresente tópicos como caminhos de descoberta por área e assunto, facilitando a entrada em comunidades relevantes.',
-  'community-feed': 'O feed central mostra como uma publicação ganha contexto, autoria e interação. Conteúdo e reações são dados de demonstração.',
+  'community-feed': 'O feed traz somente publicações ligadas a uma atividade e ao critério em foco. Publicações de estudantes passam por vistoria de respeito, privacidade e contribuição acadêmica antes de circular. Nas rodas, grupos específicos ocupam seus lugares em círculo e acompanham a conversa em cartões no centro.',
   'community-aside': 'O painel reúne próximos eventos e grupos como apoio à descoberta, sem competir com o conteúdo principal do feed.',
 };
 
@@ -214,8 +214,8 @@ const platformResponsibilities: Record<string, string> = {
   'teacher-progress': 'Este resumo ajuda a docente a acompanhar sua participação e a continuidade de seu trabalho na plataforma. Indicadores de atividade podem orientar a navegação e a organização, mas não demonstram por si mesmos a qualidade de uma proposta nem a aprendizagem de uma turma.\n\nNo modelo do Capítulo 01, compreender exige observar respostas em situações contextualizadas, considerar hipóteses e revisar a interpretação diante de novos dados. Um número ou uma frequência não substitui a leitura pedagógica dessas evidências.',
   'teacher-skills': 'Esta parte relaciona a especialidade docente às habilidades curriculares e às competências aplicadas que podem orientar uma atividade. Uma proposta pode mobilizar mais de um código da BNCC; a docente também define qual relação ou forma de raciocínio quer tornar observável.\n\nOs indicadores ajudam a localizar esses focos e a preparar materiais coerentes. Não devem reduzir uma sequência a uma lista de códigos: a compreensão aparece nas justificativas e decisões que os estudantes produzem em diferentes contextos.',
   'teacher-about': 'A apresentação reúne a especialidade, a trajetória e os vínculos que a docente escolheu compartilhar. Esse contexto ajuda estudantes e colegas a reconhecer quem selecionou referências e orientou uma produção, além de situar sua relação com uma matéria ou comunidade.\n\nO perfil dá autoria ao conhecimento que circula sem expor o acompanhamento reservado: respostas de turma, dificuldades individuais e pareceres da sondagem não são parte da biografia pública.',
-  'teacher-activity': 'Esta parte apresenta uma prática ou material que pode circular depois de ser examinado pela docente. Contexto, propósito e autoria permitem que outras pessoas compreendam a proposta, discutam suas escolhas e a adaptem a novas situações.\n\nA IA pode gerar alternativas; a docente verifica dados e hipóteses, corrige a atividade e decide publicar. A publicação compartilha conhecimento, sem levar junto respostas individuais ou devolutivas reservadas da sondagem.',
-  'teacher-projects': 'Os projetos dão forma às sequências de compreensão que a docente planeja, revisa e disponibiliza. Uma sequência pode começar com uma situação, solicitar uma hipótese, oferecer uma representação, pedir uma decisão justificada e então introduzir uma condição que faça o estudante rever sua interpretação.\n\nA docente pode variar cenários, perguntas e apoios para observar outros modos de raciocinar, conservando a finalidade comum. O andamento do projeto deve ajudar a entender esse percurso, não apenas contar exercícios concluídos.',
+  'teacher-activity': 'Aqui aparecem posts e atividades que nasceram de um trabalho concreto da turma. Cada publicação aponta a atividade e o critério relacionado; assim, quem chega entende o que foi feito e o que o grupo estava investigando. O tom pode ser leve e próximo, sem perder o contexto.\n\nQuando um estudante publica, a plataforma encaminha o conteúdo para uma vistoria de moderação antes de colocá-lo no perfil. A mediação confere se a expressão respeita as pessoas, protege dados privados e contribui para a atividade ou para a conversa acadêmica. Se algo precisar de ajuste, a orientação deve explicar o motivo e preservar a autoria do estudante. Respostas de sondagem e devolutivas individuais continuam reservadas.',
+  'teacher-projects': 'Esta parte liga a intenção pedagógica ao trabalho que a turma vai desenvolver. Cada projeto começa com autoria, pergunta e justificativa; depois define o que pode mostrar aprendizagem, quais competências entram em jogo e quais marcos ajudam a conduzir o processo. A docente pode relacionar o projeto a uma sequência de compreensão: apresentar uma situação, solicitar hipóteses, oferecer representações, pedir decisões justificadas e introduzir condições que levem a rever interpretações.\n\nOs cartões expansíveis contam essa história como publicações de trabalho em andamento, mantendo objetivo, motivo, evidências e próximos passos legíveis para a comunidade. Na criação, um stepper organiza autoria, justificativa, aprendizagem e plano. Ao final, o Cognoscere local lê a proposta e devolve um comentário com pontos coerentes, lacunas e ajustes. A revisão retorna ao início para que a docente confirme a criação ou altere os passos. A IA não salva nem publica por conta própria; a confirmação humana cria somente um rascunho local nesta demonstração.',
   'teacher-agenda': 'A agenda organiza no tempo o preparo, a condução e a revisão de atividades docentes, além dos encontros da comunidade. Ela ajuda a relacionar uma sequência às turmas e aos momentos em que será usada, incluindo o tempo para conferir materiais gerados e analisar respostas.\n\nO calendário, por si só, não mede a qualidade da proposta nem comprova aprendizagem. Para isso, são necessárias evidências contextualizadas e a interpretação docente do que cada estudante apresentou.',
   'teacher-personalization': 'A personalização permite à docente ajustar a apresentação do perfil e escolher quais informações deseja tornar visíveis. Essa escolha dá controle sobre a identidade pública e a autoria de suas produções.\n\nQuando a adaptação alcança uma experiência de aprendizagem, a orientação do Capítulo 01 é variar contexto, perguntas e apoios para tornar outros raciocínios observáveis, sem alterar a finalidade comum de compreender a relação estudada. Personalizar não é repetir o mesmo exercício com outra aparência.',
   'pedagogy-context': 'A matéria e a turma situam as condições reais de trabalho: repertório, série, finalidade e possibilidades de participação. O contexto orienta exemplos e materiais, mas não substitui a competência que a atividade pretende mobilizar.\n\nA professora pode trabalhar a mesma relação em situações distintas para tornar a compreensão observável sem presumir características do estudante pelo lugar onde vive ou pelo grupo a que pertence.',
@@ -238,7 +238,7 @@ const platformResponsibilities: Record<string, string> = {
   'student-stories': 'Os stories abrem espaço para o estudante compartilhar trabalhos, descobertas e produções que escolheu divulgar. Uma representação, explicação ou projeto pode convidar outras pessoas a conhecer o raciocínio que ela expressa.\n\nEssa participação não publica automaticamente respostas de sondagem ou dificuldades individuais. Assim, a comunidade circula conhecimento e o acompanhamento formativo mantém privadas as devolutivas dirigidas a quem aprende e a quem orienta.',
   'student-skills': 'Esta parte reúne temas e competências que o estudante escolheu explorar. A escolha orienta descobertas, projetos e conversas com a comunidade, mas não afirma domínio nem funciona como resultado de avaliação.\n\nA compreensão continua sendo acompanhada no espaço pedagógico por evidências contextualizadas e devolutivas reservadas. O perfil torna visíveis interesses autorizados sem expor respostas, hipóteses ou pareceres individuais.',
   'student-activity': 'Experiências compartilhadas mostram o que o estudante decidiu apresentar à comunidade: uma investigação, uma leitura, uma produção ou uma pergunta que convide outras pessoas a pensar.\n\nA publicação conserva autoria e contexto. Respostas de sondagem e interpretações pedagógicas ficam no ambiente reservado; compartilhar uma experiência não transfere para o perfil o histórico individual de aprendizagem.',
-  'student-projects': 'Projetos e conquistas dão visibilidade a produções, colaboração e participação autorizadas pelo estudante. Cada item informa o que foi feito e em qual contexto, sem representar um nível curricular.\n\nUma medalha ou resultado pertence às regras do evento; evidências de competência dependem de atividades contextualizadas e revisão pedagógica. O perfil reúne experiências escolhidas, não um prontuário de avaliação.',
+  'student-projects': 'Esta parte ajuda o estudante a transformar uma pergunta em trabalho coletivo e, quando fizer sentido, preparar uma ideia para compartilhar no Social. O stepper organiza autoria, justificativa, aprendizagem que o grupo pretende demonstrar e plano de marcos. O Cognoscere local comenta relações entre objetivo, competências, evidências e etapas, retorna ao início e pergunta se o grupo confirma ou quer revisar. A pessoa decide; a IA não cria nem publica sozinha.\n\nOs projetos ficam em cartões expansíveis com autoria, público, propósito, competências e próximos passos. O rascunho para o Social continua separado da publicação. O perfil reúne experiências autorizadas, não respostas, avaliações ou um prontuário de aprendizagem.',
   'student-tabs': 'As abas distinguem a apresentação pública, as áreas do percurso de aprendizagem e as produções que o estudante compartilha. Essa organização ajuda a entender para que serve cada informação e quem pode acessá-la.\n\nTambém evita confundir uma atividade social com a sondagem usada para compreender hipóteses e competências. O histórico reservado de respostas e devolutivas conserva seu propósito formativo e não se mistura com o perfil público.',
   'student-progress': 'Esta parte comunica aspectos autorizados do percurso e trata cada indicador como uma pista, não como uma conclusão automática de domínio. O Capítulo 01 propõe observar a compreensão em contextos variados, considerar idade e série e distinguir as evidências que cada resposta realmente apresenta.\n\nUma questão isolada pode revelar uma hipótese ou dificuldade específica, mas não determina sozinha o nível de uma competência. O resumo precisa ser compreensível para o estudante e coerente com a leitura pedagógica que o acompanha.',
   'student-achievements': 'As conquistas destacam participações, produções e marcos que o estudante escolheu apresentar. Elas podem reconhecer esforço ou contribuição e dar visibilidade ao que foi compartilhado com a comunidade.\n\nUma posição em evento ou medalha descreve aquela atividade e suas regras; não equivale ao nível curricular demonstrado. A compreensão de uma competência depende de evidências contextualizadas em diferentes situações e da interpretação pedagógica, não de um selo isolado.',
@@ -246,7 +246,7 @@ const platformResponsibilities: Record<string, string> = {
   'community-calendar': 'O calendário organiza encontros, mostras, desafios e outras atividades coletivas, ajudando a comunidade a saber quando e como participar. Um evento pode partir de materiais preparados em uma sequência e criar novas oportunidades para apresentar ideias e comparar abordagens.\n\nAinda assim, cada evento tem regras, datas e resultados próprios. Uma classificação ou pontuação vale dentro daquela atividade e não deve ser confundida com a progressão curricular ou com o domínio individual do estudante.',
   'community-tabs': 'As abas conduzem entre publicações, eventos e espaços de participação, deixando claro em que contexto ocorre cada interação. No feed, a comunidade consulta e debate conhecimentos; nos eventos, acompanha regras e resultados específicos; nos grupos, sustenta relações e projetos.\n\nEssa organização permite que uma produção revisada circule sem carregar dados do acompanhamento reservado. A área social amplia o trabalho pedagógico, mas não se confunde com sua avaliação.',
   'community-topics': 'Os tópicos ajudam estudantes e docentes a descobrir conversas e materiais ligados a uma matéria, competência ou interesse. A comunidade pode comparar explicações, adaptar referências e propor novas situações para pensar o mesmo conhecimento.\n\nEsse encontro amplia as formas de compreensão descritas no Capítulo 01. Os tópicos organizam conhecimento compartilhável, enquanto diagnósticos, respostas individuais e devolutivas permanecem no espaço de acompanhamento.',
-  'community-feed': 'O feed reúne publicações escolhidas por docentes ou estudantes para explicar uma ideia, apresentar uma produção ou iniciar uma discussão. Contexto e autoria permitem que outras pessoas entendam o propósito do material, dialoguem com ele e o adaptem sem apagar sua origem.\n\nEssa circulação prolonga o trabalho para além da aula e pode abrir novas situações de aprendizagem. Respostas da sondagem, erros individuais e pareceres reservados não são conteúdo social e não acompanham a publicação.',
+  'community-feed': 'O feed aproxima pessoas em torno de atividades que aconteceram de verdade: cada post mostra a atividade e o critério que deu rumo ao trabalho. A conversa pode ser informal, curiosa e bem-humorada, mantendo espaço para explicar ideias e ouvir outras leituras.\n\nNas rodas de opinião, um grupo específico conversa a partir de uma atividade comum. Os avatares formam a roda e as mensagens aparecem em sequência no centro, para que seja fácil acompanhar quem disse o quê. Publicações de estudantes passam por vistoria de respeito, privacidade e contribuição acadêmica antes de circular; a mediação orienta ajustes sem apagar a expressão da pessoa. Respostas da sondagem e devolutivas individuais seguem reservadas.',
   'community-aside': 'Este painel aproxima eventos, pessoas e grupos que podem transformar uma consulta em participação coletiva. Ele ajuda a descobrir onde uma produção pode ser discutida, que atividade está aberta e quais comunidades compartilham interesses relacionados.\n\nEventos mantêm inscrição, calendário e resultados em seu próprio escopo; quando há pontuação, ela representa o desempenho segundo aquelas regras. Não substitui evidências curriculares contextualizadas nem define, por si só, a compreensão de um estudante.',
 };
 
@@ -578,44 +578,48 @@ export const initialComponentData: Record<string, unknown> = {
     bio: 'Educadora, apaixonada por leitura, linguagens e pelo potencial transformador da educação pública. Aqui compartilho práticas, reflexões e projetos que conectam a sala de aula ao mundo real.',
     affiliations: ['Rede Municipal de Vitória da Conquista', 'Escola Municipal Nova Esperança'],
     socials: ['Instagram', 'LinkedIn', 'Facebook', 'YouTube'],
-    activityTitle: 'Linguagem conecta realidades',
-    activityText: 'Aplicação de uma sequência didática sobre crônicas urbanas. Os estudantes trouxeram relatos da própria cidade e a sala virou um mapa de histórias.',
-    activityTags: ['Língua Portuguesa', 'Crônicas', 'Cidade', 'Sequência didática'],
+    activityTitle: 'A praça virou personagem',
+    activityText: 'A turma leu duas crônicas sobre a mesma praça. Depois, cada grupo contou uma lembrança dali — e a gente percebeu como o lugar muda quando muda quem está contando.',
+    activityTags: ['Leitura', 'Crônicas', 'Nossa cidade'],
     likes: '24', comments: '8',
     activityItems: [
       {
-        id: 'city-chronicles', kind: 'post', title: 'Linguagem conecta realidades',
-        text: 'Aplicação de uma sequência didática sobre crônicas urbanas. Os estudantes trouxeram relatos da própria cidade e a sala virou um mapa de histórias.',
-        tags: ['Língua Portuguesa', 'Crônicas', 'Cidade', 'Sequência didática'], publishedAt: 'Há 2 dias', likes: 24, comments: 8,
+        id: 'city-chronicles', kind: 'post', title: 'A praça virou personagem',
+        text: 'A turma leu duas crônicas sobre a mesma praça. Depois, cada grupo contou uma lembrança dali — e a gente percebeu como o lugar muda quando muda quem está contando.',
+        activityId: 'reading-viewpoints', activityTitle: 'Roda de leitura: diferentes pontos de vista', criterion: 'Comparar narradores e explicar como cada texto muda a imagem da praça.',
+        tags: ['Leitura', 'Crônicas', 'Nossa cidade'], publishedAt: 'Há 2 dias', likes: 24, comments: 8,
         image: communityPostAsset, imageAlt: 'Professora e estudantes trabalhando juntos em uma atividade',
       },
       {
-        id: 'reading-activity', kind: 'activity', title: 'Roda de leitura: diferentes pontos de vista',
-        text: 'A turma comparou duas crônicas sobre a mesma praça e marcou as escolhas de linguagem que mudam a perspectiva de cada narrador.',
-        tags: ['Leitura', 'Interpretação', '7º ano'], publishedAt: 'Ontem', likes: 16, comments: 5,
+        id: 'reading-activity', kind: 'activity', title: 'Qual narrador conhece melhor a praça?',
+        text: 'Em duplas, a turma marcou palavras que dão pistas sobre cada narrador. No fim, apareceram leituras bem diferentes — e bons motivos para defender cada uma.',
+        activityId: 'reading-viewpoints', activityTitle: 'Roda de leitura: diferentes pontos de vista', criterion: 'Comparar narradores e explicar como cada texto muda a imagem da praça.',
+        tags: ['Leitura', 'Pontos de vista', '7º ano'], publishedAt: 'Ontem', likes: 16, comments: 5,
       },
       {
-        id: 'class-podcast', kind: 'video', title: 'Bastidores do podcast da turma',
-        text: 'Um trecho da gravação mostra como os grupos revisam a pergunta-guia antes de apresentar suas histórias da cidade.',
-        tags: ['Vídeo', 'Podcast', 'Produção dos estudantes'], publishedAt: 'Há 3 dias', likes: 31, comments: 11,
+        id: 'class-podcast', kind: 'video', title: 'Um pedacinho do nosso podcast',
+        text: 'Antes de gravar, o grupo mudou a pergunta-guia para deixar a conversa mais aberta. Aqui vai um trecho dos bastidores.',
+        activityId: 'territory-map', activityTitle: 'Leitura e Território', criterion: 'Pesquisar histórias locais e organizar as fontes usadas pelo grupo.',
+        tags: ['Podcast', 'Histórias locais', 'Trabalho em grupo'], publishedAt: 'Há 3 dias', likes: 31, comments: 11,
         image: communityPostAsset, imageAlt: 'Prévia do registro audiovisual de uma atividade colaborativa',
       },
       {
-        id: 'reading-territory', kind: 'project', title: 'Leitura e Território',
-        text: 'Projeto em andamento: reunir narrativas locais, entrevistar moradores e montar um mapa de histórias produzido pela turma.',
-        tags: ['Projeto', 'Comunidade', 'Em andamento'], publishedAt: 'Esta semana', likes: 12, comments: 3,
+        id: 'reading-territory', kind: 'project', title: 'Nosso mapa de histórias do bairro',
+        text: 'Estamos juntando relatos de quem vive por aqui para montar um mapa de histórias. A próxima parada é conversar com mais moradores e conferir de onde veio cada informação.',
+        activityId: 'territory-map', activityTitle: 'Leitura e Território', criterion: 'Pesquisar histórias locais e organizar as fontes usadas pelo grupo.',
+        tags: ['Projeto', 'Bairro', 'Em andamento'], publishedAt: 'Esta semana', likes: 12, comments: 3,
       },
     ],
     projects: [
-      { title: 'Leitura e Território', status: 'Em andamento', progress: '8/12 atividades' },
-      { title: 'Podcast da Turma', status: 'Planejamento', progress: '2/6 atividades' },
-      { title: 'Feira de Linguagens', status: 'Ideia', progress: '0/5 atividades' },
+      { id: 'seed-neighborhood-map', title: 'Mapa de histórias do bairro', status: 'Em andamento', progress: '8/12 atividades', authors: 'Ana Beatriz e grupo do 7º ano', audience: 'Moradores do bairro', goal: 'Reunir relatos de quem vive no bairro e montar um mapa de histórias locais.', justification: 'As crônicas fizeram a turma perceber que cada pessoa conta o mesmo lugar de um jeito. O mapa abre espaço para ouvir outras lembranças.', summary: 'O grupo já organizou relatos e fontes. Agora quer conversar com mais moradores, conferir as informações e escolher como cada história vai aparecer no mapa.', learningEvidence: 'O grupo vai comparar narrativas, justificar escolhas e registrar de onde veio cada informação.', competencies: ['Comunicação', 'Pensamento crítico', 'Língua Portuguesa'], milestones: [{ title: 'Conversar com moradores', date: '2026-10-24' }, { title: 'Revisar as fontes', date: '2026-10-28' }] },
+      { id: 'seed-class-podcast', title: 'Podcast da Turma', status: 'Planejamento', progress: '2/6 atividades', authors: 'Clube de leitura · 7º ano', audience: 'Comunidade escolar', goal: 'Criar episódios curtos com histórias e vozes do bairro.', justification: 'A turma quer compartilhar as leituras e incluir perspectivas diferentes sobre os lugares que fazem parte da vida local.', summary: 'O grupo está definindo pauta, pergunta-guia e tarefas de gravação antes de entrevistar as pessoas convidadas.', learningEvidence: 'Roteiros e episódios vão mostrar como o grupo organiza fontes, explica escolhas e revê perguntas.', competencies: ['Comunicação', 'Colaboração', 'Cultura digital'], milestones: [{ title: 'Fechar a pauta', date: '2026-10-25' }] },
+      { id: 'seed-language-fair', title: 'Feira de Linguagens', status: 'Ideia', progress: '0/5 atividades', authors: 'Ana Beatriz e estudantes', audience: 'Famílias e comunidade escolar', goal: 'Preparar uma mostra de produções feitas nas aulas de linguagem.', justification: 'Uma feira permite que os grupos expliquem como chegaram às próprias interpretações e troquem referências com a comunidade.', summary: 'A ideia ainda vai ganhar formato com os estudantes: exposição, roda de leitura, áudio ou uma mistura dessas possibilidades.', learningEvidence: 'Apresentações devem relacionar a produção escolhida às evidências e decisões do grupo.', competencies: ['Criatividade', 'Colaboração', 'Língua Portuguesa'], milestones: [] },
     ],
     agenda: [
       { time: '08:00', title: 'Aula 7º ano', detail: 'Análise de crônicas', tone: 'blue' },
       { time: '10:00', title: 'Planejamento', detail: 'Sequência didática', tone: 'teal' },
       { time: '14:00', title: 'Formação BNCC', detail: 'Competências de Linguagem', tone: 'rose' },
-      { time: '16:00', title: 'Reunião de projeto', detail: 'Leitura e Território', tone: 'violet' },
+      { time: '16:00', title: 'Conversa do projeto', detail: 'Mapa de histórias do bairro', tone: 'violet' },
     ],
     preferences: ['Mostrar status musical', 'Mostrar stories', 'Mostrar conquistas', 'Mostrar redes sociais'],
   },
@@ -675,9 +679,9 @@ export const initialComponentData: Record<string, unknown> = {
     activityText: 'Na experiência da rampa, mantive o carrinho e o percurso iguais e mudei a inclinação. Comparei as tentativas para entender o que mudou e compartilhei a pergunta com o clube de ciências.',
     activityTags: ['Ciências', 'Investigação', 'Clube de ciências'],
     projects: [
-      { title: 'Energia na escola', status: 'Investigação', progress: 'Registro em andamento' },
-      { title: 'Clube de leitura', status: 'Compartilhado', progress: 'Leituras e conversas' },
-      { title: 'Horta com menos desperdício', status: 'Projeto coletivo', progress: 'Observação da irrigação' },
+      { id: 'seed-student-energy', title: 'Energia na escola', status: 'Em andamento', progress: '3 marcos', authors: 'Caio e grupo de Ciências · 8º ano', audience: 'Comunidade escolar', goal: 'Investigar formas de reduzir o consumo de energia na escola.', justification: 'A turma quer entender quais mudanças fariam diferença sem atrapalhar as atividades do dia.', summary: 'O grupo está registrando os horários de uso e comparando propostas com os mesmos critérios.', learningEvidence: 'Tabela de observações, comparação dos dados e justificativa da proposta escolhida.', competencies: ['Pensamento crítico', 'Colaboração', 'Ciências'], milestones: [{ id: 'energy-observe', title: 'Observar o uso das salas', date: '2026-10-24' }, { id: 'energy-compare', title: 'Comparar as propostas', date: '2026-10-29' }] },
+      { id: 'seed-student-reading', title: 'Clube de leitura', status: 'Em conversa', progress: '2 encontros', authors: 'Clube de leitura · 8º ano', audience: 'Comunidade escolar', goal: 'Criar uma roda de leitura com diferentes interpretações de uma mesma história.', justification: 'Cada pessoa reparou em pistas diferentes e o grupo quer entender como essas leituras se relacionam.', summary: 'O clube escolhe trechos, registra perguntas e organiza uma conversa aberta para outras turmas.', learningEvidence: 'Trechos selecionados e explicações que relacionem pistas do texto às interpretações.', competencies: ['Comunicação', 'Língua Portuguesa', 'Colaboração'], milestones: [{ id: 'reading-select', title: 'Escolher os trechos', date: '2026-10-25' }] },
+      { id: 'seed-student-garden', title: 'Horta com menos desperdício', status: 'Em andamento', progress: '1 marco', authors: 'Caio e equipe da horta', audience: 'Famílias e comunidade escolar', goal: 'Descobrir como cuidar da horta usando água de forma responsável.', justification: 'A equipe percebeu diferenças na umidade dos canteiros e quer comparar maneiras de regar.', summary: 'Os estudantes medem a água usada, anotam os horários e discutem o que os registros permitem concluir.', learningEvidence: 'Medições feitas em intervalos iguais e uma explicação apoiada nos registros.', competencies: ['Investigação científica', 'Pensamento crítico', 'Colaboração'], milestones: [{ id: 'garden-measure', title: 'Medir a irrigação', date: '2026-10-27' }] },
     ],
     achievements: ['Projeto energia da escola', 'Clube de leitura', 'Feira de ciências'],
     bio: 'Aprendo investigando e gosto de transformar perguntas em projetos com a turma.',
@@ -754,7 +758,7 @@ export const initialComponentData: Record<string, unknown> = {
   },
   community: {
     title: 'Eventos e encontros',
-    subtitle: 'Compartilhe práticas, participe de encontros e construa a comunidade.',
+    subtitle: 'Conte o que a turma está fazendo, participe das conversas e encontre seu grupo.',
     month: 'Outubro 2026',
     tabs: ['Feed principal', 'Em destaque', 'Mais recentes', 'Meus círculos', 'Perguntas', 'Eventos'],
     topics: [
@@ -767,16 +771,57 @@ export const initialComponentData: Record<string, unknown> = {
     areas: ['Linguagens', 'Matemática', 'Ciências da Natureza', 'Ciências Humanas', 'Ensino Religioso', 'Arte e Cultura'],
     posts: [
       {
-        author: 'Mariana Oliveira', role: 'Professora · Língua Portuguesa', time: 'há 2h',
-        title: 'Sequência didática com crônicas urbanas',
-        text: 'Compartilho aqui uma experiência que realizei com meus 7º anos. Os estudantes trouxeram relatos da própria cidade e a sala virou um mapa de histórias.',
-        tags: ['Língua Portuguesa', 'Crônicas', 'Cidade', 'Sequência didática'], likes: '48', comments: '12',
+        author: 'Mariana Oliveira', role: 'Professora · Língua Portuguesa', time: 'há 2 horas',
+        title: 'A mesma praça, duas histórias',
+        text: 'A turma leu duas crônicas sobre a praça do bairro. Depois, cada grupo contou como conhece esse lugar — e apareceram pontos de vista bem diferentes.',
+        activityId: 'reading-viewpoints', activityTitle: 'Roda de leitura: diferentes pontos de vista', criterion: 'Comparar narradores e explicar como cada texto muda a imagem da praça.',
+        tags: ['Leitura', 'Crônicas', 'Nossa cidade'], likes: '48', comments: '12',
       },
       {
-        author: 'Rafael Mendes', role: 'Professor · Matemática', time: 'há 5h',
-        title: 'Como trabalhar proporcionalidade com dados reais da comunidade?',
-        text: 'Estou planejando uma sequência usando dados do comércio local. Alguém já aplicou algo parecido?',
-        tags: ['Matemática', 'Dados reais', 'Proporcionalidade'], likes: '23', comments: '17',
+        author: 'Rafael Mendes', role: 'Professor · Matemática', time: 'há 5 horas',
+        title: 'A feira virou nossa sala de matemática',
+        text: 'A gente comparou preços e quantidades das barracas para pensar em proporção. Que dado vocês pediriam antes de dizer qual oferta compensa?',
+        activityId: 'market-proportions', activityTitle: 'Proporção com dados da feira', criterion: 'Relacionar quantidades e preços para justificar uma comparação.',
+        tags: ['Matemática', 'Feira do bairro', 'Proporção'], likes: '23', comments: '17',
+      },
+    ],
+    opinionCircles: [
+      {
+        id: 'reading-circle', label: 'Roda de leitura · 7º ano', title: 'Roda de opiniões',
+        activityTitle: 'Roda de leitura: diferentes pontos de vista',
+        criterion: 'Comparar narradores e explicar como cada texto muda a imagem da praça.',
+        members: [
+          { name: 'Ana Beatriz', role: 'Professora', tone: 'teal' },
+          { name: 'Caio Almeida', role: 'Estudante', tone: 'blue' },
+          { name: 'Lia Santos', role: 'Estudante', tone: 'violet' },
+          { name: 'Davi Rocha', role: 'Estudante', tone: 'sun' },
+          { name: 'Bia Nunes', role: 'Estudante', tone: 'rose' },
+          { name: 'Enzo Lima', role: 'Estudante', tone: 'blue' },
+        ],
+        messages: [
+          { author: 'Ana Beatriz', role: 'Professora', time: '14:04', tone: 'teal', text: 'Qual detalhe fez a praça parecer diferente em cada crônica?' },
+          { author: 'Caio Almeida', role: 'Estudante', time: '14:06', tone: 'blue', text: 'Na primeira, o narrador fala do barulho. Na outra, ele repara mais nas pessoas que se encontram ali.' },
+          { author: 'Lia Santos', role: 'Estudante', time: '14:08', tone: 'violet', text: 'Eu conheço a praça mais pela feira. Acho que por isso li a segunda história de outro jeito.' },
+          { author: 'Ana Beatriz', role: 'Professora', time: '14:10', tone: 'teal', text: 'Boa! Que trecho do texto ajuda a sustentar essa leitura?' },
+        ],
+      },
+      {
+        id: 'market-circle', label: 'Grupo da feira · 8º ano', title: 'Roda de investigação',
+        activityTitle: 'Proporção com dados da feira',
+        criterion: 'Relacionar quantidades e preços para justificar uma comparação.',
+        members: [
+          { name: 'Rafael Mendes', role: 'Professor', tone: 'teal' },
+          { name: 'Nina Costa', role: 'Estudante', tone: 'rose' },
+          { name: 'Igor Alves', role: 'Estudante', tone: 'blue' },
+          { name: 'Malu Reis', role: 'Estudante', tone: 'violet' },
+          { name: 'Theo Dias', role: 'Estudante', tone: 'sun' },
+          { name: 'Luca Melo', role: 'Estudante', tone: 'blue' },
+        ],
+        messages: [
+          { author: 'Rafael Mendes', role: 'Professor', time: '10:12', tone: 'teal', text: 'Duas barracas vendem porções de tamanhos diferentes. O que precisamos comparar primeiro?' },
+          { author: 'Nina Costa', role: 'Estudante', time: '10:14', tone: 'rose', text: 'O preço por quilo. Só olhar o valor da embalagem pode enganar.' },
+          { author: 'Igor Alves', role: 'Estudante', time: '10:16', tone: 'blue', text: 'E vale conferir se a qualidade e o peso informado são mesmo iguais.' },
+        ],
       },
     ],
     events: [
@@ -830,10 +875,13 @@ type DemoPagePartInteraction = {
   groups: Record<string, string>;
   toggles: Record<string, boolean>;
   fields: Record<string, string>;
-  publications: string[];
+  communityPosts: CommunityPostDraft[];
+  opinionCircleMessages: Record<string, CommunityOpinionMessage[]>;
   profileActivityItems: ProfileActivityItem[];
   profileProjects: ProfileProjectItem[];
   projectChatMessages: ProjectChatMessage[];
+  projectReviewStatus: 'idle' | 'pending' | 'ready' | 'error' | 'stale';
+  projectReviewText: string;
   projectChatStatus: CognoscereStatus | null;
   projectChatPending: boolean;
   projectMilestones: ProfileProjectMilestone[];
@@ -866,12 +914,36 @@ type DemoPagePartInteraction = {
   questionFeedback: string;
   feedback: string;
 };
+function staleProjectReview(interaction: DemoPagePartInteraction): DemoPagePartInteraction {
+  if (interaction.projectReviewStatus === 'idle' || interaction.projectReviewStatus === 'stale') return interaction;
+  const wasReviewing = interaction.projectReviewStatus === 'pending';
+  return {
+    ...interaction,
+    projectReviewStatus: 'stale',
+    projectReviewText: interaction.projectReviewStatus === 'error' ? '' : interaction.projectReviewText,
+    projectChatPending: wasReviewing ? false : interaction.projectChatPending,
+    projectChatMessages: wasReviewing
+      ? interaction.projectChatMessages.filter(message => !(message.kind === 'review' && message.status === 'pending'))
+      : interaction.projectChatMessages,
+    toggles: { ...interaction.toggles, 'project-review-confirmed': false },
+  };
+}
 type ProfileActivityKind = 'post' | 'activity' | 'video' | 'project';
+type ActivityLink = { id: string; title: string; criterion: string };
+const PROFILE_ACTIVITY_LINKS: readonly ActivityLink[] = [
+  { id: 'reading-viewpoints', title: 'Roda de leitura: diferentes pontos de vista', criterion: 'Comparar narradores e explicar como cada texto muda a imagem da praça.' },
+  { id: 'territory-map', title: 'Leitura e Território', criterion: 'Pesquisar histórias locais e organizar as fontes usadas pelo grupo.' },
+  { id: 'market-proportions', title: 'Proporção com dados da feira', criterion: 'Relacionar quantidades e preços para justificar uma comparação.' },
+  { id: 'energy-consumption', title: 'Consumo de energia na escola', criterion: 'Relacionar potência, quantidade de aparelhos e tempo de uso.' },
+];
 type ProfileActivityItem = {
   id: string;
   kind: ProfileActivityKind;
   title: string;
   text: string;
+  activityId: string;
+  activityTitle: string;
+  criterion: string;
   tags: string[];
   publishedAt: string;
   likes: number;
@@ -879,11 +951,32 @@ type ProfileActivityItem = {
   image?: string;
   imageAlt?: string;
 };
+type CommunityPostDraft = {
+  id: string;
+  title: string;
+  text: string;
+  activityId: string;
+  activityTitle: string;
+  criterion: string;
+  tags: string[];
+  author: string;
+  role: string;
+  time: string;
+  likes: number;
+  comments: number;
+};
+type CommunityOpinionMessage = { author: string; role: string; text: string; time: string; tone: string };
 type ProfileProjectMilestone = { id: string; title: string; date: string };
-type ProjectChatMessage = { id: string; role: 'student' | 'assistant'; text: string; kind?: 'conversation' | 'reflection'; revision?: number; status?: 'pending' | 'error' };
+type ProjectChatMessage = { id: string; role: 'student' | 'assistant'; text: string; kind?: 'conversation' | 'reflection' | 'review'; revision?: number; status?: 'pending' | 'error' };
 type ProfileProjectItem = {
-  id: string; title: string; goal: string; summary: string; audience: string;
+  id: string; title: string; authors: string; goal: string; justification: string; summary: string; audience: string;
+  learningEvidence: string;
   competencies: string[]; milestones: ProfileProjectMilestone[]; socialDraft: boolean; createdAt: string;
+};
+type ProjectPublication = {
+  id: string; title: string; status: string; progress: string; authors: string; goal: string;
+  justification: string; summary: string; audience: string; competencies: string[]; milestones: ProfileProjectMilestone[];
+  learningEvidence: string; socialDraft: boolean;
 };
 const PROJECT_COMPETENCIES = ['Comunicação', 'Colaboração', 'Pensamento crítico', 'Criatividade', 'Cultura digital', 'Língua Portuguesa'];
 function isProfileProjectPart(id: string): boolean { return id === 'teacher-projects' || id === 'student-projects'; }
@@ -911,9 +1004,15 @@ function renderProjectCalendar(monthKey: string, milestones: ProfileProjectMiles
     + '<div class="lm-project-calendar-grid" aria-label="Calendário de marcos">' + ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(day => '<span class="weekday">' + day + '</span>').join('') + cells.join('') + '</div>'
     + '<div class="lm-project-milestones" data-project-milestone-list>' + (upcoming.length ? upcoming.map(item => '<div class="lm-project-milestone"><span>◆</span><div><b>' + e(item.title) + '</b><small>' + e(projectDateLabel(item.date)) + '</small></div><button type="button" data-project-milestone-remove="' + e(item.id) + '" aria-label="Remover marco ' + e(item.title) + '">×</button></div>').join('') : '<p class="lm-project-no-milestones">Os marcos adicionados aparecem aqui.</p>') + '</div>';
 }
-function renderProfileProjectCard(project: ProfileProjectItem): string {
-  const milestoneCount = project.milestones.length;
-  return '<article class="lm-project-row lm-project-row-local"><span class="lm-project-art art-3">✦</span><div><b>' + e(project.title) + '</b><small>' + milestoneCount + (milestoneCount === 1 ? ' marco' : ' marcos') + ' · ' + e(project.audience) + '</small><div class="lm-project-tag-row">' + project.competencies.slice(0, 3).map(item => LabPill(item, 'mint')).join('') + '</div></div>' + LabPill(project.socialDraft ? 'Rascunho para Social' : 'Privado', project.socialDraft ? 'lilac' : 'gray') + '</article>';
+function renderProjectPublication(project: ProjectPublication, index: number): string {
+  const milestoneRows = project.milestones.map(item => '<li><time>' + e(projectDateLabel(item.date)) + '</time><span>' + e(item.title) + '</span></li>').join('');
+  const competencies = project.competencies.map(item => LabPill(item, 'mint')).join('');
+  const id = e(project.id);
+  return '<article class="lm-project-publication' + (project.id.startsWith('seed-') ? ' is-seed' : ' lm-project-row-local') + '">'
+    + '<button type="button" class="lm-project-publication-trigger" data-project-expand="' + id + '" aria-expanded="false" aria-controls="project-publication-' + id + '"><span class="lm-project-art art-' + (index % 4) + '" aria-hidden="true">✦</span><span class="lm-project-publication-summary"><b>' + e(project.title) + '</b><small>' + e(project.authors) + ' · ' + e(project.progress) + '</small><span class="lm-project-meter"><i style="width:' + (project.status === 'Em andamento' ? 62 : project.status === 'Planejamento' ? 28 : 8) + '%"></i></span></span><span class="lm-project-publication-status">' + LabPill(project.status, index === 0 ? 'mint' : index === 1 ? 'lilac' : 'gray') + '<i aria-hidden="true">⌄</i></span></button>'
+    + '<div class="lm-project-publication-details" id="project-publication-' + id + '" data-project-publication-details="' + id + '" hidden><div class="lm-project-publication-byline"><span>UMA IDEIA DE</span><b>' + e(project.authors) + '</b><small>Para ' + e(project.audience) + '</small></div>'
+    + '<section><span>O QUE QUEREMOS FAZER</span><p>' + e(project.goal) + '</p></section><section><span>POR QUE ISSO IMPORTA</span><p>' + e(project.justification) + '</p></section><section><span>COMO VAMOS OBSERVAR A APRENDIZAGEM</span><p>' + e(project.learningEvidence) + '</p></section>'
+    + '<div class="lm-project-publication-foot"><div><span>COMPETÊNCIAS</span><div class="lm-project-tag-row">' + competencies + '</div></div><div><span>PRÓXIMOS PASSOS</span><ul>' + (milestoneRows || '<li><span>Etapas ainda não definidas.</span></li>') + '</ul></div></div><p class="lm-project-publication-story">' + e(project.summary) + '</p><small class="lm-project-publication-state">' + (project.socialDraft ? 'Rascunho preparado para o Social. A publicação depende de confirmação.' : 'Projeto privado em planejamento.') + '</small></div></article>';
 }
 function renderProjectChatMarkdown(source: string): string {
   const tokenHtml: string[] = [];
@@ -997,15 +1096,15 @@ function renderProjectChatMarkdown(source: string): string {
 function renderProjectChatMessages(messages: ProjectChatMessage[]): string {
   const greeting = '<article class="lm-project-chat-message assistant"><small>COGNOSCERE LOCAL · METIS</small><div class="lm-project-chat-body lm-markdown"><p>Escreva ou marque algo na ficha. O assistente acompanha as mudanças e atualiza a reflexão sobre o projeto; use a conversa para pedir ideias e encaminhamentos.</p></div></article>';
   return greeting + messages.map(message => {
-    const body = message.status === 'pending' ? '<p><span class="lm-project-chat-spinner" aria-hidden="true"></span>' + (message.kind === 'reflection' ? 'Lendo a ficha atual…' : 'Conversando com o Cognoscere local…') + '</p>'
+    const body = message.status === 'pending' ? '<p><span class="lm-project-chat-spinner" aria-hidden="true"></span>' + (message.kind === 'reflection' ? 'Lendo a ficha atual…' : message.kind === 'review' ? 'Revendo autoria, justificativa e plano…' : 'Conversando com o Cognoscere local…') + '</p>'
       : message.role === 'assistant' && message.status !== 'error' ? '<div class="lm-project-chat-body lm-markdown">' + renderProjectChatMarkdown(message.text) + '</div>'
         : '<p>' + e(message.text) + '</p>';
-    const label = message.role === 'student' ? 'VOCÊ' : message.kind === 'reflection' ? 'REFLEXÃO DO PROJETO · METIS LOCAL' : 'COGNOSCERE LOCAL · METIS';
+    const label = message.role === 'student' ? 'VOCÊ' : message.kind === 'reflection' ? 'REFLEXÃO DO PROJETO · METIS LOCAL' : message.kind === 'review' ? 'REVISÃO DO PROJETO · COGNOSCERE LOCAL' : 'COGNOSCERE LOCAL · METIS';
     return '<article class="lm-project-chat-message ' + message.role + (message.kind === 'reflection' ? ' reflection' : '') + (message.status === 'error' ? ' error' : '') + '"' + (message.status === 'pending' ? ' aria-live="polite" aria-busy="true"' : '') + '><small>' + label + '</small>' + body + '</article>';
   }).join('');
 }
 const PROFILE_ACTIVITY_LABELS: Record<ProfileActivityKind, string> = {
-  post: 'Post', activity: 'Atividade', video: 'Vídeo', project: 'Projeto',
+  post: 'Post de atividade', activity: 'Atividade', video: 'Vídeo da atividade', project: 'Projeto da atividade',
 };
 function renderProfileActivityItem(item: ProfileActivityItem, local = false, author = 'Ana Beatriz Silva'): string {
   const image = item.image
@@ -1013,11 +1112,12 @@ function renderProfileActivityItem(item: ProfileActivityItem, local = false, aut
     : '';
   const tags = item.tags.map(tag => LabPill(tag)).join('');
   const key = 'profile-activity:' + item.id;
+  const activityLink = '<div class="lm-activity-link"><span>Ligado à atividade</span><b>' + e(item.activityTitle) + '</b><small>Critério em foco: ' + e(item.criterion) + '</small></div>';
   return '<article class="lm-profile-activity-card' + (local ? ' lm-profile-activity-local' : '') + '" data-profile-activity-type="' + e(item.kind) + '">'
     + '<div class="lm-activity-author">' + LabAvatar(author, 'teal', 'tiny') + '<div><b>' + e(author) + '</b><small>' + e(PROFILE_ACTIVITY_LABELS[item.kind]) + ' · ' + e(item.publishedAt) + '</small></div>'
     + '<span class="lm-activity-kind lm-activity-kind-' + e(item.kind) + '">' + e(PROFILE_ACTIVITY_LABELS[item.kind]) + '</span></div>'
     + '<h3>' + e(item.title) + '</h3><p>' + e(item.text) + '</p>'
-    + (tags ? '<div class="lm-activity-tags">' + tags + '</div>' : '') + image
+    + activityLink + (tags ? '<div class="lm-activity-tags">' + tags + '</div>' : '') + image
     + '<footer class="lm-post-actions"><button type="button" class="lm-like-action" data-interaction-key="' + e(key + ':like') + '" data-interaction-kind="like" data-action-label="♡ ' + String(item.likes) + '" aria-label="Curtir publicação">♡ ' + String(item.likes) + '</button>'
     + '<span>◯ ' + String(item.comments) + ' comentários</span><button type="button" data-interaction-key="' + e(key + ':share') + '" data-action-label="↗ Compartilhar">↗ Compartilhar</button>'
     + '<button type="button" data-interaction-key="' + e(key + ':save') + '" data-interaction-kind="save" data-action-label="♧ Salvar">♧ Salvar</button></footer></article>';
@@ -1457,12 +1557,13 @@ function renderActivityCard(data: ComponentFixture, selectedId: string): string 
       id: labText(fixture, 'id', 'activity-' + index), kind,
       title: index === 0 ? labText(data, 'activityTitle', labText(fixture, 'title', 'Linguagem conecta realidades')) : labText(fixture, 'title', 'Publicação'),
       text: index === 0 ? labText(data, 'activityText', labText(fixture, 'text', '')) : labText(fixture, 'text', ''),
+      activityId: labText(fixture, 'activityId'), activityTitle: labText(fixture, 'activityTitle'), criterion: labText(fixture, 'criterion'),
       tags: index === 0 ? labList<string>(data, 'activityTags') : tags,
       publishedAt: labText(fixture, 'publishedAt', 'Hoje'), likes: labNumber(fixture, 'likes'), comments: labNumber(fixture, 'comments'),
       image: typeof fixture.image === 'string' ? fixture.image : undefined,
       imageAlt: labText(fixture, 'imageAlt', ''),
     };
-  });
+  }).filter(item => Boolean(item.activityId && item.activityTitle && item.criterion));
   const counts: Record<ProfileActivityKind | 'all', number> = {
     all: items.length, post: items.filter(item => item.kind === 'post').length,
     activity: items.filter(item => item.kind === 'activity').length,
@@ -1475,40 +1576,57 @@ function renderActivityCard(data: ComponentFixture, selectedId: string): string 
   ];
   const filterButtons = filters.map(filter => '<button type="button" class="' + (filter.id === 'all' ? 'active' : '') + '" data-profile-activity-filter="' + filter.id + '" aria-pressed="' + String(filter.id === 'all') + '">' + e(filter.label) + '<span data-profile-activity-count="' + filter.id + '">' + String(counts[filter.id]) + '</span></button>').join('');
   const cards = items.map(item => renderProfileActivityItem(item, false, labText(data, 'name', 'Ana Beatriz Silva'))).join('');
+  const activityOptions = PROFILE_ACTIVITY_LINKS.map(link => '<option value="' + e(link.id) + '">' + e(link.title) + '</option>').join('');
   const content = '<article class="lm-panel lm-activity-panel"><header class="lm-activity-heading"><div><span class="lm-eyebrow">PERFIL · PUBLICAÇÕES</span><h2>Posts e atividades</h2></div><button type="button" class="lm-small-primary" data-profile-activity-create>＋ Criar novo</button></header>'
+    + '<p class="lm-activity-intro">Só entram aqui publicações ligadas a uma atividade e ao critério que a turma está praticando.</p>'
     + '<nav class="lm-filter-pills lm-activity-filters" aria-label="Filtrar posts e atividades">' + filterButtons + '</nav>'
-    + '<form class="lm-profile-activity-composer" data-profile-activity-composer hidden novalidate><header><div><span class="lm-eyebrow">NOVA PUBLICAÇÃO</span><h3>Criar conteúdo</h3></div><button type="button" class="lm-panel-more" data-profile-activity-cancel aria-label="Fechar criação">×</button></header>'
-    + '<label class="lm-activity-composer-type">Tipo de conteúdo<select name="activityKind"><option value="post">Post</option><option value="activity">Atividade</option><option value="video">Vídeo</option><option value="project">Projeto</option></select></label>'
-    + '<label>Título<input name="activityTitle" maxlength="100" placeholder="Dê um título ao conteúdo" required></label>'
-    + '<label>Descrição<textarea name="activityText" rows="4" maxlength="1000" placeholder="Conte o que a turma fez, descobriu ou está planejando…" required></textarea></label>'
-    + '<label>Assuntos <small>(separe por vírgulas)</small><input name="activityTags" maxlength="180" placeholder="Leitura, investigação, 8º ano"></label>'
-    + '<footer><button type="button" class="lm-activity-cancel" data-profile-activity-cancel>Cancelar</button><button type="submit" class="lm-small-primary">Publicar conteúdo</button></footer></form>'
+    + '<form class="lm-profile-activity-composer" data-profile-activity-composer hidden novalidate><header><div><span class="lm-eyebrow">NOVA PUBLICAÇÃO</span><h3>Compartilhar com a turma</h3></div><button type="button" class="lm-panel-more" data-profile-activity-cancel aria-label="Fechar criação">×</button></header>'
+    + '<label class="lm-activity-composer-type">Formato<select name="activityKind"><option value="post">Post de atividade</option><option value="activity">Atividade</option><option value="video">Vídeo da atividade</option><option value="project">Projeto da atividade</option></select></label>'
+    + '<label>Atividade relacionada<select name="activityLink" required><option value="">Escolha uma atividade</option>' + activityOptions + '</select></label>'
+    + '<label>Título<input name="activityTitle" maxlength="100" placeholder="Ex.: A praça virou personagem" required></label>'
+    + '<label>Conta como foi<textarea name="activityText" rows="4" maxlength="1000" placeholder="O que vocês fizeram? Teve alguma descoberta ou surpresa?" required></textarea></label>'
+    + '<label>Assuntos <small>(separe por vírgulas)</small><input name="activityTags" maxlength="180" placeholder="Leitura, bairro, trabalho em grupo"></label>'
+    + '<p class="lm-activity-moderation-note"><span aria-hidden="true">✓</span> Na plataforma, publicações de estudantes passam por vistoria de respeito, privacidade e relação com a atividade. Aqui, a regra é ilustrativa; esta demonstração não aprova conteúdo.</p>'
+    + '<footer><button type="button" class="lm-activity-cancel" data-profile-activity-cancel>Cancelar</button><button type="submit" class="lm-small-primary">Publicar</button></footer></form>'
     + '<div class="lm-profile-activity-list" data-profile-activity-list>' + cards + '</div>'
-    + '<p class="lm-activity-empty" data-profile-activity-empty hidden>Nenhum conteúdo neste filtro. Escolha outro badge ou crie uma nova publicação.</p></article>';
+    + '<p class="lm-activity-empty" data-profile-activity-empty hidden>Nada por aqui nesse filtro ainda. Escolha outro ou compartilhe uma atividade.</p></article>';
   return labPart('teacher-activity', content, selectedId, 'lm-feed-card-part');
 }
 function renderProjectsPanel(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('teacher-projects', data);
   const projects = labList<ComponentFixture>(data, 'projects');
-  const rows = projects.map((project, index) => '<article class="lm-project-row" data-project-seed-row><span class="lm-project-art art-' + index + '">✦</span><div><b>' + e(labText(project, 'title', 'Projeto')) + '</b><small>' + e(labText(project, 'progress', '0/4 atividades')) + '</small><div class="lm-project-meter"><i style="width:' + [67, 34, 12][index % 3] + '%"></i></div></div>' + LabPill(labText(project, 'status', 'Ideia'), index === 0 ? 'mint' : index === 1 ? 'lilac' : 'gray') + '</article>').join('');
-  const content = '<article class="lm-panel lm-projects-panel"><header><div><span class="lm-eyebrow">PERFIL · PROJETOS</span><h2>Meus projetos em andamento</h2></div><button type="button" class="lm-text-action">Ver todos →</button></header><div class="lm-project-list" data-profile-project-list>' + rows + '</div><button type="button" class="lm-outline-action" data-project-create>＋ Criar novo projeto</button>'
+  const rows = projects.map((project, index) => {
+    const milestones = Array.isArray(project.milestones) ? project.milestones as ProfileProjectMilestone[] : [];
+    return renderProjectPublication({
+      id: labText(project, 'id', 'seed-project-' + index), title: labText(project, 'title', 'Projeto'),
+      status: labText(project, 'status', 'Ideia'), progress: labText(project, 'progress', '0/4 atividades'),
+      authors: labText(project, 'authors', 'Grupo de aprendizagem'), goal: labText(project, 'goal', ''),
+      justification: labText(project, 'justification', ''), summary: labText(project, 'summary', ''),
+      audience: labText(project, 'audience', 'Comunidade escolar'), learningEvidence: labText(project, 'learningEvidence', ''),
+      competencies: labList<string>(project, 'competencies'), milestones, socialDraft: true,
+    }, index);
+  }).join('');
+  const content = '<article class="lm-panel lm-projects-panel"><header><div><span class="lm-eyebrow">PERFIL · PROJETOS</span><h2>Meus projetos em andamento</h2><p>Abra um projeto para conhecer quem está criando, por que ele importa e qual é o próximo passo.</p></div><button type="button" class="lm-text-action">Ver todos →</button></header><div class="lm-project-list" data-profile-project-list>' + rows + '</div><button type="button" class="lm-outline-action" data-project-create>＋ Criar novo projeto</button>'
     + renderProjectBuilder('teacher-projects');
   return labPart('teacher-projects', content, selectedId, 'lm-profile-card-part');
 }
 function renderProjectBuilder(scope: 'teacher-projects' | 'student-projects'): string {
   const fieldKey = (name: string): string => scope + ':' + name;
   const competenceOptions = PROJECT_COMPETENCIES.map((name, index) => '<label><input type="checkbox" name="projectCompetency" value="' + e(name) + '" data-interaction-toggle="project-competency-' + index + '"><span>' + e(name) + '</span></label>').join('');
-  return '<section class="lm-project-builder" data-project-builder hidden><header><div><span class="lm-eyebrow">PROJETO COLABORATIVO</span><h3>Planeje algo para o Social</h3><p>Desenhe a ideia com seus colegas, organize marcos e escolha as competências que querem praticar.</p></div><button type="button" class="lm-panel-more" data-project-cancel aria-label="Fechar criação">×</button></header>'
-    + '<div class="lm-project-builder-layout"><form class="lm-project-form" data-project-create-form novalidate><div class="lm-project-form-fields">'
-    + '<label>Nome do projeto<input name="projectTitle" data-interaction-field="' + fieldKey('projectTitle') + '" maxlength="80" placeholder="Ex.: Mapa de histórias do bairro" required></label>'
-    + '<label>O que vocês querem realizar?<textarea name="projectGoal" data-interaction-field="' + fieldKey('projectGoal') + '" rows="2" maxlength="300" placeholder="Qual mudança, pergunta ou criação vai orientar o projeto?" required></textarea></label>'
-    + '<label>Como vão desenvolver a ideia?<textarea name="projectSummary" data-interaction-field="' + fieldKey('projectSummary') + '" rows="3" maxlength="600" placeholder="Conte as etapas e como a comunidade poderá participar." required></textarea></label>'
-    + '<label>Público ou comunidade<select name="projectAudience" data-interaction-field="' + fieldKey('projectAudience') + '"><option>Comunidade escolar</option><option>Famílias</option><option>Meu bairro</option><option>Comunidade online da Lumira</option></select></label>'
-    + '<fieldset class="lm-project-competencies"><legend>Competências relacionadas <small>Escolha uma ou mais</small></legend>' + competenceOptions + '</fieldset>'
-    + '<label class="lm-project-social-choice"><input type="checkbox" name="projectSocialDraft" value="yes" checked data-interaction-toggle="project-social-draft"><span><b>Preparar para o Social</b><small>O projeto será salvo como rascunho compartilhável; esta demonstração não publica conteúdo.</small></span></label>'
-    + '</div><section class="lm-project-calendar"><div><span class="lm-eyebrow">ORGANIZAÇÃO</span><h4>Calendário de marcos</h4><p>Escolha uma data e registre o próximo passo do grupo.</p></div><div data-project-calendar></div><div class="lm-project-milestone-add"><label>Nome do marco<input name="projectMilestoneTitle" data-interaction-field="' + fieldKey('projectMilestoneTitle') + '" maxlength="70" placeholder="Ex.: Entrevistar moradores"></label><label>Data<input type="date" name="projectMilestoneDate" data-interaction-field="' + fieldKey('projectMilestoneDate') + '" value="2026-10-21"></label><button type="button" class="lm-project-add-milestone" data-project-milestone-add>＋ Adicionar marco</button></div></section>'
-    + '<footer><button type="button" class="lm-activity-cancel" data-project-cancel>Cancelar</button><button type="submit" class="lm-small-primary">Salvar projeto →</button></footer></form>'
-    + '<aside class="lm-project-planner"><header><div><span class="lm-eyebrow">IDEIA E PLANEJAMENTO</span><h4>Chat do projeto</h4></div><span class="lm-project-local-tag" data-project-assistant-status aria-live="polite">VERIFICANDO COGNOSCERE LOCAL</span></header><div class="lm-project-chat-messages" data-project-chat-messages aria-live="polite"></div><form class="lm-project-chat-form" data-project-chat-form><label for="' + scope + '-chat-prompt">Converse sobre o que vocês querem criar</label><textarea id="' + scope + '-chat-prompt" name="projectChatPrompt" data-interaction-field="' + fieldKey('projectChatPrompt') + '" rows="3" maxlength="500" placeholder="Ex.: queremos registrar histórias do bairro em um mapa…" required></textarea><button type="submit" class="lm-small-primary">Conversar com Cognoscere →</button><small>O chat usa Metis e MiniCPM locais. A ficha se reflete após cada pausa na edição.</small></form></aside></div></section>';
+  const stepNames = ['Autoria', 'Justificativa', 'Aprendizagem', 'Plano'];
+  const stepHints = ['Quem está criando', 'Por que importa', 'O que observar', 'Como vai acontecer'];
+  const stepper = stepNames.map((title, index) => `<button type="button" role="tab" id="${scope}-project-step-tab-${index}" data-project-wizard-step-select="${index}" aria-selected="${index === 0}" aria-controls="${scope}-project-step-${index}" tabindex="${index === 0 ? 0 : -1}"><span>0${index + 1}</span><b>${title}</b><small>${stepHints[index]}</small></button>`).join('');
+  const steps = [
+    `<section class="lm-project-step-panel" id="${scope}-project-step-0" role="tabpanel" aria-labelledby="${scope}-project-step-tab-0" data-project-step-panel="0"><span class="lm-eyebrow">01 · AUTORIA E CONTEXTO</span><h4>Quem está por trás da ideia?</h4><p>Nomeie o grupo e escolha para quem o projeto quer fazer diferença.</p><div class="lm-project-form-fields"><label>Nome do projeto<input name="projectTitle" data-interaction-field="${fieldKey('projectTitle')}" maxlength="80" placeholder="Ex.: Mapa de histórias do bairro" required></label><label>Autoria do grupo<input name="projectAuthors" data-interaction-field="${fieldKey('projectAuthors')}" maxlength="120" placeholder="Ex.: Ana Beatriz e grupo do 7º ano" required></label><label>Público ou comunidade<select name="projectAudience" data-interaction-field="${fieldKey('projectAudience')}"><option>Comunidade escolar</option><option>Famílias</option><option>Meu bairro</option><option>Comunidade online da Lumira</option></select></label></div><footer><span>O nome dá autoria ao trabalho coletivo.</span><button type="button" class="lm-small-primary" data-project-step-next>Continuar →</button></footer></section>`,
+    `<section class="lm-project-step-panel" id="${scope}-project-step-1" role="tabpanel" aria-labelledby="${scope}-project-step-tab-1" data-project-step-panel="1" hidden><span class="lm-eyebrow">02 · JUSTIFICATIVA</span><h4>Que pergunta move vocês?</h4><p>Registre o objetivo e o motivo de o grupo querer investigar isso.</p><div class="lm-project-form-fields"><label>O que vocês querem realizar?<textarea name="projectGoal" data-interaction-field="${fieldKey('projectGoal')}" rows="3" maxlength="300" placeholder="Qual mudança, pergunta ou criação vai orientar o projeto?" required></textarea></label><label>Por que esse projeto importa?<textarea name="projectJustification" data-interaction-field="${fieldKey('projectJustification')}" rows="3" maxlength="500" placeholder="O que vocês perceberam ou querem transformar?" required></textarea></label></div><footer><button type="button" class="lm-activity-cancel" data-project-step-previous>← Autoria</button><button type="button" class="lm-small-primary" data-project-step-next>Continuar →</button></footer></section>`,
+    `<section class="lm-project-step-panel" id="${scope}-project-step-2" role="tabpanel" aria-labelledby="${scope}-project-step-tab-2" data-project-step-panel="2" hidden><span class="lm-eyebrow">03 · APRENDIZAGEM E AVALIAÇÃO</span><h4>Que aprendizagem vai aparecer no caminho?</h4><p>Escolham competências e evidências que ajudem o grupo a explicar o que descobriu.</p><div class="lm-project-form-fields"><fieldset class="lm-project-competencies"><legend>Competências relacionadas <small>Escolha uma ou mais</small></legend>${competenceOptions}</fieldset><label>O que o grupo vai produzir ou demonstrar?<textarea name="projectLearningEvidence" data-interaction-field="${fieldKey('projectLearningEvidence')}" rows="3" maxlength="500" placeholder="Ex.: comparar relatos e justificar como escolhemos as fontes." required></textarea></label><label>Como vão desenvolver a ideia?<textarea name="projectSummary" data-interaction-field="${fieldKey('projectSummary')}" rows="3" maxlength="600" placeholder="Conte as etapas e como a comunidade poderá participar." required></textarea></label></div><footer><button type="button" class="lm-activity-cancel" data-project-step-previous>← Justificativa</button><button type="button" class="lm-small-primary" data-project-step-next>Continuar →</button></footer></section>`,
+    `<section class="lm-project-step-panel" id="${scope}-project-step-3" role="tabpanel" aria-labelledby="${scope}-project-step-tab-3" data-project-step-panel="3" hidden><span class="lm-eyebrow">04 · PLANO E REVISÃO</span><h4>Transformem a ideia em próximos passos</h4><p>Marcos ajudam o grupo a combinar o que vem agora e quando quer retomar o projeto.</p><section class="lm-project-calendar"><div><span class="lm-eyebrow">CALENDÁRIO DO GRUPO</span><h5>Marcos e encontros</h5></div><div data-project-calendar></div><div class="lm-project-milestone-add"><label>Nome do marco<input name="projectMilestoneTitle" data-interaction-field="${fieldKey('projectMilestoneTitle')}" maxlength="70" placeholder="Ex.: Conversar com moradores"></label><label>Data<input type="date" name="projectMilestoneDate" data-interaction-field="${fieldKey('projectMilestoneDate')}" value="2026-10-28"></label><button type="button" class="lm-project-add-milestone" data-project-milestone-add>＋ Adicionar marco</button></div></section><label class="lm-project-social-choice"><input type="checkbox" name="projectSocialDraft" value="yes" checked data-interaction-toggle="project-social-draft"><span><b>Preparar para o Social</b><small>O projeto fica como rascunho. Publicar exige uma decisão posterior.</small></span></label><footer><button type="button" class="lm-activity-cancel" data-project-step-previous>← Aprendizagem</button><button type="button" class="lm-small-primary" data-project-review>Revisar com a IA local →</button></footer></section>`,
+  ].join('');
+  return `<section class="lm-project-builder" data-project-builder hidden><header><div><span class="lm-eyebrow">PROJETO COLABORATIVO</span><h3>Vamos tirar a ideia do papel</h3><p>Conte quem está criando, por que a ideia importa, o que querem aprender e como o grupo vai avançar. No fim, a IA comenta a proposta; vocês decidem se ela está pronta.</p></div><button type="button" class="lm-panel-more" data-project-cancel aria-label="Fechar criação">×</button></header>
+    <div class="lm-project-builder-layout"><form class="lm-project-form" data-project-create-form novalidate>
+      <section class="lm-project-review" data-project-review-panel hidden aria-live="polite"><header><span class="lm-ai-badge"><i></i> REVISÃO DO COGNOSCERE LOCAL</span><span data-project-review-status>LEITURA CONCLUÍDA</span></header><div class="lm-project-review-comment lm-markdown" data-project-review-comment tabindex="-1"></div><p data-project-review-prompt>Leia o comentário. Confirme para criar o rascunho ou volte aos passos para ajustar.</p><footer><button type="button" class="lm-activity-cancel" data-project-review-edit>Voltar aos passos</button><button type="button" class="lm-activity-cancel" data-project-review-retry hidden>Revisar proposta atualizada</button><button type="button" class="lm-small-primary" data-project-review-confirm>Confirmar projeto</button></footer></section>
+      <nav class="lm-project-stepper" role="tablist" aria-label="Etapas de criação do projeto">${stepper}</nav>${steps}
+    </form><aside class="lm-project-planner"><header><div><span class="lm-eyebrow">IDEIA E PLANEJAMENTO</span><h4>Conversa do projeto</h4></div><span class="lm-project-local-tag" data-project-assistant-status aria-live="polite">VERIFICANDO COGNOSCERE LOCAL</span></header><div class="lm-project-chat-messages" data-project-chat-messages aria-live="polite"></div><form class="lm-project-chat-form" data-project-chat-form><label for="${scope}-chat-prompt">Peça ajuda para desenvolver uma parte</label><textarea id="${scope}-chat-prompt" name="projectChatPrompt" data-interaction-field="${fieldKey('projectChatPrompt')}" rows="3" maxlength="500" placeholder="Ex.: que fontes a gente pode consultar para esse mapa?" required></textarea><button type="submit" class="lm-small-primary">Conversar com Cognoscere →</button><small>A conversa considera a ficha atual. A revisão final pede sua confirmação antes de criar o projeto.</small></form></aside></div></section>`;
 }
 function renderAgendaPanel(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('teacher-agenda', data);
@@ -1597,7 +1715,18 @@ function renderStudentActivityCard(data: ComponentFixture, selectedId: string): 
 function renderStudentProjectsPanel(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('student-projects', data);
   const projects = labList<ComponentFixture>(data, 'projects');
-  const rows = projects.map((project, index) => '<article class="lm-project-row" data-project-seed-row><span class="lm-project-art art-' + index + '">✦</span><div><b>' + e(labText(project, 'title', 'Projeto')) + '</b><small>' + e(labText(project, 'progress', 'Produção compartilhada')) + '</small></div>' + LabPill(labText(project, 'status', 'Em andamento'), ['mint', 'lilac', 'gray'][index % 3]) + '</article>').join('');
+  const rows = projects.map((project, index) => renderProjectPublication({
+    id: labText(project, 'id', 'seed-student-project-' + index), title: labText(project, 'title', 'Projeto'),
+    status: labText(project, 'status', 'Em andamento'), progress: labText(project, 'progress', 'Produção compartilhada'),
+    authors: labText(project, 'authors', 'Caio e grupo de aprendizagem'), goal: labText(project, 'goal', 'Desenvolver uma ideia em grupo.'),
+    justification: labText(project, 'justification', 'A turma quer investigar uma pergunta que surgiu nas atividades.'),
+    summary: labText(project, 'summary', 'O grupo combina observações, conversa sobre os resultados e decide como compartilhar a produção.'),
+    audience: labText(project, 'audience', 'Comunidade escolar'),
+    learningEvidence: labText(project, 'learningEvidence', 'Registros, explicações e decisões justificadas pelo grupo.'),
+    competencies: labList<string>(project, 'competencies'),
+    milestones: Array.isArray(project.milestones) ? project.milestones as ProfileProjectMilestone[] : [],
+    socialDraft: true,
+  }, index)).join('');
   const content = '<article class="lm-panel lm-student-projects"><header><div><span class="lm-eyebrow">PERFIL · CRIAÇÃO</span><h2>Projetos em destaque</h2><small>Produções e ideias da turma</small></div><button type="button" class="lm-text-action">Ver todos</button></header><div class="lm-project-list" data-profile-project-list>'
     + (rows || '<div class="empty" data-project-empty>Nenhum projeto em destaque ainda. Comece uma ideia para o Social.</div>') + '</div>'
     + '<button type="button" class="lm-outline-action" data-project-create>＋ Planejar projeto para o Social</button>'
@@ -1864,19 +1993,61 @@ function renderTopicsPanel(data: ComponentFixture, selectedId: string): string {
     + '<article class="lm-panel lm-areas-panel"><header><h2>Áreas da comunidade</h2><button type="button" class="lm-text-action">Ver todas →</button></header>' + areaRows + '</article></div>';
   return labPart('community-topics', content, selectedId, 'lm-community-column-part');
 }
+function renderCommunityPost(post: CommunityPostDraft, index: number, local = false): string {
+  const tags = post.tags.map(tag => LabPill(tag)).join('');
+  const photo = !local && index === 0
+    ? '<img class="lm-community-photo" src="' + communityPostAsset + '" alt="Professora e estudantes colaborando em uma atividade" />'
+    : '';
+  const activity = '<div class="lm-community-post-context"><span>NA ATIVIDADE</span><b>' + e(post.activityTitle) + '</b><small>Critério: ' + e(post.criterion) + '</small></div>';
+  return '<article class="lm-panel lm-community-post' + (local ? ' lm-community-post-local' : '') + '">'
+    + '<header>' + LabAvatar(post.author, index % 2 ? 'blue' : 'rose', 'tiny') + '<div><b>' + e(post.author) + '</b><small>' + e(post.role) + ' · ' + e(post.time) + '</small></div><button type="button" class="lm-panel-more" aria-label="Mais opções">•••</button></header>'
+    + '<h2>' + e(post.title) + '</h2><p>' + e(post.text) + '</p>' + activity
+    + (tags ? '<div class="lm-post-tags">' + tags + '</div>' : '') + photo
+    + '<footer class="lm-post-actions"><button type="button" class="lm-like-action" aria-label="Curtir publicação">♡ ' + String(post.likes) + '</button><span>◯ ' + String(post.comments) + ' comentários</span><button type="button">♧ Salvar</button></footer></article>';
+}
+function renderOpinionCircles(data: ComponentFixture, selectedId: string): string {
+  const circles = labList<ComponentFixture>(data, 'opinionCircles');
+  if (!circles.length) return '';
+  const seats = [
+    [50, 4], [82, 21], [82, 72], [50, 89], [18, 72], [18, 21], [50, 0], [88, 48], [12, 48],
+  ];
+  const circlePanels = circles.map((circle, circleIndex) => {
+    const id = labText(circle, 'id', 'circle-' + circleIndex);
+    const members = labList<ComponentFixture>(circle, 'members');
+    const messages = labList<ComponentFixture>(circle, 'messages');
+    const memberMarkup = members.map((member, index) => {
+      const [x, y] = seats[index % seats.length];
+      const name = labText(member, 'name', 'Participante');
+      return '<div class="lm-opinion-seat" style="--seat-x:' + x + '%;--seat-y:' + y + '%" aria-label="' + e(name + ', ' + labText(member, 'role', 'Participante')) + '">' + LabAvatar(name, labText(member, 'tone', 'teal'), 'small') + '<span>' + e(name.split(' ')[0]) + '</span></div>';
+    }).join('');
+    const messageMarkup = messages.map((message, index) => '<article class="lm-opinion-message"><header>' + LabAvatar(labText(message, 'author', 'Participante'), labText(message, 'tone', 'teal'), 'tiny') + '<div><b>' + e(labText(message, 'author', 'Participante')) + '</b><small>' + e(labText(message, 'role', 'Participante')) + ' · ' + e(labText(message, 'time', String(index + 1))) + '</small></div></header><p>' + e(labText(message, 'text')) + '</p></article>').join('');
+    return '<section class="lm-opinion-circle-panel" id="opinion-circle-panel-' + e(id) + '" role="tabpanel" aria-labelledby="opinion-circle-tab-' + e(id) + '" data-opinion-circle-panel="' + e(id) + '"' + (circleIndex ? ' hidden' : '') + '>'
+      + '<div class="lm-opinion-circle-heading"><div><span class="lm-eyebrow">' + e(labText(circle, 'label', 'CÍRCULO DE PARTICIPAÇÃO')) + '</span><h3>' + e(labText(circle, 'title', 'Roda de opiniões')) + '</h3><p>' + e(labText(circle, 'activityTitle')) + '</p></div><span class="lm-circle-member-count">' + members.length + ' na roda</span></div>'
+      + '<div class="lm-opinion-circle-context"><b>O que estamos investigando</b><span>' + e(labText(circle, 'criterion')) + '</span></div>'
+      + '<div class="lm-opinion-arena" role="group" aria-label="Participantes em círculo"><div class="lm-opinion-ring" aria-hidden="true"></div>' + memberMarkup
+      + '<div class="lm-opinion-thread" data-opinion-message-list="' + e(id) + '" aria-label="Mensagens da ' + e(labText(circle, 'title', 'roda de opiniões')) + '" aria-live="polite">' + messageMarkup + '</div></div>'
+      + '<form class="lm-opinion-reply" data-opinion-message-form="' + e(id) + '"><label class="sr-only" for="opinion-reply-' + e(id) + '">Sua mensagem na roda</label><textarea id="opinion-reply-' + e(id) + '" name="opinionMessage" data-interaction-field="community-feed:circle-message:' + e(id) + '" rows="2" maxlength="500" placeholder="Entre na conversa com uma ideia, pergunta ou exemplo…" required></textarea><button type="submit" class="lm-small-primary">Enviar para a roda <span aria-hidden="true">↗</span></button></form>'
+      + '<p class="lm-opinion-moderation">Na demonstração, as mensagens são locais. Na plataforma, publicações de estudantes passam por vistoria de respeito, privacidade e contribuição para a atividade antes de circular.</p></section>';
+  }).join('');
+  const tabs = circles.map((circle, index) => {
+    const id = labText(circle, 'id', 'circle-' + index);
+    return '<button type="button" role="tab" id="opinion-circle-tab-' + e(id) + '" class="lm-opinion-circle-tab' + (index === 0 ? ' active' : '') + '" data-opinion-circle-select="' + e(id) + '" aria-controls="opinion-circle-panel-' + e(id) + '" aria-selected="' + String(index === 0) + '" tabindex="' + (index === 0 ? '0' : '-1') + '">' + e(labText(circle, 'label', 'Roda ' + (index + 1))) + '</button>';
+  }).join('');
+  return '<section class="lm-panel lm-opinion-circles"><header class="lm-opinion-circles-heading"><div><span class="lm-eyebrow">CONVERSAS EM GRUPO</span><h2>Rodas de opiniões</h2><p>Uma atividade em comum, vários pontos de vista para comparar.</p></div></header><nav class="lm-opinion-circle-tabs" role="tablist" aria-label="Escolher roda de participação">' + tabs + '</nav>' + circlePanels + '</section>';
+}
 function renderCommunityFeed(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('community-feed', data);
-  const posts = labList<ComponentFixture>(data, 'posts');
-  const cards = posts.map((post, index) => `
-    <article class="lm-panel lm-community-post">
-      <header>${LabAvatar(labText(post, 'author', 'Comunidade'), index === 0 ? 'rose' : 'blue', 'tiny')}<div><b>${e(labText(post, 'author', 'Comunidade'))}</b><small>${e(labText(post, 'role', 'Educador · Comunidade'))} · ${e(labText(post, 'time', 'há 2h'))}</small></div><button type="button" class="lm-panel-more">•••</button></header>
-      <h2>${e(labText(post, 'title', 'Publicação da comunidade'))}</h2><p>${e(labText(post, 'text', 'Compartilhe uma experiência com a comunidade.'))}</p>
-      <div class="lm-post-tags">${labList<string>(post, 'tags').map(tag => LabPill(tag)).join('')}</div>
-      ${index === 0 ? '<img class="lm-community-photo" src="' + communityPostAsset + '" alt="Professora e estudantes colaborando em sala de aula" />' : ''}
-      <footer class="lm-post-actions"><button type="button" class="lm-like-action" aria-label="Curtir publicação">♡ ${e(labText(post, 'likes', '0'))}</button><span>◯ ${e(labText(post, 'comments', '0'))}</span><button type="button">♧ Salvar</button><button type="button">•••</button></footer>
-    </article>`).join('');
-  const composer = '<form class="lm-panel lm-post-composer">' + LabAvatar('Ana Beatriz', 'teal', 'tiny') + '<div><textarea name="post" aria-label="Texto da publicação" placeholder="Compartilhe uma ideia, experiência ou dúvida..."></textarea><footer><div class="lm-compose-options"><button type="button">✎ Texto</button><button type="button">▧ Foto</button><button type="button">▶ Vídeo</button><button type="button">▣ Projeto</button></div><button type="submit" class="lm-small-primary">Publicar</button></footer></div></form>';
-  return labPart('community-feed', '<div class="lm-community-feed-stack">' + composer + cards + '</div>', selectedId, 'lm-community-column-part');
+  const posts = labList<ComponentFixture>(data, 'posts').filter(post => Boolean(labText(post, 'activityId') && labText(post, 'activityTitle') && labText(post, 'criterion')));
+  const cards = posts.map((post, index) => renderCommunityPost({
+    id: labText(post, 'id', 'community-' + index), title: labText(post, 'title', 'Publicação da comunidade'),
+    text: labText(post, 'text'), activityId: labText(post, 'activityId'), activityTitle: labText(post, 'activityTitle'), criterion: labText(post, 'criterion'),
+    tags: labList<string>(post, 'tags'), author: labText(post, 'author', 'Comunidade'), role: labText(post, 'role', 'Comunidade'), time: labText(post, 'time', 'agora'),
+    likes: Number(labText(post, 'likes', '0')) || 0, comments: Number(labText(post, 'comments', '0')) || 0,
+  }, index)).join('');
+  const activityOptions = PROFILE_ACTIVITY_LINKS.map(link => '<option value="' + e(link.id) + '">' + e(link.title) + '</option>').join('');
+  const composer = '<form class="lm-panel lm-post-composer" data-community-post-form novalidate>' + LabAvatar('Ana Beatriz', 'teal', 'tiny') + '<div><label class="sr-only" for="community-post-activity">Atividade relacionada</label><select id="community-post-activity" name="activityLink" required><option value="">Escolha a atividade deste post</option>' + activityOptions + '</select><label class="sr-only" for="community-post-title">Título</label><input id="community-post-title" name="postTitle" maxlength="100" placeholder="Um título curto, do jeito que você contaria pra turma" required><label class="sr-only" for="community-post-text">Texto da publicação</label><textarea id="community-post-text" name="post" maxlength="1000" aria-label="Texto da publicação" placeholder="O que vocês fizeram? O que chamou atenção ou ficou como pergunta?" required></textarea><footer><span class="lm-compose-context-note">O post aparece junto com a atividade e o critério relacionado.</span><button type="submit" class="lm-small-primary">Compartilhar</button></footer></div></form>';
+  const postsSection = '<section class="lm-community-activity-posts"><header><div><span class="lm-eyebrow">DA ATIVIDADE PARA A COMUNIDADE</span><h2>O que a turma andou fazendo</h2></div><span>Posts com contexto</span></header><div class="lm-community-post-list" data-community-post-list>' + cards + '</div></section>';
+  return labPart('community-feed', '<div class="lm-community-feed-stack">' + composer + postsSection + renderOpinionCircles(data, selectedId) + '</div>', selectedId, 'lm-community-column-part');
 }
 function renderCommunityAside(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('community-aside', data);
@@ -1921,7 +2092,7 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-          groups: {}, toggles: {}, fields: {}, publications: [], profileActivityItems: [], profileProjects: [], projectChatMessages: [], projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
+          groups: {}, toggles: {}, fields: {}, communityPosts: [], opinionCircleMessages: {}, profileActivityItems: [], profileProjects: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
           projectChatStatus: null, projectChatPending: false,
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
@@ -1930,6 +2101,7 @@ export function registerComponentElements(): void {
         });
         this.state = this.transitions.next().value;
         this.addEventListener('click', event => this.onClick(event));
+        this.addEventListener('keydown', event => this.onKeyDown(event));
         this.addEventListener('input', event => this.onInput(event));
         this.addEventListener('change', event => this.onChange(event));
         this.addEventListener('submit', event => this.onSubmit(event));
@@ -1951,15 +2123,23 @@ export function registerComponentElements(): void {
           const pending = this.state.interaction.projectChatMessages.find(message => message.id === detail.requestId && message.status === 'pending');
           if (!pending) return;
           if (pending.kind === 'reflection' && pending.revision !== this.projectReflectionRevision) return;
+          if (pending.kind === 'review' && this.state.interaction.projectReviewStatus !== 'pending') return;
           this.transitionInteraction(interaction => ({
             ...interaction,
             projectChatPending: pending.kind === 'reflection' ? interaction.projectChatPending : false,
+            ...(pending.kind === 'review' ? {
+              projectReviewStatus: detail.error ? 'error' as const : 'ready' as const,
+              projectReviewText: detail.reply ?? detail.error ?? 'O Cognoscere local não retornou uma resposta.',
+              groups: { ...interaction.groups, 'project-wizard-step': '0' },
+              toggles: { ...interaction.toggles, 'project-review-confirmed': false },
+            } : {}),
             projectChatMessages: interaction.projectChatMessages.map(message => message.id === detail.requestId
               ? { ...message, role: 'assistant', text: detail.reply ?? detail.error ?? 'O Cognoscere local não retornou uma resposta.', ...(detail.error ? { status: 'error' as const } : { status: undefined }) }
               : message),
           }));
           this.render();
-          if (pending.kind !== 'reflection') this.querySelector<HTMLTextAreaElement>('[data-project-chat-form] textarea')?.focus();
+          if (pending.kind === 'review') this.querySelector<HTMLElement>('[data-project-review-comment]')?.focus();
+          else if (pending.kind !== 'reflection') this.querySelector<HTMLTextAreaElement>('[data-project-chat-form] textarea')?.focus();
         });
       }
       configure(props: DemoPagePartProps): void {
@@ -2084,21 +2264,7 @@ export function registerComponentElements(): void {
       }
       private restoreInteraction(): void {
         const { interaction } = this.state;
-        const feed = this.querySelector<HTMLElement>('.lm-community-feed-stack');
-        if (feed) {
-          for (const text of interaction.publications) {
-            const article = document.createElement('article');
-            article.className = 'lm-panel lm-community-post lm-local-post';
-            const heading = document.createElement('h2');
-            heading.textContent = 'Nova publicação';
-            const body = document.createElement('p');
-            body.textContent = text;
-            const footer = document.createElement('small');
-            footer.textContent = 'Publicado nesta demonstração';
-            article.append(heading, body, footer);
-            feed.prepend(article);
-          }
-        }
+        this.restoreCommunityParticipation();
         this.querySelectorAll<HTMLElement>('[data-interaction-group]').forEach(group => {
           const selected = interaction.groups[group.dataset.interactionGroup ?? ''];
           if (selected === undefined) return;
@@ -2196,6 +2362,41 @@ export function registerComponentElements(): void {
         const composer = this.querySelector<HTMLFormElement>('[data-profile-activity-composer]');
         if (composer) composer.hidden = this.state.interaction.toggles['profile-activity-composer-open'] !== true;
       }
+      private restoreCommunityParticipation(): void {
+        if (this.state.id !== 'community-feed') return;
+        const postList = this.querySelector<HTMLElement>('[data-community-post-list]');
+        if (postList) {
+          postList.querySelectorAll('.lm-community-post-local').forEach(post => post.remove());
+          const posts = this.state.interaction.communityPosts ?? [];
+          for (const [index, post] of posts.entries()) postList.insertAdjacentHTML('afterbegin', renderCommunityPost(post, index, true));
+        }
+        const panels = [...this.querySelectorAll<HTMLElement>('[data-opinion-circle-panel]')];
+        if (!panels.length) return;
+        const fallbackId = panels[0].dataset.opinionCirclePanel ?? '';
+        const selectedId = this.state.interaction.groups['community-opinion-circle'] || fallbackId;
+        this.querySelectorAll<HTMLButtonElement>('[data-opinion-circle-select]').forEach(button => {
+          const active = button.dataset.opinionCircleSelect === selectedId;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-selected', String(active));
+          button.tabIndex = active ? 0 : -1;
+        });
+        for (const panel of panels) panel.hidden = panel.dataset.opinionCirclePanel !== selectedId;
+        for (const [circleId, messages] of Object.entries(this.state.interaction.opinionCircleMessages ?? {})) {
+          const list = [...this.querySelectorAll<HTMLElement>('[data-opinion-message-list]')].find(item => item.dataset.opinionMessageList === circleId);
+          if (!list) continue;
+          list.querySelectorAll('.lm-opinion-message-local').forEach(message => message.remove());
+          for (const message of messages) {
+            const article = document.createElement('article');
+            article.className = 'lm-opinion-message lm-opinion-message-local';
+            const header = document.createElement('header');
+            header.innerHTML = LabAvatar(message.author, message.tone, 'tiny') + '<div><b>' + e(message.author) + '</b><small>' + e(message.role) + ' · ' + e(message.time) + '</small></div>';
+            const body = document.createElement('p');
+            body.textContent = message.text;
+            article.append(header, body);
+            list.append(article);
+          }
+        }
+      }
       private restoreProfileProjects(): void {
         if (!isProfileProjectPart(this.state.id)) return;
         const interaction = this.state.interaction;
@@ -2209,14 +2410,54 @@ export function registerComponentElements(): void {
         const list = this.querySelector<HTMLElement>('[data-profile-project-list]');
         if (list) {
           list.querySelectorAll('.lm-project-row-local').forEach(row => row.remove());
-          for (const project of interaction.profileProjects ?? []) list.insertAdjacentHTML('beforeend', renderProfileProjectCard(project));
+          for (const [index, project] of (interaction.profileProjects ?? []).entries()) {
+            list.insertAdjacentHTML('beforeend', renderProjectPublication({
+              id: project.id, title: project.title, authors: project.authors, goal: project.goal,
+              justification: project.justification, summary: project.summary, audience: project.audience,
+              learningEvidence: project.learningEvidence, competencies: project.competencies, milestones: project.milestones,
+              status: 'Em andamento', progress: project.milestones.length + (project.milestones.length === 1 ? ' marco' : ' marcos'), socialDraft: project.socialDraft,
+            }, index + list.querySelectorAll('.lm-project-publication.is-seed').length));
+          }
+          const expandedId = interaction.groups['project-expanded-id'] ?? '';
+          list.querySelectorAll<HTMLButtonElement>('[data-project-expand]').forEach(button => {
+            const expanded = button.dataset.projectExpand === expandedId;
+            button.setAttribute('aria-expanded', String(expanded));
+            button.closest('.lm-project-publication')?.classList.toggle('is-expanded', expanded);
+            const details = list.querySelector<HTMLElement>('[data-project-publication-details="' + button.dataset.projectExpand + '"]');
+            if (details) details.hidden = !expanded;
+          });
           const empty = list.querySelector<HTMLElement>('[data-project-empty]');
           if (empty) empty.hidden = interaction.profileProjects.length > 0;
         }
+        const wizardStep = Math.max(0, Math.min(3, Number(interaction.groups['project-wizard-step'] ?? '0')));
+        this.querySelectorAll<HTMLElement>('[data-project-step-panel]').forEach(panel => { panel.hidden = Number(panel.dataset.projectStepPanel) !== wizardStep; });
+        this.querySelectorAll<HTMLButtonElement>('[data-project-wizard-step-select]').forEach(tab => {
+          const active = Number(tab.dataset.projectWizardStepSelect) === wizardStep;
+          tab.setAttribute('aria-selected', String(active));
+          tab.tabIndex = active ? 0 : -1;
+          tab.classList.toggle('active', active);
+        });
+        const reviewPanel = this.querySelector<HTMLElement>('[data-project-review-panel]');
+        const reviewStatus = interaction.projectReviewStatus;
+        if (reviewPanel) reviewPanel.hidden = reviewStatus !== 'ready' && reviewStatus !== 'error' && reviewStatus !== 'stale';
+        const reviewBadge = this.querySelector<HTMLElement>('[data-project-review-status]');
+        if (reviewBadge) reviewBadge.textContent = reviewStatus === 'error' ? 'NÃO FOI POSSÍVEL REVISAR'
+          : reviewStatus === 'stale' ? 'FICHA ALTERADA · REVISÃO ANTIGA' : 'LEITURA CONCLUÍDA';
+        const reviewComment = this.querySelector<HTMLElement>('[data-project-review-comment]');
+        if (reviewComment) {
+          const previousReview = interaction.projectReviewText ? renderProjectChatMarkdown(interaction.projectReviewText) : '';
+          reviewComment.innerHTML = reviewStatus === 'ready' ? previousReview
+            : reviewStatus === 'stale' ? previousReview + '<p class="lm-project-review-stale-note">A ficha mudou depois desta leitura. Peça uma nova revisão antes de confirmar.</p>'
+              : '<p>' + e(interaction.projectReviewText || 'A revisão local não respondeu. Confira se o Cognoscere está ativo e tente novamente.') + '</p>';
+        }
+        const reviewConfirm = this.querySelector<HTMLButtonElement>('[data-project-review-confirm]');
+        if (reviewConfirm) reviewConfirm.hidden = reviewStatus !== 'ready';
+        const reviewRetry = this.querySelector<HTMLButtonElement>('[data-project-review-retry]');
+        if (reviewRetry) reviewRetry.hidden = reviewStatus !== 'error' && reviewStatus !== 'stale';
         const calendar = this.querySelector<HTMLElement>('[data-project-calendar]');
         if (calendar) {
           const month = interaction.groups['project-calendar-month'] ?? '2026-10';
-          const selectedDate = interaction.fields[fieldKey('projectMilestoneDate')] ?? '2026-10-21';
+          const selectedDate = interaction.fields[fieldKey('projectMilestoneDate')] ?? '2026-10-28';
           calendar.innerHTML = renderProjectCalendar(month, interaction.projectMilestones ?? [], selectedDate);
         }
         const messages = this.querySelector<HTMLElement>('[data-project-chat-messages]');
@@ -2239,8 +2480,12 @@ export function registerComponentElements(): void {
           chatSubmit.disabled = interaction.projectChatPending;
           chatSubmit.textContent = interaction.projectChatPending ? 'Aguardando Metis local…' : 'Conversar com Metis local →';
         }
+        this.querySelectorAll<HTMLButtonElement>('[data-project-review], [data-project-review-retry]').forEach(button => {
+          button.disabled = interaction.projectChatPending;
+          if (button.hasAttribute('data-project-review')) button.textContent = interaction.projectChatPending ? 'Aguardando revisão local…' : 'Revisar com a IA local →';
+        });
         const dateField = this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneDate"]');
-        const selectedDate = interaction.fields[fieldKey('projectMilestoneDate')] ?? '2026-10-21';
+        const selectedDate = interaction.fields[fieldKey('projectMilestoneDate')] ?? '2026-10-28';
         if (dateField && dateField.value !== selectedDate) dateField.value = selectedDate;
       }
       private restoreProfileEditor(): void {
@@ -2837,10 +3082,13 @@ export function registerComponentElements(): void {
         const values = new FormData(form);
         const context: ProjectAssistantRequest['context'] = {
           title: String(values.get('projectTitle') ?? '').trim(),
+          authors: String(values.get('projectAuthors') ?? '').trim(),
           goal: String(values.get('projectGoal') ?? '').trim(),
+          justification: String(values.get('projectJustification') ?? '').trim(),
           summary: String(values.get('projectSummary') ?? '').trim(),
           audience: String(values.get('projectAudience') ?? '').trim(),
           competencies: values.getAll('projectCompetency').map(String),
+          learningEvidence: String(values.get('projectLearningEvidence') ?? '').trim(),
           socialDraft: values.get('projectSocialDraft') === 'yes',
           milestones: this.state.interaction.projectMilestones.map(({ title, date }) => ({ title, date })),
         };
@@ -2875,13 +3123,83 @@ export function registerComponentElements(): void {
         this.render();
         this.dispatchEvent(new CustomEvent('lumira-project-assistant-request', { bubbles: true, composed: true, detail: request }));
       }
+      private requestProjectReview(): void {
+        const form = this.querySelector<HTMLFormElement>('[data-project-create-form]');
+        if (!form || !isProfileProjectPart(this.state.id) || this.state.interaction.projectChatPending) return;
+        const values = new FormData(form);
+        const required: Array<{ name: string; step: number; label: string }> = [
+          { name: 'projectTitle', step: 0, label: 'Dê um nome ao projeto.' },
+          { name: 'projectAuthors', step: 0, label: 'Identifique quem está criando o projeto.' },
+          { name: 'projectGoal', step: 1, label: 'Conte o que o grupo quer realizar.' },
+          { name: 'projectJustification', step: 1, label: 'Explique por que esse projeto importa.' },
+          { name: 'projectLearningEvidence', step: 2, label: 'Defina o que o grupo quer produzir ou demonstrar.' },
+          { name: 'projectSummary', step: 2, label: 'Descreva como a ideia vai acontecer.' },
+        ];
+        const missing = required.find(field => !String(values.get(field.name) ?? '').trim());
+        if (missing) {
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-wizard-step': String(missing.step) }, feedback: missing.label }));
+          this.render();
+          this.querySelector<HTMLInputElement | HTMLTextAreaElement>('[data-project-create-form] [name="' + missing.name + '"]')?.focus();
+          return;
+        }
+        if (!values.getAll('projectCompetency').length) {
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-wizard-step': '2' }, feedback: 'Escolha pelo menos uma competência para orientar o projeto.' }));
+          this.render();
+          this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectCompetency"]')?.focus();
+          return;
+        }
+        if (!this.state.interaction.projectMilestones.length) {
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-wizard-step': '3' }, feedback: 'Adicione ao menos um marco para organizar os próximos passos.' }));
+          this.render();
+          this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneTitle"]')?.focus();
+          return;
+        }
+        if (this.projectReflectionTimer !== undefined) window.clearTimeout(this.projectReflectionTimer);
+        this.projectReflectionTimer = undefined;
+        this.projectReflectionRevision += 1;
+        const context: ProjectAssistantRequest['context'] = {
+          title: String(values.get('projectTitle') ?? '').trim(),
+          authors: String(values.get('projectAuthors') ?? '').trim(),
+          goal: String(values.get('projectGoal') ?? '').trim(),
+          justification: String(values.get('projectJustification') ?? '').trim(),
+          summary: String(values.get('projectSummary') ?? '').trim(),
+          audience: String(values.get('projectAudience') ?? '').trim(),
+          competencies: values.getAll('projectCompetency').map(String),
+          learningEvidence: String(values.get('projectLearningEvidence') ?? '').trim(),
+          socialDraft: values.get('projectSocialDraft') === 'yes',
+          milestones: this.state.interaction.projectMilestones.map(({ title, date }) => ({ title, date })),
+        };
+        const requestId = projectId();
+        const prompt = 'Revise esta proposta antes da criação. Comente autoria, justificativa, coerência entre competências e evidências, viabilidade dos marcos e possíveis cuidados. Aponte ajustes concretos e termine perguntando se o grupo confirma ou quer revisar.';
+        const conversation = this.state.interaction.projectChatMessages
+          .filter(message => message.kind === 'conversation' && !message.status && message.text.trim())
+          .slice(-8)
+          .map(message => ({ role: message.role === 'student' ? 'user' as const : 'assistant' as const, content: message.text }));
+        const request: ProjectAssistantRequest = {
+          requestId, partId: this.state.id as ProjectAssistantRequest['partId'], kind: 'review', prompt, context, conversation,
+        };
+        const userMessage: ProjectChatMessage = { id: requestId + '-user', kind: 'conversation', role: 'student', text: 'Pedi uma revisão da proposta antes de confirmar.' };
+        const assistantMessage: ProjectChatMessage = { id: requestId, kind: 'review', role: 'assistant', text: '', status: 'pending' };
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          projectChatMessages: [...interaction.projectChatMessages.filter(message => message.kind !== 'reflection' && !(message.kind === 'review' && message.status === 'pending')), userMessage, assistantMessage],
+          projectChatPending: true,
+          projectReviewStatus: 'pending',
+          projectReviewText: '',
+          toggles: { ...interaction.toggles, 'project-review-confirmed': false },
+          feedback: '',
+        }));
+        this.render();
+        this.dispatchEvent(new CustomEvent('lumira-project-assistant-request', { bubbles: true, composed: true, detail: request }));
+      }
       private onClick(event: Event): void {
         if (!(event.target instanceof Element)) return;
         const checkbox = event.target.closest<HTMLInputElement>('input[type="checkbox"], input[type="radio"]');
         if (checkbox && this.contains(checkbox)) {
           const key = checkbox.dataset.interactionToggle;
           if (key) {
-            const feedback = this.state.id === 'pedagogy-activity-builder'
+            const editingProject = isProfileProjectPart(this.state.id) && Boolean(checkbox.closest('[data-project-create-form]'));
+            const feedback = editingProject ? 'Preferência do projeto atualizada.' : this.state.id === 'pedagogy-activity-builder'
               ? 'Conferência do rascunho atualizada.'
               : this.state.id === 'pedagogy-competency'
                 ? 'Critério de observação atualizado.'
@@ -2890,14 +3208,85 @@ export function registerComponentElements(): void {
                   : this.state.id === 'leveling-confirmation'
                     ? 'Conferência do convite atualizada.'
                   : 'Preferência atualizada nesta demonstração.';
-            this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, [key]: checkbox.checked }, feedback }));
+            this.transitionInteraction(interaction => ({
+              ...(editingProject ? staleProjectReview(interaction) : interaction),
+              toggles: { ...interaction.toggles, [key]: checkbox.checked, ...(editingProject ? { 'project-review-confirmed': false } : {}) },
+              feedback,
+            }));
             this.render();
+            if (editingProject) this.scheduleProjectReflection();
           }
           return;
         }
         const button = event.target.closest<HTMLButtonElement>('button');
         if (!button || button.disabled || !this.contains(button)) return;
         if (button.type === 'submit') return;
+        if (this.state.id === 'community-feed' && button.hasAttribute('data-opinion-circle-select')) {
+          const circleId = button.dataset.opinionCircleSelect ?? '';
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            groups: { ...interaction.groups, 'community-opinion-circle': circleId },
+          }));
+          this.render();
+          return;
+        }
+        if (isProfileProjectPart(this.state.id) && button.hasAttribute('data-project-expand')) {
+          const requested = button.dataset.projectExpand ?? '';
+          const expandedId = this.state.interaction.groups['project-expanded-id'] === requested ? '' : requested;
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-expanded-id': expandedId } }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-project-expand="' + requested + '"]')?.focus();
+          return;
+        }
+        if (isProfileProjectPart(this.state.id) && (button.hasAttribute('data-project-wizard-step-select') || button.hasAttribute('data-project-step-next') || button.hasAttribute('data-project-step-previous'))) {
+          const current = Number(this.state.interaction.groups['project-wizard-step'] ?? '0');
+          const selected = button.dataset.projectWizardStepSelect;
+          const next = selected !== undefined ? Number(selected)
+            : button.hasAttribute('data-project-step-next') ? Math.min(3, current + 1) : Math.max(0, current - 1);
+          if (button.hasAttribute('data-project-step-next')) {
+            const form = this.querySelector<HTMLFormElement>('[data-project-create-form]');
+            const values = form ? new FormData(form) : null;
+            const fieldsByStep: Record<number, Array<{ name: string; label: string }>> = {
+              0: [{ name: 'projectTitle', label: 'Dê um nome ao projeto.' }, { name: 'projectAuthors', label: 'Identifique quem está criando o projeto.' }],
+              1: [{ name: 'projectGoal', label: 'Conte o que o grupo quer realizar.' }, { name: 'projectJustification', label: 'Explique por que esse projeto importa.' }],
+              2: [{ name: 'projectLearningEvidence', label: 'Defina o que o grupo quer produzir ou demonstrar.' }, { name: 'projectSummary', label: 'Descreva como a ideia vai acontecer.' }],
+            };
+            const missing = (fieldsByStep[current] ?? []).find(field => !String(values?.get(field.name) ?? '').trim());
+            if (missing) {
+              this.transitionInteraction(interaction => ({ ...interaction, feedback: missing.label }));
+              this.render();
+              this.querySelector<HTMLInputElement | HTMLTextAreaElement>('[data-project-create-form] [name="' + missing.name + '"]')?.focus();
+              return;
+            }
+            if (current === 2 && !values?.getAll('projectCompetency').length) {
+              this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escolha pelo menos uma competência para orientar o projeto.' }));
+              this.render();
+              this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectCompetency"]')?.focus();
+              return;
+            }
+          }
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-wizard-step': String(next) }, feedback: '' }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-project-wizard-step-select="' + next + '"]')?.focus();
+          return;
+        }
+        if (isProfileProjectPart(this.state.id) && (button.hasAttribute('data-project-review') || button.hasAttribute('data-project-review-retry'))) {
+          this.requestProjectReview();
+          return;
+        }
+        if (isProfileProjectPart(this.state.id) && button.hasAttribute('data-project-review-edit')) {
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-wizard-step': '0' }, feedback: '' }));
+          this.render();
+          this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectTitle"]')?.focus();
+          return;
+        }
+        if (isProfileProjectPart(this.state.id) && button.hasAttribute('data-project-review-confirm')) {
+          if (this.state.interaction.projectReviewStatus !== 'ready') return;
+          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, 'project-review-confirmed': true }, feedback: '' }));
+          this.render();
+          this.querySelector<HTMLFormElement>('[data-project-create-form]')?.requestSubmit();
+          return;
+        }
         if (this.state.id === 'student-skills' && (button.hasAttribute('data-student-progress-open') || button.hasAttribute('data-student-progress-close'))) {
           const open = button.hasAttribute('data-student-progress-open');
           this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'student-progress-dashboard-open': open ? 'yes' : '' } }));
@@ -2968,7 +3357,7 @@ export function registerComponentElements(): void {
           return;
         }
         if (isProfileProjectPart(this.state.id) && button.hasAttribute('data-project-create')) {
-          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, 'profile-project-builder-open': true }, feedback: '' }));
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-wizard-step': '0' }, toggles: { ...interaction.toggles, 'profile-project-builder-open': true }, feedback: '' }));
           this.render();
           this.dispatchEvent(new CustomEvent('lumira-project-assistant-status-request', { bubbles: true, composed: true, detail: { partId: this.state.id } }));
           this.scheduleProjectReflection();
@@ -3001,14 +3390,14 @@ export function registerComponentElements(): void {
         if (isProfileProjectPart(this.state.id) && button.dataset.projectCalendarDate) {
           const date = button.dataset.projectCalendarDate;
           const fieldKey = this.state.id + ':projectMilestoneDate';
-          this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, [fieldKey]: date } }));
+          this.transitionInteraction(interaction => ({ ...staleProjectReview(interaction), fields: { ...interaction.fields, [fieldKey]: date } }));
           this.render();
           this.scheduleProjectReflection();
           return;
         }
         if (isProfileProjectPart(this.state.id) && button.dataset.projectMilestoneRemove) {
           const milestoneId = button.dataset.projectMilestoneRemove;
-          this.transitionInteraction(interaction => ({ ...interaction, projectMilestones: interaction.projectMilestones.filter(item => item.id !== milestoneId), feedback: 'Marco removido do calendário do projeto.' }));
+          this.transitionInteraction(interaction => ({ ...staleProjectReview(interaction), projectMilestones: interaction.projectMilestones.filter(item => item.id !== milestoneId), feedback: 'Marco removido do calendário do projeto.' }));
           this.render();
           this.scheduleProjectReflection();
           return;
@@ -3028,7 +3417,7 @@ export function registerComponentElements(): void {
           const monthKey = date.slice(0, 7);
           const fieldKey = this.state.id + ':projectMilestoneTitle';
           this.transitionInteraction(interaction => ({
-            ...interaction,
+            ...staleProjectReview(interaction),
             projectMilestones: [...interaction.projectMilestones, milestone],
             groups: { ...interaction.groups, 'project-calendar-month': monthKey },
             fields: { ...interaction.fields, [fieldKey]: '' },
@@ -3339,6 +3728,48 @@ export function registerComponentElements(): void {
         }
         this.render();
       }
+      private onKeyDown(event: Event): void {
+        if (!(event instanceof KeyboardEvent)) return;
+        if (isProfileProjectPart(this.state.id)) {
+          const currentStep = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('[data-project-wizard-step-select]') : null;
+          if (currentStep && this.contains(currentStep)) {
+            const tabs = [...this.querySelectorAll<HTMLButtonElement>('[data-project-wizard-step-select]')];
+            if (!tabs.length) return;
+            const currentIndex = tabs.indexOf(currentStep);
+            let nextIndex = currentIndex;
+            if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (currentIndex + 1) % tabs.length;
+            else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+            else if (event.key === 'Home') nextIndex = 0;
+            else if (event.key === 'End') nextIndex = tabs.length - 1;
+            else return;
+            event.preventDefault();
+            const step = tabs[nextIndex].dataset.projectWizardStepSelect ?? '0';
+            this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-wizard-step': step } }));
+            this.render();
+            this.querySelector<HTMLButtonElement>('[data-project-wizard-step-select="' + step + '"]')?.focus();
+            return;
+          }
+        }
+        if (this.state.id !== 'community-feed') return;
+        const current = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('[data-opinion-circle-select]') : null;
+        if (!current || !this.contains(current)) return;
+        const tabs = [...this.querySelectorAll<HTMLButtonElement>('[data-opinion-circle-select]')];
+        if (!tabs.length) return;
+        const currentIndex = tabs.indexOf(current);
+        let nextIndex = currentIndex;
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (currentIndex + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') nextIndex = 0;
+        else if (event.key === 'End') nextIndex = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        const nextTab = tabs[nextIndex];
+        const circleId = nextTab.dataset.opinionCircleSelect ?? '';
+        this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'community-opinion-circle': circleId } }));
+        this.render();
+        [...this.querySelectorAll<HTMLButtonElement>('[data-opinion-circle-select]')]
+          .find(tab => tab.dataset.opinionCircleSelect === circleId)?.focus();
+      }
       private onInput(event: Event): void {
         if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) return;
         const field = event.target;
@@ -3364,11 +3795,14 @@ export function registerComponentElements(): void {
         const creatingActivity = this.state.id === 'teacher-activity' && Boolean(field.closest('[data-profile-activity-composer]'));
         const editingProject = isProfileProjectPart(this.state.id) && Boolean(field.closest('[data-project-create-form]'));
         this.transitionInteraction(interaction => ({
-          ...interaction,
+          ...(editingProject ? staleProjectReview(interaction) : interaction),
           fields: { ...interaction.fields, [key]: field.value },
           ...(creatingActivity && interaction.feedback ? { feedback: '' } : {}),
         }));
-        if (editingProject) this.scheduleProjectReflection();
+        if (editingProject) {
+          this.restoreProfileProjects();
+          this.scheduleProjectReflection();
+        }
       }
       private onChange(event: Event): void {
         if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) return;
@@ -3409,6 +3843,7 @@ export function registerComponentElements(): void {
         if (field instanceof HTMLInputElement && (field.type === 'checkbox' || field.type === 'radio')) {
           const toggle = field.dataset.interactionToggle ?? key;
           if (!toggle) return;
+          const editingProject = isProfileProjectPart(this.state.id) && Boolean(field.closest('[data-project-create-form]'));
           const feedback = this.state.id === 'pedagogy-activity-builder'
             ? 'Conferência do rascunho atualizada.'
             : this.state.id === 'pedagogy-competency'
@@ -3416,10 +3851,14 @@ export function registerComponentElements(): void {
               : this.state.id === 'pedagogy-material-share'
                 ? 'Seleção de publicação atualizada.'
                 : 'Preferência atualizada nesta demonstração.';
-          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, [toggle]: field.checked }, feedback }));
+          this.transitionInteraction(interaction => ({
+            ...(editingProject ? staleProjectReview(interaction) : interaction),
+            toggles: { ...interaction.toggles, [toggle]: field.checked, ...(editingProject ? { 'project-review-confirmed': false } : {}) },
+            feedback,
+          }));
         } else {
           if (!key) return;
-          this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, [key]: field.value } }));
+          this.transitionInteraction(interaction => ({ ...(editingProject ? staleProjectReview(interaction) : interaction), fields: { ...interaction.fields, [key]: field.value } }));
         }
         this.render();
         if (editingProject) this.scheduleProjectReflection();
@@ -3453,10 +3892,13 @@ export function registerComponentElements(): void {
             prompt,
             context: {
               title: String(projectValues?.get('projectTitle') ?? ''),
+              authors: String(projectValues?.get('projectAuthors') ?? ''),
               goal: String(projectValues?.get('projectGoal') ?? ''),
+              justification: String(projectValues?.get('projectJustification') ?? ''),
               summary: String(projectValues?.get('projectSummary') ?? ''),
               audience: String(projectValues?.get('projectAudience') ?? ''),
               competencies: projectValues?.getAll('projectCompetency').map(String) ?? [],
+              learningEvidence: String(projectValues?.get('projectLearningEvidence') ?? ''),
               socialDraft: projectValues?.get('projectSocialDraft') === 'yes',
               milestones: this.state.interaction.projectMilestones.map(({ title, date }) => ({ title, date })),
             },
@@ -3476,40 +3918,59 @@ export function registerComponentElements(): void {
           return;
         }
         if (form?.matches('[data-project-create-form]') && isProfileProjectPart(this.state.id)) {
+          if (this.state.interaction.projectReviewStatus !== 'ready') {
+            this.requestProjectReview();
+            return;
+          }
+          if (this.state.interaction.toggles['project-review-confirmed'] !== true) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Leia a revisão do Cognoscere local e confirme a criação do rascunho.' }));
+            this.render();
+            this.querySelector<HTMLButtonElement>('[data-project-review-confirm]')?.focus();
+            return;
+          }
           const values = new FormData(form);
           const title = String(values.get('projectTitle') ?? '').trim();
+          const authors = String(values.get('projectAuthors') ?? '').trim();
           const goal = String(values.get('projectGoal') ?? '').trim();
+          const justification = String(values.get('projectJustification') ?? '').trim();
           const summary = String(values.get('projectSummary') ?? '').trim();
+          const learningEvidence = String(values.get('projectLearningEvidence') ?? '').trim();
           const audience = String(values.get('projectAudience') ?? 'Comunidade escolar');
           const competencies = values.getAll('projectCompetency').map(String);
           const milestones = this.state.interaction.projectMilestones;
-          if (!title || !goal || !summary) {
-            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Preencha nome, objetivo e plano antes de salvar o projeto.' }));
+          if (!title || !authors || !goal || !justification || !summary || !learningEvidence) {
+            const required = [
+              ['projectTitle', title], ['projectAuthors', authors], ['projectGoal', goal],
+              ['projectJustification', justification], ['projectLearningEvidence', learningEvidence], ['projectSummary', summary],
+            ] as const;
+            const missing = required.find(([, value]) => !value)?.[0] ?? 'projectTitle';
+            const steps: Record<string, string> = { projectTitle: '0', projectAuthors: '0', projectGoal: '1', projectJustification: '1', projectLearningEvidence: '2', projectSummary: '2' };
+            this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-wizard-step': steps[missing] }, feedback: 'Complete os campos de autoria, justificativa e aprendizagem antes de criar o projeto.' }));
             this.render();
-            this.querySelector<HTMLInputElement | HTMLTextAreaElement>('[data-project-create-form] [name="projectTitle"]')?.focus();
+            this.querySelector<HTMLInputElement | HTMLTextAreaElement>('[data-project-create-form] [name="' + missing + '"]')?.focus();
             return;
           }
-          if (this.projectReflectionTimer !== undefined) window.clearTimeout(this.projectReflectionTimer);
-          this.projectReflectionTimer = undefined;
-          this.projectReflectionRevision += 1;
           if (!competencies.length) {
-            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escolha ao menos uma competência relacionada ao projeto.' }));
+            this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-wizard-step': '2' }, feedback: 'Escolha ao menos uma competência relacionada ao projeto.' }));
             this.render();
             this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectCompetency"]')?.focus();
             return;
           }
           if (!milestones.length) {
-            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Adicione ao menos um marco no calendário para organizar o trabalho.' }));
+            this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'project-wizard-step': '3' }, feedback: 'Adicione ao menos um marco no calendário para organizar o trabalho.' }));
             this.render();
             this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneTitle"]')?.focus();
             return;
           }
+          if (this.projectReflectionTimer !== undefined) window.clearTimeout(this.projectReflectionTimer);
+          this.projectReflectionTimer = undefined;
+          this.projectReflectionRevision += 1;
           const project: ProfileProjectItem = {
-            id: projectId(), title, goal, summary, audience, competencies, milestones: milestones.map(item => ({ ...item })),
+            id: projectId(), title, authors, goal, justification, summary, audience, learningEvidence, competencies, milestones: milestones.map(item => ({ ...item })),
             socialDraft: values.has('projectSocialDraft'), createdAt: new Date().toISOString(),
           };
           const fieldPrefix = this.state.id + ':';
-          const fieldNames = ['projectTitle', 'projectGoal', 'projectSummary', 'projectAudience', 'projectMilestoneTitle', 'projectMilestoneDate'];
+          const fieldNames = ['projectTitle', 'projectAuthors', 'projectAudience', 'projectGoal', 'projectJustification', 'projectLearningEvidence', 'projectSummary', 'projectMilestoneTitle', 'projectMilestoneDate'];
           const clearedFields = { ...this.state.interaction.fields };
           fieldNames.forEach(name => { delete clearedFields[fieldPrefix + name]; });
           const clearedToggles: Record<string, boolean> = { ...this.state.interaction.toggles, 'project-social-draft': true };
@@ -3519,6 +3980,10 @@ export function registerComponentElements(): void {
             profileProjects: [...interaction.profileProjects, project],
             projectMilestones: [],
             projectChatMessages: [],
+            projectChatPending: false,
+            projectReviewStatus: 'idle',
+            projectReviewText: '',
+            groups: { ...interaction.groups, 'project-expanded-id': project.id, 'project-wizard-step': '0' },
             fields: clearedFields,
             toggles: { ...clearedToggles, 'profile-project-builder-open': false },
             feedback: 'Projeto “' + title + '” salvo nesta demonstração local como ' + (project.socialDraft ? 'rascunho para o Social.' : 'projeto privado.'),
@@ -3531,17 +3996,20 @@ export function registerComponentElements(): void {
           const values = new FormData(form);
           const title = String(values.get('activityTitle') ?? '').trim();
           const text = String(values.get('activityText') ?? '').trim();
+          const activityId = String(values.get('activityLink') ?? '');
+          const activity = PROFILE_ACTIVITY_LINKS.find(link => link.id === activityId);
           const rawKind = String(values.get('activityKind') ?? 'post');
           const kind: ProfileActivityKind = rawKind === 'activity' || rawKind === 'video' || rawKind === 'project' ? rawKind : 'post';
           const tags = String(values.get('activityTags') ?? '').split(/[,;\n]/).map(tag => tag.trim()).filter(Boolean).slice(0, 8);
-          if (!title || !text) {
-            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Preencha o título e a descrição para publicar.' }));
+          if (!title || !text || !activity) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escolha a atividade relacionada e preencha o título e o relato.' }));
             this.render();
-            this.querySelector<HTMLInputElement>('[data-profile-activity-composer] [name="activityTitle"]')?.focus();
+            this.querySelector<HTMLSelectElement>('[data-profile-activity-composer] [name="activityLink"]')?.focus();
             return;
           }
           const item: ProfileActivityItem = {
-            id: Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7), kind, title, text, tags,
+            id: Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7), kind, title, text,
+            activityId: activity.id, activityTitle: activity.title, criterion: activity.criterion, tags,
             publishedAt: 'Agora', likes: 0, comments: 0,
           };
           const fieldPrefix = 'teacher-activity:';
@@ -3551,7 +4019,7 @@ export function registerComponentElements(): void {
             groups: { ...interaction.groups, 'teacher-activity-filter': kind },
             toggles: { ...interaction.toggles, 'profile-activity-composer-open': false },
             fields: Object.fromEntries(Object.entries(interaction.fields).filter(([key]) => ![
-              fieldPrefix + 'activityKind', fieldPrefix + 'activityTitle', fieldPrefix + 'activityText', fieldPrefix + 'activityTags',
+              fieldPrefix + 'activityKind', fieldPrefix + 'activityLink', fieldPrefix + 'activityTitle', fieldPrefix + 'activityText', fieldPrefix + 'activityTags',
             ].includes(key))),
             feedback: PROFILE_ACTIVITY_LABELS[kind] + ' adicionado ao perfil nesta demonstração local.',
           }));
@@ -3762,22 +4230,53 @@ export function registerComponentElements(): void {
           this.render();
           return;
         }
-        if (this.state.id === 'community-feed' && form) {
-          const field = form.querySelector<HTMLTextAreaElement>('textarea[name="post"]');
-          const text = field?.value.trim() ?? '';
+        if (this.state.id === 'community-feed' && form?.matches('[data-opinion-message-form]')) {
+          const circleId = form.dataset.opinionMessageForm ?? '';
+          const text = String(new FormData(form).get('opinionMessage') ?? '').trim();
           if (!text) {
-            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escreva uma publicação antes de enviar.' }));
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escreva uma ideia ou pergunta antes de enviar.' }));
             this.render();
             return;
           }
-          const fieldKey = field?.dataset.interactionField;
+          const message: CommunityOpinionMessage = { author: 'Ana Beatriz', role: 'Professora · Comunidade', text, time: 'agora', tone: 'teal' };
           this.transitionInteraction(interaction => ({
             ...interaction,
-            publications: [...interaction.publications, text],
-            fields: fieldKey ? { ...interaction.fields, [fieldKey]: '' } : interaction.fields,
-            feedback: 'Publicação adicionada ao feed local.',
+            opinionCircleMessages: { ...interaction.opinionCircleMessages, [circleId]: [...(interaction.opinionCircleMessages[circleId] ?? []), message] },
+            groups: { ...interaction.groups, 'community-opinion-circle': circleId },
+            fields: { ...interaction.fields, ['community-feed:circle-message:' + circleId]: '' },
+            feedback: 'Mensagem adicionada à roda nesta demonstração local.',
           }));
-        } else if (this.state.id === 'access-form') {
+          this.render();
+          [...this.querySelectorAll<HTMLFormElement>('[data-opinion-message-form]')]
+            .find(item => item.dataset.opinionMessageForm === circleId)?.querySelector<HTMLTextAreaElement>('textarea')?.focus();
+          return;
+        }
+        if (this.state.id === 'community-feed' && form?.matches('[data-community-post-form]')) {
+          const values = new FormData(form);
+          const text = String(values.get('post') ?? '').trim();
+          const title = String(values.get('postTitle') ?? '').trim();
+          const activity = PROFILE_ACTIVITY_LINKS.find(link => link.id === String(values.get('activityLink') ?? ''));
+          if (!activity || !title || !text) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escolha a atividade relacionada e conte o que aconteceu.' }));
+            this.render();
+            return;
+          }
+          const post: CommunityPostDraft = {
+            id: Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7), title, text,
+            activityId: activity.id, activityTitle: activity.title, criterion: activity.criterion,
+            tags: [], author: 'Ana Beatriz', role: 'Professora · Comunidade', time: 'agora', likes: 0, comments: 0,
+          };
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            communityPosts: [...interaction.communityPosts, post],
+            fields: { ...interaction.fields, 'community-feed:post': '', 'community-feed:postTitle': '', 'community-feed:activityLink': '' },
+            feedback: 'Post compartilhado com a atividade e o critério relacionados. Ele está visível só nesta demonstração local.',
+          }));
+          this.render();
+          this.querySelector<HTMLSelectElement>('[data-community-post-form] [name="activityLink"]')?.focus();
+          return;
+        }
+        if (this.state.id === 'access-form') {
           this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Acesso demonstrativo processado; autenticação real não está conectada.' }));
         } else {
           this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Envio concluído nesta demonstração.' }));

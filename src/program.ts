@@ -67,13 +67,16 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
   async function converseAboutProject(request: ProjectAssistantRequest): Promise<{ reply: string }> {
     if (!['teacher-projects', 'student-projects'].includes(request.partId)) throw new Error('Parte do projeto inválida.');
     const reflection = request.kind === 'reflection';
+    const review = request.kind === 'review';
     const system = [
       'Você é o assistente local de planejamento colaborativo da plataforma educacional Lumira. A conversa é processada pelo Metis local; o MiniCPM local revisa a resposta no Cognoscere Forge.',
       'Ajude a compreender e desenvolver projetos da comunidade escolar e do Social. Responda em português natural e contextualizado.',
       'Formate com Markdown legível: primeiro um parágrafo direto; use títulos e listas em respostas com várias partes; negrito com moderação; blocos de código somente para código. Evite tabelas, imagens, HTML, JSON e comandos de sistema.',
       reflection
         ? 'Esta é uma reflexão automática da ficha após uma alteração. Atualize uma única síntese curta do que entendeu sobre o projeto com base somente nos campos, competências e marcos atuais. Aponte lacunas sem inventar dados. Não trate esta reflexão como pedido de edição e não afirme que salvou ou publicou.'
-        : 'Converse sobre o pedido considerando a ficha atual e as mensagens anteriores. Sugira objetivos, etapas, competências e marcos quando úteis. A resposta orienta a pessoa; ela revisa e altera a ficha manualmente.',
+        : review
+          ? 'Revise a proposta de projeto antes de sua confirmação. Leia autoria, objetivo, justificativa, plano, público, competências, evidência pretendida e marcos. Responda em texto natural e Markdown: comente o que está coerente, indique lacunas ou riscos concretos sem inventar informações e proponha ajustes quando necessário. Termine perguntando se a pessoa confirma a criação ou quer revisar os passos. Não altere, salve, publique nem aprove o projeto por conta própria; a decisão é da pessoa.'
+          : 'Converse sobre o pedido considerando a ficha atual e as mensagens anteriores. Sugira objetivos, etapas, competências e marcos quando úteis. A resposta orienta a pessoa; ela revisa e altera a ficha manualmente.',
       `Papel: ${request.partId === 'student-projects' ? 'estudante' : 'professor'}.`,
       `Ficha atual: ${JSON.stringify(request.context)}.`,
     ].join('\n');
