@@ -4754,11 +4754,7 @@ lumira-page-part {
 .lm-primary-button:hover { background: #0b486b; }
 .lm-secondary-button:hover,
 .lm-quiet-action:hover { background: #f2f6f9; }
-.lm-sequence-empty,
-.lm-reflection-empty { display: flex; align-items: center; gap: 12px; min-height: 74px; margin-top: 12px; padding: 14px; border: 1px dashed #cbd9e5; border-radius: 9px; background: #f9fbfd; color: #63788c; }
-.lm-reflection-empty>span { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #e8f3f8; color: #23769b; font-size: 18px; }
-.lm-reflection-empty b { color: #38556f; font-size: 11px; }
-.lm-reflection-empty p { margin: 3px 0 0; font-size: 10px; line-height: 1.5; }
+.lm-sequence-empty { display: flex; align-items: center; gap: 12px; min-height: 74px; margin-top: 12px; padding: 14px; border: 1px dashed #cbd9e5; border-radius: 9px; background: #f9fbfd; color: #63788c; }
 .lm-action-feedback { min-height: 15px; margin: 8px 0 0; color: #18715c; font-size: 10px; line-height: 1.5; }
 .lm-activity-editor { margin-top: 15px; padding: 14px; border: 1px solid #e1e8ef; border-radius: 10px; background: #fbfcfd; }
 .lm-activity-editor-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -4855,13 +4851,6 @@ lumira-page-part {
 .lm-learner-response form textarea { min-height: 155px; font-size: 12px; }
 .lm-response-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 9px; margin-top: 10px; }
 .lm-response-footer>span { color: #8796a3; font-size: 9px; }
-.lm-reflection-result { margin-top: 10px; padding: 13px; border: 1px solid #e5e0f4; border-radius: 9px; background: #fbfaff; }
-.lm-reflection-result>p { margin: 0; color: #3d5068; font-size: 11px; line-height: 1.75; white-space: pre-line; }
-.lm-reflection-boundary { display: grid; gap: 4px; margin-top: 10px; padding-top: 9px; border-top: 1px solid #e8e4f1; color: #776c99; font-size: 9px; line-height: 1.5; }
-.lm-attempt-history { display: grid; gap: 7px; margin-top: 9px; }
-.lm-attempt-history article { padding: 9px 11px; border: 1px solid #edf0f3; border-radius: 8px; background: #fff; }
-.lm-attempt-history b { color: #607489; font-size: 9px; }
-.lm-attempt-history p { margin: 4px 0 0; color: #8795a1; font-size: 9px; line-height: 1.5; }
 @media (max-width: 900px) {
   .lm-context-fields { grid-template-columns: 1fr 1fr; }
   .lm-context-wide { grid-column: 1 / -1; }
@@ -5083,12 +5072,28 @@ lumira-page-part {
 .lm-question-panel>label { gap: 6px; }
 .lm-question-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 9px; }
 .lm-question-actions>div { display: flex; gap: 6px; align-items: center; }
-.lm-question-reflection { display: grid; gap: 7px; margin-top: 10px; padding: 11px; border: 1px solid #e6e0ef; border-radius: 8px; background: #fbf9fd; }
-.lm-question-reflection>p { margin: 0; color: #5d5670; font-size: 9px; line-height: 1.65; white-space: pre-line; }
-.lm-question-reflection>small { color: #8b849b; font-size: 8px; }
 .lm-question-session-complete { margin-top: 11px; }
 .lm-question-session-complete h3 { color: #2e5140; }
 .lm-question-session-complete p { max-width: 600px; }
+.lm-question-monitor-feedback { margin-top: 14px; }
+.lm-monitor-feedback-pending { display: flex; align-items: flex-start; gap: 11px; margin-top: 12px; padding: 13px; border: 1px dashed #cad8e3; border-radius: 9px; background: #f8fafc; color: #61788b; }
+.lm-monitor-feedback-pending>span { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #eaf0f4; color: #637f91; font-size: 16px; }
+.lm-monitor-feedback-pending b { color: #38556c; font-size: 11px; }
+.lm-monitor-feedback-pending p { margin: 3px 0 0; font-size: 10px; line-height: 1.55; }
+.lm-monitor-feedback-receipt { margin-top: 12px; padding: 14px; border: 1px solid #d5e9df; border-radius: 9px; background: #f6fbf7; }
+.lm-monitor-feedback-status { display: flex; align-items: center; gap: 9px; }
+.lm-monitor-feedback-status h3 { margin: 2px 0 0; color: #28523e; font-size: 13px; }
+.lm-monitor-feedback-receipt>p { margin: 10px 0; color: #536c60; font-size: 10px; line-height: 1.65; }
+.lm-monitor-attempt-record { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin: 12px 0; }
+.lm-monitor-attempt-record>div { display: grid; gap: 4px; padding: 9px; border: 1px solid #e1ece4; border-radius: 7px; background: #fff; }
+.lm-monitor-attempt-record dt { color: #7b8e81; font-size: 8px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.lm-monitor-attempt-record dd { margin: 0; color: #355b46; font-size: 10px; font-weight: 750; }
+.lm-monitor-attempt-roadmap { display: grid; gap: 4px; padding: 9px; border-left: 2px solid #9bb7a5; background: #fff; }
+.lm-monitor-attempt-roadmap b { color: #456650; font-size: 9px; }
+.lm-monitor-attempt-roadmap span { color: #6f8274; font-size: 9px; line-height: 1.5; }
+@media (max-width: 760px) {
+  .lm-monitor-attempt-record { grid-template-columns: 1fr; }
+}
 @media (max-width: 760px) {
   .lm-leveling-registration-fields { grid-template-columns: 1fr; }
   .lm-quest-layout { grid-template-columns: 1fr; }

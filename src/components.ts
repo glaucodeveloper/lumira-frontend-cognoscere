@@ -178,13 +178,13 @@ const presentationNotes: Record<string, string> = {
   'pedagogy-course-sequence': 'A sequência simulada organiza base conceitual, hipótese inicial, representação, mudança de condição e aplicação independente para ensinar uma relação em mais de um contexto.',
   'pedagogy-material-share': 'A publicação cria uma peça compartilhável a partir do material revisado. A resposta privada e a devolutiva individual ficam fora do conteúdo público.',
   'learner-activity-brief': 'O enunciado oferece contexto, informações e uma pergunta aberta sem mostrar os critérios internos de análise.',
-  'learner-response': 'O estudante registra e envia sua explicação no espaço reservado. A tentativa fica visível como demonstração local e pode receber uma reflexão simulada.',
-  'learner-reflection': 'A reflexão de IA cita a própria resposta e aponta uma relação a considerar. Ela não atribui nota, não classifica o estudante e não altera seu percurso.',
+  'learner-response': 'O estudante registra e envia sua explicação no espaço reservado. A tela confirma o registro da tentativa demonstrativa.',
   'leveling-assessment': 'A matrícula começa com idade e série, que definem o contexto da sondagem. Um stepper conduz cinco situações de uma competência e atualiza uma pontuação demonstrativa a cada resposta; idade e série não determinam domínio nem progressão.',
   'quest-board': 'As competições sociais são eventos cadastrados com organização, período, formato, regulamento, pontuação e etapas de entrega. A inscrição e cada participação ficam registradas no histórico do evento.',
   'quest-principles': 'Pontuação e colocação seguem o regulamento de cada competição. O resultado social não vira nota curricular; respostas pedagógicas permanecem no espaço reservado.',
   'competency-question-context': 'Cada pergunta apresenta uma situação e dados suficientes para tornar observável uma relação da competência em foco, sem sugerir uma fórmula ou revelar o contrato interno de avaliação.',
-  'competency-question-response': 'A página percorre cinco contextos para a mesma competência, preserva o rascunho por questão e registra cada envio separadamente. A leitura demonstrativa não pontua nem define domínio.',
+  'competency-question-response': 'A página percorre cinco contextos para a mesma competência, preserva o rascunho por questão e entrega o conjunto ao monitor quando a pessoa finaliza. O registro não pontua nem define domínio.',
+  'competency-monitor-feedback': 'O monitor confirma a entrega do questionário e informa a tentativa demonstrativa atribuída. O histórico e a abertura de novas tentativas ficam preparados para integração futura.',
   'student-hero': 'Apresente a identidade pública do estudante com o mesmo vocabulário visual do perfil docente, adaptado a um papel discente.',
   'student-stories': 'Mostre projetos e momentos que o estudante escolhe compartilhar. A proposta preserva a natureza social dos stories sem expor registros escolares.',
   'student-skills': 'Apresente temas e competências que o estudante escolheu explorar, sem transformar interesse em nota ou avaliação pública.',
@@ -225,12 +225,12 @@ const platformResponsibilities: Record<string, string> = {
   'pedagogy-material-share': 'Depois da revisão, a professora escolhe como apresentar o material, a quem disponibilizá-lo e quais partes podem circular. A publicação é um objeto próprio, vinculado à matéria e à competência sem carregar a resposta privada que motivou a produção.\n\nO conteúdo social comunica a proposta pedagógica e preserva sua autoria. Respostas individuais, hipóteses e pareceres de sondagem permanecem no acompanhamento reservado.',
   'learner-activity-brief': 'A atividade apresenta uma situação concreta, fornece os dados necessários e pede uma conclusão justificada sem revelar os critérios internos do monitor. O estudante pode estimar, organizar uma tabela, calcular ou explicar uma relação com suas próprias palavras.\n\nO contexto não dita um procedimento. Ele dá condições para que diferentes estratégias mostrem o que a pessoa considerou e como revisou sua hipótese diante de uma mudança.',
   'learner-response': 'A resposta é uma produção pedagógica privada, ligada à revisão da atividade e às referências usadas. O envio confirma uma tentativa sem apagar versões anteriores e sem publicar o texto no perfil social.\n\nA análise posterior deve localizar as evidências na própria resposta. Se faltar informação, isso descreve o que aquela produção mostrou, não uma característica fixa do estudante.',
-  'learner-reflection': 'A reflexão devolve ao estudante uma leitura compreensível do que escreveu, com trechos que sustentam os pontos observados e uma oportunidade de continuar pensando.\n\nEla é um apoio para estudar, não uma nota ou decisão automática. O professor pode revisar o parecer, e uma nova resposta em outro contexto é necessária antes de concluir se a compreensão se mantém.',
+  'competency-monitor-feedback': 'Depois de responder e revisar os cinco itens, o estudante finaliza a entrega para o monitor. A peça exibe a confirmação de recebimento e o identificador demonstrativo da tentativa, sem fingir uma análise real do modelo.\n\nO formato reserva um ponto de retorno para o monitor e prevê identificação e histórico de tentativas. Neste protótipo, o sistema de tentativas ainda não persiste respostas, não reabre o questionário e não calcula nota ou domínio.',
   'leveling-assessment': 'A matrícula no nivelamento começa com o cadastro demonstrativo de idade e série. Essa combinação situa a etapa escolar e prepara uma sondagem de uma competência específica.\n\nDepois do cadastro, um stepper apresenta cinco situações em sequência. Cada resposta atualiza a barra da competência e pode ser revisada; a pontuação serve apenas para demonstrar o fluxo. A política institucional não define um coeficiente idade/série nem uma regra de classificação, portanto a interface não transforma esse resultado em nota, domínio ou avanço escolar.',
   'quest-board': 'As quests são competições sociais cadastradas como eventos: cada uma identifica organização, período, regras, formato de participação, critérios de pontuação e etapas com entregas. Antes de entrar, o estudante confere o regulamento e se inscreve no evento escolhido.\n\nA participação mantém um registro rastreável de inscrição, entregas e conclusão. Pontuação e colocação pertencem às regras daquela competição; não são notas, níveis nem evidências automáticas de domínio curricular.',
   'quest-principles': 'A competição informa quem organiza, quem pode participar, como os pontos serão atribuídos e quando cada etapa termina. O histórico da inscrição e das entregas deixa visível o caminho percorrido pela pessoa ou equipe.\n\nO resultado descreve somente aquela disputa social. A professora continua lendo evidências de aprendizagem no espaço pedagógico, com os critérios próprios de cada competência.',
   'competency-question-context': 'A competência em foco é relacionar potência total, duração de uso e consumo. O contrato interno verifica essas relações por critérios, mas a questão mostra ao estudante somente a situação, os dados, as referências liberadas e o pedido de resposta.\n\nOs cinco itens mudam o contexto para observar a transferência da relação estudada. Em cada página, é possível salvar uma tentativa e revisar o próprio texto sem receber um rótulo global.',
-  'competency-question-response': 'O estudante percorre cinco perguntas contextualizadas, uma por vez, e mantém um rascunho próprio em cada item. O envio guarda a resposta e apresenta uma reflexão estática de demonstração, claramente separada de uma análise real do modelo.\n\nA síntese mostra quais itens foram respondidos e encaminha o conjunto para revisão. Ela não calcula nota, não declara domínio e não muda automaticamente o próximo conteúdo.',
+  'competency-question-response': 'O estudante percorre cinco perguntas contextualizadas, uma por vez, e mantém um rascunho próprio em cada item. Registrar uma questão guarda a resposta; depois dos cinco registros, uma ação explícita finaliza e entrega o questionário ao componente de feedback do monitor.\n\nA entrega recebe o identificador demonstrativo da tentativa 01. O monitor mostra uma confirmação local de recebimento; a análise real, o histórico persistente e a abertura de novas tentativas dependem de integração futura. Nenhuma resposta isolada calcula nota, declara domínio ou muda o próximo conteúdo.',
   'student-hero': 'O perfil apresenta a pessoa estudante, suas produções e aspectos de seu percurso que podem ser compartilhados. Ele permite reconhecer autoria e participação sem converter a identidade pública em prontuário de aprendizagem.\n\nRespostas da sondagem, hipóteses, dificuldades observadas e interpretações da IA pertencem ao acompanhamento reservado e não devem aparecer no perfil por padrão. A pessoa pode mostrar o que escolheu produzir enquanto o trabalho pedagógico conserva seu contexto e suas permissões.',
   'student-stories': 'Os stories abrem espaço para o estudante compartilhar trabalhos, descobertas e produções que escolheu divulgar. Uma representação, explicação ou projeto pode convidar outras pessoas a conhecer o raciocínio que ela expressa.\n\nEssa participação não publica automaticamente respostas de sondagem ou dificuldades individuais. Assim, a comunidade circula conhecimento e o acompanhamento formativo mantém privadas as devolutivas dirigidas a quem aprende e a quem orienta.',
   'student-skills': 'Esta parte reúne temas e competências que o estudante escolheu explorar. A escolha orienta descobertas, projetos e conversas com a comunidade, mas não afirma domínio nem funciona como resultado de avaliação.\n\nA compreensão continua sendo acompanhada no espaço pedagógico por evidências contextualizadas e devolutivas reservadas. O perfil torna visíveis interesses autorizados sem expor respostas, hipóteses ou pareceres individuais.',
@@ -472,14 +472,13 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
     ],
   },
   {
-    id: 'student-activity', title: 'Atividade do aluno', description: 'Enunciado contextual, resposta reservada e reflexão simulada por evidências.',
-    presentation: 'Proposta derivada da jornada de atividade aberta. O estudante recebe uma versão aprovada, envia uma resposta privada e vê uma reflexão local que cita o próprio texto sem atribuir nota nem alterar o percurso.',
+    id: 'student-activity', title: 'Atividade do aluno', description: 'Enunciado contextual e resposta reservada com confirmação de envio.',
+    presentation: 'Proposta derivada da jornada de atividade aberta. O estudante recebe uma versão aprovada e envia uma resposta privada. A tela confirma o registro da tentativa sem alterar o percurso.',
     evidence: 'derived', fixtureKey: 'student-activity', defaultComponentId: 'learner-activity-brief',
     regions: [
       ...shellParts('student-activity', 'derived'),
       partSpec('learner-activity-brief', 'Enunciado e contexto', 'Material aprovado, contexto e pergunta aberta.', 'derived', 'student-activity'),
-      partSpec('learner-response', 'Sua resposta', 'Editor privado da tentativa com envio local demonstrativo.', 'derived', 'student-activity'),
-      partSpec('learner-reflection', 'Reflexão sobre a resposta', 'Reflexão de IA simulada com evidências da produção enviada.', 'derived', 'student-activity'),
+      partSpec('learner-response', 'Sua resposta', 'Editor privado da tentativa com confirmação de envio local.', 'derived', 'student-activity'),
     ],
   },
   {
@@ -502,13 +501,14 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
     ],
   },
   {
-    id: 'competency-questions', title: 'Questões de competência', description: 'Cinco respostas contextualizadas para uma competência em foco.',
-    presentation: 'Proposta derivada do plano de sondagem inicial. A página apresenta cinco contextos variados para a mesma competência, guarda rascunhos e respostas por item e deixa a revisão docente separada da experiência do estudante.',
+    id: 'competency-questions', title: 'Questões de competência', description: 'Cinco respostas contextualizadas, entrega final e feedback de monitor.',
+    presentation: 'Proposta derivada do plano de sondagem inicial. A página apresenta cinco contextos variados para a mesma competência, guarda rascunhos e respostas por item e oferece uma finalização explícita para entregar o questionário ao monitor. O feedback confirma a entrega e identifica a tentativa demonstrativa; análise real, histórico persistente e novas tentativas ficam para integração futura.',
     evidence: 'derived', fixtureKey: 'competency-questions', defaultComponentId: 'competency-question-context',
     regions: [
       ...shellParts('competency-questions', 'derived'),
       partSpec('competency-question-context', 'Competência e plano de questões', 'Ação aplicada, referências e cobertura da sondagem.', 'derived', 'competency-questions'),
-      partSpec('competency-question-response', 'Responder questões', 'Stepper de cinco questões, rascunhos, envios e reflexão mock.', 'derived', 'competency-questions'),
+      partSpec('competency-question-response', 'Responder questões', 'Stepper de cinco questões, rascunhos e entrega final explícita.', 'derived', 'competency-questions'),
+      partSpec('competency-monitor-feedback', 'Feedback do monitor', 'Confirmação de entrega do questionário, tentativa demonstrativa e ponto de integração futura para o histórico de tentativas.', 'derived', 'competency-questions'),
     ],
   },
   {
@@ -978,7 +978,6 @@ type DemoPagePartInteraction = {
   storyImage: string;
   storyReplies: Record<string, string[]>;
   aiGenerated: Record<string, boolean>;
-  aiReflection: string;
   studentSubmissions: string[];
   reviewFeedback: string;
   shareFeedback: string;
@@ -1506,8 +1505,9 @@ type DemoPagePartState = DemoPagePartProps & { interaction: DemoPagePartInteract
 type ComponentStateIterator<T> = Generator<T, never, (state: T) => T>;
 interface DemoPagePartElement extends HTMLElement {
   configure(props: DemoPagePartProps): void;
-  syncLearningReflection(aiReflection: string, submissions: string[]): void;
+  syncQuestionnaireMonitorFeedback(receipt: QuestionnaireMonitorReceipt | null): void;
 }
+type QuestionnaireMonitorReceipt = { attemptNumber: number; answerCount: number; submittedAt: string };
 type PageCompositionContext = {
   host: HTMLElement;
   situation: ComponentMockSituation;
@@ -1742,7 +1742,7 @@ function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, select
   const sidebarTargets: Record<string, Record<string, [string, string]>> = {
     community: { Feed: ['community', 'community-feed'], 'Meus círculos': ['community', 'community-aside'], Explorar: ['community', 'community-topics'], Mensagens: ['community', 'community-feed'], Salvos: ['community', 'community-feed'] },
     'teacher-profile': { Perfil: ['teacher-profile', 'teacher-hero'], Áreas: ['teacher-workspace', 'pedagogy-context'], Cursos: ['teacher-workspace', 'pedagogy-course-sequence'], Fórum: ['community', 'community-feed'], 'IA pedagógica': ['teacher-workspace', 'pedagogy-activity-builder'] },
-    'student-profile': { Perfil: ['student-profile', 'student-hero'], Áreas: ['student-activity', 'learner-activity-brief'], Cursos: ['competency-questions', 'competency-question-context'], Fórum: ['community', 'community-feed'], 'IA pedagógica': ['student-activity', 'learner-reflection'] },
+    'student-profile': { Perfil: ['student-profile', 'student-hero'], Áreas: ['student-activity', 'learner-activity-brief'], Cursos: ['competency-questions', 'competency-question-context'], Fórum: ['community', 'community-feed'], 'IA pedagógica': ['competency-questions', 'competency-monitor-feedback'] },
     'teacher-workspace': { Início: ['teacher-workspace', 'pedagogy-context'], 'Matérias e turmas': ['teacher-workspace', 'pedagogy-context'], Competências: ['teacher-workspace', 'pedagogy-competency'], Sondagem: ['leveling-enrollment', 'leveling-assessment'], Evidências: ['teacher-workspace', 'pedagogy-evidence-review'], Cursos: ['teacher-workspace', 'pedagogy-course-sequence'], Comunidade: ['community', 'community-feed'] },
     'student-activity': { Início: ['student-profile', 'student-hero'], Sondagem: ['leveling-enrollment', 'leveling-assessment'], Atividade: ['student-activity', 'learner-activity-brief'], Cursos: ['competency-questions', 'competency-question-context'], 'Meu percurso': ['student-profile', 'student-progress'], Comunidade: ['community', 'community-feed'] },
     'leveling-enrollment': { Início: ['student-profile', 'student-hero'], Matrícula: ['leveling-enrollment', 'leveling-assessment'], Nivelamento: ['competency-questions', 'competency-question-context'], Competições: ['quests', 'quest-board'], 'Meu percurso': ['student-profile', 'student-progress'] },
@@ -2263,20 +2263,12 @@ function renderLearnerResponse(selectedId: string): string {
   return labPart('learner-response', content, selectedId, 'lm-pedagogy-panel-part');
 }
 
-function renderLearnerReflection(selectedId: string): string {
-  const content = '<article class="lm-panel lm-learner-reflection"><header><div><span class="lm-eyebrow">REFLEXÃO APÓS O ENVIO</span><h2>Uma leitura para continuar pensando</h2></div><span class="lm-ai-badge"><i></i> IA · SIMULAÇÃO</span></header>'
-    + '<div class="lm-reflection-empty" data-reflection-empty><span aria-hidden="true">✳</span><div><b>A reflexão aparece depois da tentativa</b><p>Ela observa relações no texto enviado e não atribui nota nem muda seu percurso.</p></div></div>'
-    + '<section class="lm-reflection-result" data-reflection-result hidden><p data-ai-feedback aria-live="polite"></p><div class="lm-reflection-boundary"><b>O que esta leitura significa</b><span>Uma tentativa mostra evidências situadas. Sua professora revisa a interpretação; nenhum estado de competência muda automaticamente.</span></div></section>'
-    + '<div class="lm-attempt-history" data-ai-attempts></div></article>';
-  return labPart('learner-reflection', content, selectedId, 'lm-pedagogy-panel-part');
-}
-
 function renderStudentActivityPage(props: ComponentPageProps): string {
   const { data, situation } = props, selectedId = situation.selectedRegionId;
   return '<div class="lm-product-page lm-student-activity" data-page-id="student-activity"' + mockAttributes(situation) + '>'
     + renderWorkspaceSidebar('student-activity', data, selectedId) + '<div class="lm-product-main">' + renderWorkspaceTopbar(data, selectedId)
     + '<main class="lm-learner-canvas"><header class="lm-learner-heading"><span class="lm-eyebrow">MEU ESPAÇO DE APRENDIZAGEM</span><h1>Atividade aberta</h1><p>Leia o contexto, organize sua ideia e explique as informações que sustentam sua conclusão.</p></header>'
-    + renderLearnerActivityBrief(data, selectedId) + renderLearnerResponse(selectedId) + renderLearnerReflection(selectedId) + '</main></div></div>';
+    + renderLearnerActivityBrief(data, selectedId) + renderLearnerResponse(selectedId) + '</main></div></div>';
 }
 
 function renderLevelingAssessment(data: ComponentFixture, selectedId: string): string {
@@ -2377,10 +2369,18 @@ function renderCompetencyQuestionResponse(data: ComponentFixture, selectedId: st
       + '<div class="lm-question-situation"><small>A SITUAÇÃO</small><p>' + e(question.context) + '</p></div><div class="lm-question-prompt"><small>SEU DESAFIO</small><p>' + e(question.prompt) + '</p></div>'
       + '<label><span>Sua resposta e justificativa</span><textarea name="answer-' + e(question.id) + '" data-interaction-field="competency-answer:' + e(question.id) + '" rows="6" placeholder="Explique como comparou os dados. Você pode usar palavras, estimativas ou cálculos."></textarea></label>'
       + '<div class="lm-question-actions"><button type="button" class="lm-secondary-button" data-question-draft="' + index + '">Guardar rascunho</button><div><button type="button" class="lm-quiet-action" data-question-nav="previous"' + (index === 0 ? ' disabled' : '') + '>← Anterior</button><button type="submit" class="lm-primary-button" data-question-submit>' + (index === questions.length - 1 ? 'Registrar resposta' : 'Salvar e continuar') + ' <span aria-hidden="true">→</span></button></div></div><p class="lm-action-feedback" data-question-item-feedback role="status"></p></form>').join('')
-    + '<section class="lm-question-reflection" data-question-reflection hidden><span class="lm-ai-badge"><i></i> IA · MOCK</span><p data-question-reflection-text></p><small>Leitura ilustrativa. Nenhuma inferência real ou avaliação de competência está conectada.</small></section>'
-    + '<section class="lm-question-session-complete" data-question-session-complete hidden><span class="lm-enrollment-success-mark" aria-hidden="true">✓</span><div><span class="lm-eyebrow">CINCO RESPOSTAS REGISTRADAS</span><h3>Suas respostas seguem para revisão</h3><p>A síntese não calcula nota nem define seu nível. A professora interpreta evidências em conjunto e decide o próximo passo.</p><button type="button" class="lm-primary-button" data-screen-select="quests">Ver competições sociais <span aria-hidden="true">→</span></button></div></section>'
-    + '<p class="lm-pedagogy-note">Você pode voltar a qualquer questão e revisar a resposta. Alterar um texto não cria uma evidência independente antes de novo envio.</p></section>';
+    + '<section class="lm-question-session-complete" data-question-session-complete hidden><span class="lm-enrollment-success-mark" aria-hidden="true">✓</span><div><span class="lm-eyebrow">QUESTIONÁRIO COMPLETO</span><h3>Revise e finalize a entrega</h3><p>As cinco respostas estão registradas. Ao finalizar, o conjunto segue para o monitor; essa confirmação não calcula nota nem define domínio.</p><button type="button" class="lm-primary-button" data-question-finalize>Finalizar e entregar respostas <span aria-hidden="true">→</span></button><p class="lm-action-feedback" data-question-finalize-feedback role="status"></p></div></section>'
+    + '<p class="lm-pedagogy-note">Você pode voltar a qualquer questão. Ao editar uma resposta já registrada, será preciso registrá-la novamente antes da entrega.</p></section>';
   return labPart('competency-question-response', content, selectedId, 'lm-pedagogy-panel-part');
+}
+
+function renderCompetencyMonitorFeedback(selectedId: string): string {
+  const content = '<section class="lm-panel lm-question-monitor-feedback"><header><div><span class="lm-eyebrow">MONITOR DE APRENDIZAGEM</span><h2 tabindex="-1">Feedback e entrega</h2><p>O retorno aparece quando você finaliza e envia o questionário.</p></div><span class="lm-lock-label">⌑ PRIVADO</span></header>'
+    + '<div class="lm-monitor-feedback-pending" data-monitor-feedback-pending><span aria-hidden="true">◷</span><div><b>Aguardando a entrega</b><p>Registre as cinco respostas e finalize o questionário para receber a confirmação do monitor.</p></div></div>'
+    + '<section class="lm-monitor-feedback-receipt" data-monitor-feedback-receipt hidden aria-live="polite"><div class="lm-monitor-feedback-status"><span class="lm-enrollment-success-mark" aria-hidden="true">✓</span><div><span class="lm-eyebrow">ENTREGA RECEBIDA · DEMONSTRAÇÃO LOCAL</span><h3>Questionário enviado ao monitor</h3></div></div>'
+    + '<p data-monitor-feedback-text></p><dl class="lm-monitor-attempt-record"><div><dt>Tentativa atribuída</dt><dd data-monitor-attempt-number>—</dd></div><div><dt>Respostas entregues</dt><dd data-monitor-answer-count>—</dd></div><div><dt>Registro</dt><dd data-monitor-submitted-at>—</dd></div></dl>'
+    + '<p class="lm-monitor-attempt-roadmap"><b>Sistema de tentativas · futuro</b><span>Histórico persistente, retomada e abertura de novas tentativas ainda serão integrados. Esta tela não grava um registro de backend nem fornece avaliação real do modelo.</span></p></section></section>';
+  return labPart('competency-monitor-feedback', content, selectedId, 'lm-pedagogy-panel-part');
 }
 
 function renderCompetencyQuestionsPage(props: ComponentPageProps): string {
@@ -2388,7 +2388,7 @@ function renderCompetencyQuestionsPage(props: ComponentPageProps): string {
   return '<div class="lm-product-page lm-competency-questions-page" data-page-id="competency-questions"' + mockAttributes(situation) + '>'
     + renderWorkspaceSidebar('competency-questions', data, selectedId) + '<div class="lm-product-main">' + renderWorkspaceTopbar(data, selectedId)
     + '<main class="lm-learner-canvas lm-questions-canvas"><header class="lm-learner-heading"><span class="lm-eyebrow">MEU ESPAÇO DE APRENDIZAGEM · NIVELAMENTO</span><h1>Questões de competência</h1><p>Leia cada contexto, mostre seu raciocínio e use a navegação para revisar os cinco itens.</p></header>'
-    + renderCompetencyQuestionContext(data, selectedId) + renderCompetencyQuestionResponse(data, selectedId) + '</main></div></div>';
+    + renderCompetencyQuestionContext(data, selectedId) + renderCompetencyQuestionResponse(data, selectedId) + renderCompetencyMonitorFeedback(selectedId) + '</main></div></div>';
 }
 
 type CommunityEventFixture = { day: number; title: string; time: string; color: string };
@@ -2536,7 +2536,7 @@ export function registerComponentElements(): void {
           groups: {}, toggles: {}, fields: {}, subjectFoundation: null, subjectSkills: null, subjectSkillQuery: '', subjectSkillActiveIndex: 0, subjectSkillMenuOpen: false, subjectSkillInsight: null, activityQuestionIds: null, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {}, questParticipations: [],
           projectChatStatus: null, projectChatPending: false,
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
-            storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
+            storyFilter: 'original', storyImage: '', storyReplies: {}, studentSubmissions: [],
             reviewFeedback: '', shareFeedback: '', responseFeedback: '', enrollmentFeedback: '', questFeedback: '', questionFeedback: '', feedback: '',
           },
         });
@@ -2778,9 +2778,21 @@ export function registerComponentElements(): void {
         field.dispatchEvent(new Event('input', { bubbles: true }));
         return true;
       }
-      syncLearningReflection(aiReflection: string, submissions: string[]): void {
-        if (this.state.id !== 'learner-reflection') return;
-        this.transitionInteraction(interaction => ({ ...interaction, aiReflection, studentSubmissions: [...submissions] }));
+      syncQuestionnaireMonitorFeedback(receipt: QuestionnaireMonitorReceipt | null): void {
+        if (this.state.id !== 'competency-monitor-feedback') return;
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          fields: {
+            ...interaction.fields,
+            'monitor-answer-count': receipt ? String(receipt.answerCount) : '',
+            'monitor-submitted-at': receipt?.submittedAt ?? '',
+            'monitor-feedback-text': receipt
+              ? 'Recebemos o conjunto completo de respostas e o encaminhamos para revisão pedagógica. Esta confirmação registra a entrega; a análise interpretativa do monitor será conectada ao serviço em uma etapa futura.'
+              : '',
+          },
+          groups: { ...interaction.groups, 'monitor-attempt-number': receipt ? String(receipt.attemptNumber).padStart(2, '0') : '' },
+          toggles: { ...interaction.toggles, 'monitor-questionnaire-delivered': Boolean(receipt) },
+        }));
         this.render();
       }
       private transitionInteraction(change: (interaction: DemoPagePartInteraction) => DemoPagePartInteraction): void {
@@ -3655,26 +3667,6 @@ export function registerComponentElements(): void {
         ];
         sequence?.querySelectorAll<HTMLInputElement>('[data-sequence-title]').forEach((target, index) => { target.value = interaction.fields[target.dataset.interactionField ?? ''] ?? sequenceValues[index]?.[0] ?? ''; });
         sequence?.querySelectorAll<HTMLTextAreaElement>('[data-sequence-body]').forEach((target, index) => { target.value = interaction.fields[target.dataset.interactionField ?? ''] ?? sequenceValues[index]?.[1] ?? ''; });
-        const reflectionEmpty = this.querySelector<HTMLElement>('[data-reflection-empty]');
-        const reflectionResult = this.querySelector<HTMLElement>('[data-reflection-result]');
-        const reflection = this.querySelector<HTMLElement>('[data-ai-feedback]');
-        const hasReflection = Boolean(interaction.aiReflection);
-        if (reflectionEmpty) reflectionEmpty.hidden = hasReflection;
-        if (reflectionResult) reflectionResult.hidden = !hasReflection;
-        if (reflection) reflection.textContent = interaction.aiReflection;
-        const history = this.querySelector<HTMLElement>('[data-ai-attempts]');
-        if (history) {
-          history.replaceChildren();
-          interaction.studentSubmissions.forEach((submission, index) => {
-            const article = document.createElement('article');
-            const title = document.createElement('b');
-            title.textContent = 'Tentativa ' + (index + 1);
-            const excerpt = document.createElement('p');
-            excerpt.textContent = submission;
-            article.append(title, excerpt);
-            history.append(article);
-          });
-        }
         const reviewFeedback = this.querySelector<HTMLElement>('[data-review-feedback]');
         if (reviewFeedback) reviewFeedback.textContent = interaction.reviewFeedback;
         const shareFeedback = this.querySelector<HTMLElement>('[data-share-feedback]');
@@ -3793,9 +3785,15 @@ export function registerComponentElements(): void {
         const questFeedback = this.querySelector<HTMLElement>('[data-quest-feedback]');
         if (questFeedback) questFeedback.textContent = interaction.questFeedback;
 
+        this.restoreCompetencyQuestionResponse();
+        this.restoreQuestionnaireMonitorFeedback();
+      }
+      private restoreCompetencyQuestionResponse(): void {
+        const interaction = this.state.interaction;
         const questionForms = [...this.querySelectorAll<HTMLFormElement>('[data-competency-question-form]')];
         const questionIndex = Math.max(0, Math.min(questionForms.length - 1, Number(interaction.groups['competency-question-index'] ?? '0')));
         const submittedQuestions = questionForms.filter(form => interaction.toggles['competency-submitted:' + (form.dataset.questionId ?? '')] === true);
+        const finalized = interaction.toggles['competency-question-finalized'] === true;
         questionForms.forEach((form, index) => { form.hidden = index !== questionIndex; });
         this.querySelectorAll<HTMLButtonElement>('[data-question-select]').forEach(button => {
           const index = Number(button.dataset.questionSelect ?? '0');
@@ -3816,15 +3814,34 @@ export function registerComponentElements(): void {
         if (answeredCount) answeredCount.textContent = submittedQuestions.length + (submittedQuestions.length === 1 ? ' resposta registrada' : ' respostas registradas');
         const questionFeedback = this.querySelector<HTMLElement>('[data-question-item-feedback]');
         if (questionFeedback) questionFeedback.textContent = interaction.questionFeedback;
-        const questionReflection = this.querySelector<HTMLElement>('[data-question-reflection]');
-        const questionReflectionText = this.querySelector<HTMLElement>('[data-question-reflection-text]');
-        if (questionReflection) questionReflection.hidden = !interaction.aiReflection;
-        if (questionReflectionText) questionReflectionText.textContent = interaction.aiReflection;
         const questionComplete = this.querySelector<HTMLElement>('[data-question-session-complete]');
         if (questionComplete) questionComplete.hidden = questionForms.length === 0 || submittedQuestions.length !== questionForms.length;
+        const finalizeButton = this.querySelector<HTMLButtonElement>('[data-question-finalize]');
+        if (finalizeButton) {
+          finalizeButton.disabled = finalized;
+          finalizeButton.textContent = finalized ? 'Questionário entregue ✓' : 'Finalizar e entregar respostas →';
+        }
+        const finalizeFeedback = this.querySelector<HTMLElement>('[data-question-finalize-feedback]');
+        if (finalizeFeedback) finalizeFeedback.textContent = finalized ? 'Entrega registrada. Consulte o feedback do monitor abaixo.' : '';
         const questionForm = questionForms[questionIndex];
         const previous = questionForm?.querySelector<HTMLButtonElement>('[data-question-nav="previous"]');
         if (previous) previous.disabled = questionIndex === 0;
+      }
+      private restoreQuestionnaireMonitorFeedback(): void {
+        const interaction = this.state.interaction;
+        const delivered = interaction.toggles['monitor-questionnaire-delivered'] === true;
+        const pending = this.querySelector<HTMLElement>('[data-monitor-feedback-pending]');
+        const receipt = this.querySelector<HTMLElement>('[data-monitor-feedback-receipt]');
+        if (pending) pending.hidden = delivered;
+        if (receipt) receipt.hidden = !delivered;
+        const feedback = this.querySelector<HTMLElement>('[data-monitor-feedback-text]');
+        if (feedback) feedback.textContent = interaction.fields['monitor-feedback-text'] ?? '';
+        const attempt = this.querySelector<HTMLElement>('[data-monitor-attempt-number]');
+        if (attempt) attempt.textContent = delivered ? 'Tentativa ' + (interaction.groups['monitor-attempt-number'] ?? '01') : '—';
+        const count = this.querySelector<HTMLElement>('[data-monitor-answer-count]');
+        if (count) count.textContent = delivered ? interaction.fields['monitor-answer-count'] ?? '0' : '—';
+        const submittedAt = this.querySelector<HTMLElement>('[data-monitor-submitted-at]');
+        if (submittedAt) submittedAt.textContent = interaction.fields['monitor-submitted-at'] ?? '—';
       }
       private fillMockAiFields(values: Record<string, string>): void {
         const fields = { ...this.state.interaction.fields };
@@ -4429,6 +4446,33 @@ export function registerComponentElements(): void {
         const button = event.target.closest<HTMLButtonElement>('button');
         if (!button || button.disabled || !this.contains(button)) return;
         if (button.type === 'submit') return;
+        if (this.state.id === 'competency-question-response' && button.hasAttribute('data-question-finalize')) {
+          const questionForms = [...this.querySelectorAll<HTMLFormElement>('[data-competency-question-form]')];
+          const answerCount = questionForms.filter(form => this.state.interaction.toggles['competency-submitted:' + (form.dataset.questionId ?? '')] === true).length;
+          if (!questionForms.length || answerCount !== questionForms.length) {
+            this.transitionInteraction(interaction => ({ ...interaction, questionFeedback: 'Registre as cinco respostas antes de finalizar a entrega.' }));
+            this.restoreCompetencyQuestionResponse();
+            return;
+          }
+          const receipt: QuestionnaireMonitorReceipt = {
+            attemptNumber: 1,
+            answerCount,
+            submittedAt: new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
+          };
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            toggles: { ...interaction.toggles, 'competency-question-finalized': true },
+            questionFeedback: 'Questionário finalizado e entregue ao monitor · tentativa demonstrativa 01.',
+          }));
+          this.parentElement?.querySelector<DemoPagePartElement>('[data-component-id="competency-monitor-feedback"]')
+            ?.syncQuestionnaireMonitorFeedback(receipt);
+          this.restoreCompetencyQuestionResponse();
+          this.render();
+          const monitorHeading = this.parentElement?.querySelector<HTMLElement>('[data-component-id="competency-monitor-feedback"] h2');
+          monitorHeading?.focus();
+          monitorHeading?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
         if (this.state.id === 'leveling-assessment' && button.dataset.levelingStepSelect !== undefined) {
           const step = Number(button.dataset.levelingStepSelect);
           const questions = labList<CompetencyQuestionFixture>(this.state.fixture, 'questions');
@@ -5158,6 +5202,10 @@ export function registerComponentElements(): void {
         const editingActivity = this.state.id === 'pedagogy-activity-builder' && Boolean(field.closest('[data-activity-editor]'));
         const creatingActivity = this.state.id === 'teacher-activity' && Boolean(field.closest('[data-profile-activity-composer]'));
         const editingProject = isProfileProjectPart(this.state.id) && Boolean(field.closest('[data-project-create-form]'));
+        const questionForm = this.state.id === 'competency-question-response' ? field.closest<HTMLFormElement>('[data-competency-question-form]') : null;
+        const questionId = questionForm?.dataset.questionId ?? '';
+        const questionWasSubmitted = Boolean(questionId && this.state.interaction.toggles['competency-submitted:' + questionId] === true);
+        const questionWasFinalized = this.state.interaction.toggles['competency-question-finalized'] === true;
         const activityReviewWasConfirmed = editingActivity && (this.state.interaction.toggles['activity-approved'] === true || this.state.interaction.toggles['activity-review-confirmed'] === true);
         const activityReviewFeedback = activityReviewWasConfirmed ? 'O rascunho mudou. Revise o conjunto e confirme novamente.' : '';
         this.transitionInteraction(interaction => ({
@@ -5167,8 +5215,20 @@ export function registerComponentElements(): void {
             toggles: { ...interaction.toggles, 'activity-review-confirmed': false, 'activity-approved': false },
             reviewFeedback: activityReviewFeedback,
           } : {}),
+          ...(questionWasSubmitted ? {
+            toggles: {
+              ...interaction.toggles,
+              ['competency-submitted:' + questionId]: false,
+              'competency-question-finalized': false,
+            },
+            questionFeedback: 'Resposta alterada. Registre novamente antes de finalizar o questionário.',
+          } : {}),
           ...(creatingActivity && interaction.feedback ? { feedback: '' } : {}),
         }));
+        if (questionWasSubmitted) {
+          this.restoreCompetencyQuestionResponse();
+          if (questionWasFinalized) this.parentElement?.querySelector<DemoPagePartElement>('[data-component-id="competency-monitor-feedback"]')?.syncQuestionnaireMonitorFeedback(null);
+        }
         if (editingActivity) {
           const status = this.querySelector<HTMLElement>('[data-review-feedback]');
           if (status) status.textContent = activityReviewFeedback;
@@ -5630,7 +5690,6 @@ export function registerComponentElements(): void {
           const questionId = form.dataset.questionId ?? '';
           const questionIndex = Number(form.dataset.questionIndex ?? '0');
           const questionCount = this.querySelectorAll('[data-competency-question-form]').length;
-          const questionTitle = form.querySelector<HTMLElement>('.lm-question-panel-heading h3')?.textContent?.trim() ?? 'esta questão';
           const textarea = form.querySelector<HTMLTextAreaElement>('textarea[data-interaction-field]');
           const key = textarea?.dataset.interactionField ?? '';
           const response = textarea?.value.trim() ?? '';
@@ -5638,18 +5697,17 @@ export function registerComponentElements(): void {
             this.transitionInteraction(interaction => ({ ...interaction, questionFeedback: 'Escreva sua resposta antes de registrar esta questão.' }));
           } else {
             const nextIndex = Math.min(questionCount - 1, questionIndex + 1);
-            const excerpt = response.length > 160 ? response.slice(0, 157).trimEnd() + '…' : response;
-            const aiReflection = 'Leitura demonstrativa: sua resposta foi associada a “' + questionTitle + '”. A professora revisará quais trechos sustentam cada critério e se os dados apresentados bastam para a conclusão.\n\nTrecho reservado: “' + excerpt + '”\n\nEsta resposta isolada não determina o nível da competência.';
+            const wasFinalized = this.state.interaction.toggles['competency-question-finalized'] === true;
             this.transitionInteraction(interaction => ({
               ...interaction,
               fields: key ? { ...interaction.fields, [key]: response } : interaction.fields,
-              toggles: { ...interaction.toggles, ['competency-submitted:' + questionId]: true },
+              toggles: { ...interaction.toggles, ['competency-submitted:' + questionId]: true, 'competency-question-finalized': false },
               groups: { ...interaction.groups, 'competency-question-index': String(nextIndex) },
-              aiReflection,
-              questionFeedback: questionCount > 0 && nextIndex === questionCount - 1 && questionIndex === questionCount - 1
-                ? 'Quinta resposta registrada. O conjunto está pronto para revisão docente demonstrativa.'
+              questionFeedback: questionCount > 0 && questionIndex === questionCount - 1
+                ? 'Última resposta registrada. Revise o conjunto e finalize a entrega quando estiver pronto.'
                 : 'Questão ' + (questionIndex + 1) + ' registrada. Você pode voltar e revisar qualquer resposta.',
             }));
+            if (wasFinalized) this.parentElement?.querySelector<DemoPagePartElement>('[data-component-id="competency-monitor-feedback"]')?.syncQuestionnaireMonitorFeedback(null);
           }
           this.render();
           return;
@@ -5661,26 +5719,11 @@ export function registerComponentElements(): void {
             this.render();
             return;
           }
-          const hasGroupPower = /\b80\s*w\b|\b80\b|oito\s+l[aâ]mpadas/i.test(response);
-          const hasChangedTime = /\b4\s*h(?:oras?)?\b|quatro\s+horas|quatro\s+h/i.test(response);
-          const hasReasoning = /porque|por isso|portanto|ent[aã]o|justific|compar/i.test(response);
-          const identified: string[] = [];
-          if (hasGroupPower) identified.push('potência do conjunto');
-          if (hasChangedTime) identified.push('mudança no tempo de uso');
-          if (hasReasoning) identified.push('uma justificativa ou comparação');
-          const excerpt = response.length > 180 ? response.slice(0, 177).trimEnd() + '…' : response;
-          const nextStep = hasGroupPower && hasChangedTime && hasReasoning
-            ? 'Você relacionou os dados principais. Confira se sua conclusão explica como eles mudam a comparação no período.'
-            : 'Na próxima revisão, compare a potência do conjunto de lâmpadas com a duração alterada do ventilador e explique o que esses dados permitem concluir.';
-          const aiReflection = 'Na sua resposta, a leitura simulada encontrou: ' + (identified.length ? identified.join(', ') : 'a ideia inicial registrada') + '.\n\nTrecho considerado: “' + excerpt + '”\n\n' + nextStep;
           this.transitionInteraction(interaction => ({
             ...interaction,
-            aiReflection,
             studentSubmissions: [...interaction.studentSubmissions, response],
             responseFeedback: 'Tentativa ' + (interaction.studentSubmissions.length + 1) + ' registrada nesta demonstração. Sua resposta continua privada.',
           }));
-          this.parentElement?.querySelector<DemoPagePartElement>('[data-component-id="learner-reflection"]')
-            ?.syncLearningReflection(this.state.interaction.aiReflection, this.state.interaction.studentSubmissions);
           this.render();
           return;
         }

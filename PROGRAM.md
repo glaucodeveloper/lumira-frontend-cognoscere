@@ -2,7 +2,7 @@
 
 ## Ownership
 
-- `src/components.ts` owns page parts, expandable project publications, the project authoring stepper and review/confirmation state, chat transcript and reflection state, safe Markdown rendering, sample dashboards, and typed bubbling events.
+- `src/components.ts` owns page parts, expandable project publications, the project authoring stepper and review/confirmation state, the questionnaire delivery and monitor receipt state, chat transcript and project reflection state, safe Markdown rendering, sample dashboards, and typed bubbling events.
 - `src/program.ts` owns the local Cognoscere client and service orchestration. It talks only to Forge at `http://127.0.0.1:19195` and returns status or assistant results to the originating page part.
 - `src/componenting-demo-lab.ts` owns the single demo page generator, selection state, and the PTA presentation gate.
 - GitHub Pages hosts the web application. There is no Electron process, remote model provider, or secret embedded in the published bundle.
@@ -39,6 +39,14 @@ The `leveling-enrollment` page contains one `leveling-assessment` part. Enrollme
 The combination bar shows the registered age and grade beside the competency. Selecting an answer updates a demonstration score from 0 to 100 using 20 points for each expected choice; submitting a question records it and advances to the next unanswered step. The student can revisit answers. Changing age or grade and submitting the form clears prior answers before starting the questionnaire again. The result step stays unavailable until all five answers are submitted.
 
 This score exists only to demonstrate dynamic questionnaire state. The consulted repository does not define an age-grade coefficient or an institutional scoring policy, so age and grade only label context; the score is not a school grade, mastery level, placement decision, or progression rule. Answers and registration remain in the page-part state iterator for the current browser session. The flow does not call Forge, persist enrollment, or associate the student with a school or class.
+
+## Student answer submission and monitor feedback
+
+The `student-activity` page ends after the private answer editor and its submission status; it has no “reflection on answer” part and does not generate an automatic reading of that response.
+
+The `competency-questions` page keeps five individual answer forms in `competency-question-response`. Each answer is registered separately. After all five are registered, the student explicitly finalizes the questionnaire; that action sends a typed in-page receipt to the separate `competency-monitor-feedback` component. Editing a registered answer invalidates its submitted state and clears a previously displayed receipt until the student registers it again and resubmits the complete set.
+
+The monitor component currently displays a local delivery confirmation, answer count, timestamp, and demonstrative attempt number `01`. It does not call the model monitor, interpret answer content, persist an attempt, reopen a questionnaire, or calculate a score. Persistent attempt history and future attempt creation/resumption are reserved for a later service integration. Both parts keep state in their page-part iterators for the current browser session.
 
 ## Project narrative, authorship, and AI review
 
