@@ -67,7 +67,7 @@ The student profile's Competencies part starts with the student's public interes
 
 ## Platform references in text fields
 
-- Text inputs and text areas inside a demonstrated page part accept platform references. Typing `@` opens a filtered list of platform namespaces; selecting an entry inserts its stable path segment into the current field.
+- Text, search, URL, and telephone inputs plus text areas inside a demonstrated page part accept platform references. Typing `@` opens a filtered list of platform namespaces; selecting an entry inserts its stable path segment into the current field. Password, email, and structured-value controls do not accept references.
 - Type `>` after a selected entry with children to open that entry's next level. For example, `@competencias > questionarios > ciencias-da-natureza > ef08ci03 > questao-biblioteca > texto` identifies the text of a specific competency question. `ArrowUp`, `ArrowDown`, `Enter`, and `Escape` operate the list without leaving the field.
 - Available roots cover student and teacher profiles, personal and community calendars, social events, competencies and questionnaires, activity posts, and projects. Nested records expose fields such as title, date, event description, question text, prompt, context, and criteria.
 - The inserted value is a readable state path in the field content. The demo autocomplete does not dereference it into live data, grant access, publish content, or persist a linked record; those actions require platform services and authorization rules.

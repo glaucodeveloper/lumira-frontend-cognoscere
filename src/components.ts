@@ -2385,7 +2385,7 @@ export function registerComponentElements(): void {
       }
       private platformReferenceField(target: EventTarget | null): target is PlatformReferenceField {
         if (target instanceof HTMLTextAreaElement) return true;
-        return target instanceof HTMLInputElement && ['text', 'search', 'url', 'email', 'tel'].includes(target.type);
+        return target instanceof HTMLInputElement && ['text', 'search', 'url', 'tel'].includes(target.type);
       }
       private updatePlatformReferenceMenu(field: PlatformReferenceField): void {
         const caret = field.selectionStart ?? field.value.length;
