@@ -70,7 +70,7 @@ O inventário das telas prioritárias — acesso, perfis de professor/aluno e so
 
 ## Limites da demonstração
 
-O gateway padrão mantém dados apenas em memória. A página pública chama somente o Cognoscere Forge em loopback; o serviço aceita a origem Lumira pela allowlist CORS. A chave PTA abre a demonstração visual, não autentica a pessoa no backend. `?mode=worker` seleciona o contrato HTTP proposto, que depende de uma API Workers implantada.
+O gateway padrão mantém dados apenas em memória. A página pública chama somente o Cognoscere Forge em loopback; o serviço aceita a origem Lumira pela allowlist CORS. A autenticação do serviço pede o PAT de chat do Cognoscere e a chave local do Port Router. `?mode=worker` seleciona o contrato HTTP proposto, que depende de uma API Workers implantada.
 
 A referência Lumira menciona um coeficiente idade/série, mas não define a fórmula. O projeto mostra idade e série como contexto e mantém o coeficiente pendente de política institucional; não atribui nível escolar automaticamente. A sondagem continua exigindo revisão docente.
 

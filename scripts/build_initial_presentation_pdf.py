@@ -142,7 +142,7 @@ def page_cover(canvas: Canvas) -> None:
     canvas.setFillColor(colors.HexColor("#c9d7e2"))
     canvas.setFont("LumiraSans", 7)
     canvas.drawString(48, 34, "Documento de apresentação para conversa inicial · versão 1.0")
-    canvas.drawRightString(PAGE_W - 42, 34, "CHAVE PTA COMPARTILHADA SEPARADAMENTE")
+    canvas.drawRightString(PAGE_W - 42, 34, "CONEXÃO COM FORGE: PAT DE CHAT + CHAVE LOCAL DO ROUTER")
     canvas.showPage()
 
 
@@ -230,7 +230,7 @@ def page_philosophy(canvas: Canvas) -> None:
 
     card(canvas, 42, 86, PAGE_W - 84, 101, TEAL_SOFT, 10)
     label(canvas, "CONDIÇÕES DE USO DESTA DEMONSTRAÇÃO", 58, 166, BRAND, 6.3)
-    paragraph(canvas, "Edição salva no <b>localStorage</b> do navegador atual. A chave PTA abre a sessão da apresentação e é compartilhada separadamente. O código protege a entrada da interface; GitHub Pages e repositório continuam públicos, sem autenticação privada no servidor. A edição não sincroniza perfis entre pessoas ou dispositivos.", 58, 150, PAGE_W - 116, "card")
+    paragraph(canvas, "Edição salva no <b>localStorage</b> do navegador atual. A conexão com o Forge local exige o PAT de chat do Cognoscere e a chave local do Port Router; ambos são validados pelo serviço e ficam em memória até recarregar. GitHub Pages e repositório continuam públicos. A edição não sincroniza perfis entre pessoas ou dispositivos.", 58, 150, PAGE_W - 116, "card")
     canvas.showPage()
 
 

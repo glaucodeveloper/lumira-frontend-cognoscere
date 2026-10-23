@@ -153,10 +153,6 @@ function stateIterator<T>(initial: T): LabStateIterator<T> {
 }
 interface DemoDataEditorElement extends HTMLElement { configure(key: string, value: unknown): void; }
 const DEMO_LOADING_DURATION_MS = 1100;
-const configuredAccessKeyDigest = import.meta.env.VITE_PTA_ACCESS_KEY_SHA256?.trim().toLowerCase();
-const DEMO_ACCESS_KEY_SHA256 = configuredAccessKeyDigest && /^[a-f0-9]{64}$/.test(configuredAccessKeyDigest)
-  ? configuredAccessKeyDigest
-  : '577354857eae071767721a0f07cd8d9663502309f08bfd341bdc12f10d0ae94f';
 export function componentingDemoLab({ screens, fixtures }: { screens: readonly ReferenceScreenSpec[]; fixtures: Record<string, unknown> }): HTMLElement {
   registerComponentElements();
   class DemoDataEditor extends HTMLElement implements DemoDataEditorElement {
@@ -875,19 +871,8 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
   return lab;
 }
 
-type AccessGateState = { page: HTMLElement | null; error: string; entry: string; authorized: boolean; pending: boolean; requestId: string };
-function accessKeyDigest(value: string): Promise<string> {
-  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)).then(buffer =>
-    Array.from(new Uint8Array(buffer), byte => byte.toString(16).padStart(2, '0')).join(''));
-}
-function normalizeAccessKey(value: string): string {
-  return value.normalize('NFKC').replace(/[\u200B-\u200D\uFEFF]/g, '').trim().toUpperCase()
-    .replace(/[\u2010-\u2015\u2212]/g, '-')
-    .replace(/\s*-\s*/g, '-')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
-}
-function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
+type AccessGateState = { page: HTMLElement | null; error: string; authorized: boolean; pending: boolean; requestId: string };
+function protectDemoWithServiceAuthentication(page: HTMLElement): HTMLElement {
   interface AccessGateElement extends HTMLElement { configure(page: HTMLElement): void; }
   if (!customElements.get('lumira-access-gate')) {
     class LumiraAccessGate extends HTMLElement implements AccessGateElement {
@@ -895,7 +880,7 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
       private state: AccessGateState;
       constructor() {
         super();
-        this.transitions = stateIterator<AccessGateState>({ page: null, error: '', entry: '', authorized: false, pending: false, requestId: '' });
+        this.transitions = stateIterator<AccessGateState>({ page: null, error: '', authorized: false, pending: false, requestId: '' });
         this.state = this.transitions.next().value;
         this.addEventListener('submit', event => { void this.onSubmit(event); });
         this.addEventListener('lumira-forge-authentication-result', event => this.onAuthenticationResult(event as CustomEvent<{ requestId: string; error?: string }>));
@@ -909,48 +894,22 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
         if (!form?.matches('[data-demo-access-form]')) return;
         event.preventDefault();
         if (this.state.pending) return;
-        const input = form.querySelector<HTMLInputElement>('[name="accessKey"]');
-        const entry = input?.value ?? '';
         const pat = form.querySelector<HTMLInputElement>('[name="pat"]')?.value.trim() ?? '';
         const routerKey = form.querySelector<HTMLInputElement>('[name="routerKey"]')?.value.trim() ?? '';
-        const candidate = normalizeAccessKey(entry);
-        if (!candidate) {
-          this.state = this.transitions.next(state => ({ ...state, entry: '', error: 'Digite a chave PTA para continuar.' })).value;
-          this.render();
-          this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
-          return;
-        }
         if (!pat || !routerKey) {
-          this.state = this.transitions.next(state => ({ ...state, entry, error: 'Digite o PAT do Cognoscere e a chave do Port Router.' })).value;
+          this.state = this.transitions.next(state => ({ ...state, error: 'Informe o PAT de chat e a chave local do Port Router.' })).value;
           this.render();
           this.querySelector<HTMLInputElement>(!pat ? '[name="pat"]' : '[name="routerKey"]')?.focus();
           return;
         }
-        try {
-          const digest = await accessKeyDigest(candidate);
-          let difference = 0;
-          for (let index = 0; index < DEMO_ACCESS_KEY_SHA256.length; index++) {
-            difference |= digest.charCodeAt(index) ^ DEMO_ACCESS_KEY_SHA256.charCodeAt(index);
-          }
-          const authorized = difference === 0;
-          if (!authorized) {
-            this.state = this.transitions.next(state => ({ ...state, entry, error: 'Chave não reconhecida. Confira o código de acesso.' })).value;
-            this.render();
-            this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
-            return;
-          }
-          const requestId = 'lumira-auth-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
-          this.state = this.transitions.next(state => ({ ...state, error: '', entry: candidate, pending: true, requestId })).value;
-          this.render();
-          this.dispatchEvent(new CustomEvent('lumira-forge-authentication-request', {
-            bubbles: true,
-            composed: true,
-            detail: { requestId, pat, routerKey },
-          }));
-        } catch (error) {
-          this.state = this.transitions.next(state => ({ ...state, entry, error: error instanceof Error ? error.message : 'Não foi possível validar a chave PTA.' })).value;
-          this.render();
-        }
+        const requestId = 'lumira-auth-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
+        this.state = this.transitions.next(state => ({ ...state, error: '', pending: true, requestId })).value;
+        this.render();
+        this.dispatchEvent(new CustomEvent('lumira-forge-authentication-request', {
+          bubbles: true,
+          composed: true,
+          detail: { requestId, pat, routerKey },
+        }));
       }
       private onAuthenticationResult(event: CustomEvent<{ requestId: string; error?: string }>): void {
         const result = event.detail;
@@ -960,7 +919,6 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
           pending: false,
           authorized: !result.error,
           error: result.error ?? '',
-          entry: result.error ? state.entry : '',
           requestId: '',
         })).value;
         this.render();
@@ -971,15 +929,14 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
           this.replaceChildren(this.state.page);
           return;
         }
-        const helpId = this.state.error ? 'lm-presentation-key-error' : 'lm-presentation-key-help';
-        const helpText = 'A PTA libera a apresentação. O PAT e a chave do Port Router validam a conexão com o Cognoscere Forge.';
+        const helpId = this.state.error ? 'lm-service-auth-error' : 'lm-service-auth-help';
+        const helpText = 'O PAT de chat e a chave local do Port Router validam a conexão com o Cognoscere Forge.';
         const disabled = this.state.pending ? ' disabled' : '';
-        this.innerHTML = '<main class="lm-access-gate"><section class="lm-access-gate-intro"><span class="lm-access-gate-mark">L</span><span class="lm-eyebrow">LUMIRA · COMPONENTING DEMO LAB</span><h1>Uma plataforma que torna o raciocínio visível.</h1><p>Explore as telas, as partes de página e suas interações demonstrativas.</p><small>Apresentação de produto · acesso por convite</small></section>'
-          + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">AUTENTICAÇÃO</span><h2>Acesse a apresentação</h2><p>Informe o convite e as duas chaves do serviço para continuar.</p><label for="lm-presentation-key">Chave PTA · apresentação</label><input id="lm-presentation-key" name="accessKey" type="password" autocomplete="current-password" spellcheck="false" required' + disabled + ' aria-invalid="' + String(this.state.error.includes('PTA') || this.state.error.includes('Chave não reconhecida')) + '" aria-describedby="' + helpId + '" value="' + e(this.state.entry) + '" placeholder="PTA-XXXX-XXXX-…">'
-          + '<label for="lm-cognoscere-pat">PAT · Cognoscere</label><input id="lm-cognoscere-pat" name="pat" type="password" autocomplete="off" spellcheck="false" required' + disabled + ' placeholder="PAT do serviço local">'
-          + '<label for="lm-port-router-key">Chave · Port Router</label><input id="lm-port-router-key" name="routerKey" type="password" autocomplete="off" spellcheck="false" required' + disabled + ' placeholder="Chave do túnel">'
-          + (this.state.error ? '<p id="lm-presentation-key-error" class="lm-access-gate-error" role="alert">' + e(this.state.error) + '</p>' : '<small id="lm-presentation-key-help">' + e(helpText) + '</small>')
-          + '<button type="submit" class="lm-access-gate-submit"' + disabled + '>' + (this.state.pending ? '<span class="lm-auth-spinner" aria-hidden="true"></span> Validando as chaves…' : 'Abrir apresentação') + '<span aria-hidden="true">↗</span></button></form><small class="lm-access-gate-note">As chaves do serviço ficam somente na memória desta sessão e são apagadas ao recarregar.</small></section></main>';
+        this.innerHTML = '<main class="lm-access-gate"><section class="lm-access-gate-intro"><span class="lm-access-gate-mark">L</span><span class="lm-eyebrow">LUMIRA · COMPONENTING DEMO LAB</span><h1>Uma plataforma que torna o raciocínio visível.</h1><p>Explore as telas, as partes de página e suas interações demonstrativas.</p><small>Apresentação de produto · conexão com serviço local</small></section>'
+          + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">AUTENTICAÇÃO DO SERVIÇO</span><h2>Acesse a apresentação</h2><p>Informe as duas credenciais do serviço para continuar.</p><label for="lm-cognoscere-pat">PAT de chat · Cognoscere</label><input id="lm-cognoscere-pat" name="pat" type="password" autocomplete="off" spellcheck="false" required' + disabled + ' placeholder="PAT usado pelo serviço de chat">'
+          + '<label for="lm-port-router-key">Chave local · Port Router</label><input id="lm-port-router-key" name="routerKey" type="password" autocomplete="off" spellcheck="false" required' + disabled + ' placeholder="Chave do router local">'
+          + (this.state.error ? '<p id="lm-service-auth-error" class="lm-access-gate-error" role="alert">' + e(this.state.error) + '</p>' : '<small id="lm-service-auth-help">' + e(helpText) + '</small>')
+          + '<button type="submit" class="lm-access-gate-submit"' + disabled + '>' + (this.state.pending ? '<span class="lm-auth-spinner" aria-hidden="true"></span> Validando as chaves…' : 'Abrir apresentação') + '<span aria-hidden="true">↗</span></button></form><small class="lm-access-gate-note">As duas credenciais ficam somente na memória desta sessão e são apagadas ao recarregar.</small></section></main>';
       }
     }
     customElements.define('lumira-access-gate', LumiraAccessGate);
@@ -1016,7 +973,7 @@ export function* programGenerator(
       screens: referenceScreenSpecs,
       fixtures: initialComponentData,
     });
-    const protectedDemo = protectDemoWithAccessKey(demoPage);
+    const protectedDemo = protectDemoWithServiceAuthentication(demoPage);
     renderView = () => protectedDemo;
   }
 

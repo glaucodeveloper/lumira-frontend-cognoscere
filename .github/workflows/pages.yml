@@ -25,30 +25,6 @@ jobs:
           cache: npm
       - name: Instalar dependências
         run: npm ci
-      - name: Configurar chave PTA da apresentação
-        env:
-          PTA_ACCESS_KEY: ${{ secrets.PTA_ACCESS_KEY }}
-        run: |
-          if [ -z "$PTA_ACCESS_KEY" ]; then
-            echo "::warning::PTA_ACCESS_KEY não configurado; usando a chave compartilhada de demonstração já prevista no código."
-            exit 0
-          fi
-          node --input-type=module <<'NODE'
-          import { appendFileSync } from 'node:fs';
-          import { createHash } from 'node:crypto';
-          const normalized = process.env.PTA_ACCESS_KEY
-            .normalize('NFKC')
-            .replace(/[\u200B-\u200D\uFEFF]/g, '')
-            .trim()
-            .toUpperCase()
-            .replace(/[\u2010-\u2015\u2212]/g, '-')
-            .replace(/\s*-\s*/g, '-')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-');
-          if (!normalized) throw new Error('O secret PTA_ACCESS_KEY está vazio.');
-          const digest = createHash('sha256').update(normalized, 'utf8').digest('hex');
-          appendFileSync(process.env.GITHUB_ENV, `VITE_PTA_ACCESS_KEY_SHA256=${digest}\n`);
-          NODE
       - name: Verificar tipos
         run: npm run typecheck
       - name: Gerar apresentação estática

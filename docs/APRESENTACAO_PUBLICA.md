@@ -6,7 +6,7 @@ O PDF [Apresentação inicial — edição de perfil e partes da plataforma](../
 
 ## Acesso e edição de perfil
 
-A apresentação no GitHub Pages pede uma chave PTA compartilhada separadamente. Quando configurado, o workflow lê o secret de Actions `PTA_ACCESS_KEY`, calcula seu SHA-256 normalizado e injeta somente o digest no build. Sem o secret, a apresentação usa o digest da chave compartilhada de demonstração já prevista em `src/componenting-demo-lab.ts`, para que a publicação não fique bloqueada. Configure `PTA_ACCESS_KEY` em **Settings → Secrets and variables → Actions** no repositório `glaucodeveloper/lumira-frontend-cognoscere` para substituir a chave compartilhada pela chave de convite escolhida; publique depois para aplicar a rotação. Após entrar, a autorização fica na sessão desta aba. A chave funciona como barreira de entrada visual: o GitHub Pages e o repositório são públicos, portanto isso não equivale a autenticação no servidor nem impede alguém de inspecionar o código publicado.
+A tela de entrada pede exatamente duas credenciais do serviço local: o PAT de chat do Cognoscere e a chave local do Port Router. A aplicação valida as duas em `POST /auth/validate`; Forge verifica o PAT e o Port Router verifica sua própria chave. As credenciais ficam na memória do programa até recarregar a página, sem armazenamento no navegador. Essa etapa autentica a conexão ao Forge, não torna privado o GitHub Pages ou seu repositório público.
 
 ## Chat de projetos com Cognoscere
 

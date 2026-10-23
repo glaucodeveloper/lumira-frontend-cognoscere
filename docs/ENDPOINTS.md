@@ -2,7 +2,7 @@
 
 ## Integração implementada: autenticação e Cognoscere Forge
 
-O browser chama o serviço local pelo endereço fixo do túnel `https://ateliotic-jann-paragonless.ngrok-free.dev/19195`. O usuário informa o PAT do Cognoscere e a chave do Port Router na tela de autenticação, junto à chave PTA da apresentação. A aplicação envia as chaves ao serviço somente por headers HTTPS; mantém ambas apenas na memória do `program()` até recarregar a página.
+O browser chama o serviço local pelo endereço fixo do túnel `https://ateliotic-jann-paragonless.ngrok-free.dev/19195`. O usuário informa exatamente duas credenciais na tela de autenticação: o PAT de chat do Cognoscere e a chave local do Port Router. A aplicação envia as chaves ao serviço somente por headers HTTPS; mantém ambas apenas na memória do `program()` até recarregar a página.
 
 | Método | Rota | Uso |
 |---|---|---|
