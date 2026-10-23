@@ -21,6 +21,88 @@ export interface ProgramOptions {
 export type ProgramFactory = (options: ProgramOptions) => LumiraSystem;
 
 export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, documentTitle, bindEvents = true }: ProgramOptions): LumiraSystem {
+  const cognoscereLocal = Object.freeze({ baseUrl: 'http://127.0.0.1:19195', slug: 'lumira', unitId: 'lumira-cognoscere-monitor' });
+  function localForgeEndpoint(path: string): string {
+    const endpoint = new URL(cognoscereLocal.baseUrl);
+    if (endpoint.protocol !== 'http:' || !['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname)) {
+      throw new Error('A aplicação aceita somente o Cognoscere Forge local.');
+    }
+    return endpoint.origin + path;
+  }
+  async function readForgeError(response: Response): Promise<Error> {
+    if (response.status === 401 || response.status === 403) return new Error('O Cognoscere local recusou a chamada.');
+    let detail = '';
+    try {
+      const payload = await response.json() as { error?: unknown };
+      if (typeof payload.error === 'string') detail = payload.error;
+    } catch { /* O serviço pode responder sem JSON. */ }
+    return new Error(detail || `Cognoscere Forge respondeu com HTTP ${response.status}.`);
+  }
+  async function requestCognoscereStatus(): Promise<CognoscereStatus> {
+    const endpoint = localForgeEndpoint('/health');
+    try {
+      const response = await fetch(endpoint, { signal: AbortSignal.timeout(3500) });
+      if (!response.ok) throw await readForgeError(response);
+      const health = await response.json() as { ok?: boolean; service?: string; configured?: boolean; system_model_configured?: boolean; model?: string };
+      if (health.ok !== true || health.service !== 'cognoscere-forge') throw new Error('O serviço local não confirmou Cognoscere Forge.');
+      return {
+        available: true,
+        configured: health.configured === true,
+        systemModelConfigured: health.system_model_configured === true,
+        model: typeof health.model === 'string' ? health.model : 'Metis local',
+        endpoint: 'http://127.0.0.1:19195',
+        message: health.configured === true && health.system_model_configured === true
+          ? 'Forge, Metis e MiniCPM locais estão prontos.'
+          : 'Forge local respondeu; confira se Metis e MiniCPM estão ativos.',
+      };
+    } catch (error) {
+      return {
+        available: false, configured: false, systemModelConfigured: false, model: '', endpoint: 'http://127.0.0.1:19195',
+        message: error instanceof Error && error.name === 'TypeError'
+          ? 'Não foi possível acessar o Forge local. Inicie o Cognoscere e permita a conexão local no navegador.'
+          : error instanceof Error ? error.message : 'Não foi possível consultar o Cognoscere local.',
+      };
+    }
+  }
+  async function converseAboutProject(request: ProjectAssistantRequest): Promise<{ reply: string }> {
+    if (!['teacher-projects', 'student-projects'].includes(request.partId)) throw new Error('Parte do projeto inválida.');
+    const reflection = request.kind === 'reflection';
+    const system = [
+      'Você é o assistente local de planejamento colaborativo da plataforma educacional Lumira. A conversa é processada pelo Metis local; o MiniCPM local revisa a resposta no Cognoscere Forge.',
+      'Ajude a compreender e desenvolver projetos da comunidade escolar e do Social. Responda em português natural e contextualizado.',
+      'Formate com Markdown legível: primeiro um parágrafo direto; use títulos e listas em respostas com várias partes; negrito com moderação; blocos de código somente para código. Evite tabelas, imagens, HTML, JSON e comandos de sistema.',
+      reflection
+        ? 'Esta é uma reflexão automática da ficha após uma alteração. Atualize uma única síntese curta do que entendeu sobre o projeto com base somente nos campos, competências e marcos atuais. Aponte lacunas sem inventar dados. Não trate esta reflexão como pedido de edição e não afirme que salvou ou publicou.'
+        : 'Converse sobre o pedido considerando a ficha atual e as mensagens anteriores. Sugira objetivos, etapas, competências e marcos quando úteis. A resposta orienta a pessoa; ela revisa e altera a ficha manualmente.',
+      `Papel: ${request.partId === 'student-projects' ? 'estudante' : 'professor'}.`,
+      `Ficha atual: ${JSON.stringify(request.context)}.`,
+    ].join('\n');
+    const messages = [
+      { role: 'system', content: system },
+      ...request.conversation,
+      { role: 'user', content: request.prompt },
+    ];
+    const response = await fetch(localForgeEndpoint('/v1/chat/completions'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'Metis-4B', slug: cognoscereLocal.slug, unit_id: cognoscereLocal.unitId,
+        mode: 'document_update', messages, max_tokens: reflection ? 650 : 1400,
+      }),
+      signal: AbortSignal.timeout(240000),
+    });
+    if (!response.ok) throw await readForgeError(response);
+    const payload = await response.json() as { choices?: Array<{ message?: { content?: unknown } }> };
+    const content = payload.choices?.[0]?.message?.content;
+    if (typeof content !== 'string' || !content.trim()) throw new Error('O Cognoscere local retornou uma resposta vazia.');
+    let reply = content.trim();
+    try {
+      const structured = JSON.parse(reply) as { reply?: unknown; summary?: unknown };
+      if (typeof structured.reply === 'string' && structured.reply.trim()) reply = structured.reply.trim();
+      else if (typeof structured.summary === 'string' && structured.summary.trim()) reply = structured.summary.trim();
+    } catch { /* Texto Markdown simples também é resposta válida. */ }
+    return { reply };
+  }
   type AgeGradePolicy = {
     version: string;
     expectedAgeByGrade: Record<number, number>;
@@ -341,14 +423,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     const detail = (event as CustomEvent<{ partId?: string }>).detail;
     const origin = projectAssistantOrigin(event, detail?.partId);
     if (!origin) return;
-    let status: CognoscereStatus;
-    try {
-      status = window.lumiraDesktop
-        ? await window.lumiraDesktop.getCognoscereStatus()
-        : { available: false, configured: false, systemModelConfigured: false, model: '', endpoint: '', message: 'A conversa com o serviço local exige abrir o app Electron Lumira.' };
-    } catch (error) {
-      status = { available: false, configured: false, systemModelConfigured: false, model: '', endpoint: '', message: error instanceof Error ? error.message : String(error) };
-    }
+    const status = await requestCognoscereStatus();
     if (origin.isConnected) dispatchProjectAssistantEvent(origin, 'lumira-project-assistant-status', status);
   }
 
@@ -357,8 +432,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     const origin = projectAssistantOrigin(event, detail?.partId);
     if (!origin || !detail || typeof detail.prompt !== 'string') return;
     try {
-      if (!window.lumiraDesktop) throw new Error('Abra o app Electron Lumira para conversar com o Cognoscere local.');
-      const result = await window.lumiraDesktop.converseAboutProject(detail);
+      const result = await converseAboutProject(detail);
       dispatchProjectAssistantEvent(origin, 'lumira-project-assistant-result', { requestId: detail.requestId, reply: result.reply });
     } catch (error) {
       dispatchProjectAssistantEvent(origin, 'lumira-project-assistant-result', {

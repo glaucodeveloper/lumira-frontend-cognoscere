@@ -6,11 +6,11 @@ O PDF [Apresentação inicial — edição de perfil e partes da plataforma](../
 
 ## Acesso e edição de perfil
 
-A apresentação no GitHub Pages pede uma chave PTA compartilhada separadamente. Depois de entrar, a autorização fica na sessão desta aba. A chave funciona como barreira de entrada visual: o GitHub Pages e o repositório são públicos, portanto isso não equivale a autenticação no servidor nem impede alguém de inspecionar o código publicado. No Electron, a tela pede a chave Router API, valida-a contra o health check do endpoint e usa-a para autenticar as chamadas ao túnel.
+A apresentação no GitHub Pages pede uma chave PTA compartilhada separadamente. Depois de entrar, a autorização fica na sessão desta aba. A chave funciona como barreira de entrada visual: o GitHub Pages e o repositório são públicos, portanto isso não equivale a autenticação no servidor nem impede alguém de inspecionar o código publicado.
 
 ## Chat de projetos com Cognoscere
 
-No desktop Electron, abrir **Projetos em andamento** consulta o health check do Forge. A conversa envia a ideia, a ficha atual, competências, marcos e turnos anteriores para `POST /v1/chat/completions`; a resposta real do Cognoscere aparece no chat. Ela não altera campos nem salva o projeto sem revisão. O processo principal mantém a chave Router API somente em memória durante a execução e envia `X-Port-Router-Key` em cada chamada ao endpoint remoto. No GitHub Pages, não há ponte local e a interface informa que o chat requer o aplicativo Electron.
+Abrir **Projetos em andamento** consulta `http://127.0.0.1:19195/health` pelo navegador. A conversa envia a ideia, a ficha atual, competências, escolha de compartilhamento, marcos e turnos anteriores ao Forge local. Pausas na edição também atualizam uma única reflexão do entendimento do projeto. Metis responde em texto e MiniCPM revisa dentro do serviço local; o texto aparece em Markdown, sem alterar campos ou salvar o projeto. O navegador precisa alcançar o Forge em loopback, que libera a origem GitHub Pages por CORS. Sem serviço local ativo, o chat informa indisponibilidade.
 
 Nos perfis de professor e aluno, **Editar perfil** abre o modo de edição junto ao conteúdo. Os ícones de lápis levam ao campo correspondente; a pessoa pode alterar nome, função, escola, apresentação, biografia e competências ou interesses. A edição do perfil também permite buscar no Spotify, colar um link de faixa, álbum ou playlist, conferir o player incorporado e salvar a escolha. **Salvar alterações** atualiza a apresentação e os identificadores relacionados. Os valores ficam no `localStorage` deste navegador; não são enviados a um servidor nem sincronizados entre dispositivos. O player é incorporado pelo Spotify e depende de conexão e disponibilidade do serviço.
 
@@ -24,7 +24,7 @@ Nos perfis de professor e aluno, **Editar perfil** abre o modo de edição junto
 6. Use **Compartilhar esta parte** para copiar um link direto. A seleção também aparece no endereço e responde aos comandos voltar/avançar do navegador.
 7. Expanda a prévia para apresentar somente a tela; pressione Escape ou volte ao laboratório para continuar a exploração.
 
-Os controles são parte do formato de demonstração: a maioria não indica persistência ou serviço ativo. Os dados são fictícios. A exceção é o chat de projetos no Electron, que usa o Cognoscere local; a resposta continua sem persistência. Ações e alterações do protótipo ficam no navegador.
+Os controles são parte do formato de demonstração: a maioria não indica persistência ou serviço ativo. Os dados são fictícios. O chat de projetos usa o Cognoscere local; respostas e rascunhos do projeto não persistem. Ações e alterações do protótipo ficam no navegador.
 
 ## Telas e partes
 

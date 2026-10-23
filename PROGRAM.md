@@ -2,40 +2,37 @@
 
 ## Ownership
 
-- `src/components.ts` owns page parts, form controls, chat transcript state, pending indicators, and typed bubbling events.
-- `src/program.ts` owns service orchestration. It validates project-chat events, calls the desktop bridge, and returns status or response events to the emitting page part.
-- `src/componenting-demo-lab.ts` owns the single demo page generator, selection state, and access gate (Router API in Electron, PTA on GitHub Pages).
-- `electron/main.cjs` owns `.env`, endpoint validation, Router API gate validation, in-memory session authentication, and Cognoscere HTTP calls. `electron/preload.cjs` exposes four narrow IPC methods.
-- Static GitHub Pages runs without Electron IPC and cannot reach private local configuration. It shows the explicit desktop-only chat error instead of fabricating an AI response.
+- `src/components.ts` owns page parts, form controls, the project chat transcript and reflection state, safe Markdown rendering, the sample student progress dashboard, and typed bubbling events.
+- `src/program.ts` owns the local Cognoscere client and service orchestration. It talks only to Forge at `http://127.0.0.1:19195` and returns status or assistant results to the originating page part.
+- `src/componenting-demo-lab.ts` owns the single demo page generator, selection state, and the PTA presentation gate.
+- GitHub Pages hosts the web application. There is no Electron process, remote model provider, or secret embedded in the published bundle.
 
-## Project conversation flow
+## Project conversation and reflection
 
-1. Opening the project builder emits `lumira-project-assistant-status-request` with `{ partId }`.
-2. `program()` checks the desktop bridge and emits `lumira-project-assistant-status` with safe status fields only.
-3. Submitting the chat emits `lumira-project-assistant-request` with request id, part id, prompt, current project form, selected competencies, milestones, and recent successful turns.
-4. Electron main validates the request and sends the conversation to Forge `POST /v1/chat/completions`, using the configured Lumira speciality and memory unit. After the access gate verifies Router API against `/health`, the main process adds `X-Port-Router-Key` from in-memory session state. It returns only the assistant text.
-5. `program()` sends `lumira-project-assistant-result` to the originating part. Pending state ends on success and failure; returned text never edits or saves the project form automatically.
+1. Opening the project builder requests `GET http://127.0.0.1:19195/health` from the browser and shows the local Forge/Metis/MiniCPM status.
+2. Typing, changing the audience, marking competencies or social sharing, and adding/removing milestones schedule a 900 ms debounced reflection. The latest request contains the current form values, selected competencies, the social-draft choice, calendar milestones, and recent manual conversation turns.
+3. The chat keeps one replaceable `REFLEXÃO DO PROJETO · METIS LOCAL` message. Older reflection requests cannot overwrite the latest state. Clearing the entire form removes its stale reflection.
+4. A manual chat turn sends the same current project context and recent successful manual turns. Reflection messages are excluded from conversation history; form edits never add fake user messages.
+5. `src/program.ts` posts to the local Forge `/v1/chat/completions` using the Lumira speciality and `lumira-cognoscere-monitor` unit. Metis returns text; Forge reviews locally with MiniCPM. The project chat uses `document_update`, so it does not create OKF operations or save the project.
+6. Pending state ends on success or failure. Returned text never edits or saves the form automatically. The renderer escapes model content and supports a limited safe Markdown subset (headings, paragraphs, lists, emphasis, inline/fenced code, blockquotes, and HTTP(S)/`mailto:` links); raw HTML and image markup do not execute or load.
 
-The request uses `mode: document_update` to keep Forge in its text-reflection path and avoid creating OKF operations for a project-planning chat. The connected Memory unit is `lumira-cognoscere-monitor` by default.
+The project form remains a browser-local draft. Saving in this prototype adds it only to the current page state; the chat response is advice and reflection, not a persisted project record.
 
-## Credentials and endpoints
+## Local service boundary and web publication
 
-- Electron reads `COGNOSCERE_BASE_URL`, `COGNOSCERE_SLUG`, and `COGNOSCERE_UNIT_ID` from `.env`. The Windows release template points to the active ngrok route `https://ateliotic-jann-paragonless.ngrok-free.dev/19195`; remote endpoints require HTTPS.
-- The Electron gate accepts the Router API key only after the main process validates it against `/health`. The key stays in main-process memory for the run and is sent only in the `X-Port-Router-Key` header for authenticated requests; it is never written to disk or returned to the renderer.
-- The GitHub Pages presentation retains its static PTA gate. Electron does not use the PTA value for access.
-- Renderer receives endpoint/status text and never receives the Router API key back from main; it sends the user's password-field input to IPC only for verification. Context isolation, Node integration off, and renderer sandbox stay enabled.
-- `.env.example` documents local configuration. `.env` and `.env.*` are excluded from Git. GitHub Pages cannot read this file and keeps its legacy static presentation gate; it has no Cognoscere bridge.
+- The browser calls only loopback Forge at `127.0.0.1:19195`. Forge calls local Metis and MiniCPM. The Lumira web client has no NVIDIA provider path and does not use ngrok or a remote model endpoint.
+- Forge's CORS allowlist includes `https://glaucodeveloper.github.io` and the local Vite origins `http://127.0.0.1:5173` and `http://localhost:5173`. Add another exact web origin through `COGNOSCERE_FORGE_ALLOWED_ORIGINS`; do not use `*`.
+- The published bundle contains no model, Router API, or service token. A browser must reach a running local Forge and the browser must permit that local connection. A public GitHub Pages origin cannot reach the user's computer when the local service is stopped.
+- The PTA gate is a presentation barrier only. GitHub Pages and its JavaScript are public, so the gate is not server authentication.
 
-## Lifecycle and limits
+## Future Administration of AI page
 
-`npm run desktop:dev` starts one local Vite server and one Electron window. `npm run desktop` builds the static renderer and opens it in Electron. Electron does not start or manage Cognoscere systemd services; Forge, Metis, and MiniCPM must already be available. The demo project form remains browser-local and is not persisted to Cognoscere.
+The project-creation controls belong in a future **Administração da IA** page; that page is not implemented yet. Its contract must let an authorized institution configure role-specific project-creation instructions, the reflection policy and debounce behavior, the fields sent as context, the Markdown response format, the local speciality/unit binding, and whether project creation is enabled for each role. It must provide a prompt preview, version history, publish/rollback, and an audit record. Model and service credentials stay in the local Cognoscere service and never enter the browser configuration or published bundle.
 
-`npm run dist:win` typechecks, builds the renderer, and creates a per-user NSIS installer for Windows x64 under `release/`. The installer packages the renderer and Electron entrypoints; `.env.example` is copied to Electron's user data on first launch, while `.env` and Router API keys are never included. Set only endpoint, slug, unit, and timeout in the user-data `.env`; enter Router API key in the app gate.
+## Student profile progress dashboard
 
-## Verificação desta implementação
+The student profile's Competencies part starts with the student's public interests. `Ver todos` switches that part to an in-place progress dashboard, and `Competências` returns to the public list. Its counts, week chart, and step bars are hard-coded demonstration data in `src/components.ts`; labels state that they are samples, not a live student record, grade, or proficiency assessment. The open/closed state belongs to the part's state iterator and is not persisted.
 
-- Percurso Electron real anterior: uma chave PTA temporária liberou a tela; o builder docente consultou status e mostrou Forge online; uma solicitação contextual sobre desperdício de água chegou ao Cognoscere local e a resposta do Metis apareceu no chat após cerca de 60 s. Essa tela foi substituída nesta revisão pelo acesso via Router API.
-- Rota ngrok/port-router real: `GET /19195/health` respondeu HTTP 200 com `X-Port-Router-Key` e HTTP 401 sem a chave.
-- `.env` local está ignorado pelo Git e com modo `0600`; Vite devolve HTTP 403 ao tentar servi-lo. O bundle estático não contém o cabeçalho Router.
-- `npm run typecheck`, `npx vite build`, `node --check` nos arquivos Electron e `git diff --check` passaram. A suíte de testes não foi executada.
-- Verificação da integração: o endpoint ngrok foi chamado com e sem `X-Port-Router-Key`; a chamada sem chave recebeu HTTP 401 e a chamada autenticada ao chat escolar respondeu HTTP 200 com texto do Metis. Este build será percorrido pela entrada Router API e pelo chat após a reconstrução do instalador.
+## Build and manual review
+
+`npm run dev` serves the web application. `npm run typecheck` checks TypeScript, and `npx vite build` creates the static GitHub Pages bundle. The workflow `.github/workflows/pages.yml` publishes `dist/` on pushes to `main` and manual dispatches.

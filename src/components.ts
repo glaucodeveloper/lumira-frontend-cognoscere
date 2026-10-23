@@ -880,7 +880,7 @@ type ProfileActivityItem = {
   imageAlt?: string;
 };
 type ProfileProjectMilestone = { id: string; title: string; date: string };
-type ProjectChatMessage = { id: string; role: 'student' | 'assistant'; text: string; status?: 'pending' | 'error' };
+type ProjectChatMessage = { id: string; role: 'student' | 'assistant'; text: string; kind?: 'conversation' | 'reflection'; revision?: number; status?: 'pending' | 'error' };
 type ProfileProjectItem = {
   id: string; title: string; goal: string; summary: string; audience: string;
   competencies: string[]; milestones: ProfileProjectMilestone[]; socialDraft: boolean; createdAt: string;
@@ -915,10 +915,94 @@ function renderProfileProjectCard(project: ProfileProjectItem): string {
   const milestoneCount = project.milestones.length;
   return '<article class="lm-project-row lm-project-row-local"><span class="lm-project-art art-3">✦</span><div><b>' + e(project.title) + '</b><small>' + milestoneCount + (milestoneCount === 1 ? ' marco' : ' marcos') + ' · ' + e(project.audience) + '</small><div class="lm-project-tag-row">' + project.competencies.slice(0, 3).map(item => LabPill(item, 'mint')).join('') + '</div></div>' + LabPill(project.socialDraft ? 'Rascunho para Social' : 'Privado', project.socialDraft ? 'lilac' : 'gray') + '</article>';
 }
+function renderProjectChatMarkdown(source: string): string {
+  const tokenHtml: string[] = [];
+  const withLinks = source.replace(/(!?)\[([^\]]+)\]\(((?:[^()\s]+|\([^()\s]*\))*)\)/g, (match, image: string, label: string, rawUrl: string) => {
+    if (image) return label;
+    const url = rawUrl.trim();
+    if (/[\u0000-\u0020\u007f]/.test(url)) return label;
+    let parsed: URL;
+    try { parsed = new URL(url); } catch { return label; }
+    if (!['http:', 'https:', 'mailto:'].includes(parsed.protocol)) return label;
+    const index = tokenHtml.push('<a href="' + e(parsed.href) + '" target="_blank" rel="noopener noreferrer">' + e(label) + '</a>') - 1;
+    return '\u0000' + index + '\u0000';
+  });
+  const inline = (value: string): string => {
+    const tokens: string[] = [];
+    let html = e(value).replace(/\u0000(\d+)\u0000/g, (_match, index: string) => {
+      const token = '\u0001' + tokens.length + '\u0001';
+      tokens.push(tokenHtml[Number(index)] ?? '');
+      return token;
+    });
+    html = html.replace(/`([^`\n]+)`/g, '<code>$1</code>')
+      .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/__([^_\n]+)__/g, '<strong>$1</strong>')
+      .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, '<em>$1</em>')
+      .replace(/(?<!_)_([^_\n]+)_(?!_)/g, '<em>$1</em>');
+    tokens.forEach((token, index) => { html = html.replace('\u0001' + index + '\u0001', token); });
+    return html;
+  };
+  const lines = withLinks.replace(/\r\n?/g, '\n').split('\n');
+  const blocks: string[] = [];
+  for (let index = 0; index < lines.length;) {
+    const line = lines[index];
+    if (!line.trim()) { index += 1; continue; }
+    const fence = line.match(/^\s*```/);
+    if (fence) {
+      const code: string[] = [];
+      index += 1;
+      while (index < lines.length && !/^\s*```\s*$/.test(lines[index])) code.push(lines[index++]);
+      if (index < lines.length) index += 1;
+      blocks.push('<pre><code>' + e(code.join('\n')) + '</code></pre>');
+      continue;
+    }
+    const heading = line.match(/^\s{0,3}(#{1,3})\s+(.+?)\s*#*\s*$/);
+    if (heading) {
+      const level = heading[1].length === 1 ? 2 : 3;
+      blocks.push('<h' + level + '>' + inline(heading[2]) + '</h' + level + '>');
+      index += 1;
+      continue;
+    }
+    if (/^\s*>/.test(line)) {
+      const quote: string[] = [];
+      while (index < lines.length && /^\s*>/.test(lines[index])) quote.push(lines[index++].replace(/^\s*>\s?/, ''));
+      blocks.push('<blockquote><p>' + quote.map(inline).join('<br>') + '</p></blockquote>');
+      continue;
+    }
+    const listMatch = line.match(/^\s*(?:[-+*]|\d+[.)])\s+(.+)$/);
+    if (listMatch) {
+      const ordered = /^\s*\d+[.)]/.test(line);
+      const tag = ordered ? 'ol' : 'ul';
+      const items: string[] = [];
+      while (index < lines.length) {
+        const item = lines[index].match(/^\s*(?:[-+*]|\d+[.)])\s+(.+)$/);
+        if (!item || /^\s*\d+[.)]/.test(lines[index]) !== ordered) break;
+        items.push('<li>' + inline(item[1]) + '</li>');
+        index += 1;
+      }
+      blocks.push('<' + tag + '>' + items.join('') + '</' + tag + '>');
+      continue;
+    }
+    const paragraph = [line.trim()];
+    index += 1;
+    while (index < lines.length && lines[index].trim()
+      && !/^\s{0,3}#{1,3}\s+/.test(lines[index])
+      && !/^\s*>/.test(lines[index])
+      && !/^\s*```/.test(lines[index])
+      && !/^\s*(?:[-+*]|\d+[.)])\s+/.test(lines[index])) paragraph.push(lines[index++].trim());
+    blocks.push('<p>' + inline(paragraph.join(' ')) + '</p>');
+  }
+  return blocks.join('');
+}
 function renderProjectChatMessages(messages: ProjectChatMessage[]): string {
-  const greeting = '<article class="lm-project-chat-message assistant"><small>COGNOSCERE · METIS</small><p>Conte a ideia do grupo. O assistente considera a ficha, as competências e o calendário para conversar sobre o projeto.</p></article>';
-  return greeting + messages.map(message => '<article class="lm-project-chat-message ' + message.role + (message.status === 'error' ? ' error' : '') + '"' + (message.status === 'pending' ? ' aria-live="polite" aria-busy="true"' : '') + '><small>' + (message.role === 'student' ? 'VOCÊ' : 'COGNOSCERE · METIS') + '</small><p>'
-    + (message.status === 'pending' ? '<span class="lm-project-chat-spinner" aria-hidden="true"></span>Consultando Cognoscere…' : e(message.text)) + '</p></article>').join('');
+  const greeting = '<article class="lm-project-chat-message assistant"><small>COGNOSCERE LOCAL · METIS</small><div class="lm-project-chat-body lm-markdown"><p>Escreva ou marque algo na ficha. O assistente acompanha as mudanças e atualiza a reflexão sobre o projeto; use a conversa para pedir ideias e encaminhamentos.</p></div></article>';
+  return greeting + messages.map(message => {
+    const body = message.status === 'pending' ? '<p><span class="lm-project-chat-spinner" aria-hidden="true"></span>' + (message.kind === 'reflection' ? 'Lendo a ficha atual…' : 'Conversando com o Cognoscere local…') + '</p>'
+      : message.role === 'assistant' && message.status !== 'error' ? '<div class="lm-project-chat-body lm-markdown">' + renderProjectChatMarkdown(message.text) + '</div>'
+        : '<p>' + e(message.text) + '</p>';
+    const label = message.role === 'student' ? 'VOCÊ' : message.kind === 'reflection' ? 'REFLEXÃO DO PROJETO · METIS LOCAL' : 'COGNOSCERE LOCAL · METIS';
+    return '<article class="lm-project-chat-message ' + message.role + (message.kind === 'reflection' ? ' reflection' : '') + (message.status === 'error' ? ' error' : '') + '"' + (message.status === 'pending' ? ' aria-live="polite" aria-busy="true"' : '') + '><small>' + label + '</small>' + body + '</article>';
+  }).join('');
 }
 const PROFILE_ACTIVITY_LABELS: Record<ProfileActivityKind, string> = {
   post: 'Post', activity: 'Atividade', video: 'Vídeo', project: 'Projeto',
@@ -1424,7 +1508,7 @@ function renderProjectBuilder(scope: 'teacher-projects' | 'student-projects'): s
     + '<label class="lm-project-social-choice"><input type="checkbox" name="projectSocialDraft" value="yes" checked data-interaction-toggle="project-social-draft"><span><b>Preparar para o Social</b><small>O projeto será salvo como rascunho compartilhável; esta demonstração não publica conteúdo.</small></span></label>'
     + '</div><section class="lm-project-calendar"><div><span class="lm-eyebrow">ORGANIZAÇÃO</span><h4>Calendário de marcos</h4><p>Escolha uma data e registre o próximo passo do grupo.</p></div><div data-project-calendar></div><div class="lm-project-milestone-add"><label>Nome do marco<input name="projectMilestoneTitle" data-interaction-field="' + fieldKey('projectMilestoneTitle') + '" maxlength="70" placeholder="Ex.: Entrevistar moradores"></label><label>Data<input type="date" name="projectMilestoneDate" data-interaction-field="' + fieldKey('projectMilestoneDate') + '" value="2026-10-21"></label><button type="button" class="lm-project-add-milestone" data-project-milestone-add>＋ Adicionar marco</button></div></section>'
     + '<footer><button type="button" class="lm-activity-cancel" data-project-cancel>Cancelar</button><button type="submit" class="lm-small-primary">Salvar projeto →</button></footer></form>'
-    + '<aside class="lm-project-planner"><header><div><span class="lm-eyebrow">IDEIA E PLANEJAMENTO</span><h4>Chat do projeto</h4></div><span class="lm-project-local-tag" data-project-assistant-status aria-live="polite">VERIFICANDO COGNOSCERE</span></header><div class="lm-project-chat-messages" data-project-chat-messages aria-live="polite"></div><form class="lm-project-chat-form" data-project-chat-form><label for="' + scope + '-chat-prompt">Converse sobre o que vocês querem criar</label><textarea id="' + scope + '-chat-prompt" name="projectChatPrompt" data-interaction-field="' + fieldKey('projectChatPrompt') + '" rows="3" maxlength="500" placeholder="Ex.: queremos registrar histórias do bairro em um mapa…" required></textarea><button type="submit" class="lm-small-primary">Conversar com Cognoscere →</button><small>As respostas vêm do Forge local. Revise e aplique manualmente na ficha.</small></form></aside></div></section>';
+    + '<aside class="lm-project-planner"><header><div><span class="lm-eyebrow">IDEIA E PLANEJAMENTO</span><h4>Chat do projeto</h4></div><span class="lm-project-local-tag" data-project-assistant-status aria-live="polite">VERIFICANDO COGNOSCERE LOCAL</span></header><div class="lm-project-chat-messages" data-project-chat-messages aria-live="polite"></div><form class="lm-project-chat-form" data-project-chat-form><label for="' + scope + '-chat-prompt">Converse sobre o que vocês querem criar</label><textarea id="' + scope + '-chat-prompt" name="projectChatPrompt" data-interaction-field="' + fieldKey('projectChatPrompt') + '" rows="3" maxlength="500" placeholder="Ex.: queremos registrar histórias do bairro em um mapa…" required></textarea><button type="submit" class="lm-small-primary">Conversar com Cognoscere →</button><small>O chat usa Metis e MiniCPM locais. A ficha se reflete após cada pausa na edição.</small></form></aside></div></section>';
 }
 function renderAgendaPanel(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('teacher-agenda', data);
@@ -1463,16 +1547,43 @@ function renderStudentAchievements(data: ComponentFixture, selectedId: string): 
 }
 function renderStudentSkillRows(interests: string[]): string {
   const tones = ['teal', 'blue', 'violet', 'sun'];
-  return interests.map((item, index) => '<div class="lm-student-skill"><span class="lm-student-skill-mark tone-' + tones[index % tones.length] + '" aria-hidden="true">✦</span><div><b>' + e(item) + '</b><small>Interesse escolhido pelo estudante</small></div><span class="lm-student-skill-check" aria-label="Interesse público">✓</span></div>').join('');
+  return interests.map((item, index) => '<div class="lm-student-skill"><span class="lm-student-skill-mark tone-' + tones[index % tones.length] + '" aria-hidden="true">✦</span><div><b>' + e(item) + '</b><small>Competência de interesse</small></div><span class="lm-student-skill-check" aria-label="Interesse público">✓</span></div>').join('');
+}
+const STUDENT_PROGRESS_SAMPLE = {
+  completion: 68,
+  activityCount: 12,
+  evidenceCount: 7,
+  projectCount: 4,
+  activeWeeks: 3,
+  skills: [
+    { title: 'Comunicação', steps: '3 de 5 etapas', progress: 60, evidence: '2 registros' },
+    { title: 'Pensamento científico', steps: '2 de 4 etapas', progress: 50, evidence: '1 registro' },
+    { title: 'Colaboração', steps: '4 de 6 etapas', progress: 67, evidence: '3 registros' },
+  ],
+  weeks: [2, 4, 3, 5, 4],
+};
+function renderStudentProgressDashboard(): string {
+  const sample = STUDENT_PROGRESS_SAMPLE;
+  const skills = sample.skills.map(skill => '<article class="lm-student-progress-skill"><div class="lm-student-progress-skill-copy"><div><b>' + e(skill.title) + '</b><small>' + e(skill.evidence) + '</small></div><span>' + e(skill.steps) + '</span></div><div class="lm-student-progress-track" role="img" aria-label="' + e(skill.title) + ': ' + skill.progress + '% das etapas demonstrativas"><span style="width:' + skill.progress + '%"></span></div></article>').join('');
+  const bars = sample.weeks.map((count, index) => '<div class="lm-student-week"><span class="lm-student-week-bar" style="height:' + (count / 5 * 100) + '%" role="img" aria-label="Semana ' + (index + 1) + ': ' + count + ' registros"></span><small>' + ['S−4', 'S−3', 'S−2', 'S−1', 'Agora'][index] + '</small><b>' + count + '</b></div>').join('');
+  return '<section class="lm-student-progress-dashboard" data-student-progress-dashboard hidden aria-labelledby="lm-student-progress-title">'
+    + '<header class="lm-student-dashboard-header"><div><span class="lm-eyebrow">VISÃO DO ESTUDANTE · AMOSTRA</span><h3 id="lm-student-progress-title">Seu percurso, em contexto</h3><p>Indicadores demonstrativos de participação e etapas; não representam notas nem avaliação de domínio.</p></div><button type="button" class="lm-text-action" data-student-progress-close>← Competências</button></header>'
+    + '<div class="lm-student-progress-overview"><div class="lm-student-progress-feature"><div><span>ETAPAS DO CICLO</span><strong>' + sample.completion + '<small>%</small></strong><p>percorridas nesta amostra</p></div><div class="lm-student-progress-track" role="img" aria-label="' + sample.completion + '% das etapas demonstrativas percorridas"><span style="width:' + sample.completion + '%"></span></div><small>Próximo passo: registrar uma nova evidência de aprendizagem.</small></div>'
+    + '<div class="lm-student-progress-metrics"><div><b>' + sample.activityCount + '</b><span>atividades</span></div><div><b>' + sample.evidenceCount + '</b><span>registros de evidência</span></div><div><b>' + sample.projectCount + '</b><span>projetos</span></div><div><b>' + sample.activeWeeks + '</b><span>semanas ativas</span></div></div></div>'
+    + '<div class="lm-student-progress-details"><section class="lm-student-progress-skills"><header><div><span class="lm-eyebrow">ETAPAS POR COMPETÊNCIA</span><h4>O que está em movimento</h4></div><span>EXEMPLO</span></header>' + skills + '<small class="lm-student-progress-footnote">As barras contam etapas propostas para a demonstração, não medem proficiência.</small></section>'
+    + '<section class="lm-student-week-panel"><header><div><span class="lm-eyebrow">PARTICIPAÇÃO</span><h4>Ritmo nas últimas semanas</h4></div><span>REGISTROS</span></header><div class="lm-student-week-chart" aria-label="Registros de atividade por semana">' + bars + '</div><p>Sequência ilustrativa de registros, sem comparação com outros estudantes.</p></section></div>'
+    + '<footer class="lm-student-dashboard-next"><span aria-hidden="true">↗</span><div><b>Um próximo passo possível</b><p>Escolha uma atividade e registre o que observou, tentou ou aprendeu.</p></div><button type="button" class="lm-text-action" data-component-select="student-activity" data-screen-id="student-profile">Abrir atividades →</button></footer>'
+    + '</section>';
 }
 function renderStudentSkillsPanel(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('student-skills', data);
   const screenId = activePageComposition?.situation.screenId ?? 'student-profile';
   const interests = profileValues(screenId, data, true).competencies;
   const rows = renderStudentSkillRows(interests);
-  const content = '<article class="lm-panel lm-student-skills"><header><div><h2>Competências escolhidas</h2><small>O que quero explorar</small></div><div><button type="button" class="lm-profile-field-edit" data-profile-edit data-profile-focus-field="competencies" aria-label="Editar interesses escolhidos">✎</button><span class="lm-public-choice">PÚBLICO</span></div></header>'
-    + (rows || '<div class="empty">Nenhum interesse selecionado.</div>')
-    + '<p class="lm-student-skills-note">Interesses orientam novos projetos; não são notas nem avaliação de domínio.</p></article>';
+  const content = '<article class="lm-panel lm-student-skills"><header><div><span class="lm-eyebrow">PERFIL · INTERESSES</span><h2>Competências escolhidas</h2><small>O que quero explorar</small></div><div class="lm-student-skills-actions"><button type="button" class="lm-text-action" data-student-progress-open aria-controls="lm-student-progress-title" aria-expanded="false">Ver todos <span aria-hidden="true">→</span></button><button type="button" class="lm-profile-field-edit" data-profile-edit data-profile-focus-field="competencies" aria-label="Editar interesses escolhidos">✎</button></div></header>'
+    + '<div data-student-interest-content><div data-student-interest-list>' + (rows || '<div class="empty">Nenhum interesse selecionado.</div>') + '</div>'
+    + '<p class="lm-student-skills-note">Interesses públicos orientam novas explorações; não indicam domínio.</p></div>'
+    + renderStudentProgressDashboard() + '</article>';
   return labPart('student-skills', content, selectedId, 'lm-profile-card-part');
 }
 function renderStudentActivityCard(data: ComponentFixture, selectedId: string): string {
@@ -1801,6 +1912,8 @@ export function registerComponentElements(): void {
     class DemoPagePart extends HTMLElement implements DemoPagePartElement {
       private transitions: ComponentStateIterator<DemoPagePartState>;
       private state: DemoPagePartState;
+      private projectReflectionTimer: number | undefined;
+      private projectReflectionRevision = 0;
 
       constructor() {
         super();
@@ -1835,21 +1948,27 @@ export function registerComponentElements(): void {
           if (!isProfileProjectPart(this.state.id)) return;
           const detail = (event as CustomEvent<{ requestId: string; reply?: string; error?: string }>).detail;
           if (!detail?.requestId) return;
-          const exists = this.state.interaction.projectChatMessages.some(message => message.id === detail.requestId && message.status === 'pending');
-          if (!exists) return;
+          const pending = this.state.interaction.projectChatMessages.find(message => message.id === detail.requestId && message.status === 'pending');
+          if (!pending) return;
+          if (pending.kind === 'reflection' && pending.revision !== this.projectReflectionRevision) return;
           this.transitionInteraction(interaction => ({
             ...interaction,
-            projectChatPending: false,
+            projectChatPending: pending.kind === 'reflection' ? interaction.projectChatPending : false,
             projectChatMessages: interaction.projectChatMessages.map(message => message.id === detail.requestId
-              ? { id: message.id, role: 'assistant', text: detail.reply ?? detail.error ?? 'O Cognoscere não retornou uma resposta.', ...(detail.error ? { status: 'error' as const } : {}) }
+              ? { ...message, role: 'assistant', text: detail.reply ?? detail.error ?? 'O Cognoscere local não retornou uma resposta.', ...(detail.error ? { status: 'error' as const } : { status: undefined }) }
               : message),
           }));
           this.render();
-          this.querySelector<HTMLTextAreaElement>('[data-project-chat-form] textarea')?.focus();
+          if (pending.kind !== 'reflection') this.querySelector<HTMLTextAreaElement>('[data-project-chat-form] textarea')?.focus();
         });
       }
       configure(props: DemoPagePartProps): void {
         const snapshot = structuredClone(props);
+        if (!isProfileProjectPart(snapshot.id) && this.projectReflectionTimer !== undefined) {
+          window.clearTimeout(this.projectReflectionTimer);
+          this.projectReflectionTimer = undefined;
+          this.projectReflectionRevision += 1;
+        }
         this.state = this.transitions.next(current => ({
           ...snapshot,
           interaction: {
@@ -2022,6 +2141,7 @@ export function registerComponentElements(): void {
         });
         this.restoreStories();
         this.restoreProfileEditor();
+        this.restoreStudentSkillsDashboard();
         this.restorePedagogyDemo();
         this.restoreWorkspaceMenus();
         this.restoreCommunityCalendar();
@@ -2032,6 +2152,16 @@ export function registerComponentElements(): void {
           feedback.textContent = interaction.feedback;
           this.append(feedback);
         }
+      }
+      private restoreStudentSkillsDashboard(): void {
+        if (this.state.id !== 'student-skills') return;
+        const isOpen = this.state.interaction.groups['student-progress-dashboard-open'] === 'yes';
+        const interests = this.querySelector<HTMLElement>('[data-student-interest-content]');
+        const dashboard = this.querySelector<HTMLElement>('[data-student-progress-dashboard]');
+        const openButton = this.querySelector<HTMLButtonElement>('[data-student-progress-open]');
+        if (interests) interests.hidden = isOpen;
+        if (dashboard) dashboard.hidden = !isOpen;
+        openButton?.setAttribute('aria-expanded', String(isOpen));
       }
       private restoreProfileActivities(): void {
         if (this.state.id !== 'teacher-activity') return;
@@ -2097,17 +2227,17 @@ export function registerComponentElements(): void {
         const statusBadge = this.querySelector<HTMLElement>('[data-project-assistant-status]');
         if (statusBadge) {
           const status = interaction.projectChatStatus;
-          statusBadge.textContent = !status ? 'VERIFICANDO COGNOSCERE'
-            : status.available && status.configured ? 'COGNOSCERE ONLINE'
-              : status.available ? 'FORGE ONLINE · MODELOS OFFLINE' : 'COGNOSCERE OFFLINE';
-          statusBadge.title = status?.message ?? 'Verificando o endpoint local do Cognoscere.';
+          statusBadge.textContent = !status ? 'VERIFICANDO SERVIÇO LOCAL'
+            : status.available && status.configured ? 'METIS LOCAL ONLINE'
+              : status.available ? 'FORGE LOCAL · MODELOS OFFLINE' : 'SERVIÇO LOCAL OFFLINE';
+          statusBadge.title = status?.message ?? 'Verificando http://127.0.0.1:19195.';
           statusBadge.classList.toggle('is-online', Boolean(status?.available && status.configured));
           statusBadge.classList.toggle('is-offline', Boolean(status && (!status.available || !status.configured)));
         }
         const chatSubmit = this.querySelector<HTMLButtonElement>('[data-project-chat-form] button[type="submit"]');
         if (chatSubmit) {
           chatSubmit.disabled = interaction.projectChatPending;
-          chatSubmit.textContent = interaction.projectChatPending ? 'Aguardando Cognoscere…' : 'Conversar com Cognoscere →';
+          chatSubmit.textContent = interaction.projectChatPending ? 'Aguardando Metis local…' : 'Conversar com Metis local →';
         }
         const dateField = this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneDate"]');
         const selectedDate = interaction.fields[fieldKey('projectMilestoneDate')] ?? '2026-10-21';
@@ -2154,10 +2284,9 @@ export function registerComponentElements(): void {
         }
         const studentSkills = page.querySelector<HTMLElement>('.lm-student-skills');
         if (studentSkills) {
-          studentSkills.querySelectorAll('.lm-student-skill, .empty, .lm-student-skills-note').forEach(item => item.remove());
-          studentSkills.querySelector('header')?.insertAdjacentHTML('afterend', (renderStudentSkillRows(profile.competencies)
-            || '<div class="empty">Nenhum interesse selecionado.</div>')
-            + '<p class="lm-student-skills-note">Interesses orientam novos projetos; não são notas nem avaliação de domínio.</p>');
+          const interestList = studentSkills.querySelector<HTMLElement>('[data-student-interest-list]');
+          if (interestList) interestList.innerHTML = renderStudentSkillRows(profile.competencies)
+            || '<div class="empty">Nenhum interesse selecionado.</div>';
         }
 
         const editing = this.state.interaction.groups['profile-editor-open'] === 'yes';
@@ -2693,6 +2822,59 @@ export function registerComponentElements(): void {
         setText('[data-story-preview-title]', value('title') || storyText.slice(0, 48) || 'Seu título aparece aqui', true);
         setText('[data-story-preview-caption]', value('caption') || storyText || 'Adicione uma chamada para este story.', true);
       }
+      private scheduleProjectReflection(): void {
+        if (!isProfileProjectPart(this.state.id) || !this.querySelector('[data-project-builder]') || this.querySelector<HTMLElement>('[data-project-builder]')?.hidden) return;
+        if (this.projectReflectionTimer !== undefined) window.clearTimeout(this.projectReflectionTimer);
+        this.projectReflectionRevision += 1;
+        this.projectReflectionTimer = window.setTimeout(() => {
+          this.projectReflectionTimer = undefined;
+          this.requestProjectReflection();
+        }, 900);
+      }
+      private requestProjectReflection(): void {
+        const form = this.querySelector<HTMLFormElement>('[data-project-create-form]');
+        if (!form || !isProfileProjectPart(this.state.id)) return;
+        const values = new FormData(form);
+        const context: ProjectAssistantRequest['context'] = {
+          title: String(values.get('projectTitle') ?? '').trim(),
+          goal: String(values.get('projectGoal') ?? '').trim(),
+          summary: String(values.get('projectSummary') ?? '').trim(),
+          audience: String(values.get('projectAudience') ?? '').trim(),
+          competencies: values.getAll('projectCompetency').map(String),
+          socialDraft: values.get('projectSocialDraft') === 'yes',
+          milestones: this.state.interaction.projectMilestones.map(({ title, date }) => ({ title, date })),
+        };
+        const socialChoiceTouched = Object.hasOwn(this.state.interaction.toggles, 'project-social-draft');
+        const hasProjectInformation = Boolean(context.title || context.goal || context.summary || context.competencies.length || context.milestones.length
+          || context.audience !== 'Comunidade escolar' || socialChoiceTouched);
+        if (!hasProjectInformation) {
+          if (this.state.interaction.projectChatMessages.some(message => message.kind === 'reflection')) {
+            this.transitionInteraction(interaction => ({ ...interaction, projectChatMessages: interaction.projectChatMessages.filter(message => message.kind !== 'reflection') }));
+            this.render();
+          }
+          return;
+        }
+        const requestId = projectId();
+        const conversation = this.state.interaction.projectChatMessages
+          .filter(message => message.kind !== 'reflection' && !message.status && message.text.trim())
+          .slice(-8)
+          .map(message => ({ role: message.role === 'student' ? 'user' as const : 'assistant' as const, content: message.text }));
+        const request: ProjectAssistantRequest = {
+          requestId,
+          partId: this.state.id as ProjectAssistantRequest['partId'],
+          kind: 'reflection',
+          prompt: 'Atualize sua compreensão do projeto a partir da ficha atual.',
+          context,
+          conversation,
+        };
+        const reflectionMessage: ProjectChatMessage = { id: requestId, kind: 'reflection', revision: this.projectReflectionRevision, role: 'assistant', text: '', status: 'pending' };
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          projectChatMessages: [...interaction.projectChatMessages.filter(message => message.kind !== 'reflection'), reflectionMessage],
+        }));
+        this.render();
+        this.dispatchEvent(new CustomEvent('lumira-project-assistant-request', { bubbles: true, composed: true, detail: request }));
+      }
       private onClick(event: Event): void {
         if (!(event.target instanceof Element)) return;
         const checkbox = event.target.closest<HTMLInputElement>('input[type="checkbox"], input[type="radio"]');
@@ -2716,6 +2898,13 @@ export function registerComponentElements(): void {
         const button = event.target.closest<HTMLButtonElement>('button');
         if (!button || button.disabled || !this.contains(button)) return;
         if (button.type === 'submit') return;
+        if (this.state.id === 'student-skills' && (button.hasAttribute('data-student-progress-open') || button.hasAttribute('data-student-progress-close'))) {
+          const open = button.hasAttribute('data-student-progress-open');
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'student-progress-dashboard-open': open ? 'yes' : '' } }));
+          this.render();
+          this.querySelector<HTMLButtonElement>(open ? '[data-student-progress-close]' : '[data-student-progress-open]')?.focus();
+          return;
+        }
         if (button.dataset.calendarStep) {
           const delta = Number(button.dataset.calendarStep);
           const current = Number(this.state.interaction.groups['calendar-month-offset'] ?? '0');
@@ -2782,11 +2971,20 @@ export function registerComponentElements(): void {
           this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, 'profile-project-builder-open': true }, feedback: '' }));
           this.render();
           this.dispatchEvent(new CustomEvent('lumira-project-assistant-status-request', { bubbles: true, composed: true, detail: { partId: this.state.id } }));
+          this.scheduleProjectReflection();
           this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectTitle"]')?.focus();
           return;
         }
         if (isProfileProjectPart(this.state.id) && button.hasAttribute('data-project-cancel')) {
-          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, 'profile-project-builder-open': false }, feedback: '' }));
+          if (this.projectReflectionTimer !== undefined) window.clearTimeout(this.projectReflectionTimer);
+          this.projectReflectionTimer = undefined;
+          this.projectReflectionRevision += 1;
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            toggles: { ...interaction.toggles, 'profile-project-builder-open': false },
+            projectChatMessages: interaction.projectChatMessages.filter(message => message.kind !== 'reflection'),
+            feedback: '',
+          }));
           this.render();
           this.querySelector<HTMLButtonElement>('[data-project-create]')?.focus();
           return;
@@ -2805,12 +3003,14 @@ export function registerComponentElements(): void {
           const fieldKey = this.state.id + ':projectMilestoneDate';
           this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, [fieldKey]: date } }));
           this.render();
+          this.scheduleProjectReflection();
           return;
         }
         if (isProfileProjectPart(this.state.id) && button.dataset.projectMilestoneRemove) {
           const milestoneId = button.dataset.projectMilestoneRemove;
           this.transitionInteraction(interaction => ({ ...interaction, projectMilestones: interaction.projectMilestones.filter(item => item.id !== milestoneId), feedback: 'Marco removido do calendário do projeto.' }));
           this.render();
+          this.scheduleProjectReflection();
           return;
         }
         if (isProfileProjectPart(this.state.id) && button.hasAttribute('data-project-milestone-add')) {
@@ -2835,6 +3035,7 @@ export function registerComponentElements(): void {
             feedback: 'Marco “' + title + '” adicionado ao calendário do projeto.',
           }));
           this.render();
+          this.scheduleProjectReflection();
           this.querySelector<HTMLInputElement>('[data-project-create-form] [name="projectMilestoneTitle"]')?.focus();
           return;
         }
@@ -3161,15 +3362,18 @@ export function registerComponentElements(): void {
         }
         if (!key) return;
         const creatingActivity = this.state.id === 'teacher-activity' && Boolean(field.closest('[data-profile-activity-composer]'));
+        const editingProject = isProfileProjectPart(this.state.id) && Boolean(field.closest('[data-project-create-form]'));
         this.transitionInteraction(interaction => ({
           ...interaction,
           fields: { ...interaction.fields, [key]: field.value },
           ...(creatingActivity && interaction.feedback ? { feedback: '' } : {}),
         }));
+        if (editingProject) this.scheduleProjectReflection();
       }
       private onChange(event: Event): void {
         if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) return;
         const field = event.target;
+        const editingProject = isProfileProjectPart(this.state.id) && Boolean(field.closest('[data-project-create-form]'));
         if (field instanceof HTMLInputElement && field.type === 'file' && field.hasAttribute('data-story-image-file')) {
           const file = field.files?.[0];
           if (!file) return;
@@ -3202,9 +3406,9 @@ export function registerComponentElements(): void {
           return;
         }
         const key = field.dataset.interactionField;
-        if (!key) return;
         if (field instanceof HTMLInputElement && (field.type === 'checkbox' || field.type === 'radio')) {
           const toggle = field.dataset.interactionToggle ?? key;
+          if (!toggle) return;
           const feedback = this.state.id === 'pedagogy-activity-builder'
             ? 'Conferência do rascunho atualizada.'
             : this.state.id === 'pedagogy-competency'
@@ -3214,9 +3418,11 @@ export function registerComponentElements(): void {
                 : 'Preferência atualizada nesta demonstração.';
           this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, [toggle]: field.checked }, feedback }));
         } else {
+          if (!key) return;
           this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, [key]: field.value } }));
         }
         this.render();
+        if (editingProject) this.scheduleProjectReflection();
       }
       private onSubmit(event: Event): void {
         event.preventDefault();
@@ -3232,17 +3438,18 @@ export function registerComponentElements(): void {
             return;
           }
           const requestId = projectId();
-          const studentMessage: ProjectChatMessage = { id: requestId + '-user', role: 'student', text: prompt };
-          const assistantMessage: ProjectChatMessage = { id: requestId, role: 'assistant', text: '', status: 'pending' };
+          const studentMessage: ProjectChatMessage = { id: requestId + '-user', kind: 'conversation', role: 'student', text: prompt };
+          const assistantMessage: ProjectChatMessage = { id: requestId, kind: 'conversation', role: 'assistant', text: '', status: 'pending' };
           const projectForm = this.querySelector<HTMLFormElement>('[data-project-create-form]');
           const projectValues = projectForm ? new FormData(projectForm) : null;
           const conversation = this.state.interaction.projectChatMessages
-            .filter(message => !message.status && message.text.trim())
+            .filter(message => message.kind !== 'reflection' && !message.status && message.text.trim())
             .slice(-8)
             .map(message => ({ role: message.role === 'student' ? 'user' as const : 'assistant' as const, content: message.text }));
           const request: ProjectAssistantRequest = {
             requestId,
             partId: this.state.id as ProjectAssistantRequest['partId'],
+            kind: 'conversation',
             prompt,
             context: {
               title: String(projectValues?.get('projectTitle') ?? ''),
@@ -3250,6 +3457,7 @@ export function registerComponentElements(): void {
               summary: String(projectValues?.get('projectSummary') ?? ''),
               audience: String(projectValues?.get('projectAudience') ?? ''),
               competencies: projectValues?.getAll('projectCompetency').map(String) ?? [],
+              socialDraft: projectValues?.get('projectSocialDraft') === 'yes',
               milestones: this.state.interaction.projectMilestones.map(({ title, date }) => ({ title, date })),
             },
             conversation,
@@ -3281,6 +3489,9 @@ export function registerComponentElements(): void {
             this.querySelector<HTMLInputElement | HTMLTextAreaElement>('[data-project-create-form] [name="projectTitle"]')?.focus();
             return;
           }
+          if (this.projectReflectionTimer !== undefined) window.clearTimeout(this.projectReflectionTimer);
+          this.projectReflectionTimer = undefined;
+          this.projectReflectionRevision += 1;
           if (!competencies.length) {
             this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escolha ao menos uma competência relacionada ao projeto.' }));
             this.render();

@@ -5273,6 +5273,7 @@ lumira-page-part {
 .lm-project-chat-messages { display: grid; max-height: 400px; gap: 9px; overflow-y: auto; padding-right: 2px; }
 .lm-project-chat-message { padding: 10px; border: 1px solid #e5e9ed; border-radius: 8px; background: white; }
 .lm-project-chat-message.student { justify-self: end; width: 90%; border-color: #d3e8e1; background: #edf8f4; }
+.lm-project-chat-message.reflection { border-left: 3px solid #2b9a8c; background: #f4faf8; }
 .lm-project-chat-message>small { color: #8794a0; font-size: 7px; font-weight: 800; letter-spacing: .08em; }
 .lm-project-chat-message>p { margin: 5px 0 0; color: #485e72; font-size: 10px; line-height: 1.5; white-space: pre-wrap; }
 .lm-project-chat-message.error { border-color: #ead0c8; background: #fff9f7; }
@@ -5306,4 +5307,85 @@ lumira-page-part {
   .lm-project-planner { position: static; }
   .lm-project-milestone-add { grid-template-columns: 1fr; }
   .lm-project-add-milestone { grid-column: auto; }
+}
+
+/* Student progress dashboard and model Markdown output. */
+.lm-student-skills>header { align-items: center; }
+.lm-student-skills-actions { display: flex; align-items: center; gap: 8px; }
+.lm-student-skills-actions>.lm-text-action { display: inline-flex; align-items: center; gap: 5px; padding: 6px 8px; border: 1px solid #d9e4ef; border-radius: 7px; background: #f7f9fc; color: #2f6bce; font-size: 9px; font-weight: 750; cursor: pointer; }
+.lm-student-skills-actions>.lm-text-action:hover { border-color: #b7ccea; background: #eef4fc; }
+.lm-student-skills>[data-student-interest-content] { margin-top: 8px; }
+.lm-student-skills .lm-student-skill { gap: 10px; padding: 9px 0; }
+.lm-student-skills .lm-student-skill-mark { width: 30px; height: 30px; border-radius: 9px; }
+.lm-student-skills .lm-student-skill b { font-size: 10px; }
+.lm-student-skills .lm-student-skill small { font-size: 8px; }
+.lm-student-skills .lm-student-skills-note { margin-top: 10px; padding-top: 9px; border-top: 1px solid #edf1f5; }
+.lm-student-progress-dashboard { display: grid; gap: 13px; padding-top: 2px; }
+.lm-student-progress-dashboard[hidden],.lm-student-skills [data-student-interest-content][hidden] { display: none !important; }
+.lm-student-dashboard-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.lm-student-dashboard-header h3 { margin: 4px 0 0; color: #172b4d; font-size: 16px; letter-spacing: -.025em; }
+.lm-student-dashboard-header p { max-width: 430px; margin: 5px 0 0; color: #65778d; font-size: 9px; line-height: 1.5; }
+.lm-student-dashboard-header>.lm-text-action { flex: 0 0 auto; padding: 6px 8px; border: 1px solid #dce4ed; border-radius: 6px; color: #48627e; font-size: 8px; }
+.lm-student-progress-overview { display: grid; grid-template-columns: minmax(0,1.05fr) minmax(0,1fr); gap: 9px; }
+.lm-student-progress-feature { display: grid; gap: 10px; padding: 13px; border-radius: 9px; background: #172b4d; color: white; }
+.lm-student-progress-feature>div:first-child { display: grid; grid-template-columns: 1fr auto; align-items: end; }
+.lm-student-progress-feature>div:first-child>span { align-self: center; color: #c7d5e7; font-size: 7px; font-weight: 800; letter-spacing: .12em; }
+.lm-student-progress-feature strong { grid-column: 2; grid-row: 1 / span 2; color: #fff; font-size: 30px; line-height: .95; }
+.lm-student-progress-feature strong small { margin-left: 2px; color: #b9d2ff; font-size: 13px; }
+.lm-student-progress-feature p { grid-column: 1; grid-row: 2; margin: 4px 0 0; color: #d3dfec; font-size: 8px; }
+.lm-student-progress-track { height: 7px; overflow: hidden; border-radius: 99px; background: #e9eef4; }
+.lm-student-progress-feature .lm-student-progress-track { background: #405470; }
+.lm-student-progress-track>span { display: block; height: 100%; border-radius: inherit; background: #50b7ad; }
+.lm-student-progress-feature>small { color: #d3dfec; font-size: 8px; line-height: 1.45; }
+.lm-student-progress-metrics { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+.lm-student-progress-metrics>div { display: grid; align-content: center; gap: 3px; min-height: 58px; padding: 9px 11px; border: 1px solid #e5eaf0; border-radius: 8px; background: #fafbfd; }
+.lm-student-progress-metrics b { color: #172b4d; font-size: 17px; line-height: 1; }
+.lm-student-progress-metrics span { color: #738297; font-size: 8px; }
+.lm-student-progress-details { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(150px,.8fr); gap: 9px; }
+.lm-student-progress-skills,.lm-student-week-panel { min-width: 0; padding: 11px; border: 1px solid #e6ebf1; border-radius: 9px; background: #fff; }
+.lm-student-progress-skills>header,.lm-student-week-panel>header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 9px; }
+.lm-student-progress-skills>header h4,.lm-student-week-panel>header h4 { margin: 3px 0 0; color: #213b59; font-size: 10px; }
+.lm-student-progress-skills>header>span,.lm-student-week-panel>header>span { color: #8290a0; font-size: 6px; font-weight: 800; letter-spacing: .1em; }
+.lm-student-progress-skill { display: grid; gap: 6px; padding: 8px 0; border-top: 1px solid #edf1f5; }
+.lm-student-progress-skill-copy { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.lm-student-progress-skill-copy>div { display: grid; gap: 2px; }
+.lm-student-progress-skill-copy b { color: #2b435e; font-size: 8px; }
+.lm-student-progress-skill-copy small,.lm-student-progress-skill-copy>span { color: #8491a0; font-size: 7px; }
+.lm-student-progress-skill-copy>span { flex: 0 0 auto; }
+.lm-student-progress-skills .lm-student-progress-track { height: 5px; background: #eef2f7; }
+.lm-student-progress-footnote { display: block; margin-top: 8px; color: #7a8999; font-size: 7px; line-height: 1.45; }
+.lm-student-week-chart { display: flex; align-items: end; justify-content: space-around; gap: 7px; height: 94px; padding: 7px 5px 0; border-bottom: 1px solid #e5eaf0; background: repeating-linear-gradient(to bottom, transparent 0, transparent 22px, #eef2f6 23px); }
+.lm-student-week { display: grid; grid-template-rows: 1fr auto auto; justify-items: center; align-items: end; gap: 3px; height: 100%; min-width: 18px; }
+.lm-student-week-bar { align-self: end; width: 13px; min-height: 8px; border-radius: 4px 4px 2px 2px; background: #54aaa1; }
+.lm-student-week:nth-child(2n) .lm-student-week-bar { background: #3f78c8; }
+.lm-student-week small { color: #8290a0; font-size: 6px; }
+.lm-student-week b { color: #38536f; font-size: 7px; }
+.lm-student-week-panel>p { margin: 8px 0 0; color: #76879a; font-size: 7px; line-height: 1.45; }
+.lm-student-dashboard-next { display: flex; align-items: center; gap: 9px; padding: 10px; border-left: 3px solid #e6a63a; border-radius: 0 7px 7px 0; background: #fff9eb; }
+.lm-student-dashboard-next>span { display: grid; width: 26px; height: 26px; flex: 0 0 auto; place-items: center; border-radius: 8px; background: #ffefc9; color: #986817; font-size: 12px; }
+.lm-student-dashboard-next>div { min-width: 0; }
+.lm-student-dashboard-next b { color: #664b1c; font-size: 8px; }
+.lm-student-dashboard-next p { margin: 3px 0 0; color: #816c43; font-size: 7px; line-height: 1.4; }
+.lm-student-dashboard-next>.lm-text-action { flex: 0 0 auto; margin-left: auto; font-size: 8px; }
+.lm-project-chat-body { margin-top: 5px; color: #485e72; font-size: 10px; line-height: 1.55; overflow-wrap: anywhere; }
+.lm-project-chat-body>*:first-child { margin-top: 0; }
+.lm-project-chat-body>*:last-child { margin-bottom: 0; }
+.lm-project-chat-body p { margin: 6px 0; white-space: normal; }
+.lm-project-chat-body h2,.lm-project-chat-body h3 { margin: 10px 0 5px; color: #243e59; line-height: 1.3; }
+.lm-project-chat-body h2 { font-size: 12px; }
+.lm-project-chat-body h3 { font-size: 11px; }
+.lm-project-chat-body ul,.lm-project-chat-body ol { display: grid; gap: 4px; margin: 6px 0; padding-left: 17px; }
+.lm-project-chat-body li { padding-left: 1px; }
+.lm-project-chat-body blockquote { margin: 7px 0; padding: 5px 8px; border-left: 2px solid #54aaa1; background: #f4f8f8; color: #566d81; }
+.lm-project-chat-body code { padding: 1px 4px; border-radius: 3px; background: #eef2f6; color: #30465f; font-family: ui-monospace,SFMono-Regular,Consolas,monospace; font-size: .92em; }
+.lm-project-chat-body pre { overflow: auto; margin: 7px 0; padding: 8px; border-radius: 5px; background: #172b4d; color: #f3f6fa; }
+.lm-project-chat-body pre code { padding: 0; background: transparent; color: inherit; white-space: pre; }
+.lm-project-chat-body a { color: #2f6bce; text-decoration: underline; text-underline-offset: 2px; }
+.lm-project-chat-body strong { color: #243e59; }
+.lm-project-chat-message.error .lm-project-chat-body { color: #9b4634; }
+@media (max-width: 560px) {
+  .lm-student-dashboard-header { flex-direction: column; }
+  .lm-student-progress-overview,.lm-student-progress-details { grid-template-columns: 1fr; }
+  .lm-student-dashboard-next { align-items: flex-start; flex-wrap: wrap; }
+  .lm-student-dashboard-next>.lm-text-action { width: 100%; margin-left: 35px; }
 }

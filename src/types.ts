@@ -196,6 +196,7 @@ export interface ProjectAssistantContext {
   summary: string;
   audience: string;
   competencies: string[];
+  socialDraft: boolean;
   milestones: Array<{ title: string; date: string }>;
 }
 
@@ -207,6 +208,7 @@ export interface ProjectAssistantMessage {
 export interface ProjectAssistantRequest {
   requestId: string;
   partId: 'teacher-projects' | 'student-projects';
+  kind: 'conversation' | 'reflection';
   prompt: string;
   context: ProjectAssistantContext;
   conversation: ProjectAssistantMessage[];
@@ -219,23 +221,4 @@ export interface CognoscereStatus {
   model: string;
   endpoint: string;
   message: string;
-}
-
-export interface ApplicationKeyResult {
-  configured: boolean;
-  valid: boolean;
-  message?: string;
-}
-
-export interface LumiraDesktopBridge {
-  getCognoscereStatus(): Promise<CognoscereStatus>;
-  converseAboutProject(request: ProjectAssistantRequest): Promise<{ reply: string }>;
-  verifyApplicationKey(candidate: string): Promise<ApplicationKeyResult>;
-  isApplicationAuthenticated(): Promise<boolean>;
-}
-
-declare global {
-  interface Window {
-    lumiraDesktop?: LumiraDesktopBridge;
-  }
 }

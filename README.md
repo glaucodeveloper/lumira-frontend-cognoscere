@@ -21,20 +21,17 @@ npm run build  # validação e pacote de produção em dist/
 npm run preview # servir o pacote de produção localmente
 ```
 
-## Aplicativo Electron e Cognoscere
+## Aplicação web e Cognoscere local
 
-Copie `.env.example` para `.env` e confirme o endpoint Forge. O arquivo real `.env` é ignorado pelo Git. No Electron, digite a chave Router API na tela de acesso: o processo principal valida a chave no health check do endpoint HTTPS e a mantém somente em memória durante a execução. Cada chamada ao túnel recebe `X-Port-Router-Key`; o app não persiste a chave em `.env`, armazenamento do renderer, logs ou instalador, e nunca a devolve pelo IPC. HTTP só é permitido para loopback no modo de desenvolvimento.
+A aplicação é somente web e publica em GitHub Pages. O chat usa o Forge local em `http://127.0.0.1:19195`; Forge encaminha a conversa ao Metis local e à revisão do MiniCPM local. Não há cliente NVIDIA, túnel, Electron ou chave de serviço no bundle web.
 
 ```sh
-cp .env.example .env
-npm run desktop:dev
+npm run dev
 ```
 
-Para criar o instalador Windows x64 (`release/Lumira-Cognoscere-Setup-0.2.0-x64.exe`), use `npm run dist:win`. Em Linux, o empacotamento NSIS requer Wine. No primeiro início, o app copia `.env.example` para o arquivo `.env` da pasta de dados do usuário do Electron; ajuste ali apenas endpoint, slug, unidade e timeout. O instalador não leva o `.env` local nem chaves. O template aponta para o túnel ngrok atual, que exige a chave Router API na tela de entrada.
+Para usar o chat no site público, Cognoscere Forge, Metis e MiniCPM precisam estar ativos no computador que abre a página. O Forge permite CORS somente para a origem pública Lumira e para as origens locais Vite. Sem o serviço local ativo ou sem autorização do navegador para a conexão local, a interface mostra o estado offline; a página e os demais controles seguem disponíveis.
 
-O chat dentro de **Projetos em andamento** envia o rascunho atual, competências, marcos e histórico recente para `POST /v1/chat/completions` do Cognoscere Forge. A resposta aparece no chat e não altera campos nem salva o projeto automaticamente. Use `npm run desktop` para compilar e abrir a versão local. GitHub Pages não lê `.env` nem acessa a ponte Electron; ali o chat explica que precisa do desktop.
-
-Forge, Metis e MiniCPM precisam estar iniciados. O estado do endpoint e dos modelos aparece no cabeçalho do chat.
+O chat de **Projetos em andamento** conversa sobre a ficha atual. Alterações digitadas, seleções, competências marcadas e marcos adicionados atualizam uma única reflexão após 900 ms sem edição. A resposta manual também recebe ficha, competências, decisão de compartilhamento social, calendário e histórico recente. A resposta usa Markdown, não altera os campos e não salva o projeto.
 
 ## Programa principal
 
@@ -52,7 +49,7 @@ O sistema visual usa `src/design-tokens.json` como fonte legível dos nomes e va
 
 ## Publicação
 
-O GitHub Actions publica `dist/` no GitHub Pages quando há push em `main` ou execução manual do workflow `Publicar apresentação no GitHub Pages`. O build usa caminhos relativos para funcionar na URL de projeto do Pages. O workflow verifica os tipos e cria o bundle de produção; dados da apresentação continuam estáticos e locais. O desktop é executado separadamente e não publica `.env`.
+O GitHub Actions publica `dist/` no GitHub Pages quando há push em `main` ou execução manual do workflow `Publicar apresentação no GitHub Pages`. O build usa caminhos relativos para funcionar na URL de projeto do Pages. O workflow verifica os tipos e cria o bundle de produção; dados da apresentação continuam estáticos e locais.
 
 O inventário das telas prioritárias — acesso, perfis de professor/aluno e social — e a arquitetura planejada para o `program` exibir estados e projeções de dados estão em [`docs/ESTRUTURA_TELAS_COMPONENTES_PROGRAM.md`](docs/ESTRUTURA_TELAS_COMPONENTES_PROGRAM.md). A apresentação distingue partes observadas nas referências de propostas derivadas.
 
@@ -66,14 +63,14 @@ O inventário das telas prioritárias — acesso, perfis de professor/aluno e so
 | `src/components.ts` | Componentes de página e suas partes, specs, dados iniciais, componentes da plataforma e primitivas compartilhadas |
 | `src/componenting-demo-lab.ts` | Lógica de interação e montagem imperativa do laboratório, `programGenerator()` |
 | `src/types.ts` | Contratos tipados de usuário, snapshot, gateway e sistema |
-| `electron/main.cjs` e `electron/preload.cjs` | Processo principal, configuração protegida e ponte IPC mínima |
+| `src/program.ts` | Orquestração e cliente HTTP do Cognoscere Forge local |
 | `PROGRAM.md` | Eventos, propriedade de estado, integração e limites verificados |
 | `tests/` | Testes de domínio e renderização |
 | `docs/` | Arquitetura, endpoints e política de nivelamento |
 
 ## Limites da demonstração
 
-O gateway padrão mantém dados apenas em memória. O chat de projetos no Electron conversa com o Cognoscere Forge real, mas as respostas são orientação: não editam nem persistem o projeto. O restante da demonstração continua local. GitHub Pages não acessa `.env`, serviços locais ou credenciais. `?mode=worker` seleciona o contrato HTTP proposto, que depende de uma API Workers implantada.
+O gateway padrão mantém dados apenas em memória. A página pública chama somente o Cognoscere Forge em loopback; o serviço aceita a origem Lumira pela allowlist CORS. A chave PTA abre a demonstração visual, não autentica a pessoa no backend. `?mode=worker` seleciona o contrato HTTP proposto, que depende de uma API Workers implantada.
 
 A referência Lumira menciona um coeficiente idade/série, mas não define a fórmula. O projeto mostra idade e série como contexto e mantém o coeficiente pendente de política institucional; não atribui nível escolar automaticamente. A sondagem continua exigindo revisão docente.
 
