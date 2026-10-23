@@ -44,6 +44,52 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     } catch { /* O serviço pode responder sem JSON. */ }
     return new Error(detail || `Cognoscere Forge respondeu com HTTP ${response.status}.`);
   }
+  function paragraphCount(text: string): number {
+    return text.trim().split(/\n\s*\n/).filter(Boolean).length;
+  }
+  function separateExistingSentences(text: string, count: number): string {
+    const sentences = text.trim().replace(/\s+/g, ' ').split(/(?<=[.!?;:])\s+(?=[A-ZÁÀÂÃÉÊÍÓÔÕÚÜÇ])/u).filter(Boolean);
+    if (sentences.length < count) return text;
+    return Array.from({ length: count }, (_, index) => {
+      const start = Math.round(index * sentences.length / count);
+      const end = Math.round((index + 1) * sentences.length / count);
+      return sentences.slice(start, end).join(' ').trim();
+    }).filter(Boolean).join('\n\n');
+  }
+  async function ensurePedagogicalParagraphs(messages: Array<{ role: string; content: string }>, draft: string, instruction: string, minimumParagraphs: number): Promise<string> {
+    if (paragraphCount(draft) >= minimumParagraphs) return draft;
+    let revised = '';
+    try {
+      const response = await fetch(localForgeEndpoint('/v1/chat/completions'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'Metis-4B', slug: cognoscereLocal.slug, unit_id: cognoscereLocal.unitId,
+          mode: 'document_update', max_tokens: 1100,
+          messages: [
+            ...messages,
+            { role: 'assistant', content: draft },
+            { role: 'user', content: 'Revise a resposta anterior para cumprir o formato pedagógico pedido. ' + instruction + ' Preserve o sentido e os limites do contexto; não acrescente fatos nem explique que está revisando. Separe os parágrafos com uma linha em branco real (\\n\\n).' },
+          ],
+        }),
+        signal: AbortSignal.timeout(90000),
+      });
+      if (response.ok) {
+        const payload = await response.json() as { choices?: Array<{ message?: { content?: unknown } }> };
+        const content = payload.choices?.[0]?.message?.content;
+        if (typeof content === 'string' && content.trim()) {
+          revised = content.trim();
+          try {
+            const envelope = JSON.parse(revised) as { reply?: unknown; summary?: unknown };
+            if (typeof envelope.reply === 'string' && envelope.reply.trim()) revised = envelope.reply.trim();
+            else if (typeof envelope.summary === 'string' && envelope.summary.trim()) revised = envelope.summary.trim();
+          } catch { /* Texto Markdown simples também é resposta válida. */ }
+        }
+      }
+    } catch { /* Mantém a resposta original se a revisão de formato falhar. */ }
+    if (revised && paragraphCount(revised) >= minimumParagraphs) return revised;
+    return separateExistingSentences(revised || draft, minimumParagraphs);
+  }
   async function requestCognoscereStatus(): Promise<CognoscereStatus> {
     const endpoint = localForgeEndpoint('/health');
     try {
@@ -111,6 +157,11 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       if (typeof structured.reply === 'string' && structured.reply.trim()) reply = structured.reply.trim();
       else if (typeof structured.summary === 'string' && structured.summary.trim()) reply = structured.summary.trim();
     } catch { /* Texto Markdown simples também é resposta válida. */ }
+    reply = await ensurePedagogicalParagraphs(messages, reply, reflection
+      ? 'Organize em 2 parágrafos: leitura do projeto com base nos dados atuais; implicações, lacunas e próximo passo.'
+      : review
+        ? 'Organize em 3 parágrafos: coerência da proposta; lacunas ou riscos ancorados nos dados; ajustes e pergunta de confirmação.'
+        : 'Organize em 2 parágrafos: resposta ligada ao contexto do projeto; consequência pedagógica ou próximo passo.', reflection || !review ? 2 : 3);
     return { reply };
   }
   async function reviewQuestionnaireAnswers(request: QuestionnaireMonitorRequest): Promise<{ reply: string }> {
@@ -146,7 +197,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     const payload = await response.json() as { choices?: Array<{ message?: { content?: unknown } }> };
     const content = payload.choices?.[0]?.message?.content;
     if (typeof content !== 'string' || !content.trim()) throw new Error('O monitor local não retornou feedback.');
-    return { reply: content.trim() };
+    return { reply: await ensurePedagogicalParagraphs(messages, content.trim(), 'Organize em 3 parágrafos: síntese do raciocínio observado; evidências e limites da leitura; próximo passo útil para o estudante.', 3) };
   }
   async function understandSubjectSkill(request: SubjectSkillUnderstandingRequest): Promise<string> {
     if (request.partId !== 'pedagogy-context') throw new Error('Parte de matéria inválida.');
@@ -175,7 +226,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     const payload = await response.json() as { choices?: Array<{ message?: { content?: unknown } }> };
     const content = payload.choices?.[0]?.message?.content;
     if (typeof content !== 'string' || !content.trim()) throw new Error('O Cognoscere local não retornou uma explicação.');
-    return content.trim();
+    return ensurePedagogicalParagraphs(messages, content.trim(), 'Organize em 2 parágrafos curtos: interpretação contextualizada da habilidade; ação ou evidência de aprendizagem que ela pode orientar, com a cautela curricular pedida.', 2);
   }
   async function understandSubjectFoundation(request: SubjectFoundationAssistantRequest): Promise<string> {
     if (request.partId !== 'pedagogy-context' || !['reflection', 'conversation'].includes(request.kind)) throw new Error('Pedido de matéria inválido.');
@@ -219,7 +270,9 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       if (typeof envelope.reply === 'string' && envelope.reply.trim()) reply = envelope.reply.trim();
       else if (typeof envelope.summary === 'string' && envelope.summary.trim()) reply = envelope.summary.trim();
     } catch { /* Resposta Markdown simples também é válida. */ }
-    return reply;
+    return ensurePedagogicalParagraphs(messages, reply, request.kind === 'reflection'
+      ? 'Escreva exatamente 3 parágrafos: (1) o que a ficha permite compreender e o que ainda falta; (2) como as quatro dimensões se articulam e orientam a aprendizagem; (3) uma decisão ou lacuna concreta e uma pergunta específica. Com ficha vazia, explique como começar sem inventar uma matéria.'
+      : 'Organize em 2 parágrafos: resposta à pergunta conectada à ficha atual; consequência para o ensino, limite ou próximo passo.', request.kind === 'reflection' ? 3 : 2);
   }
   type AgeGradePolicy = {
     version: string;
