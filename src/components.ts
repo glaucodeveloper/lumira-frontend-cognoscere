@@ -177,8 +177,7 @@ const presentationNotes: Record<string, string> = {
   'pedagogy-evidence-review': 'A revisão reúne respostas fictícias, trechos citados e atribuições por critério. A professora pode aceitar ou contestar a leitura; nenhuma evidência isolada altera automaticamente o percurso.',
   'pedagogy-course-sequence': 'A sequência simulada organiza base conceitual, hipótese inicial, representação, mudança de condição e aplicação independente para ensinar uma relação em mais de um contexto.',
   'pedagogy-material-share': 'A publicação cria uma peça compartilhável a partir do material revisado. A resposta privada e a devolutiva individual ficam fora do conteúdo público.',
-  'learner-activity-brief': 'O enunciado oferece contexto, informações e uma pergunta aberta sem mostrar os critérios internos de análise.',
-  'learner-response': 'O estudante registra e envia sua explicação no espaço reservado. A tela confirma o registro da tentativa demonstrativa.',
+  'learner-activity-question': 'Cada questão reúne texto de referência, enunciado e resposta. A diretriz da questão seleciona o formato aberto, fechado ou por associação e apresenta sua legenda antes do campo correspondente.',
   'leveling-assessment': 'A matrícula começa com idade e série, que definem o contexto da sondagem. Um stepper conduz cinco situações de uma competência e atualiza uma pontuação demonstrativa a cada resposta; idade e série não determinam domínio nem progressão.',
   'quest-board': 'As competições sociais são eventos cadastrados com organização, período, formato, regulamento, pontuação e etapas de entrega. A inscrição e cada participação ficam registradas no histórico do evento.',
   'quest-principles': 'Pontuação e colocação seguem o regulamento de cada competição. O resultado social não vira nota curricular; respostas pedagógicas permanecem no espaço reservado.',
@@ -223,8 +222,7 @@ const platformResponsibilities: Record<string, string> = {
   'pedagogy-evidence-review': 'A leitura do monitor descreve realizações em relação a critérios específicos e aponta trechos da resposta que sustentam cada atribuição. A professora pode corrigir a leitura ou registrar que o enunciado não produziu evidência suficiente.\n\nUma resposta pode sustentar um critério e não informar outro. A plataforma não transforma um parecer isolado em nota global, progressão curricular ou decisão automática sobre o próximo conteúdo.',
   'pedagogy-course-sequence': 'Um material de compreensão encadeia texto-base, exemplo comentado, prática guiada, tentativa independente e aplicação em outro contexto. Cada segmento explica a ação que pretende exercitar e a evidência que poderá produzir.\n\nA personalização responde a uma necessidade observada: a IA pode sugerir outra representação ou contexto, e a professora revisa a razão da mudança. Concluir uma etapa não basta para declarar a competência consolidada; é preciso observar a ação em uma situação adequada.',
   'pedagogy-material-share': 'Depois da revisão, a professora escolhe como apresentar o material, a quem disponibilizá-lo e quais partes podem circular. A publicação é um objeto próprio, vinculado à matéria e à competência sem carregar a resposta privada que motivou a produção.\n\nO conteúdo social comunica a proposta pedagógica e preserva sua autoria. Respostas individuais, hipóteses e pareceres de sondagem permanecem no acompanhamento reservado.',
-  'learner-activity-brief': 'A atividade apresenta uma situação concreta, fornece os dados necessários e pede uma conclusão justificada sem revelar os critérios internos do monitor. O estudante pode estimar, organizar uma tabela, calcular ou explicar uma relação com suas próprias palavras.\n\nO contexto não dita um procedimento. Ele dá condições para que diferentes estratégias mostrem o que a pessoa considerou e como revisou sua hipótese diante de uma mudança.',
-  'learner-response': 'A resposta é uma produção pedagógica privada, ligada à revisão da atividade e às referências usadas. O envio confirma uma tentativa sem apagar versões anteriores e sem publicar o texto no perfil social.\n\nA análise posterior deve localizar as evidências na própria resposta. Se faltar informação, isso descreve o que aquela produção mostrou, não uma característica fixa do estudante.',
+  'learner-activity-question': 'A questão é uma unidade completa: apresenta a referência, formula o que deve ser compreendido e oferece a forma de resposta definida para aquele enunciado. A diretriz pode pedir uma produção aberta, uma escolha entre alternativas ou a associação entre itens.\n\nA legenda explica o formato antes de a pessoa responder. O campo acompanha o tipo da questão; rascunho e envio ficam ligados ao exemplo ativo e não aparecem no perfil social. Os exemplos desta tela são fixtures para demonstrar os três formatos, não uma geração ao vivo da IA.',
   'competency-monitor-feedback': 'Depois de responder e revisar os cinco itens, o estudante finaliza a entrega para o monitor. A peça exibe a confirmação de recebimento e o identificador demonstrativo da tentativa, sem fingir uma análise real do modelo.\n\nO formato reserva um ponto de retorno para o monitor e prevê identificação e histórico de tentativas. Neste protótipo, o sistema de tentativas ainda não persiste respostas, não reabre o questionário e não calcula nota ou domínio.',
   'leveling-assessment': 'A matrícula no nivelamento começa com o cadastro demonstrativo de idade e série. Essa combinação situa a etapa escolar e prepara uma sondagem de uma competência específica.\n\nDepois do cadastro, um stepper apresenta cinco situações em sequência. Cada resposta atualiza a barra da competência e pode ser revisada; a pontuação serve apenas para demonstrar o fluxo. A política institucional não define um coeficiente idade/série nem uma regra de classificação, portanto a interface não transforma esse resultado em nota, domínio ou avanço escolar.',
   'quest-board': 'As quests são competições sociais cadastradas como eventos: cada uma identifica organização, período, regras, formato de participação, critérios de pontuação e etapas com entregas. Antes de entrar, o estudante confere o regulamento e se inscreve no evento escolhido.\n\nA participação mantém um registro rastreável de inscrição, entregas e conclusão. Pontuação e colocação pertencem às regras daquela competição; não são notas, níveis nem evidências automáticas de domínio curricular.',
@@ -308,9 +306,10 @@ const prototypeFieldsByRegion: Record<string, readonly PrototypeParameterSpec[]>
   'pedagogy-competency': [{ id: 'competencies', label: 'Competências em foco', type: 'list', targetPath: 'competencies', hint: 'Uma competência por linha.' }],
   'pedagogy-activity-builder': [{ id: 'prompt', label: 'Orientação para IA', type: 'textarea', targetPath: 'prompt', hint: 'A simulação demonstra o formato da proposta.' }],
   'pedagogy-course-sequence': [{ id: 'courseTitle', label: 'Título do percurso', type: 'text', targetPath: 'courseTitle' }],
-  'learner-activity-brief': [
+  'learner-activity-question': [
     { id: 'activityTitle', label: 'Título da atividade', type: 'text', targetPath: 'activityTitle' },
-    { id: 'question', label: 'Enunciado', type: 'textarea', targetPath: 'question' },
+    { id: 'referenceText', label: 'Texto de referência · questão aberta', type: 'textarea', targetPath: 'questions.0.referenceText' },
+    { id: 'questionPrompt', label: 'Enunciado · questão aberta', type: 'textarea', targetPath: 'questions.0.prompt' },
   ],
   'teacher-projects': [{ id: 'projects', label: 'Projetos visíveis', type: 'count', targetPath: 'projects', min: 0, max: 10 }],
   'teacher-agenda': [{ id: 'agenda', label: 'Compromissos visíveis', type: 'count', targetPath: 'agenda', min: 0, max: 12 }],
@@ -472,13 +471,12 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
     ],
   },
   {
-    id: 'student-activity', title: 'Atividade do aluno', description: 'Enunciado contextual e resposta reservada com confirmação de envio.',
-    presentation: 'Proposta derivada da jornada de atividade aberta. O estudante recebe uma versão aprovada e envia uma resposta privada. A tela confirma o registro da tentativa sem alterar o percurso.',
-    evidence: 'derived', fixtureKey: 'student-activity', defaultComponentId: 'learner-activity-brief',
+    id: 'student-activity', title: 'Atividade do aluno', description: 'Questões completas com referência contextual e formato de resposta orientado pela diretriz.',
+    presentation: 'Cada questão une o texto que dá contexto, o enunciado que solicita uma compreensão e o campo adequado ao formato previsto. A demonstração inclui respostas abertas, fechadas e por associação, com rascunhos e envios privados por questão.',
+    evidence: 'derived', fixtureKey: 'student-activity', defaultComponentId: 'learner-activity-question',
     regions: [
       ...shellParts('student-activity', 'derived'),
-      partSpec('learner-activity-brief', 'Enunciado e contexto', 'Material aprovado, contexto e pergunta aberta.', 'derived', 'student-activity'),
-      partSpec('learner-response', 'Sua resposta', 'Editor privado da tentativa com confirmação de envio local.', 'derived', 'student-activity'),
+      partSpec('learner-activity-question', 'Questão e resposta', 'Referência, enunciado e controle de resposta escolhido pela diretriz da questão.', 'derived', 'student-activity'),
     ],
   },
   {
@@ -748,8 +746,39 @@ export const initialComponentData: Record<string, unknown> = {
   'student-activity': {
     name: 'Caio Almeida', handle: '@caioalmeida', role: 'Estudante · 8º ano', school: 'Escola Aurora',
     activityTitle: 'Uma decisão sobre o consumo da biblioteca',
-    context: 'A biblioteca mantém oito lâmpadas de 10 W acesas por 6 horas ao dia durante 20 dias. Um ventilador de 100 W, antes ligado por 8 horas ao dia, passará a funcionar por 4 horas. A escola quer saber qual mudança reduz mais o consumo.',
-    question: 'Compare o consumo dos dois usos no período e explique como a mudança no tempo de funcionamento afeta sua conclusão. Você pode organizar os dados como preferir; mostre como chegou à resposta.',
+    questions: [
+      {
+        id: 'library-open', title: 'Uma decisão sobre o consumo da biblioteca',
+        referenceTitle: 'Registro de uso · biblioteca escolar',
+        referenceText: 'Oito lâmpadas de 10 W ficam acesas por 6 horas ao dia durante 20 dias. Um ventilador de 100 W, antes ligado por 8 horas ao dia, passará a funcionar por 4 horas no mesmo período.',
+        prompt: 'Compare o consumo dos dois usos e explique como o tempo de funcionamento altera sua conclusão. Que informação adicional ajudaria a decidir se a mudança é adequada para a biblioteca?',
+        responseDirective: { format: 'open', caption: 'Resposta aberta · escreva uma explicação com suas palavras. Você pode organizar os dados, fazer cálculos e justificar o que concluiu.' },
+      },
+      {
+        id: 'library-closed', title: 'Escolha a leitura sustentada pelos dados',
+        referenceTitle: 'Resumo dos consumos no período',
+        referenceText: 'No período de 20 dias, o conjunto de lâmpadas usa 9,6 kWh. O ventilador, funcionando 4 horas por dia, usa 8 kWh. Os valores consideram a potência indicada e o tempo diário informado.',
+        prompt: 'Qual afirmação compara corretamente os dois usos de energia?',
+        responseDirective: { format: 'closed', caption: 'Resposta fechada · selecione uma alternativa. A questão espera uma escolha entre as opções apresentadas.' },
+        choices: [
+          'O conjunto de lâmpadas consome 1,6 kWh a mais que o ventilador.',
+          'O ventilador consome 1,6 kWh a mais que o conjunto de lâmpadas.',
+          'Os dois usos consomem a mesma quantidade de energia.',
+        ],
+      },
+      {
+        id: 'library-association', title: 'Associe cada uso ao consumo',
+        referenceTitle: 'Potência e duração observadas',
+        referenceText: 'Para comparar os aparelhos, considere o período completo de 20 dias. As lâmpadas são usadas em conjunto; o ventilador teve o horário reduzido para 4 horas por dia.',
+        prompt: 'Relacione cada uso ao consumo calculado para o período observado.',
+        responseDirective: { format: 'association', caption: 'Associação · escolha, em cada linha, o valor que corresponde ao uso descrito.' },
+        associations: [
+          { id: 'lamps', label: 'Oito lâmpadas de 10 W · 6 h/dia · 20 dias', answer: '9,6 kWh' },
+          { id: 'fan', label: 'Ventilador de 100 W · 4 h/dia · 20 dias', answer: '8 kWh' },
+        ],
+        associationChoices: ['9,6 kWh', '8 kWh', '16 kWh'],
+      },
+    ],
     competencies: ['Relacionar potência, tempo de uso e consumo elétrico'],
   },
   'leveling-enrollment': {
@@ -1074,6 +1103,17 @@ type SubjectFoundation = {
   skills: string[];
 };
 type ActivityQuestionSeed = { id: string; title: string; context: string; prompt: string; understanding: string };
+type LearnerActivityQuestionFixture = {
+  id: string;
+  title: string;
+  referenceTitle: string;
+  referenceText: string;
+  prompt: string;
+  responseDirective: { format: 'open' | 'closed' | 'association'; caption: string };
+  choices?: string[];
+  associations?: Array<{ id: string; label: string; answer: string }>;
+  associationChoices?: string[];
+};
 type SubjectSkillSuggestion = { name: string; understanding: string };
 const SUBJECT_SKILL_SUGGESTIONS: readonly SubjectSkillSuggestion[] = [
   { name: 'EF08CI03 · Transformações de energia', understanding: 'A IA lê esta habilidade como investigação das transformações de energia em aparelhos e situações, relacionando cada explicação ao fenômeno observado.' },
@@ -1749,12 +1789,12 @@ function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, select
   const sidebarTargets: Record<string, Record<string, [string, string]>> = {
     community: { Feed: ['community', 'community-feed'], 'Meus círculos': ['community', 'community-aside'], Explorar: ['community', 'community-topics'], Mensagens: ['community', 'community-feed'], Salvos: ['community', 'community-feed'] },
     'teacher-profile': { Perfil: ['teacher-profile', 'teacher-hero'], Áreas: ['teacher-workspace', 'pedagogy-context'], Cursos: ['teacher-workspace', 'pedagogy-course-sequence'], Fórum: ['community', 'community-feed'], 'IA pedagógica': ['teacher-workspace', 'pedagogy-activity-builder'] },
-    'student-profile': { Perfil: ['student-profile', 'student-hero'], Áreas: ['student-activity', 'learner-activity-brief'], Cursos: ['competency-questions', 'competency-question-context'], Fórum: ['community', 'community-feed'], 'IA pedagógica': ['competency-questions', 'competency-monitor-feedback'] },
+    'student-profile': { Perfil: ['student-profile', 'student-hero'], Áreas: ['student-activity', 'learner-activity-question'], Cursos: ['competency-questions', 'competency-question-context'], Fórum: ['community', 'community-feed'], 'IA pedagógica': ['competency-questions', 'competency-monitor-feedback'] },
     'teacher-workspace': { Início: ['teacher-workspace', 'pedagogy-context'], 'Matérias e turmas': ['teacher-workspace', 'pedagogy-context'], Competências: ['teacher-workspace', 'pedagogy-competency'], Sondagem: ['leveling-enrollment', 'leveling-assessment'], Evidências: ['teacher-workspace', 'pedagogy-evidence-review'], Cursos: ['teacher-workspace', 'pedagogy-course-sequence'], Comunidade: ['community', 'community-feed'] },
-    'student-activity': { Início: ['student-profile', 'student-hero'], Sondagem: ['leveling-enrollment', 'leveling-assessment'], Atividade: ['student-activity', 'learner-activity-brief'], Cursos: ['competency-questions', 'competency-question-context'], 'Meu percurso': ['student-profile', 'student-progress'], Comunidade: ['community', 'community-feed'] },
+    'student-activity': { Início: ['student-profile', 'student-hero'], Sondagem: ['leveling-enrollment', 'leveling-assessment'], Atividade: ['student-activity', 'learner-activity-question'], Cursos: ['competency-questions', 'competency-question-context'], 'Meu percurso': ['student-profile', 'student-progress'], Comunidade: ['community', 'community-feed'] },
     'leveling-enrollment': { Início: ['student-profile', 'student-hero'], Matrícula: ['leveling-enrollment', 'leveling-assessment'], Nivelamento: ['competency-questions', 'competency-question-context'], Competições: ['quests', 'quest-board'], 'Meu percurso': ['student-profile', 'student-progress'] },
-    quests: { Início: ['student-profile', 'student-hero'], Competições: ['quests', 'quest-board'], Nivelamento: ['competency-questions', 'competency-question-context'], Cursos: ['student-activity', 'learner-activity-brief'], 'Meu percurso': ['student-profile', 'student-progress'] },
-    'competency-questions': { Início: ['student-profile', 'student-hero'], Matrícula: ['leveling-enrollment', 'leveling-assessment'], Questões: ['competency-questions', 'competency-question-context'], Atividade: ['student-activity', 'learner-activity-brief'], 'Meu percurso': ['student-profile', 'student-progress'] },
+    quests: { Início: ['student-profile', 'student-hero'], Competições: ['quests', 'quest-board'], Nivelamento: ['competency-questions', 'competency-question-context'], Cursos: ['student-activity', 'learner-activity-question'], 'Meu percurso': ['student-profile', 'student-progress'] },
+    'competency-questions': { Início: ['student-profile', 'student-hero'], Matrícula: ['leveling-enrollment', 'leveling-assessment'], Questões: ['competency-questions', 'competency-question-context'], Atividade: ['student-activity', 'learner-activity-question'], 'Meu percurso': ['student-profile', 'student-progress'] },
   };
   const links = labels.map(label => {
     const [targetScreen, targetComponent] = sidebarTargets[screenId]?.[label] ?? [screenId, selectedId];
@@ -1766,7 +1806,7 @@ function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, select
         : questPage ? ['student-profile', 'student-progress'] as const
           : competencyQuestions ? ['leveling-enrollment', 'leveling-assessment'] as const
             : community ? ['community', 'community-calendar'] as const
-              : student ? ['student-activity', 'learner-activity-brief'] as const
+              : student ? ['student-activity', 'learner-activity-question'] as const
                 : ['teacher-workspace', 'pedagogy-context'] as const;
   const content = '<div class="lm-brand"><span class="lm-brand-symbol">✳</span><span>Lumira</span></div>'
     + '<div class="lm-side-account">' + LabAvatar(name, student ? 'blue' : 'teal', 'small') + '<div><strong>' + e(name) + '</strong><small>' + e(student ? 'Estudante' : 'Professora') + '</small></div></div>'
@@ -1783,11 +1823,11 @@ function renderWorkspaceTopbar(data: ComponentFixture, selectedId: string): stri
     access: [['Abrir perfil docente', 'teacher-profile', 'teacher-hero'], ['Abrir perfil aluno', 'student-profile', 'student-hero']],
     'teacher-profile': [['Novo story', 'teacher-profile', 'teacher-stories'], ['Preparar atividade', 'teacher-workspace', 'pedagogy-activity-builder']],
     'teacher-workspace': [['Revisar evidências', 'teacher-workspace', 'pedagogy-evidence-review'], ['Criar sequência', 'teacher-workspace', 'pedagogy-course-sequence']],
-    'student-profile': [['Criar story', 'student-profile', 'student-stories'], ['Responder atividade', 'student-activity', 'learner-response']],
+    'student-profile': [['Criar story', 'student-profile', 'student-stories'], ['Responder atividade', 'student-activity', 'learner-activity-question']],
     'student-activity': [['Ver questões', 'competency-questions', 'competency-question-response'], ['Ver meu percurso', 'student-profile', 'student-progress']],
     'leveling-enrollment': [['Começar sondagem', 'leveling-enrollment', 'leveling-assessment'], ['Ver competições', 'quests', 'quest-board']],
     quests: [['Abrir questões', 'competency-questions', 'competency-question-response'], ['Ver matrícula', 'leveling-enrollment', 'leveling-assessment']],
-    'competency-questions': [['Abrir atividade', 'student-activity', 'learner-response'], ['Ver meu percurso', 'student-profile', 'student-progress']],
+    'competency-questions': [['Abrir atividade', 'student-activity', 'learner-activity-question'], ['Ver meu percurso', 'student-profile', 'student-progress']],
     community: [['Criar publicação', 'community', 'community-feed'], ['Abrir calendário', 'community', 'community-calendar']],
   };
   const actionButtons = (quickActions[screenId] ?? quickActions.community).map(([label, targetScreen, componentId]) =>
@@ -2254,28 +2294,50 @@ function renderTeacherWorkspacePage(props: ComponentPageProps): string {
     + renderPedagogyCourseSequence(data, selectedId) + renderPedagogyMaterialShare(data, selectedId) + '</main></div></div>';
 }
 
-function renderLearnerActivityBrief(data: ComponentFixture, selectedId: string): string {
-  data = prototypeData('learner-activity-brief', data);
-  const content = '<article class="lm-panel lm-learner-brief"><header><div><span class="lm-eyebrow">CIÊNCIAS · 8º A · ATIVIDADE ABERTA</span><h2>' + e(labText(data, 'activityTitle', 'Uma decisão sobre o consumo da biblioteca')) + '</h2></div><span class="lm-due-date">Disponível até 24 out.</span></header>'
-    + '<div class="lm-activity-context"><span class="lm-context-icon">⌂</span><div><small>A SITUAÇÃO</small><p>' + e(labText(data, 'context')) + '</p></div></div>'
-    + '<div class="lm-open-question"><span>DESAFIO</span><p>' + e(labText(data, 'question')) + '</p></div>'
-    + '<div class="lm-learner-resources"><span>Referências compartilhadas</span><div>' + LabPill('Ciências da Natureza', 'blue') + LabPill('Consumo elétrico') + LabPill('Resposta aberta') + '</div></div>'
-    + '<p class="lm-pedagogy-note">Use os dados da situação e explique seu caminho. Há mais de uma forma de organizar o raciocínio.</p></article>';
-  return labPart('learner-activity-brief', content, selectedId, 'lm-pedagogy-panel-part');
-}
-
-function renderLearnerResponse(selectedId: string): string {
-  const content = '<article class="lm-panel lm-learner-response"><header><div><span class="lm-eyebrow">TENTATIVA 01 · PRIVADA</span><h2>Como você chegou a essa conclusão?</h2></div><span class="lm-lock-label">⌑ Só você e sua professora</span></header>'
-    + '<form data-student-answer-form><label><span>Sua resposta e justificativa</span><textarea name="response" data-ai-field="response" rows="8" placeholder="Explique quais dados comparou e como a mudança no tempo de uso afeta sua conclusão."></textarea></label><div class="lm-response-footer"><button type="button" class="lm-secondary-button" data-student-draft>Guardar rascunho</button><span>Resposta não será publicada no perfil.</span><button type="submit" class="lm-primary-button">Enviar tentativa <span aria-hidden="true">→</span></button></div></form><p class="lm-action-feedback" data-response-feedback role="status"></p></article>';
-  return labPart('learner-response', content, selectedId, 'lm-pedagogy-panel-part');
+function renderLearnerActivityQuestion(data: ComponentFixture, selectedId: string): string {
+  data = prototypeData('learner-activity-question', data);
+  const questions = labList<LearnerActivityQuestionFixture>(data, 'questions');
+  const activeId = questions[0]?.id ?? '';
+  const formatLabels = { open: 'ABERTA', closed: 'FECHADA', association: 'ASSOCIAÇÃO' };
+  const questionTabs = questions.map((question, index) => '<button type="button" class="lm-question-example-tab' + (index === 0 ? ' active' : '') + '" data-activity-question-select="' + e(question.id) + '" aria-controls="learner-question-panel-' + e(question.id) + '" aria-current="' + (index === 0 ? 'step' : 'false') + '"><span>0' + (index + 1) + '</span><b>' + e(question.title) + '</b><small data-activity-question-status="' + e(question.id) + '">Em aberto</small></button>').join('');
+  const questionPanels = questions.map((question, index) => {
+    const directive = question.responseDirective;
+    const format = directive?.format ?? 'open';
+    const formatLabel = formatLabels[format];
+    const fieldKey = 'activity-answer:' + question.id;
+    let responseControl = '';
+    if (format === 'closed') {
+      responseControl = '<label class="lm-answer-control"><span>Escolha uma alternativa</span><select name="choice" data-interaction-field="' + e(fieldKey) + '"><option value="">Selecione uma opção</option>'
+        + (question.choices ?? []).map((choice, choiceIndex) => '<option value="' + choiceIndex + '">' + e(choice) + '</option>').join('') + '</select></label>';
+    } else if (format === 'association') {
+      responseControl = '<div class="lm-association-list">' + (question.associations ?? []).map(pair => '<label class="lm-association-row"><span>' + e(pair.label) + '</span><select name="association-' + e(pair.id) + '" data-interaction-field="' + e(fieldKey + ':' + pair.id) + '"><option value="">Escolha o valor</option>'
+        + (question.associationChoices ?? []).map(choice => '<option value="' + e(choice) + '">' + e(choice) + '</option>').join('') + '</select></label>').join('') + '</div>';
+    } else {
+      responseControl = '<label class="lm-answer-control"><span>Escreva sua resposta</span><textarea name="response" data-interaction-field="' + e(fieldKey) + '" rows="6" maxlength="2400" placeholder="Explique o que os dados permitem concluir e como chegou a essa leitura."></textarea></label>';
+    }
+    return '<section class="lm-activity-question-panel" id="learner-question-panel-' + e(question.id) + '" data-activity-question-panel="' + e(question.id) + '"' + (index === 0 ? '' : ' hidden') + '>'
+      + '<header class="lm-activity-question-heading"><div><span class="lm-eyebrow">QUESTÃO 0' + (index + 1) + ' · CIÊNCIAS · 8º A</span><h2>' + e(question.title) + '</h2></div><span class="lm-question-private">⌑ Resposta privada</span></header>'
+      + '<section class="lm-question-reference"><header><span aria-hidden="true">▤</span><div><small>TEXTO DE REFERÊNCIA</small><h3>' + e(question.referenceTitle) + '</h3></div></header><p>' + e(question.referenceText) + '</p></section>'
+      + '<section class="lm-question-prompt"><span>ENUNCIADO DA QUESTÃO</span><p>' + e(question.prompt) + '</p></section>'
+      + '<aside class="lm-response-directive"><span>DIRETRIZ DA IA · FORMATO ' + e(formatLabel) + '</span><p>' + e(directive?.caption ?? 'Responda conforme as instruções da questão.') + '</p></aside>'
+      + '<form class="lm-learner-answer-form" data-student-answer-form data-question-id="' + e(question.id) + '" data-response-format="' + e(format) + '">' + responseControl
+      + '<footer class="lm-response-footer"><button type="button" class="lm-secondary-button" data-student-draft data-question-id="' + e(question.id) + '">Guardar rascunho</button><span>Rascunho e envio ficam neste espaço pedagógico.</span><button type="submit" class="lm-primary-button">Enviar resposta <span aria-hidden="true">→</span></button></footer>'
+      + '<p class="lm-action-feedback" data-response-feedback="' + e(question.id) + '" role="status"></p></form></section>';
+  }).join('');
+  const competency = labList<string>(data, 'competencies')[0] ?? 'Relacionar potência, tempo de uso e consumo elétrico';
+  const content = '<article class="lm-panel lm-learner-question"><header class="lm-learner-activity-header"><div><span class="lm-eyebrow">ATIVIDADE · ' + e(competency.toUpperCase()) + '</span><h2>' + e(labText(data, 'activityTitle', 'Uma decisão sobre o consumo da biblioteca')) + '</h2><p>Leia a referência, responda à questão e guarde ou envie sua produção.</p></div><span class="lm-due-date">Disponível até 24 out.</span></header>'
+    + '<nav class="lm-question-example-nav" aria-label="Exemplos de formato de questão">' + questionTabs + '</nav>'
+    + '<div class="lm-question-example-panels" data-activity-question-count="' + questions.length + '" data-activity-question-selected="' + e(activeId) + '">' + questionPanels + '</div>'
+    + '<div class="lm-learner-resources"><span>Competência em foco</span>' + LabPill(competency, 'blue') + LabPill('Texto de referência') + LabPill('Formato por questão') + '</div></article>';
+  return labPart('learner-activity-question', content, selectedId, 'lm-pedagogy-panel-part');
 }
 
 function renderStudentActivityPage(props: ComponentPageProps): string {
   const { data, situation } = props, selectedId = situation.selectedRegionId;
   return '<div class="lm-product-page lm-student-activity" data-page-id="student-activity"' + mockAttributes(situation) + '>'
     + renderWorkspaceSidebar('student-activity', data, selectedId) + '<div class="lm-product-main">' + renderWorkspaceTopbar(data, selectedId)
-    + '<main class="lm-learner-canvas"><header class="lm-learner-heading"><span class="lm-eyebrow">MEU ESPAÇO DE APRENDIZAGEM</span><h1>Atividade aberta</h1><p>Leia o contexto, organize sua ideia e explique as informações que sustentam sua conclusão.</p></header>'
-    + renderLearnerActivityBrief(data, selectedId) + renderLearnerResponse(selectedId) + '</main></div></div>';
+    + '<main class="lm-learner-canvas"><header class="lm-learner-heading"><span class="lm-eyebrow">MEU ESPAÇO DE APRENDIZAGEM</span><h1>Questões de Ciências</h1><p>Cada questão apresenta sua referência, enunciado e formato de resposta antes de você começar.</p></header>'
+    + renderLearnerActivityQuestion(data, selectedId) + '</main></div></div>';
 }
 
 function renderLevelingAssessment(data: ComponentFixture, selectedId: string): string {
@@ -2934,6 +2996,7 @@ export function registerComponentElements(): void {
       private restoreInteraction(): void {
         const { interaction } = this.state;
         this.restoreCommunityParticipation();
+        this.restoreLearnerActivityQuestion();
         this.querySelectorAll<HTMLElement>('[data-interaction-group]').forEach(group => {
           const selected = interaction.groups[group.dataset.interactionGroup ?? ''];
           if (selected === undefined) return;
@@ -3589,6 +3652,33 @@ export function registerComponentElements(): void {
         this.syncStoryComposerPreview();
       }
       private storyFieldKey(name: string): string { return this.state.id + ':story:' + name; }
+      private restoreLearnerActivityQuestion(): void {
+        if (this.state.id !== 'learner-activity-question') return;
+        const questions = labList<LearnerActivityQuestionFixture>(this.state.fixture, 'questions');
+        const activeId = this.state.interaction.groups['learner-activity-question-selected'] ?? questions[0]?.id ?? '';
+        this.querySelectorAll<HTMLButtonElement>('[data-activity-question-select]').forEach(button => {
+          const questionId = button.dataset.activityQuestionSelect ?? '';
+          const active = questionId === activeId;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-current', active ? 'step' : 'false');
+          const status = button.querySelector<HTMLElement>('[data-activity-question-status]');
+          if (status) {
+            const submitted = this.state.interaction.toggles['activity-question-submitted:' + questionId] === true;
+            const hasDraft = Object.keys(this.state.interaction.fields).some(key => key.startsWith('activity-answer:' + questionId + ':') && Boolean(this.state.interaction.fields[key].trim()))
+              || Boolean(this.state.interaction.fields['activity-answer:' + questionId]?.trim());
+            status.textContent = submitted ? 'Enviada' : hasDraft ? 'Rascunho' : 'Em aberto';
+          }
+        });
+        this.querySelectorAll<HTMLElement>('[data-activity-question-panel]').forEach(panel => {
+          const questionId = panel.dataset.activityQuestionPanel ?? '';
+          panel.hidden = questionId !== activeId;
+          const feedback = panel.querySelector<HTMLElement>('[data-response-feedback]');
+          if (feedback) feedback.textContent = this.state.interaction.groups['activity-question-feedback:' + questionId] ?? '';
+        });
+        const navigation = this.querySelector<HTMLElement>('[data-activity-question-count]');
+        if (navigation) navigation.dataset.activityQuestionSelected = activeId;
+      }
+
       private restoreLevelingAssessment(): void {
         if (this.state.id !== 'leveling-assessment') return;
         const interaction = this.state.interaction;
@@ -4416,6 +4506,16 @@ export function registerComponentElements(): void {
       }
       private onClick(event: Event): void {
         if (!(event.target instanceof Element)) return;
+        const activityQuestionButton = event.target.closest<HTMLButtonElement>('[data-activity-question-select]');
+        if (activityQuestionButton && this.state.id === 'learner-activity-question') {
+          const questionId = activityQuestionButton.dataset.activityQuestionSelect ?? '';
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            groups: { ...interaction.groups, 'learner-activity-question-selected': questionId },
+          }));
+          this.restoreLearnerActivityQuestion();
+          return;
+        }
         const activityEditorButton = event.target.closest<HTMLButtonElement>('[data-activity-step-index], [data-activity-add-question], [data-activity-remove-question], [data-activity-nav], [data-activity-approve]');
         if (this.state.id === 'pedagogy-activity-builder' && activityEditorButton && this.handleActivityEditorClick(activityEditorButton)) return;
         if (this.state.id === 'pedagogy-context' && !event.target.closest('[data-subject-skill-picker]') && this.state.interaction.subjectSkillMenuOpen) {
@@ -5024,15 +5124,25 @@ export function registerComponentElements(): void {
           this.render();
           return;
         }
-        if (button.hasAttribute('data-student-draft') && this.state.id === 'learner-response') {
-          const response = this.querySelector<HTMLTextAreaElement>('[name="response"]')?.value ?? '';
-          const key = this.querySelector<HTMLTextAreaElement>('[name="response"]')?.dataset.interactionField ?? '';
+        if (button.hasAttribute('data-student-draft') && this.state.id === 'learner-activity-question') {
+          const questionId = button.dataset.questionId ?? '';
+          const form = button.closest<HTMLFormElement>('[data-student-answer-form]');
+          const values = [...(form?.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-interaction-field]') ?? [])];
+          const hasAnswer = values.some(field => field.value.trim());
           this.transitionInteraction(interaction => ({
             ...interaction,
-            fields: key ? { ...interaction.fields, [key]: response } : interaction.fields,
-            responseFeedback: response.trim() ? 'Rascunho guardado nesta tela de demonstração.' : 'Escreva sua ideia para guardar um rascunho.',
+            fields: values.reduce((fields, field) => {
+              const key = field.dataset.interactionField;
+              return key ? { ...fields, [key]: field.value } : fields;
+            }, interaction.fields),
+            groups: {
+              ...interaction.groups,
+              ['activity-question-feedback:' + questionId]: hasAnswer
+                ? 'Rascunho guardado para esta questão. Você pode voltar a ela antes de enviar.'
+                : 'Preencha a resposta antes de guardar o rascunho.',
+            },
           }));
-          this.render();
+          this.restoreInteraction();
           return;
         }
         if (button.dataset.storyTool) {
@@ -5290,6 +5400,9 @@ export function registerComponentElements(): void {
         const questionId = questionForm?.dataset.questionId ?? '';
         const questionWasSubmitted = Boolean(questionId && this.state.interaction.toggles['competency-submitted:' + questionId] === true);
         const questionMonitorHasState = ['pending', 'ready', 'error'].includes(this.state.interaction.groups['questionnaire-monitor-status'] ?? 'idle');
+        const learnerQuestionForm = this.state.id === 'learner-activity-question' ? field.closest<HTMLFormElement>('[data-student-answer-form]') : null;
+        const learnerQuestionId = learnerQuestionForm?.dataset.questionId ?? '';
+        const learnerQuestionWasSubmitted = Boolean(learnerQuestionId && this.state.interaction.toggles['activity-question-submitted:' + learnerQuestionId] === true);
         const activityReviewWasConfirmed = editingActivity && (this.state.interaction.toggles['activity-approved'] === true || this.state.interaction.toggles['activity-review-confirmed'] === true);
         const activityReviewFeedback = activityReviewWasConfirmed ? 'O rascunho mudou. Revise o conjunto e confirme novamente.' : '';
         this.transitionInteraction(interaction => ({
@@ -5308,8 +5421,13 @@ export function registerComponentElements(): void {
             groups: { ...interaction.groups, 'questionnaire-monitor-status': 'idle', 'questionnaire-monitor-request-id': '' },
             questionFeedback: 'Resposta alterada. Registre novamente antes de finalizar o questionário.',
           } : {}),
+          ...(learnerQuestionWasSubmitted ? {
+            toggles: { ...interaction.toggles, ['activity-question-submitted:' + learnerQuestionId]: false },
+            groups: { ...interaction.groups, ['activity-question-feedback:' + learnerQuestionId]: 'Resposta alterada. Envie novamente para atualizar o registro.' },
+          } : {}),
           ...(creatingActivity && interaction.feedback ? { feedback: '' } : {}),
         }));
+        if (this.state.id === 'learner-activity-question') this.restoreLearnerActivityQuestion();
         if (questionWasSubmitted) {
           this.restoreCompetencyQuestionResponse();
           if (questionMonitorHasState) this.parentElement?.querySelector<DemoPagePartElement>('[data-component-id="competency-monitor-feedback"]')?.syncQuestionnaireMonitorFeedback(null);
@@ -5797,19 +5915,46 @@ export function registerComponentElements(): void {
           this.render();
           return;
         }
-        if (form?.matches('[data-student-answer-form]') && this.state.id === 'learner-response') {
-          const response = form.querySelector<HTMLTextAreaElement>('[name="response"]')?.value.trim() ?? '';
-          if (!response) {
-            this.transitionInteraction(interaction => ({ ...interaction, responseFeedback: 'Escreva uma resposta antes de enviar.' }));
-            this.render();
+        if (form?.matches('[data-student-answer-form]') && this.state.id === 'learner-activity-question') {
+          const questionId = form.dataset.questionId ?? '';
+          const question = labList<LearnerActivityQuestionFixture>(this.state.fixture, 'questions').find(item => item.id === questionId);
+          const format = form.dataset.responseFormat ?? 'open';
+          const values = new FormData(form);
+          let response = '';
+          if (!question) {
+            this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, ['activity-question-feedback:' + questionId]: 'Não foi possível localizar esta questão demonstrativa.' } }));
+            this.restoreInteraction();
             return;
           }
+          if (format === 'closed') {
+            const selected = String(values.get('choice') ?? '');
+            const choiceIndex = Number(selected);
+            response = selected !== '' ? question.choices?.[choiceIndex] ?? '' : '';
+          } else if (format === 'association') {
+            const answers = (question.associations ?? []).map(pair => ({ pair, value: String(values.get('association-' + pair.id) ?? '') }));
+            if (answers.some(answer => !answer.value)) {
+              this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, ['activity-question-feedback:' + questionId]: 'Associe um valor a cada item antes de enviar.' } }));
+              this.restoreInteraction();
+              return;
+            }
+            response = answers.map(({ pair, value }) => pair.label + ' → ' + value).join(' · ');
+          } else {
+            response = String(values.get('response') ?? '').trim();
+          }
+          if (!response) {
+            this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, ['activity-question-feedback:' + questionId]: format === 'closed' ? 'Escolha uma alternativa antes de enviar.' : 'Escreva uma resposta antes de enviar.' } }));
+            this.restoreInteraction();
+            return;
+          }
+          const fields = [...form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[data-interaction-field]')];
           this.transitionInteraction(interaction => ({
             ...interaction,
-            studentSubmissions: [...interaction.studentSubmissions, response],
-            responseFeedback: 'Tentativa ' + (interaction.studentSubmissions.length + 1) + ' registrada nesta demonstração. Sua resposta continua privada.',
+            fields: fields.reduce((saved, field) => field.dataset.interactionField ? { ...saved, [field.dataset.interactionField]: field.value } : saved, interaction.fields),
+            studentSubmissions: [...interaction.studentSubmissions, question.title + ': ' + response],
+            toggles: { ...interaction.toggles, ['activity-question-submitted:' + questionId]: true },
+            groups: { ...interaction.groups, ['activity-question-feedback:' + questionId]: 'Resposta enviada nesta demonstração. Ela segue privada no espaço da atividade.' },
           }));
-          this.render();
+          this.restoreInteraction();
           return;
         }
         if (form?.matches('[data-story-composer]')) {
