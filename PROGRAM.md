@@ -64,6 +64,16 @@ The project-creation controls belong in a future **Administração da IA** page;
 
 The student profile's Competencies part starts with the student's public interests. `Ver todos` switches that part to an in-place progress dashboard, and `Competências` returns to the public list. Its counts, week chart, and step bars are hard-coded demonstration data in `src/components.ts`; labels state that they are samples, not a live student record, grade, or proficiency assessment. The open/closed state belongs to the part's state iterator and is not persisted.
 
+## Social competitions and traceable participation
+
+The `quests` route presents quests as registered social competitions, not as curricular questions or skill badges. Each event fixture in `initialComponentData.quests` declares a stable ID, organizer, participant format, period, registration deadline, capacity, objective, rules, scoring criteria, linked competency context, and an ordered list of stages. A stage declares its ID, deadline label, instructions, and required deliverable. `renderQuestBoard` displays those fields before participation.
+
+The student can register only while the event fixture says `Inscrições abertas`, its ISO `registrationDeadlineAt` has not passed, and it has capacity. Registration adds a `QuestParticipation` to the `quest-board` part's state iterator, creates a local registration ID and ISO timestamp, increments the visible participant count for that event, and records an `Inscrição confirmada` history event. Filters distinguish open events, the student's registrations, and completed participation.
+
+Each registration permits one submission per stage, in the declared order. The form stores the participant's text as a `QuestStageSubmission` with its own ISO timestamp. The history records every submitted stage and its text; only the next incomplete stage can be sent. After the final stage, the participation status becomes `completed` and the audit trail records completion. The UI reports that event scoring is still awaiting the organizer; it does not calculate points, invent a ranking, change a competency level, or send this material into private assessment.
+
+These event definitions and participation records are demonstration fixtures and browser-local state. They reset when the page session ends. This prototype has no organizer-facing event creation form, server persistence, team roster/consent flow, cross-user submissions, score adjudication, or published ranking. TypeScript and production build checks do not establish those absent server workflows.
+
 ## Activity posts and opinion circles
 
 - Teacher activity posts and community feed posts must include an activity ID, activity title, and the related criterion. The community composer requires the user to choose an activity; its displayed post repeats that activity and criterion so the social feed stays tied to actual learning work.

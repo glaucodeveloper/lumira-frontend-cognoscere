@@ -183,8 +183,8 @@ const presentationNotes: Record<string, string> = {
   'leveling-invitation': 'A matrícula parte de um convite institucional que já relaciona estudante, escola, turma e responsável docente. A demo não cria uma conta nem coleta dados pessoais.',
   'leveling-scope': 'A sondagem inicial organiza cinco situações contextualizadas para uma competência, adequadas à série. As questões variam contexto e raciocínio; uma resposta isolada não determina o nível.',
   'leveling-confirmation': 'A confirmação registra somente o vínculo demonstrativo e libera o início da sondagem. Matrícula e respostas pertencem ao acompanhamento reservado, nunca ao histórico público do repositório.',
-  'quest-board': 'As quests oferecem desafios situados e registram participação. Selos pertencem à missão e não funcionam como nível curricular nem classificação de competência.',
-  'quest-principles': 'Uma missão pode convidar a investigar, explicar e compartilhar uma produção. Respostas pedagógicas continuam privadas; resultados competitivos só existem dentro de eventos com regras próprias.',
+  'quest-board': 'As competições sociais são eventos cadastrados com organização, período, formato, regulamento, pontuação e etapas de entrega. A inscrição e cada participação ficam registradas no histórico do evento.',
+  'quest-principles': 'Pontuação e colocação seguem o regulamento de cada competição. O resultado social não vira nota curricular; respostas pedagógicas permanecem no espaço reservado.',
   'competency-question-context': 'Cada pergunta apresenta uma situação e dados suficientes para tornar observável uma relação da competência em foco, sem sugerir uma fórmula ou revelar o contrato interno de avaliação.',
   'competency-question-response': 'A página percorre cinco contextos para a mesma competência, preserva o rascunho por questão e registra cada envio separadamente. A leitura demonstrativa não pontua nem define domínio.',
   'student-hero': 'Apresente a identidade pública do estudante com o mesmo vocabulário visual do perfil docente, adaptado a um papel discente.',
@@ -231,8 +231,8 @@ const platformResponsibilities: Record<string, string> = {
   'leveling-invitation': 'O nivelamento começa por um convite associado a uma escola, turma e professora. A conferência desse vínculo evita uma matrícula aberta sem contexto e situa a série em que as questões serão apresentadas.\n\nEsta tela demonstra o caminho de um estudante já autorizado pela instituição. Nome, código e vínculo são dados fictícios; a página não realiza cadastro real nem solicita informações de um menor.',
   'leveling-scope': 'A sondagem inicial reúne cinco perguntas para a competência selecionada. Cada uma usa uma situação distinta para observar como o estudante considera dados, sustenta uma hipótese e reage a uma condição alterada.\n\nAs perguntas são ajustadas à idade e à série. O conjunto orienta uma leitura de evidências; não é uma escala automática, e repetir a análise da mesma resposta não conta como uma nova evidência.',
   'leveling-confirmation': 'A confirmação associa o estudante ao percurso de nivelamento da turma e libera as perguntas previstas. A tela explica o que será registrado antes de iniciar, preserva o caráter reservado das respostas e permite retornar ao convite para conferir seus dados.\n\nO vínculo demonstrativo fica apenas no estado local desta prévia. Nenhuma matrícula, identidade ou resposta é gravada em serviço real.',
-  'quest-board': 'As quests criam oportunidades para investigar um problema e apresentar uma produção, em etapas curtas e com contexto identificável. Cada missão informa objetivo, tempo esperado e entrega antes de ser aceita.\n\nConcluir uma quest registra participação naquela proposta e pode liberar um selo demonstrativo. Isso não altera o nível curricular, não substitui a sondagem e não compara estudantes em um ranking de competência.',
-  'quest-principles': 'Uma quest pode nascer de uma pergunta da turma, de um material revisado ou de um evento com regras próprias. O estudante sabe quem verá a entrega e pode acompanhar o estado da atividade.\n\nQuando uma produção também servir como evidência pedagógica, essa ligação precisa ser explícita e revisada pela professora. Um selo ou colocação de evento permanece separado da análise curricular.',
+  'quest-board': 'As quests são competições sociais cadastradas como eventos: cada uma identifica organização, período, regras, formato de participação, critérios de pontuação e etapas com entregas. Antes de entrar, o estudante confere o regulamento e se inscreve no evento escolhido.\n\nA participação mantém um registro rastreável de inscrição, entregas e conclusão. Pontuação e colocação pertencem às regras daquela competição; não são notas, níveis nem evidências automáticas de domínio curricular.',
+  'quest-principles': 'A competição informa quem organiza, quem pode participar, como os pontos serão atribuídos e quando cada etapa termina. O histórico da inscrição e das entregas deixa visível o caminho percorrido pela pessoa ou equipe.\n\nO resultado descreve somente aquela disputa social. A professora continua lendo evidências de aprendizagem no espaço pedagógico, com os critérios próprios de cada competência.',
   'competency-question-context': 'A competência em foco é relacionar potência total, duração de uso e consumo. O contrato interno verifica essas relações por critérios, mas a questão mostra ao estudante somente a situação, os dados, as referências liberadas e o pedido de resposta.\n\nOs cinco itens mudam o contexto para observar a transferência da relação estudada. Em cada página, é possível salvar uma tentativa e revisar o próprio texto sem receber um rótulo global.',
   'competency-question-response': 'O estudante percorre cinco perguntas contextualizadas, uma por vez, e mantém um rascunho próprio em cada item. O envio guarda a resposta e apresenta uma reflexão estática de demonstração, claramente separada de uma análise real do modelo.\n\nA síntese mostra quais itens foram respondidos e encaminha o conjunto para revisão. Ela não calcula nota, não declara domínio e não muda automaticamente o próximo conteúdo.',
   'student-hero': 'O perfil apresenta a pessoa estudante, suas produções e aspectos de seu percurso que podem ser compartilhados. Ele permite reconhecer autoria e participação sem converter a identidade pública em prontuário de aprendizagem.\n\nRespostas da sondagem, hipóteses, dificuldades observadas e interpretações da IA pertencem ao acompanhamento reservado e não devem aparecer no perfil por padrão. A pessoa pode mostrar o que escolheu produzir enquanto o trabalho pedagógico conserva seu contexto e suas permissões.',
@@ -498,13 +498,13 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
     ],
   },
   {
-    id: 'quests', title: 'Quests', description: 'Desafios contextualizados com objetivos e entregas visíveis.',
-    presentation: 'Proposta derivada das missões e atividades coletivas descritas no projeto. O estudante escolhe uma quest, confere o objetivo e a entrega esperada, registra sua produção e acompanha o selo de participação sem confundi-lo com o nível curricular.',
+    id: 'quests', title: 'Competições', description: 'Eventos sociais competitivos com inscrição e participação rastreável.',
+    presentation: 'Cada competição é um evento cadastrado com organização, período, formato, regulamento, critérios de pontuação e etapas. O estudante se inscreve, acompanha prazos e registra entregas em uma trilha verificável; o resultado vale apenas dentro do evento e não substitui a avaliação curricular.',
     evidence: 'derived', fixtureKey: 'quests', defaultComponentId: 'quest-board',
     regions: [
       ...shellParts('quests', 'derived'),
-      partSpec('quest-board', 'Painel de quests', 'Filtros, desafios, aceitação e entrega da missão.', 'derived', 'quests'),
-      partSpec('quest-principles', 'Participação e conquistas', 'Escopo dos selos, eventos e dados privados.', 'derived', 'quests'),
+      partSpec('quest-board', 'Competições sociais', 'Eventos cadastrados, inscrição e trilha verificável de entregas.', 'derived', 'quests'),
+      partSpec('quest-principles', 'Regulamento e participação', 'Regras, critérios de pontuação, histórico e limite curricular do resultado.', 'derived', 'quests'),
     ],
   },
   {
@@ -736,17 +736,43 @@ export const initialComponentData: Record<string, unknown> = {
   quests: {
     name: 'Caio Almeida', handle: '@caioalmeida', role: 'Estudante · 8º ano', school: 'Escola Aurora',
     quests: [
-      { id: 'energy-library', title: 'Energia em foco', category: 'Ciências · individual', status: 'Disponível', duration: '15 min', seal: 'Observador de energia',
+      { id: 'energy-library', title: 'Energia em foco', category: 'Competição social · Ciências', status: 'Inscrições abertas', duration: '7 dias', seal: 'Observador de energia',
+        organizer: 'Feira de Ciências · Escola Aurora', format: 'Equipes de 3 a 5 estudantes', dateLabel: '2–9 nov. 2026', registrationDeadline: '30 out. 2026', registrationDeadlineAt: '2026-10-30T23:59:59-03:00', participantLimit: 12, registeredCount: 8,
+        eventObjective: 'Comparar propostas de economia de energia com dados, justificativas e um limite identificado para cada conclusão.',
+        rules: ['A equipe registra uma hipótese e identifica os dados usados.', 'Cada integrante contribui com ao menos uma observação na etapa de evidências.', 'A apresentação final precisa citar uma limitação ou condição ainda não medida.'],
+        scoringCriteria: ['Uso correto dos dados · 40 pontos', 'Comparação entre as propostas · 30 pontos', 'Justificativa e limites reconhecidos · 30 pontos'],
+        stages: [
+          { id: 'hypothesis', title: 'Registrar a hipótese', dueLabel: 'Até 3 nov.', description: 'Escolha uma proposta e explique que dados sustentam a expectativa inicial.', deliverable: 'Hipótese curta com dois dados citados.' },
+          { id: 'evidence', title: 'Enviar evidências da equipe', dueLabel: 'Até 6 nov.', description: 'Compare os registros e inclua as contribuições dos participantes.', deliverable: 'Tabela ou relato comparativo com fontes.' },
+          { id: 'presentation', title: 'Apresentar a conclusão', dueLabel: 'Encontro · 9 nov.', description: 'Mostre a decisão da equipe e o que ainda precisa ser verificado.', deliverable: 'Síntese final apresentada no evento.' },
+        ],
         competency: 'Relacionar potência, duração e consumo', context: 'A biblioteca quer reduzir o uso de energia sem deixar os espaços sem iluminação ou ventilação.',
         challenge: 'Compare duas propostas de horário para os aparelhos. Explique que dados sustentam sua decisão e que condição do ambiente ainda seria preciso observar.',
         deliverable: 'Uma justificativa curta com os dados considerados.',
       },
-      { id: 'water-garden', title: 'Rota da água', category: 'Ciências · investigação', status: 'Disponível', duration: '20 min', seal: 'Investigador de sistemas',
+      { id: 'water-garden', title: 'Rota da água', category: 'Competição social · investigação', status: 'Inscrições abertas', duration: '10 dias', seal: 'Investigador de sistemas',
+        organizer: 'Mostra da Horta · Clube de Ciências', format: 'Equipes de 2 a 4 estudantes', dateLabel: '7–17 nov. 2026', registrationDeadline: '5 nov. 2026', registrationDeadlineAt: '2026-11-05T23:59:59-03:00', participantLimit: 10, registeredCount: 5,
+        eventObjective: 'Recomendar um calendário de irrigação apoiado em medições e em condições observadas na horta.',
+        rules: ['As equipes usam os mesmos cinco dias de registro.', 'A medição adicional precisa ser realizável pela turma.', 'A recomendação deve indicar em que condição ela deixa de valer.'],
+        scoringCriteria: ['Leitura dos registros · 35 pontos', 'Qualidade da medição proposta · 35 pontos', 'Limites da recomendação · 30 pontos'],
+        stages: [
+          { id: 'reading', title: 'Ler os registros', dueLabel: 'Até 10 nov.', description: 'Compare volume e duração nos dois setores da horta.', deliverable: 'Comparação inicial com dados citados.' },
+          { id: 'measurement', title: 'Propor uma medição', dueLabel: 'Até 14 nov.', description: 'Indique uma medição adicional e explique por que ela ajuda.', deliverable: 'Plano curto de coleta e justificativa.' },
+          { id: 'recommendation', title: 'Defender a recomendação', dueLabel: 'Mostra · 17 nov.', description: 'Apresente a recomendação, uma ressalva e a evidência usada.', deliverable: 'Apresentação da equipe na mostra.' },
+        ],
         competency: 'Interpretar evidências de uso de água', context: 'A horta da escola tem dois setores irrigados em horários diferentes. A equipe registrou volume e duração por cinco dias.',
         challenge: 'Proponha como comparar os setores e indique uma medição adicional antes de recomendar mudança no calendário de irrigação.',
         deliverable: 'Uma hipótese acompanhada de evidências e de uma pergunta para a próxima medição.',
       },
-      { id: 'table-detective', title: 'Detetives da tabela', category: 'Ciências · colaboração', status: 'Disponível', duration: '10 min', seal: 'Leitor de dados',
+      { id: 'table-detective', title: 'Detetives da tabela', category: 'Competição social · desafio de dados', status: 'Inscrições abertas', duration: '1 tarde', seal: 'Leitor de dados',
+        organizer: 'Encontro de Dados · Laboratório Escolar', format: 'Individual', dateLabel: '16 nov. 2026 · 14h', registrationDeadline: '12 nov. 2026', registrationDeadlineAt: '2026-11-12T23:59:59-03:00', participantLimit: 30, registeredCount: 18,
+        eventObjective: 'Interpretar uma tabela, apresentar uma comparação permitida pelos dados e sinalizar o que ela não permite concluir.',
+        rules: ['Todos recebem a mesma tabela no início do encontro.', 'Não vale acrescentar valores que não aparecem no material.', 'A resposta deve explicar uma conclusão possível e uma pergunta em aberto.'],
+        scoringCriteria: ['Comparação coerente · 45 pontos', 'Uso dos valores da tabela · 35 pontos', 'Limite reconhecido · 20 pontos'],
+        stages: [
+          { id: 'inspect', title: 'Inspecionar a tabela', dueLabel: 'Durante o encontro', description: 'Escolha colunas que possam sustentar uma comparação.', deliverable: 'Registro da comparação escolhida.' },
+          { id: 'explain', title: 'Enviar interpretação', dueLabel: 'Até 16 nov. · 16h', description: 'Explique sua leitura e uma conclusão que os dados não autorizam.', deliverable: 'Resposta individual com evidências da tabela.' },
+        ],
         competency: 'Relacionar padrões e variações em registros', context: 'Um grupo preparou uma tabela de consumo por sala, mas registrou horários e quantidades em colunas diferentes.',
         challenge: 'Escolha uma comparação que a tabela permite fazer, explique sua escolha e descreva uma conclusão que os dados ainda não autorizam.',
         deliverable: 'Uma observação que cite os dados usados e um limite da conclusão.',
@@ -951,9 +977,35 @@ type DemoPagePartInteraction = {
   responseFeedback: string;
   enrollmentFeedback: string;
   questFeedback: string;
+  questParticipations: QuestParticipation[];
   questionFeedback: string;
   feedback: string;
 };
+type QuestCompetitionStage = { id: string; title: string; dueLabel: string; description: string; deliverable: string };
+type QuestFixture = {
+  id: string; title: string; category: string; status: string; duration: string; seal: string;
+  competency: string; context: string; challenge: string; deliverable: string;
+  organizer: string; format: string; dateLabel: string; registrationDeadline: string; registrationDeadlineAt: string;
+  participantLimit: number; registeredCount: number; eventObjective: string;
+  rules: string[]; scoringCriteria: string[]; stages: QuestCompetitionStage[];
+};
+type QuestParticipationEvent = { action: string; at: string; detail: string };
+type QuestStageSubmission = { submittedAt: string; response: string };
+type QuestParticipation = {
+  questId: string;
+  registrationId: string;
+  registeredAt: string;
+  status: 'registered' | 'in-progress' | 'completed';
+  stageSubmissions: Record<string, QuestStageSubmission>;
+  history: QuestParticipationEvent[];
+};
+function questRegistrationOpen(quest: QuestFixture, now = Date.now()): boolean {
+  const deadline = Date.parse(quest.registrationDeadlineAt);
+  return quest.status === 'Inscrições abertas'
+    && quest.registeredCount < quest.participantLimit
+    && Number.isFinite(deadline)
+    && deadline >= now;
+}
 function staleProjectReview(interaction: DemoPagePartInteraction): DemoPagePartInteraction {
   if (interaction.projectReviewStatus === 'idle' || interaction.projectReviewStatus === 'stale') return interaction;
   const wasReviewing = interaction.projectReviewStatus === 'pending';
@@ -1297,6 +1349,10 @@ type ProjectPublication = {
 const PROJECT_COMPETENCIES = ['Comunicação', 'Colaboração', 'Pensamento crítico', 'Criatividade', 'Cultura digital', 'Língua Portuguesa'];
 function isProfileProjectPart(id: string): boolean { return id === 'teacher-projects' || id === 'student-projects'; }
 function projectId(): string { return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7); }
+function formatQuestDateTime(value: string): string {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+}
 function projectDateLabel(date: string): string {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
   const [year, month, day] = date.split('-').map(Number);
@@ -1669,20 +1725,20 @@ function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, select
   const labels = community ? ['Feed', 'Meus círculos', 'Explorar', 'Mensagens', 'Salvos']
     : teachingSpace ? ['Início', 'Matérias e turmas', 'Competências', 'Sondagem', 'Evidências', 'Cursos', 'Comunidade']
       : learnerActivity ? ['Início', 'Sondagem', 'Atividade', 'Cursos', 'Meu percurso', 'Comunidade']
-        : levelingEnrollment ? ['Início', 'Matrícula', 'Nivelamento', 'Quests', 'Meu percurso']
-          : questPage ? ['Início', 'Quests', 'Nivelamento', 'Cursos', 'Meu percurso']
+        : levelingEnrollment ? ['Início', 'Matrícula', 'Nivelamento', 'Competições', 'Meu percurso']
+          : questPage ? ['Início', 'Competições', 'Nivelamento', 'Cursos', 'Meu percurso']
             : competencyQuestions ? ['Início', 'Matrícula', 'Questões', 'Atividade', 'Meu percurso']
         : ['Perfil', 'Áreas', 'Cursos', 'Fórum', 'IA pedagógica'];
   const active = community ? 'Feed' : teachingSpace ? 'Matérias e turmas' : learnerActivity ? 'Atividade'
-    : levelingEnrollment ? 'Matrícula' : questPage ? 'Quests' : competencyQuestions ? 'Questões' : 'Perfil';
+    : levelingEnrollment ? 'Matrícula' : questPage ? 'Competições' : competencyQuestions ? 'Questões' : 'Perfil';
   const sidebarTargets: Record<string, Record<string, [string, string]>> = {
     community: { Feed: ['community', 'community-feed'], 'Meus círculos': ['community', 'community-aside'], Explorar: ['community', 'community-topics'], Mensagens: ['community', 'community-feed'], Salvos: ['community', 'community-feed'] },
     'teacher-profile': { Perfil: ['teacher-profile', 'teacher-hero'], Áreas: ['teacher-workspace', 'pedagogy-context'], Cursos: ['teacher-workspace', 'pedagogy-course-sequence'], Fórum: ['community', 'community-feed'], 'IA pedagógica': ['teacher-workspace', 'pedagogy-activity-builder'] },
     'student-profile': { Perfil: ['student-profile', 'student-hero'], Áreas: ['student-activity', 'learner-activity-brief'], Cursos: ['competency-questions', 'competency-question-context'], Fórum: ['community', 'community-feed'], 'IA pedagógica': ['student-activity', 'learner-reflection'] },
     'teacher-workspace': { Início: ['teacher-workspace', 'pedagogy-context'], 'Matérias e turmas': ['teacher-workspace', 'pedagogy-context'], Competências: ['teacher-workspace', 'pedagogy-competency'], Sondagem: ['leveling-enrollment', 'leveling-scope'], Evidências: ['teacher-workspace', 'pedagogy-evidence-review'], Cursos: ['teacher-workspace', 'pedagogy-course-sequence'], Comunidade: ['community', 'community-feed'] },
     'student-activity': { Início: ['student-profile', 'student-hero'], Sondagem: ['leveling-enrollment', 'leveling-scope'], Atividade: ['student-activity', 'learner-activity-brief'], Cursos: ['competency-questions', 'competency-question-context'], 'Meu percurso': ['student-profile', 'student-progress'], Comunidade: ['community', 'community-feed'] },
-    'leveling-enrollment': { Início: ['student-profile', 'student-hero'], Matrícula: ['leveling-enrollment', 'leveling-invitation'], Nivelamento: ['competency-questions', 'competency-question-context'], Quests: ['quests', 'quest-board'], 'Meu percurso': ['student-profile', 'student-progress'] },
-    quests: { Início: ['student-profile', 'student-hero'], Quests: ['quests', 'quest-board'], Nivelamento: ['competency-questions', 'competency-question-context'], Cursos: ['student-activity', 'learner-activity-brief'], 'Meu percurso': ['student-profile', 'student-progress'] },
+    'leveling-enrollment': { Início: ['student-profile', 'student-hero'], Matrícula: ['leveling-enrollment', 'leveling-invitation'], Nivelamento: ['competency-questions', 'competency-question-context'], Competições: ['quests', 'quest-board'], 'Meu percurso': ['student-profile', 'student-progress'] },
+    quests: { Início: ['student-profile', 'student-hero'], Competições: ['quests', 'quest-board'], Nivelamento: ['competency-questions', 'competency-question-context'], Cursos: ['student-activity', 'learner-activity-brief'], 'Meu percurso': ['student-profile', 'student-progress'] },
     'competency-questions': { Início: ['student-profile', 'student-hero'], Matrícula: ['leveling-enrollment', 'leveling-invitation'], Questões: ['competency-questions', 'competency-question-context'], Atividade: ['student-activity', 'learner-activity-brief'], 'Meu percurso': ['student-profile', 'student-progress'] },
   };
   const links = labels.map(label => {
@@ -1700,7 +1756,7 @@ function renderWorkspaceSidebar(screenId: string, data: ComponentFixture, select
   const content = '<div class="lm-brand"><span class="lm-brand-symbol">✳</span><span>Lumira</span></div>'
     + '<div class="lm-side-account">' + LabAvatar(name, student ? 'blue' : 'teal', 'small') + '<div><strong>' + e(name) + '</strong><small>' + e(student ? 'Estudante' : 'Professora') + '</small></div></div>'
     + '<nav class="lm-side-nav" aria-label="Navegação de demonstração">' + links + '</nav>'
-    + '<aside class="lm-sidebar-promo"><span class="lm-sidebar-promo-mark">✦</span><p>' + e(community ? 'Professores que inspiram professores.' : teachingSpace ? 'Planeje experiências que tornam o conhecimento observável.' : learnerActivity ? 'Responda com suas próprias estratégias.' : levelingEnrollment ? 'Um convite claro para começar seu percurso.' : questPage ? 'Investigue situações e conte como chegou à sua ideia.' : competencyQuestions ? 'Cinco contextos para mostrar seu raciocínio.' : 'Educação que se conecta com o real.') + '</p><button type="button" data-screen-select="' + e(promoTarget[0]) + '" data-component-select="' + e(promoTarget[1]) + '" data-screen-id="' + e(promoTarget[0]) + '">' + (community ? 'Ver calendário' : teachingSpace ? 'Abrir sondagem' : learnerActivity ? 'Ver meu percurso' : levelingEnrollment ? 'Ver as questões' : questPage ? 'Ver meu percurso' : competencyQuestions ? 'Voltar à matrícula' : 'Explorar áreas') + ' →</button></aside>'
+    + '<aside class="lm-sidebar-promo"><span class="lm-sidebar-promo-mark">✦</span><p>' + e(community ? 'Professores que inspiram professores.' : teachingSpace ? 'Planeje experiências que tornam o conhecimento observável.' : learnerActivity ? 'Responda com suas próprias estratégias.' : levelingEnrollment ? 'Um convite claro para começar seu percurso.' : questPage ? 'Participe de eventos com regras e etapas visíveis.' : competencyQuestions ? 'Cinco contextos para mostrar seu raciocínio.' : 'Educação que se conecta com o real.') + '</p><button type="button" data-screen-select="' + e(promoTarget[0]) + '" data-component-select="' + e(promoTarget[1]) + '" data-screen-id="' + e(promoTarget[0]) + '">' + (community ? 'Ver calendário' : teachingSpace ? 'Abrir sondagem' : learnerActivity ? 'Ver meu percurso' : levelingEnrollment ? 'Ver as questões' : questPage ? 'Ver meu percurso' : competencyQuestions ? 'Voltar à matrícula' : 'Explorar áreas') + ' →</button></aside>'
     + '<footer class="lm-sidebar-footer">LUMIRA · COMPONENTING LAB</footer>';
   return labPart('workspace-sidebar', content, selectedId, 'lm-product-sidebar');
 }
@@ -1714,7 +1770,7 @@ function renderWorkspaceTopbar(data: ComponentFixture, selectedId: string): stri
     'teacher-workspace': [['Revisar evidências', 'teacher-workspace', 'pedagogy-evidence-review'], ['Criar sequência', 'teacher-workspace', 'pedagogy-course-sequence']],
     'student-profile': [['Criar story', 'student-profile', 'student-stories'], ['Responder atividade', 'student-activity', 'learner-response']],
     'student-activity': [['Ver questões', 'competency-questions', 'competency-question-response'], ['Ver meu percurso', 'student-profile', 'student-progress']],
-    'leveling-enrollment': [['Começar sondagem', 'competency-questions', 'competency-question-response'], ['Ver quests', 'quests', 'quest-board']],
+    'leveling-enrollment': [['Começar sondagem', 'competency-questions', 'competency-question-response'], ['Ver competições', 'quests', 'quest-board']],
     quests: [['Abrir questões', 'competency-questions', 'competency-question-response'], ['Ver matrícula', 'leveling-enrollment', 'leveling-confirmation']],
     'competency-questions': [['Abrir atividade', 'student-activity', 'learner-response'], ['Ver meu percurso', 'student-profile', 'student-progress']],
     community: [['Criar publicação', 'community', 'community-feed'], ['Abrir calendário', 'community', 'community-calendar']],
@@ -2255,29 +2311,28 @@ function renderLevelingEnrollmentPage(props: ComponentPageProps): string {
     + renderLevelingInvitation(data, selectedId) + renderLevelingScope(data, selectedId) + renderLevelingConfirmation(data, selectedId) + '</main></div></div>';
 }
 
-type QuestFixture = {
-  id: string; title: string; category: string; status: string; duration: string; seal: string;
-  competency: string; context: string; challenge: string; deliverable: string;
-};
 function renderQuestBoard(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('quest-board', data);
   const quests = labList<QuestFixture>(data, 'quests');
-  const filters: Array<[string, string]> = [['all', 'Todas'], ['available', 'Disponíveis'], ['in-progress', 'Em andamento'], ['completed', 'Concluídas']];
-  const content = '<section class="lm-panel lm-quest-board"><header><div><span class="lm-eyebrow">MISSÕES DE APRENDIZAGEM · DEMONSTRAÇÃO</span><h2>Escolha uma quest</h2><p>Cada desafio explica o que investigar e qual produção será registrada.</p></div><span class="lm-quest-count">' + String(quests.length).padStart(2, '0') + ' MISSÕES</span></header>'
-    + '<nav class="lm-quest-filters" aria-label="Filtrar quests">' + filters.map(([id, label], index) => '<button type="button" data-quest-filter="' + id + '" class="' + (index === 0 ? 'active' : '') + '" aria-pressed="' + String(index === 0) + '">' + e(label) + '</button>').join('') + '</nav>'
+  const filters: Array<[string, string]> = [['all', 'Todas'], ['available', 'Inscrições abertas'], ['registered', 'Minhas inscrições'], ['completed', 'Concluídas']];
+  const content = '<section class="lm-panel lm-quest-board"><header><div><span class="lm-eyebrow">EVENTOS SOCIAIS · COMPETIÇÕES</span><h2>Competições abertas</h2><p>Confira regulamento e prazos, inscreva-se e acompanhe cada entrega.</p></div><span class="lm-quest-count">' + String(quests.length).padStart(2, '0') + ' EVENTOS</span></header>'
+    + '<nav class="lm-quest-filters" aria-label="Filtrar competições">' + filters.map(([id, label], index) => '<button type="button" data-quest-filter="' + id + '" class="' + (index === 0 ? 'active' : '') + '" aria-pressed="' + String(index === 0) + '">' + e(label) + ' <small data-quest-filter-count="' + id + '"></small></button>').join('') + '</nav>'
     + '<p class="lm-action-feedback" data-quest-feedback role="status"></p>'
-    + '<div class="lm-quest-layout"><div class="lm-quest-list" role="list" aria-label="Quests disponíveis">' + quests.map((quest, index) => '<button type="button" class="lm-quest-card ' + (index === 0 ? 'active' : '') + '" data-quest-select="' + e(quest.id) + '" data-quest-status="available" aria-pressed="' + String(index === 0) + '"><span class="lm-quest-card-icon">' + (index === 0 ? '⌁' : index === 1 ? '◉' : '⌗') + '</span><span><small>' + e(quest.category) + '</small><b>' + e(quest.title) + '</b><i data-quest-card-state>Disponível</i></span><span class="lm-quest-card-arrow">→</span></button>').join('') + '</div>'
-    + '<div class="lm-quest-details">' + quests.map(quest => '<article class="lm-quest-detail" data-quest-detail="' + e(quest.id) + '" hidden><header><div><span class="lm-eyebrow">' + e(quest.category) + ' · ' + e(quest.duration) + '</span><h3>' + e(quest.title) + '</h3></div><span class="lm-quest-status" data-quest-status-label>DISPONÍVEL</span></header>'
-      + '<div class="lm-quest-competency"><small>RELAÇÃO EM FOCO</small><b>' + e(quest.competency) + '</b></div><div class="lm-quest-story"><small>A SITUAÇÃO</small><p>' + e(quest.context) + '</p></div><div class="lm-quest-challenge"><small>SUA MISSÃO</small><p>' + e(quest.challenge) + '</p></div><div class="lm-quest-deliverable"><span>ENTREGA</span><b>' + e(quest.deliverable) + '</b></div>'
-      + '<button type="button" class="lm-primary-button" data-quest-action="accept" data-quest-id="' + e(quest.id) + '">Aceitar missão</button>'
-      + '<form data-quest-form="' + e(quest.id) + '" hidden><label><span>Seu registro da missão</span><textarea name="questAnswer" data-interaction-field="quest-answer:' + e(quest.id) + '" rows="4" placeholder="Explique os dados e as escolhas que orientam sua ideia."></textarea></label><div class="lm-quest-submit-row"><span>Seu rascunho fica nesta demonstração local.</span><button type="submit" class="lm-primary-button">Registrar entrega <span aria-hidden="true">→</span></button></div></form>'
-      + '<section class="lm-quest-complete" data-quest-complete="' + e(quest.id) + '" hidden><span class="lm-quest-seal">✦</span><div><small>PARTICIPAÇÃO REGISTRADA</small><b>' + e(quest.seal) + '</b><p data-quest-completed-answer></p><span>O selo pertence a esta missão e não altera sua avaliação de competência.</span></div></section></article>').join('') + '</div></div>'
-    + '<p class="lm-pedagogy-note">Quests não usam ranking curricular. Uma colocação competitiva só cabe em um evento com regras e resultados próprios.</p></section>';
-  return labPart('quest-board', content, selectedId, 'lm-pedagogy-panel-part');
+    + '<div class="lm-quest-layout"><div class="lm-quest-list" role="list" aria-label="Competições cadastradas">' + quests.map((quest, index) => '<button type="button" role="listitem" class="lm-quest-card ' + (index === 0 ? 'active' : '') + '" data-quest-select="' + e(quest.id) + '" data-quest-status="available" aria-pressed="' + String(index === 0) + '"><span class="lm-quest-card-icon">' + (index === 0 ? '⌁' : index === 1 ? '◉' : '⌗') + '</span><span><small>' + e(quest.category) + '</small><b>' + e(quest.title) + '</b><i data-quest-card-state>Inscrições abertas</i></span><span class="lm-quest-card-arrow">→</span></button>').join('') + '<p class="lm-quest-empty-state" data-quest-empty hidden>Não há competições neste filtro. Escolha outra categoria para consultar os eventos.</p></div>'
+    + '<div class="lm-quest-details">' + quests.map(quest => '<article class="lm-quest-detail" data-quest-detail="' + e(quest.id) + '" hidden><header><div><span class="lm-eyebrow">' + e(quest.category) + ' · ' + e(quest.format) + '</span><h3>' + e(quest.title) + '</h3></div><span class="lm-quest-status" data-quest-status-label>INSCRIÇÕES ABERTAS</span></header>'
+      + '<div class="lm-competition-facts"><div><small>ORGANIZAÇÃO</small><b>' + e(quest.organizer) + '</b></div><div><small>PERÍODO</small><b>' + e(quest.dateLabel) + '</b></div><div><small>INSCRIÇÕES ATÉ</small><b>' + e(quest.registrationDeadline) + '</b></div><div><small>VAGAS</small><b><span data-quest-participant-count>' + quest.registeredCount + '</span> / ' + quest.participantLimit + ' inscrições</b></div></div>'
+      + '<div class="lm-quest-competency"><small>OBJETIVO DO EVENTO</small><b>' + e(quest.eventObjective) + '</b></div><div class="lm-quest-story"><small>CONTEXTO</small><p>' + e(quest.context) + '</p></div><div class="lm-quest-challenge"><small>DESAFIO</small><p>' + e(quest.challenge) + '</p></div>'
+      + '<div class="lm-competition-rules-grid"><section><h4>Regulamento</h4><ul>' + quest.rules.map(rule => '<li>' + e(rule) + '</li>').join('') + '</ul></section><section><h4>Critérios de pontuação</h4><ul>' + quest.scoringCriteria.map(criterion => '<li>' + e(criterion) + '</li>').join('') + '</ul><small>A pontuação descreve o resultado deste evento; não é nota curricular.</small></section></div>'
+      + '<section class="lm-competition-stages"><header><div><span class="lm-eyebrow">PARTICIPAÇÃO POR ETAPAS</span><h4>O que precisa ser registrado</h4></div><span data-quest-progress-label>0 de ' + quest.stages.length + ' etapas</span></header><ol>' + quest.stages.map((stage, index) => '<li data-quest-stage-card="' + e(stage.id) + '"><div class="lm-competition-stage-number">' + String(index + 1).padStart(2, '0') + '</div><div class="lm-competition-stage-body"><header><div><h5>' + e(stage.title) + '</h5><small>' + e(stage.dueLabel) + '</small></div><span data-quest-stage-state>Inscrição necessária</span></header><p>' + e(stage.description) + '</p><div class="lm-quest-deliverable"><span>ENTREGA</span><b>' + e(stage.deliverable) + '</b></div><form data-quest-stage-form="' + e(quest.id) + '" data-stage-id="' + e(stage.id) + '" hidden><label><span>Registro da etapa</span><textarea data-interaction-field="quest-stage:' + e(quest.id) + ':' + e(stage.id) + '" rows="3" maxlength="1600" placeholder="Descreva sua contribuição e os registros que sustentam sua entrega."></textarea></label><div class="lm-quest-submit-row"><span>Entrega com data e hora nesta demonstração.</span><button type="submit" class="lm-primary-button">Registrar etapa</button></div></form><p data-quest-stage-submission hidden></p></div></li>').join('') + '</ol></section>'
+      + '<button type="button" class="lm-primary-button" data-quest-action="register" data-quest-id="' + e(quest.id) + '">Inscrever-se na competição</button>'
+      + '<section class="lm-quest-registration" data-quest-participation="' + e(quest.id) + '" hidden><header><div><span class="lm-eyebrow">INSCRIÇÃO CONFIRMADA</span><h4>Seu registro de participação</h4></div><b data-quest-registration-code></b></header><p data-quest-registration-summary></p><ol class="lm-quest-audit-trail" data-quest-audit-trail aria-label="Histórico de participação"></ol></section>'
+      + '</article>').join('') + '</div></div>'
+    + '<p class="lm-pedagogy-note">Inscrições e entregas ficam apenas nesta demonstração local. Resultados competitivos permanecem separados das respostas e da avaliação de competências.</p></section>';
+  return labPart('quest-board', content, selectedId, 'lm-pedagogy-panel-part', data);
 }
 
 function renderQuestPrinciples(selectedId: string): string {
-  const content = '<aside class="lm-panel lm-quest-principles"><div><span class="lm-quest-principles-icon">✳</span><div><span class="lm-eyebrow">PARTICIPAÇÃO COM CONTEXTO</span><h2>Uma missão pode abrir novas perguntas</h2></div></div><p>Investigue, compare e explique seu caminho. O selo reconhece participação nesta quest; a compreensão curricular continua acompanhada pelas respostas e evidências de cada competência.</p><button type="button" class="lm-quiet-action" data-screen-select="competency-questions">Ir para questões de competência <span aria-hidden="true">→</span></button></aside>';
+  const content = '<aside class="lm-panel lm-quest-principles"><div><span class="lm-quest-principles-icon">✳</span><div><span class="lm-eyebrow">REGULAMENTO E REGISTRO</span><h2>Competir sem misturar resultados</h2></div></div><p>Confira quem organiza o evento, como a pontuação é composta, quais são os prazos e o que cada participante precisa entregar. Inscrição, etapas e conclusão formam um histórico local visível para a pessoa.</p><p>Classificação vale somente pelas regras da competição. Questões de competência e respostas pedagógicas continuam em seu percurso reservado.</p><button type="button" class="lm-quiet-action" data-screen-select="competency-questions">Ver questões de competência <span aria-hidden="true">→</span></button></aside>';
   return labPart('quest-principles', content, selectedId, 'lm-pedagogy-panel-part');
 }
 
@@ -2285,7 +2340,7 @@ function renderQuestsPage(props: ComponentPageProps): string {
   const { data, situation } = props, selectedId = situation.selectedRegionId;
   return '<div class="lm-product-page lm-quests-page" data-page-id="quests"' + mockAttributes(situation) + '>'
     + renderWorkspaceSidebar('quests', data, selectedId) + '<div class="lm-product-main">' + renderWorkspaceTopbar(data, selectedId)
-    + '<main class="lm-learner-canvas lm-quests-canvas"><header class="lm-learner-heading"><span class="lm-eyebrow">MEU ESPAÇO DE APRENDIZAGEM · DESAFIOS</span><h1>Quests</h1><p>Escolha um desafio, investigue a situação e registre sua produção.</p></header>'
+    + '<main class="lm-learner-canvas lm-quests-canvas"><header class="lm-learner-heading"><span class="lm-eyebrow">MEU ESPAÇO SOCIAL · EVENTOS COMPETITIVOS</span><h1>Competições</h1><p>Inscreva-se, acompanhe as regras e registre sua participação etapa por etapa.</p></header>'
     + renderQuestBoard(data, selectedId) + renderQuestPrinciples(selectedId) + '</main></div></div>';
 }
 
@@ -2309,7 +2364,7 @@ function renderCompetencyQuestionResponse(data: ComponentFixture, selectedId: st
       + '<label><span>Sua resposta e justificativa</span><textarea name="answer-' + e(question.id) + '" data-interaction-field="competency-answer:' + e(question.id) + '" rows="6" placeholder="Explique como comparou os dados. Você pode usar palavras, estimativas ou cálculos."></textarea></label>'
       + '<div class="lm-question-actions"><button type="button" class="lm-secondary-button" data-question-draft="' + index + '">Guardar rascunho</button><div><button type="button" class="lm-quiet-action" data-question-nav="previous"' + (index === 0 ? ' disabled' : '') + '>← Anterior</button><button type="submit" class="lm-primary-button" data-question-submit>' + (index === questions.length - 1 ? 'Registrar resposta' : 'Salvar e continuar') + ' <span aria-hidden="true">→</span></button></div></div><p class="lm-action-feedback" data-question-item-feedback role="status"></p></form>').join('')
     + '<section class="lm-question-reflection" data-question-reflection hidden><span class="lm-ai-badge"><i></i> IA · MOCK</span><p data-question-reflection-text></p><small>Leitura ilustrativa. Nenhuma inferência real ou avaliação de competência está conectada.</small></section>'
-    + '<section class="lm-question-session-complete" data-question-session-complete hidden><span class="lm-enrollment-success-mark" aria-hidden="true">✓</span><div><span class="lm-eyebrow">CINCO RESPOSTAS REGISTRADAS</span><h3>Suas respostas seguem para revisão</h3><p>A síntese não calcula nota nem define seu nível. A professora interpreta evidências em conjunto e decide o próximo passo.</p><button type="button" class="lm-primary-button" data-screen-select="quests">Explorar quests <span aria-hidden="true">→</span></button></div></section>'
+    + '<section class="lm-question-session-complete" data-question-session-complete hidden><span class="lm-enrollment-success-mark" aria-hidden="true">✓</span><div><span class="lm-eyebrow">CINCO RESPOSTAS REGISTRADAS</span><h3>Suas respostas seguem para revisão</h3><p>A síntese não calcula nota nem define seu nível. A professora interpreta evidências em conjunto e decide o próximo passo.</p><button type="button" class="lm-primary-button" data-screen-select="quests">Ver competições sociais <span aria-hidden="true">→</span></button></div></section>'
     + '<p class="lm-pedagogy-note">Você pode voltar a qualquer questão e revisar a resposta. Alterar um texto não cria uma evidência independente antes de novo envio.</p></section>';
   return labPart('competency-question-response', content, selectedId, 'lm-pedagogy-panel-part');
 }
@@ -2464,7 +2519,7 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', fixture: {}, situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-          groups: {}, toggles: {}, fields: {}, subjectFoundation: null, subjectSkills: null, subjectSkillQuery: '', subjectSkillActiveIndex: 0, subjectSkillMenuOpen: false, subjectSkillInsight: null, activityQuestionIds: null, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
+          groups: {}, toggles: {}, fields: {}, subjectFoundation: null, subjectSkills: null, subjectSkillQuery: '', subjectSkillActiveIndex: 0, subjectSkillMenuOpen: false, subjectSkillInsight: null, activityQuestionIds: null, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {}, questParticipations: [],
           projectChatStatus: null, projectChatPending: false,
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
@@ -3526,41 +3581,113 @@ export function registerComponentElements(): void {
         const enrollmentFeedback = this.querySelector<HTMLElement>('[data-leveling-feedback]');
         if (enrollmentFeedback) enrollmentFeedback.textContent = interaction.enrollmentFeedback;
 
+        const questFixtures = labList<QuestFixture>(this.state.fixture, 'quests');
+        const questById = new Map(questFixtures.map(quest => [quest.id, quest]));
+        const questRecords = new Map(interaction.questParticipations.map(record => [record.questId, record]));
         const questCards = [...this.querySelectorAll<HTMLButtonElement>('[data-quest-select]')];
         const questFilter = interaction.groups['quest-filter'] ?? 'all';
         const selectedQuest = interaction.groups['quest-selected'] ?? questCards[0]?.dataset.questSelect ?? '';
-        const questStatus = (id: string): 'available' | 'in-progress' | 'completed' => interaction.toggles['quest-completed:' + id]
-          ? 'completed' : interaction.toggles['quest-accepted:' + id] ? 'in-progress' : 'available';
+        const questStatus = (id: string): 'available' | 'registered' | 'in-progress' | 'completed' | 'closed' => {
+          const record = questRecords.get(id);
+          const quest = questById.get(id);
+          if (record?.status === 'completed') return 'completed';
+          if (record?.status === 'in-progress') return 'in-progress';
+          if (record) return 'registered';
+          if (!quest || !questRegistrationOpen(quest)) return 'closed';
+          return 'available';
+        };
+        const matchesQuestFilter = (status: ReturnType<typeof questStatus>): boolean => questFilter === 'all'
+          || questFilter === 'available' && status === 'available'
+          || questFilter === 'registered' && (status === 'registered' || status === 'in-progress')
+          || questFilter === 'completed' && status === 'completed';
+        const questStatusLabel = (status: ReturnType<typeof questStatus>, quest?: QuestFixture): string => status === 'completed' ? 'Concluída · aguardando resultado'
+          : status === 'in-progress' ? 'Inscrita · em andamento' : status === 'registered' ? 'Inscrita'
+            : status === 'closed' && quest?.registeredCount !== undefined && quest.registeredCount >= quest.participantLimit ? 'Vagas esgotadas'
+              : status === 'closed' && quest?.registrationDeadlineAt && Date.parse(quest.registrationDeadlineAt) < Date.now() ? 'Prazo encerrado'
+                : status === 'closed' ? 'Inscrições encerradas' : 'Inscrições abertas';
         questCards.forEach(card => {
           const id = card.dataset.questSelect ?? '';
           const status = questStatus(id);
           card.dataset.questStatus = status;
-          card.hidden = questFilter !== 'all' && questFilter !== status;
+          card.hidden = !matchesQuestFilter(status);
           card.classList.toggle('active', id === selectedQuest);
           card.setAttribute('aria-pressed', String(id === selectedQuest));
           const state = card.querySelector<HTMLElement>('[data-quest-card-state]');
-          if (state) state.textContent = status === 'completed' ? 'Concluída' : status === 'in-progress' ? 'Em andamento' : 'Disponível';
+          if (state) state.textContent = questStatusLabel(status, questById.get(id));
         });
+        const questEmpty = this.querySelector<HTMLElement>('[data-quest-empty]');
+        if (questEmpty) questEmpty.hidden = questCards.some(card => !card.hidden);
         this.querySelectorAll<HTMLButtonElement>('[data-quest-filter]').forEach(button => {
           const active = button.dataset.questFilter === questFilter;
           button.classList.toggle('active', active);
           button.setAttribute('aria-pressed', String(active));
+          const count = button.querySelector<HTMLElement>('[data-quest-filter-count]');
+          const filter = button.dataset.questFilter ?? 'all';
+          if (count) count.textContent = String(questCards.filter(card => {
+            const status = questStatus(card.dataset.questSelect ?? '');
+            return filter === 'all' || filter === 'available' && status === 'available'
+              || filter === 'registered' && (status === 'registered' || status === 'in-progress')
+              || filter === 'completed' && status === 'completed';
+          }).length);
         });
         this.querySelectorAll<HTMLElement>('[data-quest-detail]').forEach(panel => {
           const id = panel.dataset.questDetail ?? '';
           const selected = id === selectedQuest;
           const status = questStatus(id);
+          const quest = questById.get(id);
+          const record = questRecords.get(id);
           panel.hidden = !selected;
           const statusLabel = panel.querySelector<HTMLElement>('[data-quest-status-label]');
-          if (statusLabel) statusLabel.textContent = status === 'completed' ? 'CONCLUÍDA' : status === 'in-progress' ? 'EM ANDAMENTO' : 'DISPONÍVEL';
-          const accept = panel.querySelector<HTMLButtonElement>('[data-quest-action="accept"]');
-          if (accept) accept.hidden = status !== 'available';
-          const form = panel.querySelector<HTMLFormElement>('[data-quest-form]');
-          if (form) form.hidden = status !== 'in-progress';
-          const complete = panel.querySelector<HTMLElement>('[data-quest-complete]');
-          if (complete) complete.hidden = status !== 'completed';
-          const answer = complete?.querySelector<HTMLElement>('[data-quest-completed-answer]');
-          if (answer) answer.textContent = interaction.fields['quest-answer:' + id] ? 'Seu registro: “' + interaction.fields['quest-answer:' + id] + '”' : '';
+          if (statusLabel) statusLabel.textContent = questStatusLabel(status, quest).toLocaleUpperCase();
+          const register = panel.querySelector<HTMLButtonElement>('[data-quest-action="register"]');
+          if (register) {
+            register.hidden = Boolean(record);
+            register.disabled = status !== 'available';
+            register.textContent = status === 'available' ? 'Inscrever-se na competição' : questStatusLabel(status, quest);
+          }
+          const participation = panel.querySelector<HTMLElement>('[data-quest-participation]');
+          if (participation) participation.hidden = !record;
+          const registrationCode = participation?.querySelector<HTMLElement>('[data-quest-registration-code]');
+          if (registrationCode) registrationCode.textContent = record?.registrationId ?? '';
+          const registrationSummary = participation?.querySelector<HTMLElement>('[data-quest-registration-summary]');
+          if (registrationSummary && record && quest) registrationSummary.textContent = 'Inscrição de ' + labText(this.state.fixture, 'name', 'Caio Almeida') + ' · ' + quest.format + ' · registrada em ' + formatQuestDateTime(record.registeredAt) + '. Status: ' + (record.status === 'completed' ? 'participação concluída; resultado do evento ainda não apurado.' : record.status === 'in-progress' ? 'etapas em andamento.' : 'aguardando a primeira entrega.');
+          const participantCount = panel.querySelector<HTMLElement>('[data-quest-participant-count]');
+          if (participantCount && quest) participantCount.textContent = String(quest.registeredCount + (record ? 1 : 0));
+          const submittedCount = quest?.stages.filter(stage => Boolean(record?.stageSubmissions[stage.id])).length ?? 0;
+          const progress = panel.querySelector<HTMLElement>('[data-quest-progress-label]');
+          if (progress && quest) progress.textContent = submittedCount + ' de ' + quest.stages.length + ' etapas registradas';
+          const firstIncomplete = quest?.stages.findIndex(stage => !record?.stageSubmissions[stage.id]) ?? -1;
+          panel.querySelectorAll<HTMLElement>('[data-quest-stage-card]').forEach((stageCard, index) => {
+            const stageId = stageCard.dataset.questStageCard ?? '';
+            const submission = record?.stageSubmissions[stageId];
+            const stageForm = stageCard.querySelector<HTMLFormElement>('[data-quest-stage-form]');
+            if (stageForm) stageForm.hidden = !record || Boolean(submission) || index !== firstIncomplete;
+            const stageStatus = stageCard.querySelector<HTMLElement>('[data-quest-stage-state]');
+            if (stageStatus) stageStatus.textContent = submission ? 'Entrega registrada' : !record ? 'Inscreva-se para participar' : index === firstIncomplete ? 'Etapa atual' : 'Aguardando etapa anterior';
+            stageCard.classList.toggle('is-complete', Boolean(submission));
+            stageCard.classList.toggle('is-current', Boolean(record) && index === firstIncomplete);
+            const submitted = stageCard.querySelector<HTMLElement>('[data-quest-stage-submission]');
+            if (submitted) {
+              submitted.hidden = !submission;
+              submitted.textContent = submission ? 'Registrada em ' + formatQuestDateTime(submission.submittedAt) + ' · ' + submission.response : '';
+            }
+          });
+          const trail = participation?.querySelector<HTMLOListElement>('[data-quest-audit-trail]');
+          if (trail) {
+            trail.replaceChildren();
+            record?.history.forEach(item => {
+              const entry = document.createElement('li');
+              const heading = document.createElement('b');
+              heading.textContent = item.action;
+              const time = document.createElement('time');
+              time.dateTime = item.at;
+              time.textContent = formatQuestDateTime(item.at);
+              const detail = document.createElement('p');
+              detail.textContent = item.detail;
+              entry.append(heading, time, detail);
+              trail.append(entry);
+            });
+          }
         });
         const questFeedback = this.querySelector<HTMLElement>('[data-quest-feedback]');
         if (questFeedback) questFeedback.textContent = interaction.questFeedback;
@@ -4522,15 +4649,28 @@ export function registerComponentElements(): void {
         }
         if (button.dataset.questFilter) {
           const filter = button.dataset.questFilter;
+          const fixtures = labList<QuestFixture>(this.state.fixture, 'quests');
+          const records = new Map(this.state.interaction.questParticipations.map(record => [record.questId, record]));
           const cards = [...this.querySelectorAll<HTMLButtonElement>('[data-quest-select]')];
-          const statusFor = (id: string): string => this.state.interaction.toggles['quest-completed:' + id]
-            ? 'completed' : this.state.interaction.toggles['quest-accepted:' + id] ? 'in-progress' : 'available';
-          const nextSelection = filter === 'all' ? this.state.interaction.groups['quest-selected'] ?? cards[0]?.dataset.questSelect ?? ''
-            : cards.find(card => statusFor(card.dataset.questSelect ?? '') === filter)?.dataset.questSelect ?? '';
+          const statusFor = (id: string): string => {
+            const quest = fixtures.find(item => item.id === id);
+            const record = records.get(id);
+            if (record?.status === 'completed') return 'completed';
+            if (record?.status === 'in-progress') return 'registered';
+            if (record) return 'registered';
+            return quest && questRegistrationOpen(quest) ? 'available' : 'closed';
+          };
+          const visibleCards = cards.filter(card => filter === 'all'
+            || filter === 'registered' && statusFor(card.dataset.questSelect ?? '') === 'registered'
+            || filter === 'available' && statusFor(card.dataset.questSelect ?? '') === 'available'
+            || filter === 'completed' && statusFor(card.dataset.questSelect ?? '') === 'completed');
+          const currentSelection = this.state.interaction.groups['quest-selected'] ?? cards[0]?.dataset.questSelect ?? '';
+          const nextSelection = visibleCards.some(card => card.dataset.questSelect === currentSelection)
+            ? currentSelection : visibleCards[0]?.dataset.questSelect ?? '';
           this.transitionInteraction(interaction => ({
             ...interaction,
             groups: { ...interaction.groups, 'quest-filter': filter, 'quest-selected': nextSelection },
-            questFeedback: filter === 'all' ? 'Mostrando todas as missões.' : filter === 'available' ? 'Mostrando quests disponíveis.' : filter === 'in-progress' ? 'Mostrando quests em andamento.' : 'Mostrando quests concluídas.',
+            questFeedback: filter === 'all' ? 'Mostrando todas as competições.' : filter === 'available' ? 'Mostrando competições com inscrição aberta.' : filter === 'registered' ? 'Mostrando suas inscrições e participações.' : 'Mostrando participações concluídas.',
           }));
           this.render();
           return;
@@ -4544,13 +4684,29 @@ export function registerComponentElements(): void {
           this.render();
           return;
         }
-        if (button.dataset.questAction === 'accept') {
+        if (button.dataset.questAction === 'register') {
           const questId = button.dataset.questId ?? '';
+          const quest = labList<QuestFixture>(this.state.fixture, 'quests').find(item => item.id === questId);
+          const existing = this.state.interaction.questParticipations.find(record => record.questId === questId);
+          if (!quest || existing || !questRegistrationOpen(quest)) {
+            this.transitionInteraction(interaction => ({ ...interaction, questFeedback: existing ? 'Sua inscrição já está registrada. Acompanhe as etapas e o histórico neste evento.' : 'As inscrições para esta competição estão encerradas ou sem vagas.' }));
+            this.render();
+            return;
+          }
+          const registeredAt = new Date().toISOString();
+          const registration: QuestParticipation = {
+            questId,
+            registrationId: 'LUM-' + questId.toLocaleUpperCase().replace(/[^A-Z0-9]+/g, '-') + '-' + projectId().slice(-5).toLocaleUpperCase(),
+            registeredAt,
+            status: 'registered',
+            stageSubmissions: {},
+            history: [{ action: 'Inscrição confirmada', at: registeredAt, detail: 'Participante: ' + labText(this.state.fixture, 'name', 'Caio Almeida') + '. Formato: ' + quest.format + '.' }],
+          };
           this.transitionInteraction(interaction => ({
             ...interaction,
-            groups: { ...interaction.groups, 'quest-selected': questId },
-            toggles: { ...interaction.toggles, ['quest-accepted:' + questId]: true },
-            questFeedback: 'Quest aceita. Registre sua entrega quando concluir a investigação.',
+            groups: { ...interaction.groups, 'quest-selected': questId, 'quest-filter': 'all' },
+            questParticipations: [...interaction.questParticipations, registration],
+            questFeedback: 'Inscrição confirmada. O código ' + registration.registrationId + ' identifica sua participação; registre cada etapa para manter o histórico.',
           }));
           this.render();
           return;
@@ -5260,17 +5416,41 @@ export function registerComponentElements(): void {
           this.render();
           return;
         }
-        if (form?.matches('[data-quest-form]') && this.state.id === 'quest-board') {
-          const questId = form.dataset.questForm ?? '';
-          const response = form.querySelector<HTMLTextAreaElement>('textarea[name="questAnswer"]')?.value.trim() ?? '';
-          if (!response) {
-            this.transitionInteraction(interaction => ({ ...interaction, questFeedback: 'Escreva seu registro antes de concluir a quest.' }));
+        if (form?.matches('[data-quest-stage-form]') && this.state.id === 'quest-board') {
+          const questId = form.dataset.questStageForm ?? '';
+          const stageId = form.dataset.stageId ?? '';
+          const quest = labList<QuestFixture>(this.state.fixture, 'quests').find(item => item.id === questId);
+          const participation = this.state.interaction.questParticipations.find(record => record.questId === questId);
+          const stage = quest?.stages.find(item => item.id === stageId);
+          const nextStage = quest?.stages.find(item => !participation?.stageSubmissions[item.id]);
+          const textarea = form.querySelector<HTMLTextAreaElement>('textarea[data-interaction-field]');
+          const response = textarea?.value.trim() ?? '';
+          if (!participation || !quest || !stage || participation.status === 'completed') {
+            this.transitionInteraction(interaction => ({ ...interaction, questFeedback: 'Inscreva-se na competição antes de registrar etapas.' }));
+          } else if (nextStage?.id !== stageId) {
+            this.transitionInteraction(interaction => ({ ...interaction, questFeedback: 'Registre as etapas na ordem indicada para preservar a trilha de participação.' }));
+          } else if (!response) {
+            this.transitionInteraction(interaction => ({ ...interaction, questFeedback: 'Escreva o registro da etapa antes de enviar.' }));
+            textarea?.focus();
           } else {
+            const submittedAt = new Date().toISOString();
+            const completed = quest.stages.every(item => item.id === stageId || Boolean(participation.stageSubmissions[item.id]));
+            const submission: QuestStageSubmission = { submittedAt, response };
+            const history: QuestParticipationEvent[] = [
+              ...participation.history,
+              { action: 'Entrega registrada · ' + stage.title, at: submittedAt, detail: 'Registro enviado: ' + response },
+              ...(completed ? [{ action: 'Participação concluída', at: submittedAt, detail: 'Todas as ' + quest.stages.length + ' etapas foram registradas. A apuração da pontuação continua a cargo da organização do evento.' }] : []),
+            ];
+            const updatedParticipation: QuestParticipation = {
+              ...participation,
+              status: completed ? 'completed' : 'in-progress',
+              stageSubmissions: { ...participation.stageSubmissions, [stageId]: submission },
+              history,
+            };
             this.transitionInteraction(interaction => ({
               ...interaction,
-              toggles: { ...interaction.toggles, ['quest-accepted:' + questId]: true, ['quest-completed:' + questId]: true },
-              fields: { ...interaction.fields, ['quest-answer:' + questId]: response },
-              questFeedback: 'Entrega registrada. O selo reconhece sua participação nesta quest, sem alterar o nível da competência.',
+              questParticipations: interaction.questParticipations.map(record => record.questId === questId ? updatedParticipation : record),
+              questFeedback: completed ? 'Última etapa registrada. Sua participação está concluída e rastreada; a classificação ainda não foi apurada.' : 'Etapa “' + stage.title + '” registrada com data e hora. A próxima etapa foi liberada.',
             }));
           }
           this.render();
