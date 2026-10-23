@@ -859,6 +859,79 @@ lumira-page-part {
   min-width: 0;
   --lm-prototype-accent: #219c98;
 }
+.lm-platform-reference-menu {
+  position: fixed;
+  z-index: 12000;
+  display: flex;
+  flex-direction: column;
+  max-height: min(360px, 48vh);
+  overflow: hidden;
+  border: 1px solid #cbd5df;
+  border-radius: 10px;
+  background: #fff;
+  color: #1d2b3b;
+  box-shadow: 0 16px 42px rgb(20 35 50 / 20%);
+  font-family: var(--lm-font-sans, Inter, sans-serif);
+}
+.lm-reference-menu-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px 7px;
+  color: #75869a;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: .09em;
+}
+.lm-reference-menu-heading span { margin-right: auto; }
+.lm-reference-menu-heading kbd {
+  padding: 3px 5px;
+  border: 1px solid #e1e6eb;
+  border-radius: 4px;
+  background: #f6f8fa;
+  color: #637386;
+  font: 9px var(--lm-font-mono, monospace);
+  letter-spacing: 0;
+}
+.lm-reference-menu-path {
+  padding: 0 12px 9px;
+  border-bottom: 1px solid #edf0f3;
+  color: #263b52;
+  font: 11px var(--lm-font-mono, monospace);
+  overflow-wrap: anywhere;
+}
+.lm-reference-menu-options {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px;
+}
+.lm-reference-menu-options [data-platform-reference-option] {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.lm-reference-menu-options [data-platform-reference-option]:hover,
+.lm-reference-menu-options [data-platform-reference-option][aria-selected="true"] {
+  background: #edf6f5;
+}
+.lm-reference-menu-options [data-platform-reference-option] span { display: grid; gap: 3px; min-width: 0; }
+.lm-reference-menu-options [data-platform-reference-option] strong { font-size: 12px; font-weight: 700; }
+.lm-reference-menu-options [data-platform-reference-option] small { color: #75869a; font-size: 10px; line-height: 1.35; }
+.lm-reference-menu-options [data-platform-reference-option] code {
+  flex: 0 0 auto;
+  color: #718197;
+  font: 10px var(--lm-font-mono, monospace);
+}
+.lm-reference-menu-empty { margin: 0; padding: 14px 10px; color: #718197; font-size: 11px; line-height: 1.5; }
 .lm-page-part[data-prototype-accent="blue"] { --lm-prototype-accent: #3477bb; }
 .lm-page-part[data-prototype-accent="violet"] { --lm-prototype-accent: #7959b7; }
 .lm-page-part[data-prototype-accent="rose"] { --lm-prototype-accent: #ca6482; }

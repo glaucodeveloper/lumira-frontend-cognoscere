@@ -65,6 +65,14 @@ The student profile's Competencies part starts with the student's public interes
 - Agenda items and post previews are local to their page-part state. The demo does not persist them after reload, publish to a real feed, sync an external calendar, or expose question responses and individual feedback. Those remain in the reserved learning space.
 - The agenda responsibility text describes how teachers and students can use this format without treating a social post as learning evidence or turning a public profile into an assessment record.
 
+## Platform references in text fields
+
+- Text inputs and text areas inside a demonstrated page part accept platform references. Typing `@` opens a filtered list of platform namespaces; selecting an entry inserts its stable path segment into the current field.
+- Type `>` after a selected entry with children to open that entry's next level. For example, `@competencias > questionarios > ciencias-da-natureza > ef08ci03 > questao-biblioteca > texto` identifies the text of a specific competency question. `ArrowUp`, `ArrowDown`, `Enter`, and `Escape` operate the list without leaving the field.
+- Available roots cover student and teacher profiles, personal and community calendars, social events, competencies and questionnaires, activity posts, and projects. Nested records expose fields such as title, date, event description, question text, prompt, context, and criteria.
+- The inserted value is a readable state path in the field content. The demo autocomplete does not dereference it into live data, grant access, publish content, or persist a linked record; those actions require platform services and authorization rules.
+- The dropdown is attached to the active page part's field, follows it while scrolling, closes on escape/outside click/field change, and removes its document listeners when closed or when its page part is detached.
+
 ## Build and manual review
 
 `npm run dev` serves the web application. `npm run typecheck` checks TypeScript, and `npx vite build` creates the static GitHub Pages bundle. The workflow `.github/workflows/pages.yml` publishes `dist/` on pushes to `main` and manual dispatches.

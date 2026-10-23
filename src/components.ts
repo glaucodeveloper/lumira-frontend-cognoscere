@@ -987,6 +987,158 @@ type ProfileProjectItem = {
 type ProfileAgendaElement = { id: string; type: 'competency-question' | 'social-challenge'; title: string; detail: string };
 type ProfileAgendaItem = { id: string; title: string; detail: string; date: string; time: string; elementId: string };
 type ProfileAgendaPost = ProfileAgendaItem & { visibility: 'school' | 'community'; publishedAt: string };
+type PlatformReferenceNode = { id: string; label: string; description: string; children?: readonly PlatformReferenceNode[] };
+type PlatformReferenceContext = { path: string[]; query: string; segmentStart: number; caret: number };
+type PlatformReferenceField = HTMLInputElement | HTMLTextAreaElement;
+const PLATFORM_REFERENCE_TREE: readonly PlatformReferenceNode[] = [
+  { id: 'perfil', label: 'Perfil', description: 'Dados e conteúdo de um perfil', children: [
+    { id: 'aluno', label: 'Aluno', description: 'Perfil de estudante', children: [
+      { id: 'nome', label: 'Nome', description: 'Nome público do estudante' },
+      { id: 'apresentacao', label: 'Apresentação', description: 'Texto curto do perfil' },
+      { id: 'biografia', label: 'Biografia', description: 'Descrição pessoal' },
+      { id: 'interesses', label: 'Interesses', description: 'Interesses escolhidos para o perfil' },
+      { id: 'competencias', label: 'Competências', description: 'Competências em destaque' },
+      { id: 'agenda', label: 'Agenda', description: 'Agenda e compromissos do perfil', children: [
+        { id: 'visibilidade', label: 'Visibilidade', description: 'Quem pode ver a agenda' },
+        { id: 'compromissos', label: 'Compromissos', description: 'Itens da agenda', children: [
+          { id: 'titulo', label: 'Título', description: 'Nome do compromisso' },
+          { id: 'data', label: 'Data', description: 'Dia do compromisso' },
+          { id: 'elemento', label: 'Elemento relacionado', description: 'Questão ou evento associado' },
+        ] },
+      ] },
+    ] },
+    { id: 'professor', label: 'Professor', description: 'Perfil de docente', children: [
+      { id: 'nome', label: 'Nome', description: 'Nome público do professor' },
+      { id: 'apresentacao', label: 'Apresentação', description: 'Texto curto do perfil' },
+      { id: 'biografia', label: 'Biografia', description: 'Descrição profissional' },
+      { id: 'competencias', label: 'Competências', description: 'Competências em destaque' },
+      { id: 'agenda', label: 'Agenda', description: 'Agenda e compromissos do perfil', children: [
+        { id: 'visibilidade', label: 'Visibilidade', description: 'Quem pode ver a agenda' },
+        { id: 'compromissos', label: 'Compromissos', description: 'Itens da agenda', children: [
+          { id: 'titulo', label: 'Título', description: 'Nome do compromisso' },
+          { id: 'data', label: 'Data', description: 'Dia do compromisso' },
+          { id: 'elemento', label: 'Elemento relacionado', description: 'Questão ou evento associado' },
+        ] },
+      ] },
+    ] },
+  ] },
+  { id: 'calendarios', label: 'Calendários', description: 'Agendas pessoais e da comunidade', children: [
+    { id: 'pessoal', label: 'Pessoal', description: 'Calendário do perfil', children: [
+      { id: 'compromissos', label: 'Compromissos', description: 'Itens da agenda', children: [
+        { id: 'titulo', label: 'Título', description: 'Nome do compromisso' },
+        { id: 'data', label: 'Data', description: 'Dia do compromisso' },
+        { id: 'elemento', label: 'Elemento relacionado', description: 'Questão ou evento associado' },
+      ] },
+    ] },
+    { id: 'comunidade', label: 'Comunidade', description: 'Calendário de eventos sociais', children: [
+      { id: 'eventos', label: 'Eventos', description: 'Eventos da comunidade', children: [
+        { id: 'feira-de-experiencias', label: 'Feira de experiências', description: 'Mostra comunitária', children: [
+          { id: 'titulo', label: 'Título', description: 'Nome do evento' },
+          { id: 'data', label: 'Data', description: 'Data do evento' },
+          { id: 'descricao', label: 'Descrição', description: 'Apresentação do evento' },
+          { id: 'perguntas', label: 'Perguntas e desafios', description: 'Atividades abertas do evento' },
+        ] },
+        { id: 'roda-de-leitura', label: 'Roda de leitura', description: 'Encontro de leitura', children: [
+          { id: 'titulo', label: 'Título', description: 'Nome do evento' },
+          { id: 'data', label: 'Data', description: 'Data do evento' },
+          { id: 'perguntas', label: 'Perguntas e desafios', description: 'Atividades abertas do evento' },
+        ] },
+      ] },
+    ] },
+  ] },
+  { id: 'eventos', label: 'Eventos', description: 'Eventos e atividades sociais', children: [
+    { id: 'feira-de-experiencias', label: 'Feira de experiências', description: 'Mostra comunitária', children: [
+      { id: 'titulo', label: 'Título', description: 'Nome do evento' },
+      { id: 'data', label: 'Data', description: 'Data do evento' },
+      { id: 'descricao', label: 'Descrição', description: 'Apresentação do evento' },
+      { id: 'participantes', label: 'Participantes', description: 'Pessoas e grupos inscritos' },
+      { id: 'questoes', label: 'Questões', description: 'Questões do evento' },
+      { id: 'desafios', label: 'Desafios', description: 'Desafios do evento' },
+    ] },
+    { id: 'roda-de-leitura', label: 'Roda de leitura', description: 'Encontro de leitura', children: [
+      { id: 'titulo', label: 'Título', description: 'Nome do evento' },
+      { id: 'data', label: 'Data', description: 'Data do evento' },
+      { id: 'pergunta', label: 'Pergunta-guia', description: 'Questão aberta para a roda' },
+    ] },
+  ] },
+  { id: 'competencias', label: 'Competências', description: 'Competências, habilidades e questionários', children: [
+    { id: 'comunicacao', label: 'Comunicação', description: 'Expressar ideias e dialogar' },
+    { id: 'pensamento-critico', label: 'Pensamento crítico', description: 'Analisar evidências e justificar decisões' },
+    { id: 'investigacao-cientifica', label: 'Investigação científica', description: 'Investigar fenômenos com evidências' },
+    { id: 'questionarios', label: 'Questionários', description: 'Sondagens e questões por competência', children: [
+      { id: 'ciencias-da-natureza', label: 'Ciências da Natureza', description: 'Questões de Ciências', children: [
+        { id: 'ef08ci03', label: 'EF08CI03 · Energia', description: 'Relacionar potência, tempo e consumo', children: [
+          { id: 'questao-biblioteca', label: 'Questão da biblioteca', description: 'Consumo de energia na biblioteca', children: [
+            { id: 'texto', label: 'Texto', description: 'Texto completo da questão' },
+            { id: 'enunciado', label: 'Enunciado', description: 'Pedido apresentado ao estudante' },
+            { id: 'contexto', label: 'Contexto', description: 'Situação da questão' },
+            { id: 'criterios', label: 'Critérios', description: 'Critérios observáveis de resposta' },
+          ] },
+          { id: 'questao-horta', label: 'Questão da horta', description: 'Uso de água na horta escolar', children: [
+            { id: 'texto', label: 'Texto', description: 'Texto completo da questão' },
+            { id: 'enunciado', label: 'Enunciado', description: 'Pedido apresentado ao estudante' },
+            { id: 'contexto', label: 'Contexto', description: 'Situação da questão' },
+            { id: 'criterios', label: 'Critérios', description: 'Critérios observáveis de resposta' },
+          ] },
+          { id: 'questao-consumo-salas', label: 'Questão do consumo nas salas', description: 'Comparação de registros de consumo', children: [
+            { id: 'texto', label: 'Texto', description: 'Texto completo da questão' },
+            { id: 'enunciado', label: 'Enunciado', description: 'Pedido apresentado ao estudante' },
+            { id: 'contexto', label: 'Contexto', description: 'Situação da questão' },
+            { id: 'criterios', label: 'Critérios', description: 'Critérios observáveis de resposta' },
+          ] },
+        ] },
+      ] },
+      { id: 'lingua-portuguesa', label: 'Língua Portuguesa', description: 'Questões de leitura e linguagem', children: [
+        { id: 'ef69lp44', label: 'EF69LP44 · Leitura', description: 'Relacionar texto, narrador e interpretação', children: [
+          { id: 'questao-narrador', label: 'Questão da praça', description: 'Narrador e memórias do bairro', children: [
+            { id: 'texto', label: 'Texto', description: 'Texto completo da questão' },
+            { id: 'enunciado', label: 'Enunciado', description: 'Pedido apresentado ao estudante' },
+            { id: 'contexto', label: 'Contexto', description: 'Situação da questão' },
+            { id: 'criterios', label: 'Critérios', description: 'Critérios observáveis de resposta' },
+          ] },
+        ] },
+      ] },
+    ] },
+  ] },
+  { id: 'publicacoes', label: 'Publicações', description: 'Posts ligados a atividades', children: [
+    { id: 'posts-de-atividade', label: 'Posts de atividade', description: 'Publicações relacionadas ao trabalho da turma', children: [
+      { id: 'titulo', label: 'Título', description: 'Título da publicação' },
+      { id: 'texto', label: 'Texto', description: 'Corpo da publicação' },
+      { id: 'atividade', label: 'Atividade relacionada', description: 'Atividade e critério associados' },
+    ] },
+  ] },
+  { id: 'projetos', label: 'Projetos', description: 'Projetos colaborativos', children: [
+    { id: 'mapa-de-historias-do-bairro', label: 'Mapa de histórias do bairro', description: 'Projeto em andamento', children: [
+      { id: 'autoria', label: 'Autoria', description: 'Pessoas e grupo autores' },
+      { id: 'objetivo', label: 'Objetivo', description: 'Mudança ou resultado pretendido' },
+      { id: 'justificativa', label: 'Justificativa', description: 'Por que o projeto importa' },
+      { id: 'competencias', label: 'Competências', description: 'Competências relacionadas' },
+      { id: 'etapas', label: 'Etapas', description: 'Marcos e calendário do projeto' },
+    ] },
+  ] },
+];
+function platformReferenceNode(path: readonly string[]): PlatformReferenceNode | null {
+  let level = PLATFORM_REFERENCE_TREE;
+  let node: PlatformReferenceNode | undefined;
+  for (const segment of path) {
+    node = level.find(item => item.id === segment);
+    if (!node) return null;
+    level = node.children ?? [];
+  }
+  return node ?? null;
+}
+function platformReferenceContext(value: string, caret: number): PlatformReferenceContext | null {
+  const prefix = value.slice(0, caret);
+  const match = prefix.match(/(^|[\s([{])@([a-z0-9-]*(?:\s*>\s*[a-z0-9-]*)*)$/i);
+  if (!match) return null;
+  const expression = match[2];
+  const segments = expression.split('>');
+  const current = segments.pop() ?? '';
+  const query = current.trim();
+  const segmentStart = caret - current.length;
+  const path = segments.map(segment => segment.trim()).filter(Boolean);
+  return { path, query, segmentStart, caret };
+}
 const PROFILE_AGENDA_ELEMENTS: readonly ProfileAgendaElement[] = [
   { id: 'question-reading', type: 'competency-question', title: 'Qual narrador conhece melhor a praça?', detail: 'Histórico de questões · Língua Portuguesa · 7º ano' },
   { id: 'question-library', type: 'competency-question', title: 'Uma decisão na biblioteca', detail: 'Histórico de questões · Ciências · EF08CI03' },
@@ -2140,6 +2292,18 @@ export function registerComponentElements(): void {
       private state: DemoPagePartState;
       private projectReflectionTimer: number | undefined;
       private projectReflectionRevision = 0;
+      private platformReferenceMenu: HTMLDivElement | null = null;
+      private platformReferenceTarget: PlatformReferenceField | null = null;
+      private platformReferenceCurrent: PlatformReferenceContext | null = null;
+      private platformReferenceOptions: readonly PlatformReferenceNode[] = [];
+      private platformReferenceActiveIndex = 0;
+      private platformReferenceSkipInput: PlatformReferenceField | null = null;
+      private readonly repositionPlatformReferenceMenu = (): void => this.positionPlatformReferenceMenu();
+      private readonly closePlatformReferenceOnOutsidePointer = (event: PointerEvent): void => {
+        const target = event.target;
+        if (target instanceof Node && (this.platformReferenceTarget?.contains(target) || this.platformReferenceMenu?.contains(target))) return;
+        this.closePlatformReferenceMenu();
+      };
 
       constructor() {
         super();
@@ -2160,6 +2324,9 @@ export function registerComponentElements(): void {
         this.addEventListener('input', event => this.onInput(event));
         this.addEventListener('change', event => this.onChange(event));
         this.addEventListener('submit', event => this.onSubmit(event));
+        this.addEventListener('focusout', event => {
+          if (event.target === this.platformReferenceTarget) this.closePlatformReferenceMenu();
+        });
         this.addEventListener('profile-edit-command', event => {
           if (this.state.id !== 'teacher-hero' && this.state.id !== 'student-hero') return;
           const detail = (event as CustomEvent<{ field?: string }>).detail;
@@ -2212,6 +2379,141 @@ export function registerComponentElements(): void {
           },
         })).value;
         this.render();
+      }
+      disconnectedCallback(): void {
+        this.closePlatformReferenceMenu();
+      }
+      private platformReferenceField(target: EventTarget | null): target is PlatformReferenceField {
+        if (target instanceof HTMLTextAreaElement) return true;
+        return target instanceof HTMLInputElement && ['text', 'search', 'url', 'email', 'tel'].includes(target.type);
+      }
+      private updatePlatformReferenceMenu(field: PlatformReferenceField): void {
+        const caret = field.selectionStart ?? field.value.length;
+        const context = platformReferenceContext(field.value, caret);
+        if (!context || !platformReferenceNode(context.path) && context.path.length > 0) {
+          this.closePlatformReferenceMenu();
+          return;
+        }
+        const parent = context.path.length ? platformReferenceNode(context.path) : null;
+        const candidates = parent ? parent.children ?? [] : PLATFORM_REFERENCE_TREE;
+        const query = context.query.toLocaleLowerCase();
+        this.platformReferenceOptions = candidates.filter(node => !query
+          || node.id.toLocaleLowerCase().includes(query)
+          || node.label.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(query.normalize('NFD').replace(/[\u0300-\u036f]/g, '')));
+        this.platformReferenceTarget = field;
+        this.platformReferenceCurrent = context;
+        this.platformReferenceActiveIndex = 0;
+        const menu = this.ensurePlatformReferenceMenu();
+        const pathLabel = context.path.length ? '@' + context.path.join(' > ') + (context.query ? ' > ' + context.query : '') : (context.query ? '@' + context.query : 'Escolha um namespace');
+        const rows = this.platformReferenceOptions.map((node, index) => '<button type="button" role="option" aria-selected="' + String(index === 0) + '" data-platform-reference-option="' + index + '"><span><strong>' + e(node.label) + '</strong><small>' + e(node.description) + '</small></span><code>' + e(node.id) + (node.children?.length ? '　›' : '') + '</code></button>').join('');
+        menu.innerHTML = '<div class="lm-reference-menu-heading"><span>ELEMENTO DA PLATAFORMA</span><kbd>@</kbd><kbd>&gt;</kbd><kbd>Esc</kbd></div><div class="lm-reference-menu-path">' + e(pathLabel) + '</div><div class="lm-reference-menu-options" role="listbox" aria-label="Elementos da plataforma">' + (rows || '<p class="lm-reference-menu-empty">Nenhum elemento encontrado. Continue digitando ou ajuste o caminho.</p>') + '</div>';
+        field.setAttribute('aria-expanded', 'true');
+        field.setAttribute('aria-autocomplete', 'list');
+        field.setAttribute('aria-controls', menu.id);
+        this.positionPlatformReferenceMenu();
+      }
+      private ensurePlatformReferenceMenu(): HTMLDivElement {
+        if (this.platformReferenceMenu) return this.platformReferenceMenu;
+        const menu = document.createElement('div');
+        menu.className = 'lm-platform-reference-menu';
+        menu.id = 'lumira-platform-reference-menu';
+        menu.setAttribute('role', 'presentation');
+        menu.addEventListener('pointerdown', event => event.preventDefault());
+        menu.addEventListener('click', event => {
+          const option = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-platform-reference-option]') : null;
+          if (!option) return;
+          const index = Number(option.dataset.platformReferenceOption);
+          const selected = this.platformReferenceOptions[index];
+          if (selected) this.selectPlatformReference(selected);
+        });
+        document.body.append(menu);
+        document.addEventListener('pointerdown', this.closePlatformReferenceOnOutsidePointer, true);
+        window.addEventListener('resize', this.repositionPlatformReferenceMenu);
+        window.addEventListener('scroll', this.repositionPlatformReferenceMenu, true);
+        this.platformReferenceMenu = menu;
+        return menu;
+      }
+      private positionPlatformReferenceMenu(): void {
+        const menu = this.platformReferenceMenu;
+        const field = this.platformReferenceTarget;
+        if (!menu || !field?.isConnected) return;
+        const rect = field.getBoundingClientRect();
+        const width = Math.min(Math.max(rect.width, 300), Math.max(220, window.innerWidth - 24));
+        menu.style.width = width + 'px';
+        const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+        menu.style.left = left + 'px';
+        menu.style.top = Math.max(8, rect.bottom + 6) + 'px';
+        const menuHeight = menu.getBoundingClientRect().height;
+        if (rect.bottom + 6 + menuHeight > window.innerHeight - 8) menu.style.top = Math.max(8, rect.top - menuHeight - 6) + 'px';
+      }
+      private updatePlatformReferenceActiveOption(index: number): void {
+        if (!this.platformReferenceOptions.length) return;
+        this.platformReferenceActiveIndex = (index + this.platformReferenceOptions.length) % this.platformReferenceOptions.length;
+        this.platformReferenceMenu?.querySelectorAll<HTMLElement>('[data-platform-reference-option]').forEach((option, optionIndex) => {
+          const active = optionIndex === this.platformReferenceActiveIndex;
+          option.setAttribute('aria-selected', String(active));
+          if (active) option.scrollIntoView({ block: 'nearest' });
+        });
+      }
+      private selectPlatformReference(node: PlatformReferenceNode): void {
+        const field = this.platformReferenceTarget;
+        const context = this.platformReferenceCurrent;
+        if (!field || !context) return;
+        field.setRangeText((context.path.length ? ' ' : '') + node.id, context.segmentStart, context.caret, 'end');
+        this.platformReferenceSkipInput = field;
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+        this.closePlatformReferenceMenu();
+        field.focus();
+      }
+      private closePlatformReferenceMenu(): void {
+        const field = this.platformReferenceTarget;
+        field?.removeAttribute('aria-expanded');
+        field?.removeAttribute('aria-autocomplete');
+        field?.removeAttribute('aria-controls');
+        this.platformReferenceMenu?.remove();
+        this.platformReferenceMenu = null;
+        this.platformReferenceTarget = null;
+        this.platformReferenceCurrent = null;
+        this.platformReferenceOptions = [];
+        this.platformReferenceActiveIndex = 0;
+        document.removeEventListener('pointerdown', this.closePlatformReferenceOnOutsidePointer, true);
+        window.removeEventListener('resize', this.repositionPlatformReferenceMenu);
+        window.removeEventListener('scroll', this.repositionPlatformReferenceMenu, true);
+      }
+      private handlePlatformReferenceKey(event: KeyboardEvent, field: PlatformReferenceField): boolean {
+        if (this.platformReferenceTarget === field && this.platformReferenceMenu) {
+          if (event.key === 'ArrowDown' && this.platformReferenceOptions.length) {
+            event.preventDefault();
+            this.updatePlatformReferenceActiveOption(this.platformReferenceActiveIndex + 1);
+            return true;
+          }
+          if (event.key === 'ArrowUp' && this.platformReferenceOptions.length) {
+            event.preventDefault();
+            this.updatePlatformReferenceActiveOption(this.platformReferenceActiveIndex - 1);
+            return true;
+          }
+          if (event.key === 'Enter' && this.platformReferenceOptions.length) {
+            event.preventDefault();
+            const option = this.platformReferenceOptions[this.platformReferenceActiveIndex];
+            if (option) this.selectPlatformReference(option);
+            return true;
+          }
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            this.closePlatformReferenceMenu();
+            return true;
+          }
+        }
+        if (event.key !== '>' || field.selectionStart === null || field.selectionEnd !== field.selectionStart) return false;
+        const caret = field.selectionStart;
+        const context = platformReferenceContext(field.value, caret);
+        if (!context || !context.query) return false;
+        const selected = platformReferenceNode([...context.path, context.query]);
+        if (!selected?.children?.length) return false;
+        event.preventDefault();
+        field.setRangeText(' > ', caret, caret, 'end');
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+        return true;
       }
       syncLearningReflection(aiReflection: string, submissions: string[]): void {
         if (this.state.id !== 'learner-reflection') return;
@@ -3889,6 +4191,7 @@ export function registerComponentElements(): void {
       }
       private onKeyDown(event: Event): void {
         if (!(event instanceof KeyboardEvent)) return;
+        if (this.platformReferenceField(event.target) && this.handlePlatformReferenceKey(event, event.target)) return;
         if (isProfileProjectPart(this.state.id)) {
           const currentStep = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('[data-project-wizard-step-select]') : null;
           if (currentStep && this.contains(currentStep)) {
@@ -3932,6 +4235,16 @@ export function registerComponentElements(): void {
       private onInput(event: Event): void {
         if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) return;
         const field = event.target;
+        if (this.platformReferenceField(field)) {
+          if (this.platformReferenceSkipInput === field) {
+            this.platformReferenceSkipInput = null;
+            this.closePlatformReferenceMenu();
+          } else {
+            this.updatePlatformReferenceMenu(field);
+          }
+        } else {
+          this.closePlatformReferenceMenu();
+        }
         if (field.hasAttribute('data-workspace-search')) {
           this.updateWorkspaceSearch(field.value);
           return;
@@ -4470,6 +4783,7 @@ export function registerComponentElements(): void {
         this.render();
       }
       private render(): void {
+        this.closePlatformReferenceMenu();
         const { id, title, content, selectedId, className, situation, prototypeParameters } = this.state;
         this.className = 'lm-page-part ' + e(className) + (id === selectedId ? ' is-selected' : '');
         this.dataset.componentId = id;
