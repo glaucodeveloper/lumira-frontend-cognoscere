@@ -990,7 +990,100 @@ type ProfileAgendaPost = ProfileAgendaItem & { visibility: 'school' | 'community
 type PlatformReferenceNode = { id: string; label: string; description: string; children?: readonly PlatformReferenceNode[] };
 type PlatformReferenceContext = { path: string[]; query: string; segmentStart: number; caret: number };
 type PlatformReferenceField = HTMLInputElement | HTMLTextAreaElement;
+type PlatformReferenceMockProfile = {
+  id: string; name: string; handle: string; group: 'alunos' | 'professores'; role: string; school: string; className: string;
+  summary: string; biography: string; competencies: Array<{ id: string; label: string }>;
+  agenda: Array<{ id: string; title: string; date: string; context: string }>;
+};
+const PLATFORM_REFERENCE_MOCK_PROFILES: readonly PlatformReferenceMockProfile[] = [
+  {
+    id: 'caio-almeida', name: 'Caio Almeida', handle: '@caioalmeida', group: 'alunos', role: 'Estudante · 8º ano', school: 'Escola Aurora', className: '8º A',
+    summary: 'Aluno fictício · 8º ano · Escola Aurora', biography: 'Aprendo investigando e gosto de transformar perguntas em projetos com a turma.',
+    competencies: [
+      { id: 'investigacao-cientifica', label: 'Investigação científica' },
+      { id: 'leitura-e-interpretacao', label: 'Leitura e interpretação' },
+      { id: 'colaboracao', label: 'Colaboração' },
+    ],
+    agenda: [
+      { id: 'clube-de-ciencias', title: 'Clube de Ciências', date: '2026-10-22', context: 'Questão sobre consumo de energia' },
+      { id: 'feira-de-experiencias', title: 'Feira de experiências', date: '2026-10-24', context: 'Desafio em grupo' },
+    ],
+  },
+  {
+    id: 'lia-santos', name: 'Lia Santos', handle: '@liasantos', group: 'alunos', role: 'Estudante · 7º ano', school: 'Escola Aurora', className: '7º B',
+    summary: 'Aluna fictícia · 7º ano · Escola Aurora', biography: 'Gosto de comparar interpretações e encontrar trechos que sustentam uma ideia.',
+    competencies: [
+      { id: 'leitura-e-interpretacao', label: 'Leitura e interpretação' },
+      { id: 'comunicacao', label: 'Comunicação' },
+      { id: 'colaboracao', label: 'Colaboração' },
+    ],
+    agenda: [
+      { id: 'roda-de-leitura', title: 'Roda do Clube de Leitura', date: '2026-10-26', context: 'Compartilhar interpretações e trechos' },
+      { id: 'feira-de-experiencias', title: 'Feira de experiências', date: '2026-10-24', context: 'Apresentação de projetos' },
+    ],
+  },
+  {
+    id: 'ana-beatriz-silva', name: 'Ana Beatriz Silva', handle: '@anabeatriz', group: 'professores', role: 'Professora · Língua Portuguesa', school: 'Escola Aurora', className: '7º ano',
+    summary: 'Professora fictícia · Língua Portuguesa · Escola Aurora', biography: 'Organiza rodas de leitura e acompanha como a turma sustenta diferentes interpretações.',
+    competencies: [
+      { id: 'leitura-e-interpretacao', label: 'Leitura e interpretação' },
+      { id: 'argumentacao', label: 'Argumentação com evidências' },
+      { id: 'mediacao-de-grupo', label: 'Mediação de grupo' },
+    ],
+    agenda: [
+      { id: 'roda-de-leitura', title: 'Roda de leitura · diferentes pontos de vista', date: '2026-10-21', context: 'Encontro aberto à comunidade escolar' },
+      { id: 'planejamento-colaborativo', title: 'Planejamento colaborativo', date: '2026-10-14', context: 'Revisão de critérios de leitura' },
+    ],
+  },
+  {
+    id: 'helena-martins', name: 'Helena Martins', handle: '@helenamartins', group: 'professores', role: 'Professora · Ciências da Natureza', school: 'Escola Aurora', className: '8º A',
+    summary: 'Professora fictícia · Ciências da Natureza · Escola Aurora', biography: 'Planeja situações investigativas e revisa as evidências antes de orientar a turma.',
+    competencies: [
+      { id: 'investigacao-cientifica', label: 'Investigação científica' },
+      { id: 'pensamento-critico', label: 'Pensamento crítico' },
+      { id: 'avaliacao-formativa', label: 'Avaliação formativa' },
+    ],
+    agenda: [
+      { id: 'clube-de-ciencias', title: 'Clube de Ciências', date: '2026-10-22', context: 'Questão sobre potência e consumo' },
+      { id: 'feira-de-experiencias', title: 'Feira de experiências', date: '2026-10-24', context: 'Mostra de projetos de Ciências' },
+    ],
+  },
+  {
+    id: 'mariana-oliveira', name: 'Mariana Oliveira', handle: '@marianaoliveira', group: 'professores', role: 'Professora · Língua Portuguesa', school: 'Escola Aurora', className: '7º A',
+    summary: 'Professora fictícia · Língua Portuguesa · Escola Aurora', biography: 'Trabalha com crônicas, narradores e leitura compartilhada do território.',
+    competencies: [
+      { id: 'leitura-e-interpretacao', label: 'Leitura e interpretação' },
+      { id: 'comunicacao', label: 'Comunicação' },
+      { id: 'pensamento-critico', label: 'Pensamento crítico' },
+    ],
+    agenda: [
+      { id: 'roda-de-leitura', title: 'Roda de leitura · histórias do bairro', date: '2026-10-21', context: 'Comparação de narradores' },
+    ],
+  },
+];
+const platformReferenceMockProfileNode = (profile: PlatformReferenceMockProfile): PlatformReferenceNode => ({
+  id: profile.id, label: profile.name, description: profile.summary, children: [
+    { id: 'nome', label: 'Nome', description: profile.name },
+    { id: 'identificador', label: 'Identificador', description: 'Perfil demonstrativo · ' + profile.handle },
+    { id: 'papel', label: 'Papel', description: profile.role },
+    { id: 'escola', label: 'Escola', description: profile.school },
+    { id: 'turma', label: 'Turma', description: profile.className },
+    { id: 'biografia', label: 'Biografia', description: profile.biography },
+    { id: 'competencias', label: 'Competências', description: 'Competências de demonstração do perfil', children: profile.competencies.map(item => ({ ...item, description: 'Competência mock do perfil · ' + item.label })) },
+    { id: 'agenda', label: 'Agenda', description: 'Itens de demonstração do calendário do perfil', children: profile.agenda.map(item => ({
+      id: item.id, label: item.title, description: item.date + ' · ' + item.context, children: [
+        { id: 'titulo', label: 'Título', description: item.title },
+        { id: 'data', label: 'Data', description: item.date },
+        { id: 'contexto', label: 'Contexto', description: item.context },
+      ],
+    })) },
+  ],
+});
 const PLATFORM_REFERENCE_TREE: readonly PlatformReferenceNode[] = [
+  { id: 'perfis', label: 'Perfis mock', description: 'Pessoas fictícias da demonstração', children: [
+    { id: 'alunos', label: 'Alunos', description: 'Perfis demonstrativos de estudantes', children: PLATFORM_REFERENCE_MOCK_PROFILES.filter(profile => profile.group === 'alunos').map(platformReferenceMockProfileNode) },
+    { id: 'professores', label: 'Professores', description: 'Perfis demonstrativos de docentes', children: PLATFORM_REFERENCE_MOCK_PROFILES.filter(profile => profile.group === 'professores').map(platformReferenceMockProfileNode) },
+  ] },
   { id: 'perfil', label: 'Perfil', description: 'Dados e conteúdo de um perfil', children: [
     { id: 'aluno', label: 'Aluno', description: 'Perfil de estudante', children: [
       { id: 'nome', label: 'Nome', description: 'Nome público do estudante' },
