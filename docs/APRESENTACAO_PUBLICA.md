@@ -6,7 +6,7 @@ O PDF [Apresentação inicial — edição de perfil e partes da plataforma](../
 
 ## Acesso e edição de perfil
 
-A tela pede um PAT GitHub com acesso ao repositório privado `glaucodeveloper/remote-station-support-repo` e, em outro campo, a chave local do Port Router. O router confirma acesso ao próprio repositório na API do GitHub; não consulta secrets. O PAT é descartado após a validação e uma sessão temporária é criada. A credencial do Forge fica no ambiente local e é usada pelo router ao encaminhar conversas. Nenhuma chave é salva no navegador. Essa entrada libera a experiência e a conexão local; GitHub Pages e os arquivos publicados continuam públicos.
+A tela pede um PAT GitHub que inclua `glaucodeveloper/lumira-frontend-cognoscere`, repositório desta página, e, em outro campo, a chave local do Port Router. O router valida se o repositório aparece entre os acessíveis à conta autenticada; não consulta secrets. O PAT é descartado após a validação e uma sessão temporária é criada. A credencial do Forge fica no ambiente local e é usada pelo router ao encaminhar conversas. Nenhuma chave é salva no navegador. Essa entrada libera a experiência e a conexão local; GitHub Pages e os arquivos publicados continuam públicos.
 
 ## Chat de projetos com Cognoscere
 

@@ -7,7 +7,7 @@ const HOST = process.env.PORT_ROUTER_HOST || "127.0.0.1";
 const ROUTER_PORT = Number(process.env.PORT_ROUTER_PORT || "7777");
 const KEY = process.env.PORT_ROUTER_KEY || "";
 const FORGE_PORT = 19195;
-const GITHUB_REPO = process.env.PORT_ROUTER_GITHUB_REPO || "";
+const GITHUB_REPO = "glaucodeveloper/lumira-frontend-cognoscere";
 const COGNOSCERE_API_TOKEN = process.env.COGNOSCERE_API_TOKEN || "";
 const AUTH_SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 const authSessions = new Map();
@@ -258,52 +258,74 @@ async function validateRepositoryPat(req, res) {
 
   req.resume();
   const [owner, repo] = repoMatch.slice(1);
-  const repositoryUrl = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;
-  let githubResponse;
-  try {
-    githubResponse = await fetch(repositoryUrl, {
-      method: "GET",
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${repositoryPat}`,
-        "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "Lumira-Repository-Access",
-      },
-      signal: AbortSignal.timeout(12000),
-    });
-  } catch {
-    jsonResponse(res, 503, { error: "GitHub could not validate repository access right now." });
-    return;
+  let repository = null;
+  let page = 1;
+  let hasNextPage = true;
+  while (hasNextPage && page <= 100) {
+    const repositoriesUrl = new URL("https://api.github.com/user/repos");
+    repositoriesUrl.searchParams.set("visibility", "all");
+    repositoriesUrl.searchParams.set("affiliation", "owner,collaborator,organization_member");
+    repositoriesUrl.searchParams.set("per_page", "100");
+    repositoriesUrl.searchParams.set("page", String(page));
+    let githubResponse;
+    try {
+      githubResponse = await fetch(repositoriesUrl, {
+        method: "GET",
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${repositoryPat}`,
+          "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "Lumira-Repository-Access",
+        },
+        signal: AbortSignal.timeout(12000),
+      });
+    } catch {
+      jsonResponse(res, 503, { error: "GitHub could not validate repository access right now." });
+      return;
+    }
+
+    if (githubResponse.status === 401) {
+      jsonResponse(res, 401, { error: "GitHub PAT is invalid or expired." });
+      return;
+    }
+    if (githubResponse.status === 403) {
+      jsonResponse(res, 401, {
+        error: `GitHub PAT cannot list repositories. A fine-grained PAT needs Metadata: read for ${GITHUB_REPO}.`,
+      });
+      return;
+    }
+    if (githubResponse.status === 429 || githubResponse.status >= 500) {
+      jsonResponse(res, 503, { error: `GitHub repository validation returned HTTP ${githubResponse.status}. Retry shortly.` });
+      return;
+    }
+    if (!githubResponse.ok) {
+      jsonResponse(res, 502, { error: `GitHub repository validation returned HTTP ${githubResponse.status}.` });
+      return;
+    }
+
+    let repositories;
+    try {
+      repositories = await githubResponse.json();
+    } catch {
+      jsonResponse(res, 502, { error: "GitHub returned unreadable repository metadata." });
+      return;
+    }
+    if (!Array.isArray(repositories)) {
+      jsonResponse(res, 502, { error: "GitHub returned an unexpected repository-list response." });
+      return;
+    }
+    repository = repositories.find(
+      (item) => String(item?.full_name || "").toLowerCase() === `${owner}/${repo}`.toLowerCase()
+    ) || null;
+    if (repository) break;
+    hasNextPage = String(githubResponse.headers.get("link") || "").includes('rel="next"');
+    page += 1;
   }
 
-  if (githubResponse.status === 401) {
-    jsonResponse(res, 401, { error: "GitHub PAT is invalid or expired." });
-    return;
-  }
-  if (githubResponse.status === 403 || githubResponse.status === 404) {
+  if (!repository) {
     jsonResponse(res, 401, {
-      error: `GitHub PAT cannot access the private repository ${GITHUB_REPO}. A fine-grained PAT must include this repository; a classic PAT needs repo scope and account access.`,
+      error: `GitHub authenticated the PAT, but it does not list ${GITHUB_REPO} as an accessible repository. Select this repository for the fine-grained PAT and allow Metadata: read.`,
     });
-    return;
-  }
-  if (githubResponse.status === 429 || githubResponse.status >= 500) {
-    jsonResponse(res, 503, { error: `GitHub repository validation returned HTTP ${githubResponse.status}. Retry shortly.` });
-    return;
-  }
-  if (!githubResponse.ok) {
-    jsonResponse(res, 502, { error: `GitHub repository validation returned HTTP ${githubResponse.status}.` });
-    return;
-  }
-
-  let metadata;
-  try {
-    metadata = await githubResponse.json();
-  } catch {
-    jsonResponse(res, 502, { error: "GitHub returned unreadable repository metadata." });
-    return;
-  }
-  if (String(metadata?.full_name || "").toLowerCase() !== GITHUB_REPO.toLowerCase() || metadata?.private !== true) {
-    jsonResponse(res, 503, { error: `Port Router expected the private repository ${GITHUB_REPO}.` });
     return;
   }
 

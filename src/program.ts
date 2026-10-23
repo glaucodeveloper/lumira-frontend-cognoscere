@@ -776,7 +776,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     const repositoryPat = typeof detail.repositoryPat === 'string' ? detail.repositoryPat.trim() : '';
     const routerKey = typeof detail.routerKey === 'string' ? detail.routerKey.trim() : '';
     if (!repositoryPat || repositoryPat.length > 4096 || /[\r\n]/.test(repositoryPat) || !routerKey || routerKey.length > 300 || /[\r\n]/.test(routerKey)) {
-      result.error = 'Informe o PAT com acesso ao segredo do repositório e a chave do Port Router.';
+      result.error = 'Informe o PAT do repositório Lumira e a chave do Port Router.';
     } else {
       try {
         const response = await fetch(tunneledForgeEndpoint('/auth/validate'), {
