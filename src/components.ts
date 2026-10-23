@@ -1,6 +1,6 @@
 /** Componentes, páginas e dados iniciais da plataforma e do Componenting Demo Lab. */
 
-import type { AppSnapshot, CognoscereStatus, CommunityEvent, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, ProjectAssistantRequest, QuestionnaireMonitorRequest, QuestionnaireMonitorResult, SessionUser, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
+import type { AppSnapshot, CognoscereStatus, CommunityEvent, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, ProjectAssistantRequest, QuestionnaireMonitorRequest, QuestionnaireMonitorResult, SessionUser, SubjectFoundationAssistantRequest, SubjectFoundationAssistantResult, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
 import profileCoverAsset from './assets/profile/serra-dourada-cover.webp';
 import communityPostAsset from './assets/community/sala-colaborativa.webp';
 import studentRampStoryAsset from './assets/stories/student-ramp-experiment.webp';
@@ -974,6 +974,9 @@ type DemoPagePartInteraction = {
   subjectSkillActiveIndex: number;
   subjectSkillMenuOpen: boolean;
   subjectSkillInsight: { skillName: string; requestId: string; status: 'pending' | 'ready' | 'error'; explanation: string } | null;
+  subjectReflection: { requestId: string; revision: number; status: 'idle' | 'pending' | 'ready' | 'error' | 'stale'; text: string } | null;
+  subjectChatMessages: SubjectFoundationChatMessage[];
+  subjectChatPending: boolean;
   activityQuestionIds: string[] | null;
   communityPosts: CommunityPostDraft[];
   opinionCircleMessages: Record<string, CommunityOpinionMessage[]>;
@@ -1102,6 +1105,7 @@ type SubjectFoundation = {
   aspects: string;
   skills: string[];
 };
+type SubjectFoundationChatMessage = { id: string; role: 'teacher' | 'assistant'; text: string; status?: 'pending' | 'error' };
 type ActivityQuestionSeed = { id: string; title: string; context: string; prompt: string; understanding: string };
 type LearnerActivityQuestionFixture = {
   id: string;
@@ -2214,17 +2218,18 @@ function renderPedagogyContext(data: ComponentFixture, selectedId: string): stri
     + '<div class="lm-context-fields"><label><span>Turma</span><select name="className" data-ai-field="className"><option ' + (labText(data, 'className') === '8º A' ? 'selected' : '') + '>8º A</option><option>8º B</option></select></label>'
     + '<label><span>Série</span><select name="grade" data-ai-field="grade"><option selected>8º ano</option><option>7º ano</option><option>9º ano</option></select></label>'
     + '<label class="lm-context-wide"><span>Contexto de aplicação</span><input name="context" data-ai-field="context" value="' + e(labText(data, 'context')) + '"></label></div>'
-    + '<section class="lm-subject-foundation" data-subject-foundation><div class="lm-subject-foundation-heading"><div><span class="lm-eyebrow">CRIAÇÃO DE MATÉRIA</span><h2>Fundação para orientar a IA</h2><p>Descreva a matéria por quatro dimensões e associe quantas habilidades forem necessárias.</p></div><button type="button" class="lm-secondary-button" data-subject-foundation-toggle aria-expanded="false">＋ Criar matéria</button></div>'
+    + '<section class="lm-subject-foundation" data-subject-foundation><div class="lm-subject-foundation-heading"><div><span class="lm-eyebrow">CRIAÇÃO DE MATÉRIA</span><h2>Fundação para orientar a IA</h2><p>Construa a matéria por partes. Cada descrição orienta uma responsabilidade diferente do assistente.</p></div><button type="button" class="lm-secondary-button" data-subject-foundation-toggle aria-expanded="false">＋ Criar matéria</button></div>'
     + '<div class="lm-subject-foundation-summary" data-subject-foundation-summary hidden></div>'
-    + '<form class="lm-subject-foundation-editor" data-subject-foundation-form hidden novalidate><label class="lm-subject-name-field"><span>Nome da matéria</span><input name="subjectName" data-interaction-field="pedagogy-context:subject-name" maxlength="100" placeholder="Ex.: Ciências da Natureza" required></label>'
-    + '<div class="lm-subject-dimensions"><label><span>Natureza</span><small>Que fenômenos, objetos ou problemas constituem esta matéria?</small><textarea name="subjectNature" data-interaction-field="pedagogy-context:subject-nature" rows="3" maxlength="700" placeholder="Descreva o campo de conhecimento e o que o caracteriza." required></textarea></label>'
-    + '<label><span>Entendimento</span><small>Que relações a pessoa deve aprender a compreender?</small><textarea name="subjectUnderstanding" data-interaction-field="pedagogy-context:subject-understanding" rows="3" maxlength="700" placeholder="Explique como reconhecer compreensão além de repetir informações." required></textarea></label>'
-    + '<label><span>Abordagem</span><small>Como investigar, interpretar ou produzir conhecimento?</small><textarea name="subjectApproach" data-interaction-field="pedagogy-context:subject-approach" rows="3" maxlength="700" placeholder="Indique práticas, métodos e formas de argumentar." required></textarea></label>'
-    + '<label><span>Aspectos</span><small>Que contextos, representações ou limites precisam aparecer?</small><textarea name="subjectAspects" data-interaction-field="pedagogy-context:subject-aspects" rows="3" maxlength="700" placeholder="Descreva aspectos que ajudam a IA a variar exemplos sem perder o foco." required></textarea></label></div>'
-    + '<div class="lm-subject-skill-section"><div><b>Habilidades da matéria</b><small>Adicione quantas habilidades precisar. Digite um nome ou código para buscar sugestões.</small></div><div class="lm-subject-skill-chips" data-subject-skill-chips></div>'
+    + '<div class="lm-subject-authoring-layout" data-subject-authoring-layout hidden><form class="lm-subject-foundation-editor" data-subject-foundation-form novalidate><label class="lm-subject-name-field"><span>Nome da matéria</span><small>Identifica o campo que será organizado e usado no planejamento.</small><input name="subjectName" data-interaction-field="pedagogy-context:subject-name" maxlength="100" placeholder="Ex.: Ciências da Natureza" required></label>'
+    + '<div class="lm-subject-dimensions"><fieldset class="lm-subject-dimension"><legend><span>01</span> Natureza</legend><p>Delimita o campo: fenômenos, objetos e problemas que pertencem a esta matéria.</p><label><span class="sr-only">Descrição da natureza da matéria</span><textarea name="subjectNature" data-interaction-field="pedagogy-context:subject-nature" rows="4" maxlength="700" placeholder="O que esta matéria estuda? Que fenômenos ou problemas a caracterizam?" required></textarea></label></fieldset>'
+    + '<fieldset class="lm-subject-dimension"><legend><span>02</span> Entendimento</legend><p>Define o que significa compreender: relações, explicações e evidências que o estudante precisa construir.</p><label><span class="sr-only">Descrição do entendimento esperado</span><textarea name="subjectUnderstanding" data-interaction-field="pedagogy-context:subject-understanding" rows="4" maxlength="700" placeholder="Que relações a pessoa deve compreender? Como distinguir compreensão de repetição?" required></textarea></label></fieldset>'
+    + '<fieldset class="lm-subject-dimension"><legend><span>03</span> Abordagem</legend><p>Orienta como aprender e produzir conhecimento: práticas, métodos, investigação e formas de argumentar.</p><label><span class="sr-only">Descrição da abordagem de aprendizagem</span><textarea name="subjectApproach" data-interaction-field="pedagogy-context:subject-approach" rows="4" maxlength="700" placeholder="Como investigar, interpretar, criar ou argumentar nesta matéria?" required></textarea></label></fieldset>'
+    + '<fieldset class="lm-subject-dimension"><legend><span>04</span> Aspectos e contexto</legend><p>Registra contextos, representações, limites e perspectivas que ajudam a IA a variar exemplos sem perder o foco.</p><label><span class="sr-only">Descrição dos aspectos e contextos da matéria</span><textarea name="subjectAspects" data-interaction-field="pedagogy-context:subject-aspects" rows="4" maxlength="700" placeholder="Que contextos, linguagens, representações e limites devem ser considerados?" required></textarea></label></fieldset></div>'
+    + '<div class="lm-subject-skill-section"><div><b>Habilidades da matéria</b><small>Associe as habilidades que serão desenvolvidas. Você pode adicionar quantas forem necessárias.</small></div><div class="lm-subject-skill-chips" data-subject-skill-chips></div>'
     + '<div class="lm-subject-skill-picker" data-subject-skill-picker><label><span class="sr-only">Buscar habilidade</span><input type="text" data-subject-skill-input role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="subject-skill-options" aria-describedby="subject-skill-understanding" placeholder="Ex.: consumo de energia, EF08CI04…" autocomplete="off"></label>'
     + '<div class="lm-subject-skill-menu" data-subject-skill-menu hidden><div class="lm-subject-skill-options" id="subject-skill-options" role="listbox" data-subject-skill-options></div><aside class="lm-subject-skill-understanding" id="subject-skill-understanding" data-subject-skill-understanding role="tooltip" aria-live="polite" hidden></aside></div></div></div>'
-    + '<footer class="lm-subject-foundation-actions"><p data-subject-foundation-status role="status" aria-live="polite"></p><div><button type="button" class="lm-quiet-action" data-subject-foundation-cancel>Cancelar</button><button type="submit" class="lm-primary-button">Salvar fundação da matéria <span aria-hidden="true">→</span></button></div></footer></form></section>'
+    + '<footer class="lm-subject-foundation-actions"><p data-subject-foundation-status role="status" aria-live="polite"></p><div><button type="button" class="lm-quiet-action" data-subject-foundation-cancel>Cancelar</button><button type="submit" class="lm-primary-button">Salvar fundação da matéria <span aria-hidden="true">→</span></button></div></footer></form>'
+    + '<aside class="lm-subject-reflection" data-subject-reflection><header><div><span class="lm-eyebrow">COGNOSCERE LOCAL · METIS</span><h3>Correspondência de entendimento</h3></div><div class="lm-subject-reflection-tools"><span data-subject-reflection-status>AGUARDANDO LEITURA</span><button type="button" class="lm-subject-reflection-retry" data-subject-reflection-retry aria-label="Pedir nova leitura da matéria">↻</button></div></header><p class="lm-subject-reflection-intro">O assistente lê a ficha atual e explica como compreendeu cada responsabilidade. Sua resposta não altera nem salva a matéria.</p><div class="lm-subject-reflection-response" data-subject-reflection-response aria-live="polite" aria-busy="false"></div><div class="lm-subject-conversation" data-subject-conversation aria-live="polite"></div><form class="lm-subject-chat-form" data-subject-chat-form><label for="subject-foundation-chat-prompt">Pergunte ou corrija a leitura</label><textarea id="subject-foundation-chat-prompt" name="subjectChatPrompt" data-subject-chat-prompt rows="3" maxlength="1200" placeholder="Ex.: a abordagem precisa incluir observação de dados locais." required></textarea><button type="submit" class="lm-primary-button">Conversar sobre a matéria <span aria-hidden="true">→</span></button><small>O chat considera as quatro descrições e as habilidades associadas.</small></form></aside></div></section>'
     + '<div class="lm-context-foot"><span>Professora <b>' + e(labText(data, 'name', 'Helena Martins')) + '</b></span><span>Referência curricular <b>BNCC · Ciências</b></span><span>Dados demonstrativos · edição local</span></div></section>';
   return labPart('pedagogy-context', content, selectedId, 'lm-pedagogy-context-part');
 }
@@ -2585,6 +2590,8 @@ export function registerComponentElements(): void {
       private projectReflectionRevision = 0;
       private subjectSkillInsightTimer: number | undefined;
       private subjectSkillInsightRevision = 0;
+      private subjectFoundationReflectionTimer: number | undefined;
+      private subjectFoundationReflectionRevision = 0;
       private platformReferenceMenu: HTMLDivElement | null = null;
       private platformReferenceTarget: PlatformReferenceField | null = null;
       private platformReferenceCurrent: PlatformReferenceContext | null = null;
@@ -2604,7 +2611,7 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', fixture: {}, situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-          groups: {}, toggles: {}, fields: {}, subjectFoundation: null, subjectSkills: null, subjectSkillQuery: '', subjectSkillActiveIndex: 0, subjectSkillMenuOpen: false, subjectSkillInsight: null, activityQuestionIds: null, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {}, questParticipations: [],
+          groups: {}, toggles: {}, fields: {}, subjectFoundation: null, subjectSkills: null, subjectSkillQuery: '', subjectSkillActiveIndex: 0, subjectSkillMenuOpen: false, subjectSkillInsight: null, subjectReflection: null, subjectChatMessages: [], subjectChatPending: false, activityQuestionIds: null, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {}, questParticipations: [],
           projectChatStatus: null, projectChatPending: false,
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, studentSubmissions: [],
@@ -2623,6 +2630,7 @@ export function registerComponentElements(): void {
         this.addEventListener('lumira-opinion-message-rejected', event => this.onOpinionMessageRejected(event as CustomEvent<OpinionCircleMessageRejection>));
         this.addEventListener('lumira-questionnaire-monitor-result', event => this.onQuestionnaireMonitorResult(event as CustomEvent<QuestionnaireMonitorResult>));
         this.addEventListener('lumira-subject-skill-understanding-result', event => this.onSubjectSkillUnderstandingResult(event as CustomEvent<SubjectSkillUnderstandingResult>));
+        this.addEventListener('lumira-subject-foundation-assistant-result', event => this.onSubjectFoundationAssistantResult(event as CustomEvent<SubjectFoundationAssistantResult>));
         this.addEventListener('focusout', event => {
           if (event.target === this.platformReferenceTarget) this.closePlatformReferenceMenu();
         });
@@ -2673,6 +2681,11 @@ export function registerComponentElements(): void {
           this.subjectSkillInsightTimer = undefined;
           this.subjectSkillInsightRevision += 1;
         }
+        if (snapshot.id !== 'pedagogy-context') {
+          if (this.subjectFoundationReflectionTimer !== undefined) window.clearTimeout(this.subjectFoundationReflectionTimer);
+          this.subjectFoundationReflectionTimer = undefined;
+          this.subjectFoundationReflectionRevision += 1;
+        }
         if (!isProfileProjectPart(snapshot.id) && this.projectReflectionTimer !== undefined) {
           window.clearTimeout(this.projectReflectionTimer);
           this.projectReflectionTimer = undefined;
@@ -2683,12 +2696,16 @@ export function registerComponentElements(): void {
           interaction: {
             ...current.interaction,
             ...(current.id !== props.id && props.id === 'pedagogy-context' ? {
+              groups: { ...current.interaction.groups, 'subject-foundation-open': '', 'subject-foundation-draft-started': '' },
               subjectFoundation: null,
               subjectSkills: [],
               subjectSkillQuery: '',
               subjectSkillActiveIndex: 0,
               subjectSkillMenuOpen: false,
               subjectSkillInsight: null,
+              subjectReflection: null,
+              subjectChatMessages: [],
+              subjectChatPending: false,
             } : {}),
             ...(enteringActivityBuilder ? {
               activityQuestionIds: activitySeeds.map(question => question.id),
@@ -2717,6 +2734,9 @@ export function registerComponentElements(): void {
         if (this.subjectSkillInsightTimer !== undefined) window.clearTimeout(this.subjectSkillInsightTimer);
         this.subjectSkillInsightTimer = undefined;
         this.subjectSkillInsightRevision += 1;
+        if (this.subjectFoundationReflectionTimer !== undefined) window.clearTimeout(this.subjectFoundationReflectionTimer);
+        this.subjectFoundationReflectionTimer = undefined;
+        this.subjectFoundationReflectionRevision += 1;
       }
       private platformReferenceField(target: EventTarget | null): target is PlatformReferenceField {
         if (target instanceof HTMLTextAreaElement) return true;
@@ -4164,9 +4184,11 @@ export function registerComponentElements(): void {
         const interaction = this.state.interaction;
         const open = interaction.groups['subject-foundation-open'] === 'yes';
         const editor = this.querySelector<HTMLElement>('[data-subject-foundation-form]');
+        const authoringLayout = this.querySelector<HTMLElement>('[data-subject-authoring-layout]');
         const summary = this.querySelector<HTMLElement>('[data-subject-foundation-summary]');
         const toggle = this.querySelector<HTMLButtonElement>('[data-subject-foundation-toggle]');
-        if (editor) editor.hidden = !open;
+        if (editor) editor.hidden = false;
+        if (authoringLayout) authoringLayout.hidden = !open;
         if (toggle) {
           toggle.setAttribute('aria-expanded', String(open));
           toggle.textContent = open ? 'Fechar criação' : interaction.subjectFoundation ? '＋ Criar outra matéria' : '＋ Criar matéria';
@@ -4216,6 +4238,147 @@ export function registerComponentElements(): void {
               + (insight?.status === 'error' && active.understanding ? '<small>Referência demonstrativa: ' + e(active.understanding) + '</small>' : '')
             : '';
         }
+        this.restoreSubjectFoundationAssistant();
+      }
+      private subjectFoundationContext(): SubjectFoundationAssistantRequest['context'] {
+        const form = this.querySelector<HTMLFormElement>('[data-subject-foundation-form]');
+        const values = form ? new FormData(form) : null;
+        return {
+          name: String(values?.get('subjectName') ?? '').trim(),
+          nature: String(values?.get('subjectNature') ?? '').trim(),
+          understanding: String(values?.get('subjectUnderstanding') ?? '').trim(),
+          approach: String(values?.get('subjectApproach') ?? '').trim(),
+          aspects: String(values?.get('subjectAspects') ?? '').trim(),
+          skills: [...(this.state.interaction.subjectSkills ?? [])],
+        };
+      }
+      private subjectFoundationConversation(): SubjectFoundationAssistantRequest['conversation'] {
+        return this.state.interaction.subjectChatMessages
+          .filter(message => !message.status && message.text.trim())
+          .slice(-8)
+          .map(message => ({ role: message.role === 'teacher' ? 'user' as const : 'assistant' as const, content: message.text }));
+      }
+      private restoreSubjectFoundationAssistant(): void {
+        if (this.state.id !== 'pedagogy-context') return;
+        const reflection = this.state.interaction.subjectReflection;
+        const status = this.querySelector<HTMLElement>('[data-subject-reflection-status]');
+        const retry = this.querySelector<HTMLButtonElement>('[data-subject-reflection-retry]');
+        const response = this.querySelector<HTMLElement>('[data-subject-reflection-response]');
+        const messages = this.querySelector<HTMLElement>('[data-subject-conversation]');
+        const chatSubmit = this.querySelector<HTMLButtonElement>('[data-subject-chat-form] button[type="submit"]');
+        if (status) status.textContent = !reflection || reflection.status === 'idle' ? 'AGUARDANDO LEITURA'
+          : reflection.status === 'pending' ? 'METIS LENDO A FICHA'
+            : reflection.status === 'ready' ? 'LEITURA ATUALIZADA'
+              : reflection.status === 'stale' ? 'FICHA ALTERADA · NOVA LEITURA EM BREVE' : 'FORGE LOCAL INDISPONÍVEL';
+        if (retry) retry.disabled = reflection?.status === 'pending';
+        if (response) {
+          const body = !reflection || reflection.status === 'idle'
+            ? '<p>Ao abrir esta etapa, o Metis lê o rascunho e descreve o que compreendeu. Comece pela natureza da matéria.</p>'
+            : reflection.status === 'pending'
+              ? '<p><span class="lm-project-chat-spinner" aria-hidden="true"></span>Lendo as responsabilidades e a correspondência entre as descrições…</p>'
+              : reflection.status === 'error'
+                ? '<p>' + e(reflection.text || 'Não foi possível conversar com o Cognoscere local. Confira se o Forge está ativo e tente novamente.') + '</p>'
+                : (reflection.status === 'stale' ? '<p class="lm-subject-reflection-stale">A ficha mudou depois desta leitura. O texto abaixo representa a versão anterior; a nova leitura começa após uma breve pausa.</p>' : '')
+                  + '<div class="lm-project-chat-body lm-markdown">' + renderProjectChatMarkdown(reflection.text) + '</div>';
+          response.innerHTML = '<article class="lm-project-chat-message assistant reflection' + (reflection?.status === 'error' ? ' error' : '') + '"' + (reflection?.status === 'pending' ? ' aria-busy="true"' : '') + '><small>' + (reflection?.status === 'stale' ? 'REFLEXÃO ANTERIOR · DESATUALIZADA' : 'REFLEXÃO DE MATÉRIA · METIS LOCAL') + '</small>' + body + '</article>';
+          response.setAttribute('aria-busy', String(reflection?.status === 'pending'));
+        }
+        if (messages) {
+          messages.innerHTML = this.state.interaction.subjectChatMessages.map(message => {
+            const pending = message.status === 'pending';
+            const assistantBody = message.role === 'assistant' && !message.status
+              ? '<div class="lm-project-chat-body lm-markdown">' + renderProjectChatMarkdown(message.text) + '</div>'
+              : '<p>' + (pending ? '<span class="lm-project-chat-spinner" aria-hidden="true"></span>Consultando a ficha com o Metis local…' : e(message.text)) + '</p>';
+            return '<article class="lm-project-chat-message ' + (message.role === 'teacher' ? 'student' : 'assistant') + (message.status === 'error' ? ' error' : '') + '"' + (pending ? ' aria-busy="true"' : '') + '><small>' + (message.role === 'teacher' ? 'VOCÊ' : 'METIS LOCAL') + '</small>' + assistantBody + '</article>';
+          }).join('');
+          messages.scrollTop = messages.scrollHeight;
+        }
+        if (chatSubmit) {
+          chatSubmit.disabled = this.state.interaction.subjectChatPending;
+          chatSubmit.textContent = this.state.interaction.subjectChatPending ? 'Aguardando Metis local…' : 'Conversar sobre a matéria →';
+        }
+      }
+      private scheduleSubjectFoundationReflection(): void {
+        if (this.state.id !== 'pedagogy-context' || this.state.interaction.groups['subject-foundation-open'] !== 'yes') return;
+        if (this.subjectFoundationReflectionTimer !== undefined) window.clearTimeout(this.subjectFoundationReflectionTimer);
+        this.subjectFoundationReflectionTimer = undefined;
+        const revision = ++this.subjectFoundationReflectionRevision;
+        const current = this.state.interaction.subjectReflection;
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          subjectReflection: current?.text
+            ? { ...current, revision, status: 'stale' }
+            : { requestId: '', revision, status: 'idle', text: '' },
+        }));
+        this.restoreSubjectFoundationAssistant();
+        this.subjectFoundationReflectionTimer = window.setTimeout(() => {
+          this.subjectFoundationReflectionTimer = undefined;
+          if (revision !== this.subjectFoundationReflectionRevision) return;
+          this.requestSubjectFoundationReflection();
+        }, 820);
+      }
+      private requestSubjectFoundationReflection(): void {
+        if (this.state.id !== 'pedagogy-context' || this.state.interaction.groups['subject-foundation-open'] !== 'yes') return;
+        if (this.subjectFoundationReflectionTimer !== undefined) window.clearTimeout(this.subjectFoundationReflectionTimer);
+        this.subjectFoundationReflectionTimer = undefined;
+        const revision = ++this.subjectFoundationReflectionRevision;
+        const requestId = 'subject-' + Date.now().toString(36) + '-' + revision.toString(36);
+        const request: SubjectFoundationAssistantRequest = {
+          requestId, partId: 'pedagogy-context', kind: 'reflection',
+          prompt: 'Leia a fundação atual da matéria. Reflita o que entendeu sobre cada responsabilidade preenchida, como elas se conectam e se essa leitura corresponde ao que a professora pretende. Aponte lacunas sem completar por conta própria.',
+          context: this.subjectFoundationContext(),
+          conversation: this.subjectFoundationConversation(),
+        };
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          subjectReflection: { requestId, revision, status: 'pending', text: '' },
+        }));
+        this.restoreSubjectFoundationAssistant();
+        this.dispatchEvent(new CustomEvent('lumira-subject-foundation-assistant-request', { bubbles: true, composed: true, detail: request }));
+      }
+      private onSubjectFoundationAssistantResult(event: CustomEvent<SubjectFoundationAssistantResult>): void {
+        if (this.state.id !== 'pedagogy-context') return;
+        const detail = event.detail;
+        if (!detail?.requestId || !['reflection', 'conversation'].includes(detail.kind)) return;
+        if (detail.kind === 'reflection') {
+          const current = this.state.interaction.subjectReflection;
+          if (!current || current.requestId !== detail.requestId || current.revision !== this.subjectFoundationReflectionRevision) return;
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            subjectReflection: { ...current, status: detail.error ? 'error' : 'ready', text: detail.reply?.trim() || detail.error || 'O Metis local não retornou uma leitura.' },
+          }));
+        } else {
+          const pending = this.state.interaction.subjectChatMessages.some(message => message.id === detail.requestId && message.status === 'pending');
+          if (!pending) return;
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            subjectChatPending: false,
+            subjectChatMessages: interaction.subjectChatMessages.map(message => message.id === detail.requestId
+              ? { ...message, role: 'assistant', text: detail.reply?.trim() || detail.error || 'O Metis local não retornou uma resposta.', ...(detail.error ? { status: 'error' as const } : { status: undefined }) }
+              : message),
+          }));
+        }
+        this.restoreSubjectFoundationAssistant();
+      }
+      private requestSubjectFoundationConversation(prompt: string): void {
+        if (this.state.id !== 'pedagogy-context' || this.state.interaction.subjectChatPending) return;
+        const requestId = 'subject-chat-' + Date.now().toString(36);
+        const request: SubjectFoundationAssistantRequest = {
+          requestId, partId: 'pedagogy-context', kind: 'conversation', prompt,
+          context: this.subjectFoundationContext(), conversation: this.subjectFoundationConversation(),
+        };
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          subjectChatPending: true,
+          subjectChatMessages: [...interaction.subjectChatMessages,
+            { id: requestId + '-user', role: 'teacher' as const, text: prompt },
+            { id: requestId, role: 'assistant' as const, text: '', status: 'pending' as const },
+          ],
+        }));
+        const input = this.querySelector<HTMLTextAreaElement>('[data-subject-chat-prompt]');
+        if (input) input.value = '';
+        this.restoreSubjectFoundationAssistant();
+        this.dispatchEvent(new CustomEvent('lumira-subject-foundation-assistant-request', { bubbles: true, composed: true, detail: request }));
       }
       private scheduleSubjectSkillUnderstanding(suggestion: SubjectSkillSuggestion | undefined): void {
         const existing = this.state.interaction.subjectSkillInsight;
@@ -4277,6 +4440,7 @@ export function registerComponentElements(): void {
           feedback: '',
         }));
         this.restoreSubjectFoundation();
+        this.scheduleSubjectFoundationReflection();
         this.querySelector<HTMLInputElement>('[data-subject-skill-input]')?.focus();
       }
       private storyComposerMarkup(): string {
@@ -4526,6 +4690,9 @@ export function registerComponentElements(): void {
         if (subjectToggle && this.state.id === 'pedagogy-context') {
           const opening = this.state.interaction.groups['subject-foundation-open'] !== 'yes';
           const startingFreshDraft = opening && this.state.interaction.groups['subject-foundation-draft-started'] !== 'yes';
+          if (this.subjectFoundationReflectionTimer !== undefined) window.clearTimeout(this.subjectFoundationReflectionTimer);
+          this.subjectFoundationReflectionTimer = undefined;
+          this.subjectFoundationReflectionRevision += 1;
           const foundationKeys = ['subject-name', 'subject-nature', 'subject-understanding', 'subject-approach', 'subject-aspects']
             .map(name => 'pedagogy-context:' + name);
           this.transitionInteraction(interaction => ({
@@ -4533,19 +4700,33 @@ export function registerComponentElements(): void {
             groups: { ...interaction.groups, 'subject-foundation-open': opening ? 'yes' : '', ...(opening ? { 'subject-foundation-draft-started': 'yes' } : {}) },
             ...(startingFreshDraft ? { fields: Object.fromEntries(Object.entries(interaction.fields).filter(([key]) => !foundationKeys.includes(key))) } : {}),
             ...(startingFreshDraft ? { subjectSkills: [], subjectSkillQuery: '', subjectSkillMenuOpen: false, subjectSkillActiveIndex: 0 } : {}),
+            ...(startingFreshDraft ? { subjectReflection: null, subjectChatMessages: [], subjectChatPending: false } : {}),
             feedback: '',
           }));
-          this.render();
-          if (opening) this.querySelector<HTMLInputElement>('[data-subject-foundation-form] [name="subjectName"]')?.focus();
-          else subjectToggle.focus();
+          if (opening && startingFreshDraft) this.render();
+          else this.restoreSubjectFoundation();
+          if (opening) {
+            this.requestSubjectFoundationReflection();
+            this.querySelector<HTMLInputElement>('[data-subject-foundation-form] [name="subjectName"]')?.focus();
+          }
+          else this.querySelector<HTMLButtonElement>('[data-subject-foundation-toggle]')?.focus();
+          return;
+        }
+        const subjectReflectionRetry = event.target.closest<HTMLButtonElement>('[data-subject-reflection-retry]');
+        if (subjectReflectionRetry && this.state.id === 'pedagogy-context') {
+          this.requestSubjectFoundationReflection();
           return;
         }
         const subjectCancel = event.target.closest<HTMLButtonElement>('[data-subject-foundation-cancel]');
         if (subjectCancel && this.state.id === 'pedagogy-context') {
+          if (this.subjectFoundationReflectionTimer !== undefined) window.clearTimeout(this.subjectFoundationReflectionTimer);
+          this.subjectFoundationReflectionTimer = undefined;
+          this.subjectFoundationReflectionRevision += 1;
           this.transitionInteraction(interaction => ({
             ...interaction,
             groups: { ...interaction.groups, 'subject-foundation-open': '', 'subject-foundation-draft-started': '' },
             subjectSkills: [], subjectSkillQuery: '', subjectSkillMenuOpen: false, subjectSkillActiveIndex: 0,
+            subjectReflection: null, subjectChatMessages: [], subjectChatPending: false,
             feedback: '',
           }));
           this.render();
@@ -4566,6 +4747,7 @@ export function registerComponentElements(): void {
             subjectSkills: (interaction.subjectSkills ?? []).filter((_, skillIndex) => skillIndex !== index),
           }));
           this.restoreSubjectFoundation();
+          this.scheduleSubjectFoundationReflection();
           this.querySelector<HTMLInputElement>('[data-subject-skill-input]')?.focus();
           return;
         }
@@ -5441,6 +5623,9 @@ export function registerComponentElements(): void {
           this.restoreProfileProjects();
           this.scheduleProjectReflection();
         }
+        if (this.state.id === 'pedagogy-context' && /^pedagogy-context:subject-(name|nature|understanding|approach|aspects)$/.test(key)) {
+          this.scheduleSubjectFoundationReflection();
+        }
       }
       private onChange(event: Event): void {
         if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement)) return;
@@ -5517,6 +5702,18 @@ export function registerComponentElements(): void {
       private onSubmit(event: Event): void {
         event.preventDefault();
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
+        if (form?.matches('[data-subject-chat-form]') && this.state.id === 'pedagogy-context') {
+          const prompt = String(new FormData(form).get('subjectChatPrompt') ?? '').trim();
+          if (!prompt || prompt.length > 1200) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Escreva uma pergunta com até 1.200 caracteres.' }));
+            this.querySelector<HTMLTextAreaElement>('[data-subject-chat-prompt]')?.focus();
+            return;
+          }
+          if (this.state.interaction.subjectChatPending) return;
+          this.requestSubjectFoundationConversation(prompt);
+          this.querySelector<HTMLTextAreaElement>('[data-subject-chat-prompt]')?.focus();
+          return;
+        }
         if (form?.matches('[data-subject-foundation-form]') && this.state.id === 'pedagogy-context') {
           const values = new FormData(form);
           const foundation: SubjectFoundation = {

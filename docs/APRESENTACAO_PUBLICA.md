@@ -6,7 +6,7 @@ O PDF [Apresentação inicial — edição de perfil e partes da plataforma](../
 
 ## Acesso e edição de perfil
 
-A apresentação no GitHub Pages pede uma chave PTA compartilhada separadamente. Depois de entrar, a autorização fica na sessão desta aba. A chave funciona como barreira de entrada visual: o GitHub Pages e o repositório são públicos, portanto isso não equivale a autenticação no servidor nem impede alguém de inspecionar o código publicado.
+A apresentação no GitHub Pages pede uma chave PTA compartilhada separadamente. O workflow lê o secret de Actions `PTA_ACCESS_KEY`, calcula seu SHA-256 normalizado e injeta somente o digest no build. Sem o secret, a publicação falha antes de substituir o site atual. Configure `PTA_ACCESS_KEY` em **Settings → Secrets and variables → Actions** no repositório `glaucodeveloper/lumira-frontend-cognoscere`; use exatamente a chave de convite que deve abrir a apresentação. Depois de entrar, a autorização fica na sessão desta aba. A chave funciona como barreira de entrada visual: o GitHub Pages e o repositório são públicos, portanto isso não equivale a autenticação no servidor nem impede alguém de inspecionar o código publicado. O fallback embutido em `src/componenting-demo-lab.ts` serve apenas para desenvolvimento local.
 
 ## Chat de projetos com Cognoscere
 

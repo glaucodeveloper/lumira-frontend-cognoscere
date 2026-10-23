@@ -252,6 +252,29 @@ export interface SubjectSkillUnderstandingResult {
   error?: string;
 }
 
+export interface SubjectFoundationAssistantRequest {
+  requestId: string;
+  partId: 'pedagogy-context';
+  kind: 'reflection' | 'conversation';
+  prompt: string;
+  context: {
+    name: string;
+    nature: string;
+    understanding: string;
+    approach: string;
+    aspects: string;
+    skills: string[];
+  };
+  conversation: Array<{ role: 'user' | 'assistant'; content: string }>;
+}
+
+export interface SubjectFoundationAssistantResult {
+  requestId: string;
+  kind: 'reflection' | 'conversation';
+  reply?: string;
+  error?: string;
+}
+
 export type OpinionCircleActorRole = 'professor' | 'aluno' | 'visitante';
 
 export interface OpinionCircleMessageSendRequest {

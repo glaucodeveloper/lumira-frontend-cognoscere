@@ -129,7 +129,10 @@ function stateIterator<T>(initial: T): LabStateIterator<T> {
 }
 interface DemoDataEditorElement extends HTMLElement { configure(key: string, value: unknown): void; }
 const DEMO_LOADING_DURATION_MS = 1100;
-const DEMO_ACCESS_KEY_SHA256 = '577354857eae071767721a0f07cd8d9663502309f08bfd341bdc12f10d0ae94f';
+const configuredAccessKeyDigest = import.meta.env.VITE_PTA_ACCESS_KEY_SHA256?.trim().toLowerCase();
+const DEMO_ACCESS_KEY_SHA256 = configuredAccessKeyDigest && /^[a-f0-9]{64}$/.test(configuredAccessKeyDigest)
+  ? configuredAccessKeyDigest
+  : '577354857eae071767721a0f07cd8d9663502309f08bfd341bdc12f10d0ae94f';
 const DEMO_ACCESS_SESSION_KEY = 'lumira.presentation.pta-access.v1';
 
 export function componentingDemoLab({ screens, fixtures }: { screens: readonly ReferenceScreenSpec[]; fixtures: Record<string, unknown> }): HTMLElement {
@@ -843,7 +846,7 @@ function accessKeyDigest(value: string): Promise<string> {
     Array.from(new Uint8Array(buffer), byte => byte.toString(16).padStart(2, '0')).join(''));
 }
 function normalizeAccessKey(value: string): string {
-  return value.normalize('NFKC').trim().toLocaleUpperCase()
+  return value.normalize('NFKC').replace(/[\u200B-\u200D\uFEFF]/g, '').trim().toUpperCase()
     .replace(/[\u2010-\u2015\u2212]/g, '-')
     .replace(/\s*-\s*/g, '-')
     .replace(/\s+/g, '-')
@@ -886,7 +889,7 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
           }
           const authorized = difference === 0;
           if (!authorized) {
-            this.state = this.transitions.next(state => ({ ...state, entry: '', error: 'Chave não reconhecida. Confira o código de acesso.' })).value;
+            this.state = this.transitions.next(state => ({ ...state, entry, error: 'Chave não reconhecida. Confira o código de acesso.' })).value;
             this.render();
             this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
             return;
@@ -895,7 +898,7 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
           this.state = this.transitions.next(state => ({ ...state, error: '', entry: '', authorized: true })).value;
           this.render();
         } catch (error) {
-          this.state = this.transitions.next(state => ({ ...state, entry: '', error: error instanceof Error ? error.message : 'Não foi possível validar a chave PTA.' })).value;
+          this.state = this.transitions.next(state => ({ ...state, entry, error: error instanceof Error ? error.message : 'Não foi possível validar a chave PTA.' })).value;
           this.render();
         }
       }

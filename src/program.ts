@@ -1,6 +1,6 @@
 /** Monólito interno dos programas: domínios, gateways e API operacional da plataforma. */
 import { shell, landing, access, page, createHtmlIterator } from './components';
-import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CognoscereStatus, CommunityEvent, CommunityPost, Competency, Contracts, Gateway, LoginInput, LumiraSystem, Material, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, Preview, ProjectAssistantRequest, QuestionnaireMonitorRequest, QuestionnaireMonitorResult, Role, SessionUser, SondagemPlan, SocialProfile, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
+import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CognoscereStatus, CommunityEvent, CommunityPost, Competency, Contracts, Gateway, LoginInput, LumiraSystem, Material, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, Preview, ProjectAssistantRequest, QuestionnaireMonitorRequest, QuestionnaireMonitorResult, Role, SessionUser, SondagemPlan, SocialProfile, SubjectFoundationAssistantRequest, SubjectFoundationAssistantResult, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
 
 /** Domain policy stays private to this program module. */
 export interface ProgramRenderContext {
@@ -167,6 +167,49 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     const content = payload.choices?.[0]?.message?.content;
     if (typeof content !== 'string' || !content.trim()) throw new Error('O Cognoscere local não retornou uma explicação.');
     return content.trim();
+  }
+  async function understandSubjectFoundation(request: SubjectFoundationAssistantRequest): Promise<string> {
+    if (request.partId !== 'pedagogy-context' || !['reflection', 'conversation'].includes(request.kind)) throw new Error('Pedido de matéria inválido.');
+    if (request.prompt.trim().length > 1600) throw new Error('A mensagem deve ter até 1.600 caracteres.');
+    const context = request.context;
+    if (!context || [context.name, context.nature, context.understanding, context.approach, context.aspects].some(value => typeof value !== 'string' || value.length > 700)
+      || !Array.isArray(context.skills) || context.skills.length > 100 || context.skills.some(skill => typeof skill !== 'string' || skill.length > 180)) {
+      throw new Error('A fundação da matéria excede os limites de leitura do assistente.');
+    }
+    const conversation = Array.isArray(request.conversation) ? request.conversation.slice(-8) : [];
+    if (conversation.some(message => !message || !['user', 'assistant'].includes(message.role) || typeof message.content !== 'string' || message.content.length > 2000)) {
+      throw new Error('A conversa contém uma mensagem inválida.');
+    }
+    const system = [
+      'Você é o assistente pedagógico local da Lumira. Metis compreende a matéria e responde em texto natural; o Cognoscere Forge faz a revisão local.',
+      'A fundação tem quatro responsabilidades distintas: Natureza delimita o campo, fenômenos e objetos; Entendimento define relações e evidências que demonstram compreensão; Abordagem descreve práticas para investigar, interpretar e produzir conhecimento; Aspectos registram contextos, representações, limites e diversidade relevantes.',
+      'Quando refletir sobre a ficha, explique o que entendeu em cada dimensão que tiver conteúdo, como elas se relacionam e se há correspondência entre elas. Aponte com cuidado o que ainda está vazio, ambíguo ou desalinhado e termine perguntando à professora se essa leitura corresponde ao que ela quer ensinar. Não invente informação para completar lacunas.',
+      'Na primeira interação, a ficha pode estar vazia: explique brevemente o papel de cada dimensão e convide a professora a começar, sem fingir que já compreendeu uma matéria específica.',
+      'Nas mensagens de conversa, responda à pergunta levando em conta a versão atual da ficha e a conversa anterior. Se uma alteração recente mudar seu entendimento, diga o que mudou.',
+      'Não altere nem salve a ficha, não proponha comandos de sistema, JSON ou operações. Devolva somente texto natural em português, com Markdown simples quando ajudar.',
+    ].join('\n');
+    const messages = [
+      { role: 'system', content: system },
+      ...conversation.map(message => ({ role: message.role, content: message.content })),
+      { role: 'user', content: JSON.stringify({ kind: request.kind, instruction: request.prompt, currentSubjectFoundation: context }) },
+    ];
+    const response = await fetch(localForgeEndpoint('/v1/chat/completions'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'Metis-4B', slug: cognoscereLocal.slug, unit_id: cognoscereLocal.unitId, mode: 'document_update', messages, max_tokens: request.kind === 'reflection' ? 700 : 900 }),
+      signal: AbortSignal.timeout(90000),
+    });
+    if (!response.ok) throw await readForgeError(response);
+    const payload = await response.json() as { choices?: Array<{ message?: { content?: unknown } }> };
+    const content = payload.choices?.[0]?.message?.content;
+    if (typeof content !== 'string' || !content.trim()) throw new Error('O Metis local não retornou uma reflexão.');
+    let reply = content.trim();
+    try {
+      const envelope = JSON.parse(reply) as { reply?: unknown; summary?: unknown };
+      if (typeof envelope.reply === 'string' && envelope.reply.trim()) reply = envelope.reply.trim();
+      else if (typeof envelope.summary === 'string' && envelope.summary.trim()) reply = envelope.summary.trim();
+    } catch { /* Resposta Markdown simples também é válida. */ }
+    return reply;
   }
   type AgeGradePolicy = {
     version: string;
@@ -488,6 +531,12 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     return event.target;
   }
 
+  function subjectFoundationOrigin(event: Event, partId: unknown): HTMLElement | null {
+    if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
+    if (partId !== 'pedagogy-context' || event.target.dataset.componentId !== 'pedagogy-context') return null;
+    return event.target;
+  }
+
   function questionnaireMonitorOrigin(event: Event, partId: unknown): HTMLElement | null {
     if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
     if (partId !== 'competency-question-response' || event.target.dataset.componentId !== 'competency-question-response') return null;
@@ -551,6 +600,20 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       result.error = error instanceof Error ? error.message : String(error);
     }
     if (origin.isConnected) origin.dispatchEvent(new CustomEvent('lumira-subject-skill-understanding-result', { detail: result }));
+  }
+
+  async function onSubjectFoundationAssistantRequest(event: Event): Promise<void> {
+    const detail = (event as CustomEvent<SubjectFoundationAssistantRequest>).detail;
+    const origin = subjectFoundationOrigin(event, detail?.partId);
+    if (!origin || !detail || !['reflection', 'conversation'].includes(detail.kind)
+      || typeof detail.requestId !== 'string' || !/^[a-z0-9-]{1,100}$/i.test(detail.requestId)) return;
+    const result: SubjectFoundationAssistantResult = { requestId: detail.requestId, kind: detail.kind };
+    try {
+      result.reply = await understandSubjectFoundation(detail);
+    } catch (error) {
+      result.error = error instanceof Error ? error.message : String(error);
+    }
+    if (origin.isConnected) origin.dispatchEvent(new CustomEvent('lumira-subject-foundation-assistant-result', { detail: result }));
   }
 
   function dispatchOpinionMessageEvent(origin: HTMLElement, name: string, detail: OpinionCircleMessageDelivery | OpinionCircleMessageRejection): void {
@@ -623,12 +686,14 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
   mount.addEventListener('lumira-project-assistant-request', onProjectAssistantRequest);
   mount.addEventListener('lumira-questionnaire-monitor-request', onQuestionnaireMonitorRequest);
   mount.addEventListener('lumira-subject-skill-understanding-request', onSubjectSkillUnderstandingRequest);
+  mount.addEventListener('lumira-subject-foundation-assistant-request', onSubjectFoundationAssistantRequest);
   mount.addEventListener('lumira-opinion-message-send', onOpinionMessageSend);
   removeListeners.push(
     () => mount.removeEventListener('lumira-project-assistant-status-request', onProjectAssistantStatus),
     () => mount.removeEventListener('lumira-project-assistant-request', onProjectAssistantRequest),
     () => mount.removeEventListener('lumira-questionnaire-monitor-request', onQuestionnaireMonitorRequest),
     () => mount.removeEventListener('lumira-subject-skill-understanding-request', onSubjectSkillUnderstandingRequest),
+    () => mount.removeEventListener('lumira-subject-foundation-assistant-request', onSubjectFoundationAssistantRequest),
     () => mount.removeEventListener('lumira-opinion-message-send', onOpinionMessageSend),
   );
 

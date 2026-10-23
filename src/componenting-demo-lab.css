@@ -4530,11 +4530,14 @@ lumira-page-part {
     height: 100vh;
     height: 100dvh;
     min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
     overflow: hidden;
   }
   .lm-app-rail {
     position: relative;
+    grid-row: 1;
+    grid-column: 1;
     min-height: 0;
     overflow: hidden;
   }
@@ -4682,6 +4685,7 @@ lumira-page-part {
 .lm-subject-foundation-summary { margin-top: 15px; padding: 14px; border: 1px solid #d9e6e9; border-radius: 9px; background: #fff; }
 .lm-subject-foundation-summary[hidden],
 .lm-subject-foundation-editor[hidden],
+.lm-subject-authoring-layout[hidden],
 .lm-subject-skill-menu[hidden],
 .lm-subject-skill-understanding[hidden] { display: none !important; }
 .lm-subject-foundation-summary>header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
@@ -4696,14 +4700,28 @@ lumira-page-part {
 .lm-subject-foundation-summary dl>div { display: grid; grid-template-columns: 95px minmax(0, 1fr); gap: 10px; }
 .lm-subject-foundation-summary dt { color: #74869a; font-weight: 700; }
 .lm-subject-foundation-summary dd { margin: 0; color: #445a70; line-height: 1.55; }
-.lm-subject-foundation-editor { display: grid; gap: 15px; margin-top: 14px; padding: 15px; border: 1px solid #e1e9ef; border-radius: 9px; background: #fff; }
+.lm-subject-authoring-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr); align-items: start; gap: 20px; margin-top: 18px; }
+.lm-subject-foundation-editor { display: grid; gap: 18px; min-width: 0; margin: 0; padding: 18px; border: 1px solid #e1e9ef; border-radius: 10px; background: #fff; }
 .lm-subject-foundation-editor label { display: grid; gap: 5px; color: #35516c; font-size: 10px; font-weight: 750; }
 .lm-subject-foundation-editor label small { color: #7b8b9b; font-size: 9px; font-weight: 450; line-height: 1.4; }
 .lm-subject-foundation-editor input,
-.lm-subject-foundation-editor textarea { width: 100%; min-width: 0; border: 1px solid #d9e3eb; border-radius: 7px; background: #fcfdfe; padding: 9px 10px; color: #243d54; font: inherit; font-size: 10px; line-height: 1.5; }
-.lm-subject-foundation-editor textarea { min-height: 72px; resize: vertical; }
-.lm-subject-name-field { max-width: 480px; }
-.lm-subject-dimensions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.lm-subject-foundation-editor textarea { width: 100%; min-width: 0; border: 1px solid #d9e3eb; border-radius: 7px; background: #fcfdfe; padding: 11px 12px; color: #243d54; font: inherit; font-size: 11px; line-height: 1.6; }
+.lm-subject-foundation-editor textarea { min-height: 96px; resize: vertical; }
+.lm-subject-foundation-editor input:focus,
+.lm-subject-foundation-editor textarea:focus,
+.lm-subject-chat-form textarea:focus { outline: 2px solid #8fcfc1; outline-offset: 2px; }
+.lm-subject-name-field { max-width: none; padding-bottom: 3px; }
+.lm-subject-name-field input { max-width: 620px; }
+.lm-subject-dimensions { display: grid; grid-template-columns: 1fr; gap: 15px; }
+.lm-subject-dimension { display: grid; gap: 8px; min-width: 0; margin: 0; padding: 14px 15px 15px; border: 1px solid #e0e8ee; border-left: 3px solid var(--lm-teal); border-radius: 8px; background: #fbfcfd; }
+.lm-subject-dimension:nth-child(2) { border-left-color: #497bc5; }
+.lm-subject-dimension:nth-child(3) { border-left-color: #d49a3f; }
+.lm-subject-dimension:nth-child(4) { border-left-color: #8e78bb; }
+.lm-subject-dimension legend { padding: 0 5px; color: #17354f; font-family: var(--lm-font-display); font-size: 14px; font-weight: 750; }
+.lm-subject-dimension legend span { margin-right: 7px; color: #91a0ad; font-family: var(--lm-font-ui); font-size: 8px; letter-spacing: .1em; }
+.lm-subject-dimension>p { margin: 0 0 2px; color: #718295; font-size: 10px; font-weight: 450; line-height: 1.55; }
+.lm-subject-dimension>label { gap: 0; }
+.lm-subject-dimension textarea { min-height: 102px; }
 .lm-subject-skill-section { display: grid; gap: 9px; }
 .lm-subject-skill-section>div:first-child { display: grid; gap: 4px; color: #35516c; font-size: 10px; }
 .lm-subject-skill-section>div:first-child small { color: #7b8b9b; font-size: 9px; font-weight: 450; }
@@ -4729,6 +4747,25 @@ lumira-page-part {
 .lm-subject-foundation-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 9px; border-top: 1px solid #edf0f3; }
 .lm-subject-foundation-actions>p { margin: 0; color: #60788c; font-size: 9px; }
 .lm-subject-foundation-actions>div { display: flex; align-items: center; gap: 8px; }
+.lm-subject-reflection { position: sticky; top: 12px; display: grid; gap: 12px; min-width: 0; max-height: calc(100vh - 125px); padding: 16px; border: 1px solid #dce5ed; border-radius: 10px; background: #f8fafb; }
+.lm-subject-reflection>header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.lm-subject-reflection h3 { margin: 4px 0 0; color: #17354f; font-family: var(--lm-font-display); font-size: 16px; }
+.lm-subject-reflection-tools { display: flex; align-items: center; gap: 7px; }
+.lm-subject-reflection-tools>span { max-width: 135px; color: #8493a1; font-size: 7px; font-weight: 800; line-height: 1.35; letter-spacing: .07em; text-align: right; }
+.lm-subject-reflection-retry { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; border: 1px solid #dce4e9; border-radius: 50%; background: #fff; color: #526b80; font-size: 17px; cursor: pointer; }
+.lm-subject-reflection-retry:hover:not(:disabled) { border-color: #a9cbc3; color: #247c6f; }
+.lm-subject-reflection-retry:disabled { cursor: wait; opacity: .55; }
+.lm-subject-reflection-intro { margin: 0; color: #728294; font-size: 9px; line-height: 1.55; }
+.lm-subject-reflection-response { min-height: 190px; max-height: min(46vh, 420px); overflow-y: auto; padding-right: 2px; }
+.lm-subject-reflection-response .lm-project-chat-message { padding: 12px; }
+.lm-subject-reflection-response .lm-project-chat-body { font-size: 11px; line-height: 1.65; }
+.lm-subject-reflection-stale { padding: 7px 8px; border-left: 2px solid #d49a3f; background: #fff9ed; color: #846333 !important; font-size: 9px !important; }
+.lm-subject-conversation { display: grid; max-height: 245px; gap: 8px; overflow-y: auto; }
+.lm-subject-chat-form { display: grid; gap: 7px; padding-top: 11px; border-top: 1px solid #e4e9ed; }
+.lm-subject-chat-form>label { color: #52667b; font-size: 9px; font-weight: 750; }
+.lm-subject-chat-form textarea { width: 100%; min-width: 0; resize: vertical; padding: 10px 11px; border: 1px solid #dce3e9; border-radius: 7px; background: white; color: #263a4d; font: 11px var(--lm-font-body); line-height: 1.5; }
+.lm-subject-chat-form>button { justify-self: end; }
+.lm-subject-chat-form>small { color: #8794a0; font-size: 8px; line-height: 1.4; }
 .lm-context-foot { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 12px; padding-top: 11px; border-top: 1px solid #e8edf2; color: var(--lm-muted); font-size: 9px; }
 .lm-context-foot b { margin-left: 3px; color: #334f69; }
 .lm-pedagogy-competency>header { margin-bottom: 14px; }
@@ -4887,7 +4924,9 @@ lumira-page-part {
 @media (max-width: 900px) {
   .lm-context-fields { grid-template-columns: 1fr 1fr; }
   .lm-context-wide { grid-column: 1 / -1; }
-  .lm-subject-dimensions { grid-template-columns: 1fr; }
+  .lm-subject-authoring-layout { grid-template-columns: 1fr; }
+  .lm-subject-reflection { position: static; max-height: none; }
+  .lm-subject-reflection-response { max-height: none; }
   .lm-subject-skill-menu { grid-template-columns: 1fr; }
   .lm-activity-question-fields { grid-template-columns: 1fr; }
   .lm-activity-question-fields .lm-activity-field-wide { grid-column: auto; }
@@ -4915,6 +4954,9 @@ lumira-page-part {
   .lm-subject-foundation-heading { align-items: flex-start; flex-direction: column; }
   .lm-subject-foundation-actions { align-items: flex-start; flex-direction: column; }
   .lm-subject-foundation-actions>div { width: 100%; justify-content: flex-end; }
+  .lm-subject-foundation-editor { padding: 12px; }
+  .lm-subject-dimension { padding: 12px; }
+  .lm-subject-reflection { padding: 12px; }
   .lm-subject-skill-menu { width: calc(100vw - 40px); }
   .lm-context-wide { grid-column: auto; }
   .lm-context-foot { gap: 6px 14px; }
