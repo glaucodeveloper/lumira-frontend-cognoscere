@@ -22,6 +22,12 @@ export type ProgramFactory = (options: ProgramOptions) => LumiraSystem;
 
 export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, documentTitle, bindEvents = true }: ProgramOptions): LumiraSystem {
   const cognoscereLocal = Object.freeze({ baseUrl: 'http://127.0.0.1:19195', slug: 'lumira', unitId: 'lumira-cognoscere-monitor' });
+  const metisPedagogicalCommunication = [
+    'COMUNICAÇÃO PEDAGÓGICA: converse como parceiro de reflexão da professora, com linguagem clara, respeitosa e situada na experiência de ensinar e aprender.',
+    'Em vez de entregar uma frase genérica ou um bloco único, desenvolva o raciocínio em 2 a 4 parágrafos completos, separados por uma linha em branco. Cada parágrafo deve avançar a leitura: contexto e entendimento; significado pedagógico e relações entre elementos; evidências, lacunas ou limites; pergunta ou próximo passo, quando útil.',
+    'Construa uma explicação conectada: diga o que os dados permitem compreender, por que isso importa para a aprendizagem e o que ainda precisa ser observado ou decidido. Use exemplos específicos do contexto recebido. Não transforme toda resposta em lista; use títulos ou listas somente quando ajudarem a organizar uma proposta com várias etapas.',
+    'Diferencie dado explícito de interpretação, reconheça incertezas e não invente conteúdo, intenção, evidência ou resultado. Não exponha raciocínio interno; apresente apenas a síntese pedagógica que a professora pode revisar.',
+  ].join('\n');
   function localForgeEndpoint(path: string): string {
     const endpoint = new URL(cognoscereLocal.baseUrl);
     if (endpoint.protocol !== 'http:' || !['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname)) {
@@ -71,9 +77,10 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     const system = [
       'Você é o assistente local de planejamento colaborativo da plataforma educacional Lumira. A conversa é processada pelo Metis local; o MiniCPM local revisa a resposta no Cognoscere Forge.',
       'Ajude a compreender e desenvolver projetos da comunidade escolar e do Social. Responda em português natural e contextualizado.',
-      'Formate com Markdown legível: primeiro um parágrafo direto; use títulos e listas em respostas com várias partes; negrito com moderação; blocos de código somente para código. Evite tabelas, imagens, HTML, JSON e comandos de sistema.',
+      metisPedagogicalCommunication,
+      'Formate com Markdown legível; negrito com moderação; blocos de código somente para código. Evite tabelas, imagens, HTML, JSON e comandos de sistema.',
       reflection
-        ? 'Esta é uma reflexão automática da ficha após uma alteração. Atualize uma única síntese curta do que entendeu sobre o projeto com base somente nos campos, competências e marcos atuais. Aponte lacunas sem inventar dados. Não trate esta reflexão como pedido de edição e não afirme que salvou ou publicou.'
+        ? 'Esta é uma reflexão automática da ficha após uma alteração. Explique em parágrafos o entendimento atualizado do projeto com base somente nos campos, competências e marcos atuais. Relacione objetivo, público, competências e marcos apenas quando os dados permitirem. Aponte lacunas sem inventar dados. Não trate esta reflexão como pedido de edição e não afirme que salvou ou publicou.'
         : review
           ? 'Revise a proposta de projeto antes de sua confirmação. Leia autoria, objetivo, justificativa, plano, público, competências, evidência pretendida e marcos. Responda em texto natural e Markdown: comente o que está coerente, indique lacunas ou riscos concretos sem inventar informações e proponha ajustes quando necessário. Termine perguntando se a pessoa confirma a criação ou quer revisar os passos. Não altere, salve, publique nem aprove o projeto por conta própria; a decisão é da pessoa.'
           : 'Converse sobre o pedido considerando a ficha atual e as mensagens anteriores. Sugira objetivos, etapas, competências e marcos quando úteis. A resposta orienta a pessoa; ela revisa e altera a ficha manualmente.',
@@ -118,7 +125,8 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
         role: 'system',
         content: [
           'Você é o monitor pedagógico local da plataforma educacional Lumira. O Metis compreende o questionário e responde em texto natural; o Cognoscere Forge revisa a resposta localmente.',
-          'Leia em conjunto a competência, os cinco contextos, os pedidos e as respostas do estudante. Responda em português claro, com um resumo curto do raciocínio que aparece no conjunto, um aspecto consistente e uma pergunta ou próximo passo útil para a pessoa revisar.',
+          metisPedagogicalCommunication,
+          'Leia em conjunto a competência, os cinco contextos, os pedidos e as respostas do estudante. Relacione o raciocínio que aparece no conjunto a evidências concretas, reconheça um aspecto consistente e identifique o que ainda pede revisão. Termine com uma pergunta ou próximo passo útil para a pessoa revisar.',
           'Use evidências concretas das respostas sem expor trechos longos. Se as respostas forem insuficientes ou vazias, diga isso com precisão e peça uma ampliação específica. Não invente dados nem atribua intenção, característica pessoal, nota, nível, diagnóstico ou domínio da competência. Uma tentativa não decide progressão escolar.',
           'Responda somente com feedback em texto natural e Markdown simples. Não gere JSON, operações, comandos de sistema, notas numéricas ou propostas de alteração automática.',
         ].join('\n'),
@@ -149,7 +157,8 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
         role: 'system',
         content: [
           'Você é o assistente pedagógico local da plataforma educacional Lumira. A conversa é processada pelo Metis local e revisada pelo Cognoscere Forge.',
-          'Explique em um parágrafo curto como você entende a habilidade informada e que ação de aprendizagem ela pode orientar. Use linguagem clara para uma professora.',
+          metisPedagogicalCommunication,
+          'Explique como você interpreta a habilidade informada e que ação de aprendizagem ela pode orientar. Desenvolva a explicação em dois parágrafos curtos: interpretação contextualizada e possível observação pedagógica.',
           'Se a habilidade for um código curricular cuja descrição oficial não esteja explícita no pedido, não invente nem atribua uma redação oficial. Expresse a interpretação com cautela e diga que o código precisa ser confirmado no documento curricular.',
           'Não gere atividades, comandos, JSON ou instruções para alterar o sistema. Responda somente com a explicação em texto natural.',
         ].join('\n'),
@@ -182,10 +191,11 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     }
     const system = [
       'Você é o assistente pedagógico local da Lumira. Metis compreende a matéria e responde em texto natural; o Cognoscere Forge faz a revisão local.',
+      metisPedagogicalCommunication,
       'A fundação tem quatro responsabilidades distintas: Natureza delimita o campo, fenômenos e objetos; Entendimento define relações e evidências que demonstram compreensão; Abordagem descreve práticas para investigar, interpretar e produzir conhecimento; Aspectos registram contextos, representações, limites e diversidade relevantes.',
-      'Quando refletir sobre a ficha, explique o que entendeu em cada dimensão que tiver conteúdo, como elas se relacionam e se há correspondência entre elas. Aponte com cuidado o que ainda está vazio, ambíguo ou desalinhado e termine perguntando à professora se essa leitura corresponde ao que ela quer ensinar. Não invente informação para completar lacunas.',
-      'Na primeira interação, a ficha pode estar vazia: explique brevemente o papel de cada dimensão e convide a professora a começar, sem fingir que já compreendeu uma matéria específica.',
-      'Nas mensagens de conversa, responda à pergunta levando em conta a versão atual da ficha e a conversa anterior. Se uma alteração recente mudar seu entendimento, diga o que mudou.',
+      'Na reflexão sobre a ficha, desenvolva em 3 ou 4 parágrafos: interprete cada dimensão que tenha conteúdo; mostre como natureza, entendimento, abordagem e aspectos se sustentam ou entram em tensão; explique o que essa composição pode orientar no ensino; depois indique lacunas, ambiguidades ou desalinhamentos concretos. Termine com uma pergunta específica sobre uma decisão que ajude a professora a avançar. Não invente informação para completar lacunas.',
+      'Na primeira interação, a ficha pode estar vazia. Em pelo menos dois parágrafos, explique como as quatro dimensões se complementam e convide a professora a começar por uma decisão concreta, sem fingir que já compreendeu uma matéria específica nem listar definições soltas.',
+      'Nas mensagens de conversa, responda à pergunta levando em conta a versão atual da ficha e a conversa anterior. Construa a resposta em parágrafos que conectem a pergunta ao projeto pedagógico da matéria. Se uma alteração recente mudar seu entendimento, explique qual relação mudou e qual consequência isso traz para o ensino.',
       'Não altere nem salve a ficha, não proponha comandos de sistema, JSON ou operações. Devolva somente texto natural em português, com Markdown simples quando ajudar.',
     ].join('\n');
     const messages = [
@@ -196,7 +206,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     const response = await fetch(localForgeEndpoint('/v1/chat/completions'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'Metis-4B', slug: cognoscereLocal.slug, unit_id: cognoscereLocal.unitId, mode: 'document_update', messages, max_tokens: request.kind === 'reflection' ? 700 : 900 }),
+      body: JSON.stringify({ model: 'Metis-4B', slug: cognoscereLocal.slug, unit_id: cognoscereLocal.unitId, mode: 'document_update', messages, max_tokens: request.kind === 'reflection' ? 1000 : 1100 }),
       signal: AbortSignal.timeout(90000),
     });
     if (!response.ok) throw await readForgeError(response);
