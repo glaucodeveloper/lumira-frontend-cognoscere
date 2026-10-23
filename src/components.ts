@@ -169,7 +169,7 @@ const presentationNotes: Record<string, string> = {
   'teacher-about': 'Este painel reúne biografia, vínculos e redes públicas para explicar como a docente escolhe se apresentar à comunidade.',
   'teacher-activity': 'Mostre publicações ligadas a uma atividade e ao critério que orientou o trabalho. Antes de uma publicação estudantil aparecer no perfil, a plataforma faz uma vistoria de respeito, privacidade e contribuição para a atividade, preservando a expressão e a autoria de quem publicou.',
   'teacher-projects': 'A lista funciona como um conjunto de publicações de projeto: cada cartão abre autoria, objetivo, justificativa, aprendizagem esperada, competências e próximos marcos. Ao criar, a docente percorre um stepper de autoria, justificativa, avaliação da aprendizagem e plano. No fim, o Cognoscere local comenta a proposta e devolve a pessoa ao primeiro passo; só a confirmação humana cria o rascunho.',
-  'teacher-agenda': 'A agenda aproxima compromissos e horários da rotina docente. Os itens servem como cenário de apresentação, sem integração com calendário externo.',
+  'teacher-agenda': 'A agenda do perfil reúne compromissos de ensino e encontros sociais. A pessoa escolhe a visibilidade padrão e pode publicar cada compromisso como uma postagem, vinculada a uma questão de competência ou a um desafio social.',
   'teacher-personalization': 'Demonstre os controles de aparência e visibilidade do perfil. Alterações são locais à página de demonstração e podem ser ajustadas nos controles da peça.',
   'pedagogy-context': 'Demonstre como matéria, turma, série e contexto de aplicação delimitam o trabalho antes da geração de qualquer atividade.',
   'pedagogy-competency': 'Mostre a relação entre habilidade curricular, competência aplicada e critérios observáveis. A seleção orienta a proposta sem substituir a revisão docente.',
@@ -192,6 +192,7 @@ const presentationNotes: Record<string, string> = {
   'student-skills': 'Apresente temas e competências que o estudante escolheu explorar, sem transformar interesse em nota ou avaliação pública.',
   'student-activity': 'Destaque uma experiência ou publicação escolhida pelo estudante para compartilhar com a comunidade.',
   'student-projects': 'Os projetos aparecem como publicações expansíveis para que autoria, motivo, aprendizagem, competências e próximos passos tenham contexto. Ao criar uma ideia para o Social, o estudante percorre autoria, justificativa, avaliação e plano; o Cognoscere local comenta a proposta e pede confirmação antes de criar o rascunho. A escolha de publicar permanece separada.',
+  'student-agenda': 'A agenda integra o perfil do estudante: organiza encontros e atividades, liga questões do histórico ou desafios de eventos sociais e permite escolher o público de cada postagem.',
   'student-tabs': 'As abas separam apresentação pública, percurso autorizado e publicações para que cada área mantenha seu contexto.',
   'student-progress': 'Demonstre apenas indicadores explicitamente liberados para o perfil. O estado vazio ou restrito ajuda a discutir consentimento e privacidade.',
   'student-achievements': 'Apresente conquistas como itens públicos escolhidos pelo estudante. A demonstração não inclui notas, respostas ou pareceres pedagógicos.',
@@ -216,7 +217,7 @@ const platformResponsibilities: Record<string, string> = {
   'teacher-about': 'A apresentação reúne a especialidade, a trajetória e os vínculos que a docente escolheu compartilhar. Esse contexto ajuda estudantes e colegas a reconhecer quem selecionou referências e orientou uma produção, além de situar sua relação com uma matéria ou comunidade.\n\nO perfil dá autoria ao conhecimento que circula sem expor o acompanhamento reservado: respostas de turma, dificuldades individuais e pareceres da sondagem não são parte da biografia pública.',
   'teacher-activity': 'Aqui aparecem posts e atividades que nasceram de um trabalho concreto da turma. Cada publicação aponta a atividade e o critério relacionado; assim, quem chega entende o que foi feito e o que o grupo estava investigando. O tom pode ser leve e próximo, sem perder o contexto.\n\nQuando um estudante publica, a plataforma encaminha o conteúdo para uma vistoria de moderação antes de colocá-lo no perfil. A mediação confere se a expressão respeita as pessoas, protege dados privados e contribui para a atividade ou para a conversa acadêmica. Se algo precisar de ajuste, a orientação deve explicar o motivo e preservar a autoria do estudante. Respostas de sondagem e devolutivas individuais continuam reservadas.',
   'teacher-projects': 'Esta parte liga a intenção pedagógica ao trabalho que a turma vai desenvolver. Cada projeto começa com autoria, pergunta e justificativa; depois define o que pode mostrar aprendizagem, quais competências entram em jogo e quais marcos ajudam a conduzir o processo. A docente pode relacionar o projeto a uma sequência de compreensão: apresentar uma situação, solicitar hipóteses, oferecer representações, pedir decisões justificadas e introduzir condições que levem a rever interpretações.\n\nOs cartões expansíveis contam essa história como publicações de trabalho em andamento, mantendo objetivo, motivo, evidências e próximos passos legíveis para a comunidade. Na criação, um stepper organiza autoria, justificativa, aprendizagem e plano. Ao final, o Cognoscere local lê a proposta e devolve um comentário com pontos coerentes, lacunas e ajustes. A revisão retorna ao início para que a docente confirme a criação ou altere os passos. A IA não salva nem publica por conta própria; a confirmação humana cria somente um rascunho local nesta demonstração.',
-  'teacher-agenda': 'A agenda organiza no tempo o preparo, a condução e a revisão de atividades docentes, além dos encontros da comunidade. Ela ajuda a relacionar uma sequência às turmas e aos momentos em que será usada, incluindo o tempo para conferir materiais gerados e analisar respostas.\n\nO calendário, por si só, não mede a qualidade da proposta nem comprova aprendizagem. Para isso, são necessárias evidências contextualizadas e a interpretação docente do que cada estudante apresentou.',
+  'teacher-agenda': 'A agenda organiza no tempo o preparo, a condução e a revisão de atividades docentes, além dos encontros da comunidade. Cada compromisso pode apontar para uma questão de competência do histórico ou para um desafio associado a um evento social, preservando o contexto do trabalho.\n\nA docente define a visibilidade padrão da agenda no perfil e escolhe quando transformar um compromisso em postagem. Respostas, hipóteses e devolutivas individuais permanecem reservadas; publicar um evento não publica o histórico de aprendizagem.',
   'teacher-personalization': 'A personalização permite à docente ajustar a apresentação do perfil e escolher quais informações deseja tornar visíveis. Essa escolha dá controle sobre a identidade pública e a autoria de suas produções.\n\nQuando a adaptação alcança uma experiência de aprendizagem, a orientação do Capítulo 01 é variar contexto, perguntas e apoios para tornar outros raciocínios observáveis, sem alterar a finalidade comum de compreender a relação estudada. Personalizar não é repetir o mesmo exercício com outra aparência.',
   'pedagogy-context': 'A matéria e a turma situam as condições reais de trabalho: repertório, série, finalidade e possibilidades de participação. O contexto orienta exemplos e materiais, mas não substitui a competência que a atividade pretende mobilizar.\n\nA professora pode trabalhar a mesma relação em situações distintas para tornar a compreensão observável sem presumir características do estudante pelo lugar onde vive ou pelo grupo a que pertence.',
   'pedagogy-competency': 'A habilidade curricular funciona como referência; a competência explicita a ação que será exercida sobre um assunto. Só depois dessa relação a equipe escolhe situações, materiais e critérios para observar o trabalho.\n\nUma tarefa pode mobilizar mais de uma habilidade. A revisão precisa indicar que relações aquela questão realmente permite examinar, sem afirmar que a simples presença de códigos comprova aprendizagem.',
@@ -239,6 +240,7 @@ const platformResponsibilities: Record<string, string> = {
   'student-skills': 'Esta parte reúne temas e competências que o estudante escolheu explorar. A escolha orienta descobertas, projetos e conversas com a comunidade, mas não afirma domínio nem funciona como resultado de avaliação.\n\nA compreensão continua sendo acompanhada no espaço pedagógico por evidências contextualizadas e devolutivas reservadas. O perfil torna visíveis interesses autorizados sem expor respostas, hipóteses ou pareceres individuais.',
   'student-activity': 'Experiências compartilhadas mostram o que o estudante decidiu apresentar à comunidade: uma investigação, uma leitura, uma produção ou uma pergunta que convide outras pessoas a pensar.\n\nA publicação conserva autoria e contexto. Respostas de sondagem e interpretações pedagógicas ficam no ambiente reservado; compartilhar uma experiência não transfere para o perfil o histórico individual de aprendizagem.',
   'student-projects': 'Esta parte ajuda o estudante a transformar uma pergunta em trabalho coletivo e, quando fizer sentido, preparar uma ideia para compartilhar no Social. O stepper organiza autoria, justificativa, aprendizagem que o grupo pretende demonstrar e plano de marcos. O Cognoscere local comenta relações entre objetivo, competências, evidências e etapas, retorna ao início e pergunta se o grupo confirma ou quer revisar. A pessoa decide; a IA não cria nem publica sozinha.\n\nOs projetos ficam em cartões expansíveis com autoria, público, propósito, competências e próximos passos. O rascunho para o Social continua separado da publicação. O perfil reúne experiências autorizadas, não respostas, avaliações ou um prontuário de aprendizagem.',
+  'student-agenda': 'A agenda do perfil reúne compromissos, encontros de grupo e eventos da comunidade escolhidos pelo estudante. Um item pode apontar para uma questão de competência já vista — como referência de estudo — ou para uma pergunta/desafio aberto em um evento social. A ligação identifica o contexto da atividade e não torna pública uma resposta do histórico.\n\nA visibilidade padrão da agenda é uma escolha do perfil pessoal. O estudante pode converter um compromisso em postagem quando o público permitido fizer sentido; a publicação mostra o evento e a conexão escolhida, nunca a tentativa ou devolutiva pedagógica. A agenda local desta demonstração não sincroniza com calendários externos.',
   'student-tabs': 'As abas distinguem a apresentação pública, as áreas do percurso de aprendizagem e as produções que o estudante compartilha. Essa organização ajuda a entender para que serve cada informação e quem pode acessá-la.\n\nTambém evita confundir uma atividade social com a sondagem usada para compreender hipóteses e competências. O histórico reservado de respostas e devolutivas conserva seu propósito formativo e não se mistura com o perfil público.',
   'student-progress': 'Esta parte comunica aspectos autorizados do percurso e trata cada indicador como uma pista, não como uma conclusão automática de domínio. O Capítulo 01 propõe observar a compreensão em contextos variados, considerar idade e série e distinguir as evidências que cada resposta realmente apresenta.\n\nUma questão isolada pode revelar uma hipótese ou dificuldade específica, mas não determina sozinha o nível de uma competência. O resumo precisa ser compreensível para o estudante e coerente com a leitura pedagógica que o acompanha.',
   'student-achievements': 'As conquistas destacam participações, produções e marcos que o estudante escolheu apresentar. Elas podem reconhecer esforço ou contribuição e dar visibilidade ao que foi compartilhado com a comunidade.\n\nUma posição em evento ou medalha descreve aquela atividade e suas regras; não equivale ao nível curricular demonstrado. A compreensão de uma competência depende de evidências contextualizadas em diferentes situações e da interpretação pedagógica, não de um selo isolado.',
@@ -343,6 +345,7 @@ const prototypeFieldsByRegion: Record<string, readonly PrototypeParameterSpec[]>
     { id: 'activityText', label: 'Descrição compartilhada', type: 'textarea', targetPath: 'activityText' },
   ],
   'student-projects': [{ id: 'projects', label: 'Projetos e conquistas visíveis', type: 'count', targetPath: 'projects', min: 0, max: 10 }],
+  'student-agenda': [{ id: 'agenda', label: 'Compromissos visíveis', type: 'count', targetPath: 'agenda', min: 0, max: 12 }],
   'student-tabs': [{ id: 'tabs', label: 'Abas', type: 'list', targetPath: 'tabs', hint: 'Uma aba por linha.' }],
   'student-progress': [
     { id: 'progress', label: 'Percurso autorizado', type: 'range', targetPath: 'progress', min: 0, max: 100, step: 1 },
@@ -436,7 +439,7 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
       partSpec('teacher-about', 'Sobre mim', 'Apresentação pública, vínculo e redes.', 'observed', 'teacher'),
       partSpec('teacher-activity', 'Publicações e atividades', 'Post destacado com imagem, texto e reações.', 'observed', 'teacher'),
       partSpec('teacher-projects', 'Projetos em andamento', 'Projetos e estados de participação.', 'observed', 'teacher'),
-      partSpec('teacher-agenda', 'Agenda', 'Compromissos e horários da docente.', 'observed', 'teacher'),
+      partSpec('teacher-agenda', 'Agenda', 'Compromissos do perfil, visibilidade e publicações vinculadas.', 'observed', 'teacher'),
       partSpec('teacher-personalization', 'Personalização', 'Tema, layout, widgets, mídia e visibilidade.', 'observed', 'teacher'),
     ],
   },
@@ -469,6 +472,7 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
       partSpec('student-privacy', 'Apresentação e privacidade', 'Texto público e limites de visibilidade.', 'derived', 'student'),
       partSpec('student-activity', 'Experiências compartilhadas', 'Produções públicas escolhidas pelo estudante.', 'derived', 'student'),
       partSpec('student-projects', 'Projetos em destaque', 'Projetos e conquistas autorizados para exibição.', 'derived', 'student'),
+      partSpec('student-agenda', 'Agenda do perfil', 'Compromissos, conexões pedagógicas e eventos sociais publicáveis.', 'derived', 'student'),
     ],
   },
   {
@@ -616,10 +620,10 @@ export const initialComponentData: Record<string, unknown> = {
       { id: 'seed-language-fair', title: 'Feira de Linguagens', status: 'Ideia', progress: '0/5 atividades', authors: 'Ana Beatriz e estudantes', audience: 'Famílias e comunidade escolar', goal: 'Preparar uma mostra de produções feitas nas aulas de linguagem.', justification: 'Uma feira permite que os grupos expliquem como chegaram às próprias interpretações e troquem referências com a comunidade.', summary: 'A ideia ainda vai ganhar formato com os estudantes: exposição, roda de leitura, áudio ou uma mistura dessas possibilidades.', learningEvidence: 'Apresentações devem relacionar a produção escolhida às evidências e decisões do grupo.', competencies: ['Criatividade', 'Colaboração', 'Língua Portuguesa'], milestones: [] },
     ],
     agenda: [
-      { time: '08:00', title: 'Aula 7º ano', detail: 'Análise de crônicas', tone: 'blue' },
-      { time: '10:00', title: 'Planejamento', detail: 'Sequência didática', tone: 'teal' },
-      { time: '14:00', title: 'Formação BNCC', detail: 'Competências de Linguagem', tone: 'rose' },
-      { time: '16:00', title: 'Conversa do projeto', detail: 'Mapa de histórias do bairro', tone: 'violet' },
+      { time: '08:00', date: '2026-10-22', title: 'Aula 7º ano', detail: 'Análise de crônicas', tone: 'blue', elementId: 'question-reading' },
+      { time: '10:00', date: '2026-10-22', title: 'Planejamento', detail: 'Sequência didática', tone: 'teal', elementId: '' },
+      { time: '14:00', date: '2026-10-23', title: 'Feira de experiências', detail: 'Encontro da comunidade escolar', tone: 'rose', elementId: 'challenge-fair' },
+      { time: '16:00', date: '2026-10-24', title: 'Conversa do projeto', detail: 'Mapa de histórias do bairro', tone: 'violet', elementId: 'challenge-reading' },
     ],
     preferences: ['Mostrar status musical', 'Mostrar stories', 'Mostrar conquistas', 'Mostrar redes sociais'],
   },
@@ -678,6 +682,11 @@ export const initialComponentData: Record<string, unknown> = {
     activityTitle: 'Uma investigação sobre movimento',
     activityText: 'Na experiência da rampa, mantive o carrinho e o percurso iguais e mudei a inclinação. Comparei as tentativas para entender o que mudou e compartilhei a pergunta com o clube de ciências.',
     activityTags: ['Ciências', 'Investigação', 'Clube de ciências'],
+    agenda: [
+      { time: '15:30', date: '2026-10-22', title: 'Clube de Ciências', detail: 'Pergunta da semana · consumo de energia', tone: 'blue', elementId: 'question-library' },
+      { time: '09:00', date: '2026-10-24', title: 'Feira de experiências', detail: 'Desafio em grupo · comparar propostas', tone: 'teal', elementId: 'challenge-fair' },
+      { time: '17:00', date: '2026-10-26', title: 'Roda do Clube de Leitura', detail: 'Compartilhar interpretações e trechos', tone: 'violet', elementId: 'challenge-reading' },
+    ],
     projects: [
       { id: 'seed-student-energy', title: 'Energia na escola', status: 'Em andamento', progress: '3 marcos', authors: 'Caio e grupo de Ciências · 8º ano', audience: 'Comunidade escolar', goal: 'Investigar formas de reduzir o consumo de energia na escola.', justification: 'A turma quer entender quais mudanças fariam diferença sem atrapalhar as atividades do dia.', summary: 'O grupo está registrando os horários de uso e comparando propostas com os mesmos critérios.', learningEvidence: 'Tabela de observações, comparação dos dados e justificativa da proposta escolhida.', competencies: ['Pensamento crítico', 'Colaboração', 'Ciências'], milestones: [{ id: 'energy-observe', title: 'Observar o uso das salas', date: '2026-10-24' }, { id: 'energy-compare', title: 'Comparar as propostas', date: '2026-10-29' }] },
       { id: 'seed-student-reading', title: 'Clube de leitura', status: 'Em conversa', progress: '2 encontros', authors: 'Clube de leitura · 8º ano', audience: 'Comunidade escolar', goal: 'Criar uma roda de leitura com diferentes interpretações de uma mesma história.', justification: 'Cada pessoa reparou em pistas diferentes e o grupo quer entender como essas leituras se relacionam.', summary: 'O clube escolhe trechos, registra perguntas e organiza uma conversa aberta para outras turmas.', learningEvidence: 'Trechos selecionados e explicações que relacionem pistas do texto às interpretações.', competencies: ['Comunicação', 'Língua Portuguesa', 'Colaboração'], milestones: [{ id: 'reading-select', title: 'Escolher os trechos', date: '2026-10-25' }] },
@@ -879,6 +888,8 @@ type DemoPagePartInteraction = {
   opinionCircleMessages: Record<string, CommunityOpinionMessage[]>;
   profileActivityItems: ProfileActivityItem[];
   profileProjects: ProfileProjectItem[];
+  profileAgendaItems: ProfileAgendaItem[];
+  profileAgendaPosts: ProfileAgendaPost[];
   projectChatMessages: ProjectChatMessage[];
   projectReviewStatus: 'idle' | 'pending' | 'ready' | 'error' | 'stale';
   projectReviewText: string;
@@ -973,6 +984,17 @@ type ProfileProjectItem = {
   learningEvidence: string;
   competencies: string[]; milestones: ProfileProjectMilestone[]; socialDraft: boolean; createdAt: string;
 };
+type ProfileAgendaElement = { id: string; type: 'competency-question' | 'social-challenge'; title: string; detail: string };
+type ProfileAgendaItem = { id: string; title: string; detail: string; date: string; time: string; elementId: string };
+type ProfileAgendaPost = ProfileAgendaItem & { visibility: 'school' | 'community'; publishedAt: string };
+const PROFILE_AGENDA_ELEMENTS: readonly ProfileAgendaElement[] = [
+  { id: 'question-reading', type: 'competency-question', title: 'Qual narrador conhece melhor a praça?', detail: 'Histórico de questões · Língua Portuguesa · 7º ano' },
+  { id: 'question-library', type: 'competency-question', title: 'Uma decisão na biblioteca', detail: 'Histórico de questões · Ciências · EF08CI03' },
+  { id: 'question-garden', type: 'competency-question', title: 'A bomba da horta', detail: 'Histórico de questões · Ciências · EF08CI03' },
+  { id: 'challenge-fair', type: 'social-challenge', title: 'Desafio da feira: comparar ofertas', detail: 'Evento social · Feira de experiências · Matemática' },
+  { id: 'challenge-reading', type: 'social-challenge', title: 'Pergunta da roda de leitura', detail: 'Evento social · Clube de leitura · Língua Portuguesa' },
+];
+function isProfileAgendaPart(id: string): boolean { return id === 'teacher-agenda' || id === 'student-agenda'; }
 type ProjectPublication = {
   id: string; title: string; status: string; progress: string; authors: string; goal: string;
   justification: string; summary: string; audience: string; competencies: string[]; milestones: ProfileProjectMilestone[];
@@ -1628,12 +1650,45 @@ function renderProjectBuilder(scope: 'teacher-projects' | 'student-projects'): s
       <nav class="lm-project-stepper" role="tablist" aria-label="Etapas de criação do projeto">${stepper}</nav>${steps}
     </form><aside class="lm-project-planner"><header><div><span class="lm-eyebrow">IDEIA E PLANEJAMENTO</span><h4>Conversa do projeto</h4></div><span class="lm-project-local-tag" data-project-assistant-status aria-live="polite">VERIFICANDO COGNOSCERE LOCAL</span></header><div class="lm-project-chat-messages" data-project-chat-messages aria-live="polite"></div><form class="lm-project-chat-form" data-project-chat-form><label for="${scope}-chat-prompt">Peça ajuda para desenvolver uma parte</label><textarea id="${scope}-chat-prompt" name="projectChatPrompt" data-interaction-field="${fieldKey('projectChatPrompt')}" rows="3" maxlength="500" placeholder="Ex.: que fontes a gente pode consultar para esse mapa?" required></textarea><button type="submit" class="lm-small-primary">Conversar com Cognoscere →</button><small>A conversa considera a ficha atual. A revisão final pede sua confirmação antes de criar o projeto.</small></form></aside></div></section>`;
 }
-function renderAgendaPanel(data: ComponentFixture, selectedId: string): string {
-  data = prototypeData('teacher-agenda', data);
+function agendaDateLabel(date: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+  const [year, month, day] = date.split('-').map(Number);
+  return new Intl.DateTimeFormat('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(year, month - 1, day));
+}
+function renderAgendaEvent(item: ProfileAgendaItem, partId: string, tone: string, local: boolean): string {
+  const element = PROFILE_AGENDA_ELEMENTS.find(option => option.id === item.elementId);
+  const typeLabel = element?.type === 'competency-question' ? 'QUESTÃO · HISTÓRICO' : element ? 'DESAFIO · EVENTO SOCIAL' : '';
+  const elementChip = element ? '<span class="lm-agenda-element-chip"><b>' + typeLabel + '</b><span>' + e(element.title) + '</span><small>' + e(element.detail) + '</small></span>' : '';
+  return '<article class="lm-agenda-item' + (local ? ' lm-agenda-item-local' : '') + '" data-agenda-event-id="' + e(item.id) + '" data-agenda-owner="' + e(partId) + '">'
+    + '<time datetime="' + e(item.date + 'T' + item.time) + '">' + e(item.time) + '</time><i class="tone-' + e(tone) + '"></i><div class="lm-agenda-item-content">'
+    + '<header><b>' + e(item.title) + '</b><time>' + e(agendaDateLabel(item.date)) + '</time></header><small>' + e(item.detail) + '</small>' + elementChip
+    + '<div class="lm-agenda-share-row"><button type="button" data-profile-agenda-share="' + e(item.id) + '" data-agenda-title="' + e(item.title) + '" data-agenda-detail="' + e(item.detail) + '" data-agenda-date="' + e(item.date) + '" data-agenda-time="' + e(item.time) + '" data-agenda-element-id="' + e(item.elementId) + '">Compartilhar como postagem</button><small data-agenda-share-state="' + e(item.id) + '">Visibilidade privada</small></div>'
+    + '</div></article>';
+}
+function renderAgendaPanel(data: ComponentFixture, selectedId: string, partId: 'teacher-agenda' | 'student-agenda'): string {
+  data = prototypeData(partId, data);
   const agenda = labList<ComponentFixture>(data, 'agenda');
-  const rows = agenda.map(item => '<div class="lm-agenda-item"><time>' + e(labText(item, 'time', '09:00')) + '</time><i class="tone-' + e(labText(item, 'tone', 'blue')) + '"></i><div><b>' + e(labText(item, 'title', 'Atividade')) + '</b><small>' + e(labText(item, 'detail', 'Encontro da comunidade')) + '</small></div></div>').join('');
-  const content = '<article class="lm-panel lm-agenda-panel"><header><h2>Minha agenda</h2><button type="button" class="lm-text-action">Ver agenda →</button></header><div class="lm-agenda-date">▦ <b>Hoje, 14 de outubro</b></div><div class="lm-agenda-list">' + rows + '</div></article>';
-  return labPart('teacher-agenda', content, selectedId, 'lm-profile-card-part');
+  const events: ProfileAgendaItem[] = agenda.map((item, index) => ({
+    id: partId + '-seed-' + index,
+    title: labText(item, 'title', 'Atividade'), detail: labText(item, 'detail', 'Encontro da comunidade'),
+    date: labText(item, 'date', '2026-10-22'), time: labText(item, 'time', '09:00'), elementId: labText(item, 'elementId'),
+  }));
+  const options = PROFILE_AGENDA_ELEMENTS.map(option => '<option value="' + e(option.id) + '">' + e((option.type === 'competency-question' ? 'Questão do histórico · ' : 'Evento social · ') + option.title) + '</option>').join('');
+  const isStudent = partId === 'student-agenda';
+  const heading = isStudent ? 'Agenda do estudante' : 'Minha agenda docente';
+  const visibilityKey = partId + ':visibility';
+  const content = '<article class="lm-panel lm-agenda-panel" data-agenda-role="' + (isStudent ? 'student' : 'teacher') + '"><header><div><span class="lm-eyebrow">PERFIL · AGENDA</span><h2>' + heading + '</h2></div><button type="button" class="lm-small-primary" data-profile-agenda-create>＋ Novo compromisso</button></header>'
+    + '<section class="lm-agenda-visibility"><label for="' + partId + '-visibility">Visibilidade padrão no perfil pessoal</label><select id="' + partId + '-visibility" data-interaction-field="' + visibilityKey + '"><option value="private">Somente eu</option><option value="school">Minha escola</option><option value="community">Comunidade Lumira</option></select><p>Você escolhe quando cada compromisso vira uma postagem. Respostas e devolutivas continuam privadas.</p></section>'
+    + '<div class="lm-agenda-date">▦ <b>Compromissos e encontros</b><span>' + events.length + ' itens</span></div><div class="lm-agenda-list" data-profile-agenda-event-list">' + events.map((item, index) => renderAgendaEvent(item, partId, labText(agenda[index], 'tone', 'blue'), false)).join('') + '</div>'
+    + '<form class="lm-agenda-composer" data-profile-agenda-composer hidden novalidate><header><div><span class="lm-eyebrow">NOVO ITEM · ' + (isStudent ? 'PERFIL DO ESTUDANTE' : 'PERFIL DOCENTE') + '</span><h3>Adicionar à agenda</h3></div><button type="button" class="lm-panel-more" data-profile-agenda-cancel aria-label="Fechar criação">×</button></header>'
+    + '<label>Nome<input name="agendaTitle" data-interaction-field="' + partId + ':title" maxlength="90" placeholder="Ex.: Encontro do clube de Ciências" required></label>'
+    + '<div class="lm-agenda-form-row"><label>Data<input type="date" name="agendaDate" data-interaction-field="' + partId + ':date" value="2026-10-24" required></label><label>Horário<input type="time" name="agendaTime" data-interaction-field="' + partId + ':time" value="14:00" required></label></div>'
+    + '<label>O que vai acontecer?<textarea name="agendaDetail" data-interaction-field="' + partId + ':detail" rows="2" maxlength="220" placeholder="Conte o contexto do encontro ou da atividade." required></textarea></label>'
+    + '<button type="button" class="lm-agenda-element-toggle" data-profile-agenda-element-toggle>＋ Adicionar elemento da plataforma</button><div class="lm-agenda-element-picker" data-profile-agenda-element-picker hidden><label>Vincular questão ou desafio<select name="agendaElementId" data-interaction-field="' + partId + ':elementId"><option value="">Sem vínculo</option>' + options + '</select></label><small>Questões vêm do histórico de competências. Desafios apontam para atividades em eventos sociais.</small></div>'
+    + '<footer><button type="button" class="lm-activity-cancel" data-profile-agenda-cancel>Cancelar</button><button type="submit" class="lm-small-primary">Adicionar à agenda</button></footer></form>'
+    + '<section class="lm-agenda-published"><header><div><span class="lm-eyebrow">PERFIL · POSTAGENS</span><h3>Publicações da agenda</h3></div><span data-agenda-published-count>0</span></header><div data-profile-agenda-published-list><p class="lm-agenda-empty">Nenhum compromisso foi publicado. A agenda continua privada até você escolher um público e compartilhar um item.</p></div></section>'
+    + '<p class="lm-agenda-feedback" data-agenda-feedback role="status" aria-live="polite"></p></article>';
+  return labPart(partId, content, selectedId, 'lm-profile-card-part');
 }
 function renderPersonalizationPanel(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('teacher-personalization', data);
@@ -1654,7 +1709,7 @@ function renderTeacherProfilePage(props: ComponentPageProps): string {
     + '<main class="lm-profile-canvas">' + renderProfileHero('teacher-hero', data, selectedId)
     + renderStories('teacher-stories', data, selectedId) + renderProfileTabs('teacher-tabs', data, selectedId)
     + '<div class="lm-profile-overview">' + renderProgressCard(data, selectedId) + renderSkillsPanel(data, selectedId) + renderAboutPanel(data, selectedId) + '</div>'
-    + '<div class="lm-profile-lower">' + renderActivityCard(data, selectedId) + renderProjectsPanel(data, selectedId) + renderAgendaPanel(data, selectedId) + '</div>'
+    + '<div class="lm-profile-lower">' + renderActivityCard(data, selectedId) + renderProjectsPanel(data, selectedId) + renderAgendaPanel(data, selectedId, 'teacher-agenda') + '</div>'
     + renderPersonalizationPanel(data, selectedId) + '</main></div></div>';
 }
 function renderStudentAchievements(data: ComponentFixture, selectedId: string): string {
@@ -1741,7 +1796,7 @@ function renderStudentProfilePage(props: ComponentPageProps): string {
     + '<main class="lm-profile-canvas">' + renderProfileHero('student-hero', data, selectedId, true)
     + renderStories('student-stories', data, selectedId) + renderProfileTabs('student-tabs', data, selectedId)
     + '<div class="lm-student-overview">' + renderStudentSkillsPanel(data, selectedId) + renderProgressCard(data, selectedId, true) + renderStudentAchievements(data, selectedId) + renderAboutPanel(data, selectedId, true) + '</div>'
-    + '<div class="lm-student-lower">' + renderStudentActivityCard(data, selectedId) + renderStudentProjectsPanel(data, selectedId) + '</div>'
+    + '<div class="lm-student-lower">' + renderStudentActivityCard(data, selectedId) + renderStudentProjectsPanel(data, selectedId) + renderAgendaPanel(data, selectedId, 'student-agenda') + '</div>'
     + '</main></div></div>';
 }
 
@@ -2092,7 +2147,7 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-          groups: {}, toggles: {}, fields: {}, communityPosts: [], opinionCircleMessages: {}, profileActivityItems: [], profileProjects: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
+          groups: {}, toggles: {}, fields: {}, communityPosts: [], opinionCircleMessages: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
           projectChatStatus: null, projectChatPending: false,
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
@@ -2285,6 +2340,7 @@ export function registerComponentElements(): void {
         });
         this.restoreProfileActivities();
         this.restoreProfileProjects();
+        this.restoreProfileAgenda();
         this.querySelectorAll<HTMLButtonElement>('[data-interaction-kind]').forEach(button => {
           const active = interaction.toggles[button.dataset.interactionKey ?? ''] === true;
           const kind = button.dataset.interactionKind;
@@ -2361,6 +2417,55 @@ export function registerComponentElements(): void {
         if (empty) empty.hidden = visibleCount > 0;
         const composer = this.querySelector<HTMLFormElement>('[data-profile-activity-composer]');
         if (composer) composer.hidden = this.state.interaction.toggles['profile-activity-composer-open'] !== true;
+      }
+      private restoreProfileAgenda(): void {
+        if (!isProfileAgendaPart(this.state.id)) return;
+        const interaction = this.state.interaction;
+        const partId = this.state.id;
+        const visibilityKey = partId + ':visibility';
+        const visibility = interaction.fields[visibilityKey] ?? 'private';
+        const visibilitySelect = this.querySelector<HTMLSelectElement>('[data-interaction-field="' + visibilityKey + '"]');
+        if (visibilitySelect && visibilitySelect.value !== visibility) visibilitySelect.value = visibility;
+        const eventList = this.querySelector<HTMLElement>('[data-profile-agenda-event-list]');
+        eventList?.querySelectorAll('.lm-agenda-item-local').forEach(item => item.remove());
+        if (eventList) {
+          for (const [index, item] of interaction.profileAgendaItems.entries()) {
+            eventList.insertAdjacentHTML('beforeend', renderAgendaEvent(item, partId, ['teal', 'violet', 'blue'][index % 3], true));
+          }
+          const publishedIds = new Set(interaction.profileAgendaPosts.map(post => post.id));
+          eventList.querySelectorAll<HTMLButtonElement>('[data-profile-agenda-share]').forEach(button => {
+            const id = button.dataset.profileAgendaShare ?? '';
+            const published = publishedIds.has(id);
+            button.disabled = visibility === 'private' || published;
+            button.textContent = published ? 'Publicado no perfil' : 'Compartilhar como postagem';
+            const state = [...eventList.querySelectorAll<HTMLElement>('[data-agenda-share-state]')].find(item => item.dataset.agendaShareState === id);
+            if (state) state.textContent = published ? 'Postagem nesta demonstração' : visibility === 'private' ? 'Escolha um público para publicar' : 'Público: ' + (visibility === 'school' ? 'minha escola' : 'comunidade Lumira');
+          });
+        }
+        const composer = this.querySelector<HTMLFormElement>('[data-profile-agenda-composer]');
+        if (composer) composer.hidden = interaction.toggles[partId + ':composer-open'] !== true;
+        const picker = this.querySelector<HTMLElement>('[data-profile-agenda-element-picker]');
+        if (picker) picker.hidden = interaction.toggles[partId + ':element-picker-open'] !== true;
+        const publishedList = this.querySelector<HTMLElement>('[data-profile-agenda-published-list]');
+        if (publishedList) {
+          publishedList.replaceChildren();
+          if (interaction.profileAgendaPosts.length === 0) {
+            publishedList.innerHTML = '<p class="lm-agenda-empty">Nenhum compromisso foi publicado. A agenda continua privada até você escolher um público e compartilhar um item.</p>';
+          } else {
+            for (const post of interaction.profileAgendaPosts) {
+              const element = PROFILE_AGENDA_ELEMENTS.find(option => option.id === post.elementId);
+              const audience = post.visibility === 'school' ? 'Minha escola' : 'Comunidade Lumira';
+              publishedList.insertAdjacentHTML('beforeend', '<article class="lm-agenda-post"><header><span>POSTAGEM DA AGENDA · ' + e(audience.toLocaleUpperCase()) + '</span><time>' + e(post.publishedAt) + '</time></header><h4>' + e(post.title) + '</h4><p>' + e(post.detail) + '</p><small>' + e(agendaDateLabel(post.date)) + ' · ' + e(post.time) + '</small>' + (element ? '<div class="lm-agenda-post-link"><b>' + (element.type === 'competency-question' ? 'Questão de competência' : 'Desafio social') + '</b><span>' + e(element.title) + '</span></div>' : '') + '</article>');
+            }
+          }
+        }
+        const count = this.querySelector<HTMLElement>('[data-agenda-published-count]');
+        if (count) count.textContent = String(interaction.profileAgendaPosts.length);
+        const feedback = this.querySelector<HTMLElement>('[data-agenda-feedback]');
+        if (feedback) {
+          feedback.textContent = interaction.fields[partId + ':feedback'] ?? '';
+          feedback.hidden = !feedback.textContent;
+        }
       }
       private restoreCommunityParticipation(): void {
         if (this.state.id !== 'community-feed') return;
@@ -3440,6 +3545,60 @@ export function registerComponentElements(): void {
           this.querySelector<HTMLButtonElement>('[data-profile-activity-create]')?.focus();
           return;
         }
+        if (isProfileAgendaPart(this.state.id) && button.hasAttribute('data-profile-agenda-create')) {
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            toggles: { ...interaction.toggles, [this.state.id + ':composer-open']: true, [this.state.id + ':element-picker-open']: false },
+            fields: { ...interaction.fields, [this.state.id + ':feedback']: '' },
+          }));
+          this.render();
+          this.querySelector<HTMLInputElement>('[data-profile-agenda-composer] [name="agendaTitle"]')?.focus();
+          return;
+        }
+        if (isProfileAgendaPart(this.state.id) && button.hasAttribute('data-profile-agenda-cancel')) {
+          const prefix = this.state.id + ':';
+          const draftFields = new Set(['title', 'date', 'time', 'detail', 'elementId'].map(name => prefix + name));
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            toggles: { ...interaction.toggles, [this.state.id + ':composer-open']: false, [this.state.id + ':element-picker-open']: false },
+            fields: Object.fromEntries(Object.entries(interaction.fields).filter(([key]) => !draftFields.has(key))),
+          }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-profile-agenda-create]')?.focus();
+          return;
+        }
+        if (isProfileAgendaPart(this.state.id) && button.hasAttribute('data-profile-agenda-element-toggle')) {
+          const key = this.state.id + ':element-picker-open';
+          const open = this.state.interaction.toggles[key] !== true;
+          this.transitionInteraction(interaction => ({ ...interaction, toggles: { ...interaction.toggles, [key]: open } }));
+          this.render();
+          if (open) this.querySelector<HTMLSelectElement>('[data-profile-agenda-element-picker] select')?.focus();
+          return;
+        }
+        if (isProfileAgendaPart(this.state.id) && button.dataset.profileAgendaShare) {
+          const visibility = this.state.interaction.fields[this.state.id + ':visibility'] ?? 'private';
+          if (visibility === 'private') return;
+          const id = button.dataset.profileAgendaShare;
+          if (this.state.interaction.profileAgendaPosts.some(post => post.id === id)) return;
+          const post: ProfileAgendaPost = {
+            id,
+            title: button.dataset.agendaTitle ?? 'Compromisso',
+            detail: button.dataset.agendaDetail ?? '',
+            date: button.dataset.agendaDate ?? '',
+            time: button.dataset.agendaTime ?? '',
+            elementId: button.dataset.agendaElementId ?? '',
+            visibility: visibility === 'community' ? 'community' : 'school',
+            publishedAt: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+          };
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            profileAgendaPosts: [...interaction.profileAgendaPosts, post],
+            fields: { ...interaction.fields, [this.state.id + ':feedback']: '“' + post.title + '” virou uma postagem local para ' + (post.visibility === 'school' ? 'minha escola.' : 'a comunidade Lumira.') },
+          }));
+          this.render();
+          this.querySelector<HTMLElement>('[data-profile-agenda-published-list] .lm-agenda-post:last-child')?.scrollIntoView({ block: 'nearest' });
+          return;
+        }
         // Deixe a navegação entre telas chegar ao Componenting Demo Lab, que
         // controla a montagem da página e a URL selecionada.
         if (button.hasAttribute('data-screen-select') || button.hasAttribute('data-component-select')) {
@@ -3866,6 +4025,33 @@ export function registerComponentElements(): void {
       private onSubmit(event: Event): void {
         event.preventDefault();
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
+        if (form?.matches('[data-profile-agenda-composer]') && isProfileAgendaPart(this.state.id)) {
+          const values = new FormData(form);
+          const title = String(values.get('agendaTitle') ?? '').trim();
+          const detail = String(values.get('agendaDetail') ?? '').trim();
+          const date = String(values.get('agendaDate') ?? '').trim();
+          const time = String(values.get('agendaTime') ?? '').trim();
+          const elementId = String(values.get('agendaElementId') ?? '').trim();
+          const validElement = !elementId || PROFILE_AGENDA_ELEMENTS.some(element => element.id === elementId);
+          if (!title || !detail || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(time) || !validElement) {
+            this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, [this.state.id + ':feedback']: 'Preencha nome, contexto, data e horário válidos. Confira também o vínculo escolhido.' } }));
+            this.render();
+            this.querySelector<HTMLInputElement>('[data-profile-agenda-composer] [name="agendaTitle"]')?.focus();
+            return;
+          }
+          const item: ProfileAgendaItem = { id: this.state.id + '-' + projectId(), title, detail, date, time, elementId };
+          const prefix = this.state.id + ':';
+          const draftFields = new Set(['title', 'date', 'time', 'detail', 'elementId'].map(name => prefix + name));
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            profileAgendaItems: [...interaction.profileAgendaItems, item],
+            toggles: { ...interaction.toggles, [prefix + 'composer-open']: false, [prefix + 'element-picker-open']: false },
+            fields: { ...Object.fromEntries(Object.entries(interaction.fields).filter(([key]) => !draftFields.has(key))), [prefix + 'feedback']: '“' + title + '” adicionado à agenda do perfil. Escolha um público para convertê-lo em postagem.' },
+          }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-profile-agenda-create]')?.focus();
+          return;
+        }
         if (form?.matches('[data-project-chat-form]') && isProfileProjectPart(this.state.id)) {
           if (this.state.interaction.projectChatPending) return;
           const values = new FormData(form);

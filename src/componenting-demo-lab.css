@@ -2360,6 +2360,57 @@ lumira-page-part {
   color: var(--lm-muted);
   font-size: 7px;
 }
+.lm-agenda-panel>header>div { min-width: 0; }
+.lm-agenda-panel>header h2 { margin-top: 3px; }
+.lm-agenda-visibility { display: grid; grid-template-columns: minmax(0, 1fr) minmax(112px, .72fr); align-items: center; gap: 5px 9px; padding: 8px; border: 1px solid #e6edf2; border-radius: 7px; background: #f8fafc; }
+.lm-agenda-visibility>label { color: #4e6479; font-size: 8px; font-weight: 750; }
+.lm-agenda-visibility select,
+.lm-agenda-element-picker select { min-width: 0; height: 30px; padding: 5px 7px; border: 1px solid #d3dee7; border-radius: 5px; background: white; color: #28435d; font-size: 8px; }
+.lm-agenda-visibility>p { grid-column: 1 / -1; margin: 0; color: #75889a; font-size: 7px; line-height: 1.45; }
+.lm-agenda-date { justify-content: space-between; }
+.lm-agenda-date>span { margin-left: auto; color: #7b8b99; font-size: 7px; }
+.lm-agenda-item { grid-template-columns: 34px 3px minmax(0, 1fr); }
+.lm-agenda-item-content>header { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+.lm-agenda-item-content>header time { flex: 0 0 auto; color: #8493a0; font-size: 7px; }
+.lm-agenda-element-chip { display: grid; gap: 2px; margin-top: 4px; padding: 5px 6px; border-radius: 5px; background: #f3f7fa; }
+.lm-agenda-element-chip>b { color: #47718d; font-size: 6px; letter-spacing: .07em; }
+.lm-agenda-element-chip>span { color: #344f65; font-size: 7px; font-weight: 700; }
+.lm-agenda-element-chip>small { color: #8293a1; font-size: 6px; }
+.lm-agenda-share-row { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-top: 5px; }
+.lm-agenda-share-row>button { padding: 4px 6px; border: 1px solid #d4e1e8; border-radius: 5px; background: #fff; color: #176b79; font-size: 7px; font-weight: 750; }
+.lm-agenda-share-row>button:disabled { background: #f5f7f8; color: #9aa6af; cursor: not-allowed; }
+.lm-agenda-share-row>small { text-align: right; font-size: 6px; }
+.lm-agenda-composer { display: grid; gap: 8px; margin-top: 9px; padding: 10px; border: 1px solid #dce7ee; border-radius: 8px; background: #fbfcfd; }
+.lm-agenda-composer[hidden],
+.lm-agenda-element-picker[hidden] { display: none !important; }
+.lm-agenda-composer>header,
+.lm-agenda-published>header { display: flex; align-items: center; justify-content: space-between; gap: 7px; }
+.lm-agenda-composer h3,
+.lm-agenda-published h3 { margin: 3px 0 0; color: #243e55; font-size: 10px; }
+.lm-agenda-composer>label,
+.lm-agenda-form-row>label,
+.lm-agenda-element-picker>label { display: grid; gap: 4px; color: #53697c; font-size: 7px; font-weight: 700; }
+.lm-agenda-composer input,
+.lm-agenda-composer textarea { width: 100%; min-width: 0; padding: 7px; border: 1px solid #d6e0e8; border-radius: 5px; background: white; color: #2d455b; font: inherit; font-size: 8px; }
+.lm-agenda-composer textarea { resize: vertical; }
+.lm-agenda-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.lm-agenda-element-toggle { justify-self: start; padding: 5px 0; border: 0; background: transparent; color: #176b79; font-size: 8px; font-weight: 750; }
+.lm-agenda-element-picker { display: grid; gap: 4px; padding: 8px; border: 1px solid #dce7ee; border-radius: 6px; background: white; }
+.lm-agenda-element-picker>small { color: #788a99; font-size: 7px; line-height: 1.45; }
+.lm-agenda-composer>footer { display: flex; justify-content: flex-end; gap: 6px; }
+.lm-agenda-published { display: grid; gap: 7px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #e8edf1; }
+.lm-agenda-published>header>span { display: grid; min-width: 20px; height: 20px; place-items: center; border-radius: 50%; background: #edf4f6; color: #4c7283; font-size: 8px; font-weight: 800; }
+.lm-agenda-empty { margin: 0; color: #8493a0; font-size: 8px; line-height: 1.5; }
+.lm-agenda-post { padding: 8px; border: 1px solid #e3eaef; border-radius: 6px; background: #fff; }
+.lm-agenda-post>header { display: flex; justify-content: space-between; gap: 8px; color: #6c8799; font-size: 6px; font-weight: 750; letter-spacing: .07em; }
+.lm-agenda-post>h4 { margin: 6px 0 3px; color: #2d465d; font-size: 9px; }
+.lm-agenda-post>p { margin: 0 0 5px; color: #657b8c; font-size: 8px; line-height: 1.45; }
+.lm-agenda-post>small { color: #8897a2; font-size: 7px; }
+.lm-agenda-post-link { display: grid; gap: 2px; margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf1f4; }
+.lm-agenda-post-link>b { color: #52758a; font-size: 6px; text-transform: uppercase; }
+.lm-agenda-post-link>span { color: #4a6173; font-size: 7px; }
+.lm-agenda-feedback { margin: 7px 0 0; color: #26745f; font-size: 8px; line-height: 1.45; }
+.lm-agenda-feedback[hidden] { display: none; }
 .lm-personalization-part {
   position: absolute;
   z-index: 5;
@@ -3253,12 +3304,15 @@ lumira-page-part {
   .lm-profile-lower {
     grid-template-columns: 1fr 1fr;
   }
+  .lm-profile-lower>.lm-page-part:last-child,
+  .lm-student-lower>.lm-page-part:last-child { grid-column: 1 / -1; }
   .lm-agenda-panel {
     grid-column: 1 / -1;
   }
   .lm-student-overview {
     grid-template-columns: 1fr 1fr;
   }
+  .lm-student-lower { grid-template-columns: 1fr 1fr; }
   .lm-student-overview .lm-about-panel {
     grid-column: 1 / -1;
   }
@@ -3683,12 +3737,14 @@ lumira-page-part {
   }
   .lm-profile-overview,
   .lm-profile-lower,
-  .lm-student-overview {
+  .lm-student-overview,
+  .lm-student-lower {
     grid-template-columns: 1fr;
   }
   .lm-profile-overview .lm-about-panel,
   .lm-profile-lower .lm-agenda-panel,
-  .lm-student-overview .lm-about-panel {
+  .lm-student-overview .lm-about-panel,
+  .lm-student-lower .lm-agenda-panel {
     grid-column: auto;
   }
   .lm-personalization-part {
@@ -5110,7 +5166,7 @@ lumira-page-part {
 .lm-profile-save-button:hover { background: #0a4669; }
 .lm-student-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .lm-student-overview .lm-about-panel { grid-column: 1 / -1; }
-.lm-student-lower { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(260px, .95fr); align-items: start; gap: 10px; padding: 0 12px 12px; }
+.lm-student-lower { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(240px, .95fr) minmax(230px, .9fr); align-items: start; gap: 10px; padding: 0 12px 12px; }
 .lm-student-skill { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid #edf1f5; }
 .lm-student-skill-mark { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 8px; background: #eaf5f5; color: #148a88; font-size: 12px; }
 .lm-student-skill-mark.tone-blue { background: #eaf1fb; color: #3574bc; }
@@ -5210,6 +5266,15 @@ lumira-page-part {
   .lm-profile-music-picker>header { flex-direction: column; }
   .lm-profile-editor-inline>form>footer { flex-direction: column-reverse; }
   .lm-profile-editor-inline>form>footer button { width: 100%; }
+}
+
+@media(max-width:1120px) {
+  .lm-student-lower { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .lm-student-lower>.lm-page-part:last-child { grid-column: 1 / -1; }
+}
+@media(max-width:900px) {
+  .lm-student-lower { grid-template-columns: 1fr; }
+  .lm-student-lower>.lm-page-part:last-child { grid-column: auto; }
 }
 
 /* Project builder: ficha, chat and calendar are one usable planning flow. */

@@ -57,6 +57,14 @@ The student profile's Competencies part starts with the student's public interes
 - The part presentation describes the platform's moderation responsibility: review a student's post for respectful expression, privacy, and contribution to the activity or academic discussion, while preserving the student's authorship. This prototype displays that policy but does not implement a real moderation queue, automated classifier, or approval service. Its local posts and messages are clearly labeled as demonstration content.
 - Private assessment answers, student-specific feedback, and enrollment data do not enter the public feed or opinion circles.
 
+## Profile agenda and shareable events
+
+- `teacher-agenda` and `student-agenda` use the same internal `ProfileAgendaItem` shape: stable ID, title, context, date, time, and an optional platform element ID. Each profile page renders its own agenda part and fixture data.
+- The agenda's **Visibilidade padrão no perfil pessoal** control starts at **Somente eu**. Choosing **Minha escola** or **Comunidade Lumira** enables the per-item **Compartilhar como postagem** action. Sharing creates a `ProfileAgendaPost` in that agenda part's state and renders its post preview with the selected audience.
+- **＋ Adicionar elemento da plataforma** opens links to competency questions already in the history or challenges/questions associated with social events. The selected reference is shown on the event and carried into the post preview.
+- Agenda items and post previews are local to their page-part state. The demo does not persist them after reload, publish to a real feed, sync an external calendar, or expose question responses and individual feedback. Those remain in the reserved learning space.
+- The agenda responsibility text describes how teachers and students can use this format without treating a social post as learning evidence or turning a public profile into an assessment record.
+
 ## Build and manual review
 
 `npm run dev` serves the web application. `npm run typecheck` checks TypeScript, and `npx vite build` creates the static GitHub Pages bundle. The workflow `.github/workflows/pages.yml` publishes `dist/` on pushes to `main` and manual dispatches.
