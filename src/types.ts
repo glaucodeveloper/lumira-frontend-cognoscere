@@ -217,6 +217,19 @@ export interface ProjectAssistantRequest {
   conversation: ProjectAssistantMessage[];
 }
 
+export interface SubjectSkillUnderstandingRequest {
+  requestId: string;
+  partId: 'pedagogy-context';
+  skillName: string;
+}
+
+export interface SubjectSkillUnderstandingResult {
+  requestId: string;
+  skillName: string;
+  explanation?: string;
+  error?: string;
+}
+
 export type OpinionCircleActorRole = 'professor' | 'aluno' | 'visitante';
 
 export interface OpinionCircleMessageSendRequest {

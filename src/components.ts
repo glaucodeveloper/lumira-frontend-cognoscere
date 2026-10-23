@@ -1,6 +1,6 @@
 /** Componentes, páginas e dados iniciais da plataforma e do Componenting Demo Lab. */
 
-import type { AppSnapshot, CognoscereStatus, CommunityEvent, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, ProjectAssistantRequest, SessionUser } from './types';
+import type { AppSnapshot, CognoscereStatus, CommunityEvent, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, ProjectAssistantRequest, SessionUser, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
 import profileCoverAsset from './assets/profile/serra-dourada-cover.webp';
 import communityPostAsset from './assets/community/sala-colaborativa.webp';
 import studentRampStoryAsset from './assets/stories/student-ramp-experiment.webp';
@@ -219,7 +219,7 @@ const platformResponsibilities: Record<string, string> = {
   'teacher-projects': 'Esta parte liga a intenção pedagógica ao trabalho que a turma vai desenvolver. Cada projeto começa com autoria, pergunta e justificativa; depois define o que pode mostrar aprendizagem, quais competências entram em jogo e quais marcos ajudam a conduzir o processo. A docente pode relacionar o projeto a uma sequência de compreensão: apresentar uma situação, solicitar hipóteses, oferecer representações, pedir decisões justificadas e introduzir condições que levem a rever interpretações.\n\nOs cartões expansíveis contam essa história como publicações de trabalho em andamento, mantendo objetivo, motivo, evidências e próximos passos legíveis para a comunidade. Na criação, um stepper organiza autoria, justificativa, aprendizagem e plano. Ao final, o Cognoscere local lê a proposta e devolve um comentário com pontos coerentes, lacunas e ajustes. A revisão retorna ao início para que a docente confirme a criação ou altere os passos. A IA não salva nem publica por conta própria; a confirmação humana cria somente um rascunho local nesta demonstração.',
   'teacher-agenda': 'A agenda organiza no tempo o preparo, a condução e a revisão de atividades docentes, além dos encontros da comunidade. Cada compromisso pode apontar para uma questão de competência do histórico ou para um desafio associado a um evento social, preservando o contexto do trabalho.\n\nA docente define a visibilidade padrão da agenda no perfil e escolhe quando transformar um compromisso em postagem. Respostas, hipóteses e devolutivas individuais permanecem reservadas; publicar um evento não publica o histórico de aprendizagem.',
   'teacher-personalization': 'A personalização permite à docente ajustar a apresentação do perfil e escolher quais informações deseja tornar visíveis. Essa escolha dá controle sobre a identidade pública e a autoria de suas produções.\n\nQuando a adaptação alcança uma experiência de aprendizagem, a orientação do Capítulo 01 é variar contexto, perguntas e apoios para tornar outros raciocínios observáveis, sem alterar a finalidade comum de compreender a relação estudada. Personalizar não é repetir o mesmo exercício com outra aparência.',
-  'pedagogy-context': 'A matéria e a turma situam as condições reais de trabalho: repertório, série, finalidade e possibilidades de participação. O contexto orienta exemplos e materiais, mas não substitui a competência que a atividade pretende mobilizar.\n\nA professora pode trabalhar a mesma relação em situações distintas para tornar a compreensão observável sem presumir características do estudante pelo lugar onde vive ou pelo grupo a que pertence.',
+  'pedagogy-context': 'A matéria começa por uma fundação que explica sua natureza, o entendimento que pretende construir, a abordagem para investigar esse conhecimento e os aspectos que devem aparecer em situações de aprendizagem. Essas descrições dão à IA um contexto pedagógico antes que ela sugira materiais ou atividades.\n\nA professora associa habilidades por nome ou código curricular e revê a interpretação sugerida para cada uma. A matéria e a turma então situam série, finalidade e possibilidades de participação; variar contextos ajuda a observar a mesma relação sem presumir características do estudante pelo lugar onde vive ou pelo grupo a que pertence.',
   'pedagogy-competency': 'A habilidade curricular funciona como referência; a competência explicita a ação que será exercida sobre um assunto. Só depois dessa relação a equipe escolhe situações, materiais e critérios para observar o trabalho.\n\nUma tarefa pode mobilizar mais de uma habilidade. A revisão precisa indicar que relações aquela questão realmente permite examinar, sem afirmar que a simples presença de códigos comprova aprendizagem.',
   'pedagogy-activity-builder': 'A professora escreve a compreensão que deseja observar e seleciona referências e contexto. A IA pode propor uma situação e alternativas de enunciado; a docente verifica se os dados são suficientes, se a pergunta exige o raciocínio pretendido e se a resposta não é antecipada pelo próprio texto.\n\nO rascunho permanece editável. A aprovação fixa uma revisão identificável para a turma; gerar outra versão não altera materiais já publicados nem muda silenciosamente os contratos de avaliação.',
   'pedagogy-evidence-review': 'A leitura do monitor descreve realizações em relação a critérios específicos e aponta trechos da resposta que sustentam cada atribuição. A professora pode corrigir a leitura ou registrar que o enunciado não produziu evidência suficiente.\n\nUma resposta pode sustentar um critério e não informar outro. A plataforma não transforma um parecer isolado em nota global, progressão curricular ou decisão automática sobre o próximo conteúdo.',
@@ -884,6 +884,12 @@ type DemoPagePartInteraction = {
   groups: Record<string, string>;
   toggles: Record<string, boolean>;
   fields: Record<string, string>;
+  subjectFoundation: SubjectFoundation | null;
+  subjectSkills: string[] | null;
+  subjectSkillQuery: string;
+  subjectSkillActiveIndex: number;
+  subjectSkillMenuOpen: boolean;
+  subjectSkillInsight: { skillName: string; requestId: string; status: 'pending' | 'ready' | 'error'; explanation: string } | null;
   communityPosts: CommunityPostDraft[];
   opinionCircleMessages: Record<string, CommunityOpinionMessage[]>;
   opinionMessageRequests: Record<string, string>;
@@ -978,6 +984,25 @@ type CommunityPostDraft = {
   comments: number;
 };
 type CommunityOpinionMessage = OpinionCircleMessageEvent;
+type SubjectFoundation = {
+  name: string;
+  nature: string;
+  understanding: string;
+  approach: string;
+  aspects: string;
+  skills: string[];
+};
+type SubjectSkillSuggestion = { name: string; understanding: string };
+const SUBJECT_SKILL_SUGGESTIONS: readonly SubjectSkillSuggestion[] = [
+  { name: 'EF08CI03 · Transformações de energia', understanding: 'A IA lê esta habilidade como investigação das transformações de energia em aparelhos e situações, relacionando cada explicação ao fenômeno observado.' },
+  { name: 'EF08CI04 · Consumo de energia elétrica', understanding: 'A IA procura relações entre potência, quantidade de aparelhos e duração de uso, conferindo se a justificativa usa os dados do contexto.' },
+  { name: 'EF08CI05 · Uso consciente de energia', understanding: 'A IA considera propostas de redução do consumo junto com as necessidades e condições do ambiente em que serão aplicadas.' },
+  { name: 'Investigar fenômenos', understanding: 'A IA espera uma pergunta investigável, observações ou dados e uma conclusão ligada ao que foi observado.' },
+  { name: 'Interpretar evidências', understanding: 'A IA procura uma relação explícita entre evidência, afirmação e limite do que os dados permitem concluir.' },
+  { name: 'Comunicar explicações científicas', understanding: 'A IA procura uma explicação compreensível que conecte conceitos, evidências e escolhas feitas durante a investigação.' },
+  { name: 'Comparar modelos e representações', understanding: 'A IA observa o que cada representação destaca, quais relações preserva e onde deixa de explicar o fenômeno.' },
+  { name: 'Avaliar soluções em contexto', understanding: 'A IA considera critérios, efeitos esperados e restrições locais antes de comparar ou recomendar uma solução.' },
+];
 type ProfileProjectMilestone = { id: string; title: string; date: string };
 type ProjectChatMessage = { id: string; role: 'student' | 'assistant'; text: string; kind?: 'conversation' | 'reflection' | 'review'; revision?: number; status?: 'pending' | 'error' };
 type ProfileProjectItem = {
@@ -2054,6 +2079,17 @@ function renderPedagogyContext(data: ComponentFixture, selectedId: string): stri
     + '<div class="lm-context-fields"><label><span>Turma</span><select name="className" data-ai-field="className"><option ' + (labText(data, 'className') === '8º A' ? 'selected' : '') + '>8º A</option><option>8º B</option></select></label>'
     + '<label><span>Série</span><select name="grade" data-ai-field="grade"><option selected>8º ano</option><option>7º ano</option><option>9º ano</option></select></label>'
     + '<label class="lm-context-wide"><span>Contexto de aplicação</span><input name="context" data-ai-field="context" value="' + e(labText(data, 'context')) + '"></label></div>'
+    + '<section class="lm-subject-foundation" data-subject-foundation><div class="lm-subject-foundation-heading"><div><span class="lm-eyebrow">CRIAÇÃO DE MATÉRIA</span><h2>Fundação para orientar a IA</h2><p>Descreva a matéria por quatro dimensões e associe quantas habilidades forem necessárias.</p></div><button type="button" class="lm-secondary-button" data-subject-foundation-toggle aria-expanded="false">＋ Criar matéria</button></div>'
+    + '<div class="lm-subject-foundation-summary" data-subject-foundation-summary hidden></div>'
+    + '<form class="lm-subject-foundation-editor" data-subject-foundation-form hidden novalidate><label class="lm-subject-name-field"><span>Nome da matéria</span><input name="subjectName" data-interaction-field="pedagogy-context:subject-name" maxlength="100" placeholder="Ex.: Ciências da Natureza" required></label>'
+    + '<div class="lm-subject-dimensions"><label><span>Natureza</span><small>Que fenômenos, objetos ou problemas constituem esta matéria?</small><textarea name="subjectNature" data-interaction-field="pedagogy-context:subject-nature" rows="3" maxlength="700" placeholder="Descreva o campo de conhecimento e o que o caracteriza." required></textarea></label>'
+    + '<label><span>Entendimento</span><small>Que relações a pessoa deve aprender a compreender?</small><textarea name="subjectUnderstanding" data-interaction-field="pedagogy-context:subject-understanding" rows="3" maxlength="700" placeholder="Explique como reconhecer compreensão além de repetir informações." required></textarea></label>'
+    + '<label><span>Abordagem</span><small>Como investigar, interpretar ou produzir conhecimento?</small><textarea name="subjectApproach" data-interaction-field="pedagogy-context:subject-approach" rows="3" maxlength="700" placeholder="Indique práticas, métodos e formas de argumentar." required></textarea></label>'
+    + '<label><span>Aspectos</span><small>Que contextos, representações ou limites precisam aparecer?</small><textarea name="subjectAspects" data-interaction-field="pedagogy-context:subject-aspects" rows="3" maxlength="700" placeholder="Descreva aspectos que ajudam a IA a variar exemplos sem perder o foco." required></textarea></label></div>'
+    + '<div class="lm-subject-skill-section"><div><b>Habilidades da matéria</b><small>Adicione quantas habilidades precisar. Digite um nome ou código para buscar sugestões.</small></div><div class="lm-subject-skill-chips" data-subject-skill-chips></div>'
+    + '<div class="lm-subject-skill-picker" data-subject-skill-picker><label><span class="sr-only">Buscar habilidade</span><input type="text" data-subject-skill-input role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="subject-skill-options" aria-describedby="subject-skill-understanding" placeholder="Ex.: consumo de energia, EF08CI04…" autocomplete="off"></label>'
+    + '<div class="lm-subject-skill-menu" data-subject-skill-menu hidden><div class="lm-subject-skill-options" id="subject-skill-options" role="listbox" data-subject-skill-options></div><aside class="lm-subject-skill-understanding" id="subject-skill-understanding" data-subject-skill-understanding role="tooltip" aria-live="polite" hidden></aside></div></div></div>'
+    + '<footer class="lm-subject-foundation-actions"><p data-subject-foundation-status role="status" aria-live="polite"></p><div><button type="button" class="lm-quiet-action" data-subject-foundation-cancel>Cancelar</button><button type="submit" class="lm-primary-button">Salvar fundação da matéria <span aria-hidden="true">→</span></button></div></footer></form></section>'
     + '<div class="lm-context-foot"><span>Professora <b>' + e(labText(data, 'name', 'Helena Martins')) + '</b></span><span>Referência curricular <b>BNCC · Ciências</b></span><span>Dados demonstrativos · edição local</span></div></section>';
   return labPart('pedagogy-context', content, selectedId, 'lm-pedagogy-context-part');
 }
@@ -2388,6 +2424,8 @@ export function registerComponentElements(): void {
       private state: DemoPagePartState;
       private projectReflectionTimer: number | undefined;
       private projectReflectionRevision = 0;
+      private subjectSkillInsightTimer: number | undefined;
+      private subjectSkillInsightRevision = 0;
       private platformReferenceMenu: HTMLDivElement | null = null;
       private platformReferenceTarget: PlatformReferenceField | null = null;
       private platformReferenceCurrent: PlatformReferenceContext | null = null;
@@ -2407,7 +2445,7 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-          groups: {}, toggles: {}, fields: {}, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
+          groups: {}, toggles: {}, fields: {}, subjectFoundation: null, subjectSkills: null, subjectSkillQuery: '', subjectSkillActiveIndex: 0, subjectSkillMenuOpen: false, subjectSkillInsight: null, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
           projectChatStatus: null, projectChatPending: false,
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
@@ -2416,12 +2454,15 @@ export function registerComponentElements(): void {
         });
         this.state = this.transitions.next().value;
         this.addEventListener('click', event => this.onClick(event));
+        this.addEventListener('pointerover', event => this.onPointerOver(event));
+        this.addEventListener('focusin', event => this.onFocusIn(event));
         this.addEventListener('keydown', event => this.onKeyDown(event));
         this.addEventListener('input', event => this.onInput(event));
         this.addEventListener('change', event => this.onChange(event));
         this.addEventListener('submit', event => this.onSubmit(event));
         this.addEventListener('lumira-opinion-message-delivered', event => this.onOpinionMessageDelivered(event as CustomEvent<OpinionCircleMessageDelivery>));
         this.addEventListener('lumira-opinion-message-rejected', event => this.onOpinionMessageRejected(event as CustomEvent<OpinionCircleMessageRejection>));
+        this.addEventListener('lumira-subject-skill-understanding-result', event => this.onSubjectSkillUnderstandingResult(event as CustomEvent<SubjectSkillUnderstandingResult>));
         this.addEventListener('focusout', event => {
           if (event.target === this.platformReferenceTarget) this.closePlatformReferenceMenu();
         });
@@ -2464,6 +2505,11 @@ export function registerComponentElements(): void {
       }
       configure(props: DemoPagePartProps): void {
         const snapshot = structuredClone(props);
+        if (snapshot.id !== 'pedagogy-context' && this.subjectSkillInsightTimer !== undefined) {
+          window.clearTimeout(this.subjectSkillInsightTimer);
+          this.subjectSkillInsightTimer = undefined;
+          this.subjectSkillInsightRevision += 1;
+        }
         if (!isProfileProjectPart(snapshot.id) && this.projectReflectionTimer !== undefined) {
           window.clearTimeout(this.projectReflectionTimer);
           this.projectReflectionTimer = undefined;
@@ -2473,6 +2519,14 @@ export function registerComponentElements(): void {
           ...snapshot,
           interaction: {
             ...current.interaction,
+            ...(current.id !== props.id && props.id === 'pedagogy-context' ? {
+              subjectFoundation: null,
+              subjectSkills: [],
+              subjectSkillQuery: '',
+              subjectSkillActiveIndex: 0,
+              subjectSkillMenuOpen: false,
+              subjectSkillInsight: null,
+            } : {}),
             selectedStory: current.interaction.selectedStory ?? (props.id.endsWith('-stories') ? 0 : null),
           },
         })).value;
@@ -2480,6 +2534,9 @@ export function registerComponentElements(): void {
       }
       disconnectedCallback(): void {
         this.closePlatformReferenceMenu();
+        if (this.subjectSkillInsightTimer !== undefined) window.clearTimeout(this.subjectSkillInsightTimer);
+        this.subjectSkillInsightTimer = undefined;
+        this.subjectSkillInsightRevision += 1;
       }
       private platformReferenceField(target: EventTarget | null): target is PlatformReferenceField {
         if (target instanceof HTMLTextAreaElement) return true;
@@ -2765,6 +2822,7 @@ export function registerComponentElements(): void {
         this.restoreProfileEditor();
         this.restoreStudentSkillsDashboard();
         this.restorePedagogyDemo();
+        this.restoreSubjectFoundation();
         this.restoreWorkspaceMenus();
         this.restoreCommunityCalendar();
         if (interaction.feedback) {
@@ -3517,6 +3575,137 @@ export function registerComponentElements(): void {
         });
         this.transitionInteraction(interaction => ({ ...interaction, fields }));
       }
+      private subjectSkillSuggestions(query: string): SubjectSkillSuggestion[] {
+        const normalized = query.trim().toLocaleLowerCase();
+        const selected = new Set((this.state.interaction.subjectSkills ?? []).map(skill => skill.toLocaleLowerCase()));
+        const matches = SUBJECT_SKILL_SUGGESTIONS.filter(item =>
+          (!normalized || item.name.toLocaleLowerCase().includes(normalized)) && !selected.has(item.name.toLocaleLowerCase()),
+        );
+        if (!normalized) return matches.slice(0, 6);
+        if (matches.length) return matches.slice(0, 6);
+        if (selected.has(normalized)) return [];
+        return [{ name: query.trim(), understanding: 'Habilidade livre desta matéria. A IA poderá usar o nome junto das quatro descrições da fundação; acrescente uma explicação mais específica se este nome não deixar o objetivo claro.' }];
+      }
+      private restoreSubjectFoundation(): void {
+        if (this.state.id !== 'pedagogy-context') return;
+        const interaction = this.state.interaction;
+        const open = interaction.groups['subject-foundation-open'] === 'yes';
+        const editor = this.querySelector<HTMLElement>('[data-subject-foundation-form]');
+        const summary = this.querySelector<HTMLElement>('[data-subject-foundation-summary]');
+        const toggle = this.querySelector<HTMLButtonElement>('[data-subject-foundation-toggle]');
+        if (editor) editor.hidden = !open;
+        if (toggle) {
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.textContent = open ? 'Fechar criação' : interaction.subjectFoundation ? '＋ Criar outra matéria' : '＋ Criar matéria';
+        }
+        if (summary) {
+          const foundation = interaction.subjectFoundation;
+          summary.hidden = !foundation;
+          summary.innerHTML = foundation
+            ? '<header><div><span class="lm-eyebrow">FUNDAÇÃO SALVA NESTA DEMONSTRAÇÃO</span><h3>' + e(foundation.name) + '</h3></div><span class="lm-subject-saved-mark">✓ RASCUNHO LOCAL</span></header>'
+              + '<div class="lm-subject-saved-skills">' + foundation.skills.map(skill => '<span>' + e(skill) + '</span>').join('') + '</div>'
+              + '<details><summary>Ver as quatro descrições para IA</summary><dl><div><dt>Natureza</dt><dd>' + e(foundation.nature) + '</dd></div><div><dt>Entendimento</dt><dd>' + e(foundation.understanding) + '</dd></div><div><dt>Abordagem</dt><dd>' + e(foundation.approach) + '</dd></div><div><dt>Aspectos</dt><dd>' + e(foundation.aspects) + '</dd></div></dl></details>'
+            : '';
+        }
+        const skills = interaction.subjectSkills ?? [];
+        const chips = this.querySelector<HTMLElement>('[data-subject-skill-chips]');
+        if (chips) chips.innerHTML = skills.map((skill, index) => '<span class="lm-subject-skill-chip">' + e(skill) + '<button type="button" data-subject-skill-remove="' + index + '" aria-label="Remover habilidade ' + e(skill) + '">×</button></span>').join('');
+        const input = this.querySelector<HTMLInputElement>('[data-subject-skill-input]');
+        const menu = this.querySelector<HTMLElement>('[data-subject-skill-menu]');
+        const options = this.querySelector<HTMLElement>('[data-subject-skill-options]');
+        const understanding = this.querySelector<HTMLElement>('[data-subject-skill-understanding]');
+        const suggestions = this.subjectSkillSuggestions(interaction.subjectSkillQuery);
+        const activeIndex = suggestions.length ? Math.max(0, Math.min(suggestions.length - 1, interaction.subjectSkillActiveIndex)) : 0;
+        if (input) {
+          if (input.value !== interaction.subjectSkillQuery) input.value = interaction.subjectSkillQuery;
+          input.setAttribute('aria-expanded', String(open && interaction.subjectSkillMenuOpen && suggestions.length > 0));
+          if (open && interaction.subjectSkillMenuOpen && suggestions.length) input.setAttribute('aria-activedescendant', 'subject-skill-option-' + activeIndex);
+          else input.removeAttribute('aria-activedescendant');
+        }
+        if (menu) menu.hidden = !open || !interaction.subjectSkillMenuOpen || suggestions.length === 0;
+        if (options) options.innerHTML = suggestions.map((suggestion, index) => '<button type="button" id="subject-skill-option-' + index + '" class="lm-subject-skill-option' + (index === activeIndex ? ' active' : '') + '" role="option" aria-selected="' + String(index === activeIndex) + '" data-subject-skill-index="' + index + '"><span>' + e(suggestion.name) + '</span><small>' + (SUBJECT_SKILL_SUGGESTIONS.some(item => item.name === suggestion.name) ? 'SUGESTÃO' : 'ADICIONAR NOME') + '</small></button>').join('');
+        if (understanding) {
+          const active = suggestions[activeIndex];
+          const insight = interaction.subjectSkillInsight?.skillName === active?.name ? interaction.subjectSkillInsight : null;
+          const eyebrow = !active ? '' : insight?.status === 'pending'
+            ? 'CONSULTANDO COGNOSCERE LOCAL'
+            : insight?.status === 'ready'
+              ? 'ENTENDIMENTO DO METIS LOCAL'
+              : insight?.status === 'error'
+                ? 'REFERÊNCIA · FORGE LOCAL INDISPONÍVEL'
+                : 'ENTENDIMENTO DO METIS LOCAL';
+          const explanation = insight?.explanation || 'Passe o cursor, use as setas ou digite para consultar como o assistente local entende esta habilidade.';
+          understanding.hidden = !active || !open || !interaction.subjectSkillMenuOpen;
+          understanding.innerHTML = active
+            ? '<span class="lm-eyebrow">' + eyebrow + '</span><b>' + e(active.name) + '</b>'
+              + (insight?.status === 'pending' ? '<span class="lm-subject-skill-spinner" aria-hidden="true"></span>' : '')
+              + '<p>' + e(explanation) + '</p>'
+              + (insight?.status === 'error' && active.understanding ? '<small>Referência demonstrativa: ' + e(active.understanding) + '</small>' : '')
+            : '';
+        }
+      }
+      private scheduleSubjectSkillUnderstanding(suggestion: SubjectSkillSuggestion | undefined): void {
+        const existing = this.state.interaction.subjectSkillInsight;
+        if (suggestion && existing?.skillName === suggestion.name && existing.status !== 'error') return;
+        if (this.subjectSkillInsightTimer !== undefined) window.clearTimeout(this.subjectSkillInsightTimer);
+        this.subjectSkillInsightTimer = undefined;
+        if (!suggestion || this.state.id !== 'pedagogy-context') {
+          this.subjectSkillInsightRevision += 1;
+          this.transitionInteraction(interaction => ({ ...interaction, subjectSkillInsight: null }));
+          return;
+        }
+        const revision = ++this.subjectSkillInsightRevision;
+        const requestId = 'skill-' + Date.now().toString(36) + '-' + revision.toString(36);
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          subjectSkillInsight: { skillName: suggestion.name, requestId, status: 'pending', explanation: '' },
+        }));
+        this.restoreSubjectFoundation();
+        this.subjectSkillInsightTimer = window.setTimeout(() => {
+          this.subjectSkillInsightTimer = undefined;
+          const current = this.state.interaction.subjectSkillInsight;
+          if (this.state.id !== 'pedagogy-context' || !this.isConnected || current?.requestId !== requestId) return;
+          const request: SubjectSkillUnderstandingRequest = { requestId, partId: 'pedagogy-context', skillName: suggestion.name };
+          this.dispatchEvent(new CustomEvent('lumira-subject-skill-understanding-request', { bubbles: true, composed: true, detail: request }));
+        }, 420);
+      }
+      private onSubjectSkillUnderstandingResult(event: CustomEvent<SubjectSkillUnderstandingResult>): void {
+        if (this.state.id !== 'pedagogy-context') return;
+        const detail = event.detail;
+        const insight = this.state.interaction.subjectSkillInsight;
+        if (!detail?.requestId || !insight || insight.requestId !== detail.requestId || insight.skillName !== detail.skillName) return;
+        const failed = Boolean(detail.error || !detail.explanation?.trim());
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          subjectSkillInsight: {
+            skillName: detail.skillName,
+            requestId: detail.requestId,
+            status: failed ? 'error' : 'ready',
+            explanation: failed ? detail.error || 'Não foi possível consultar o entendimento agora.' : detail.explanation!.trim(),
+          },
+        }));
+        this.restoreSubjectFoundation();
+      }
+      private addSubjectSkill(name: string): void {
+        const value = name.trim();
+        if (!value || this.state.id !== 'pedagogy-context') return;
+        const existing = this.state.interaction.subjectSkills ?? [];
+        if (existing.some(skill => skill.toLocaleLowerCase() === value.toLocaleLowerCase())) {
+          this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Essa habilidade já está na lista.' }));
+          this.restoreSubjectFoundation();
+          return;
+        }
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          subjectSkills: [...(interaction.subjectSkills ?? []), value],
+          subjectSkillQuery: '',
+          subjectSkillActiveIndex: 0,
+          subjectSkillMenuOpen: false,
+          feedback: '',
+        }));
+        this.restoreSubjectFoundation();
+        this.querySelector<HTMLInputElement>('[data-subject-skill-input]')?.focus();
+      }
       private storyComposerMarkup(): string {
         const interaction = this.state.interaction;
         const tool = interaction.storyComposerTool;
@@ -3744,6 +3933,57 @@ export function registerComponentElements(): void {
       }
       private onClick(event: Event): void {
         if (!(event.target instanceof Element)) return;
+        if (this.state.id === 'pedagogy-context' && !event.target.closest('[data-subject-skill-picker]') && this.state.interaction.subjectSkillMenuOpen) {
+          this.transitionInteraction(interaction => ({ ...interaction, subjectSkillMenuOpen: false }));
+          this.restoreSubjectFoundation();
+        }
+        const subjectToggle = event.target.closest<HTMLButtonElement>('[data-subject-foundation-toggle]');
+        if (subjectToggle && this.state.id === 'pedagogy-context') {
+          const opening = this.state.interaction.groups['subject-foundation-open'] !== 'yes';
+          const startingFreshDraft = opening && this.state.interaction.groups['subject-foundation-draft-started'] !== 'yes';
+          const foundationKeys = ['subject-name', 'subject-nature', 'subject-understanding', 'subject-approach', 'subject-aspects']
+            .map(name => 'pedagogy-context:' + name);
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            groups: { ...interaction.groups, 'subject-foundation-open': opening ? 'yes' : '', ...(opening ? { 'subject-foundation-draft-started': 'yes' } : {}) },
+            ...(startingFreshDraft ? { fields: Object.fromEntries(Object.entries(interaction.fields).filter(([key]) => !foundationKeys.includes(key))) } : {}),
+            ...(startingFreshDraft ? { subjectSkills: [], subjectSkillQuery: '', subjectSkillMenuOpen: false, subjectSkillActiveIndex: 0 } : {}),
+            feedback: '',
+          }));
+          this.render();
+          if (opening) this.querySelector<HTMLInputElement>('[data-subject-foundation-form] [name="subjectName"]')?.focus();
+          else subjectToggle.focus();
+          return;
+        }
+        const subjectCancel = event.target.closest<HTMLButtonElement>('[data-subject-foundation-cancel]');
+        if (subjectCancel && this.state.id === 'pedagogy-context') {
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            groups: { ...interaction.groups, 'subject-foundation-open': '', 'subject-foundation-draft-started': '' },
+            subjectSkills: [], subjectSkillQuery: '', subjectSkillMenuOpen: false, subjectSkillActiveIndex: 0,
+            feedback: '',
+          }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-subject-foundation-toggle]')?.focus();
+          return;
+        }
+        const skillOption = event.target.closest<HTMLButtonElement>('[data-subject-skill-index]');
+        if (skillOption && this.state.id === 'pedagogy-context') {
+          const suggestion = this.subjectSkillSuggestions(this.state.interaction.subjectSkillQuery)[Number(skillOption.dataset.subjectSkillIndex ?? '0')];
+          if (suggestion) this.addSubjectSkill(suggestion.name);
+          return;
+        }
+        const skillRemove = event.target.closest<HTMLButtonElement>('[data-subject-skill-remove]');
+        if (skillRemove && this.state.id === 'pedagogy-context') {
+          const index = Number(skillRemove.dataset.subjectSkillRemove);
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            subjectSkills: (interaction.subjectSkills ?? []).filter((_, skillIndex) => skillIndex !== index),
+          }));
+          this.restoreSubjectFoundation();
+          this.querySelector<HTMLInputElement>('[data-subject-skill-input]')?.focus();
+          return;
+        }
         const checkbox = event.target.closest<HTMLInputElement>('input[type="checkbox"], input[type="radio"]');
         if (checkbox && this.contains(checkbox)) {
           const key = checkbox.dataset.interactionToggle;
@@ -4332,9 +4572,59 @@ export function registerComponentElements(): void {
         }
         this.render();
       }
+      private onFocusIn(event: Event): void {
+        if (this.state.id !== 'pedagogy-context' || !(event.target instanceof HTMLInputElement) || !event.target.matches('[data-subject-skill-input]')) return;
+        this.transitionInteraction(interaction => ({ ...interaction, subjectSkillQuery: event.target instanceof HTMLInputElement ? event.target.value : '', subjectSkillMenuOpen: true, subjectSkillActiveIndex: 0 }));
+        this.scheduleSubjectSkillUnderstanding(this.subjectSkillSuggestions(event.target.value)[0]);
+        this.restoreSubjectFoundation();
+      }
+      private onPointerOver(event: Event): void {
+        if (this.state.id !== 'pedagogy-context' || !(event.target instanceof Element)) return;
+        const option = event.target.closest<HTMLButtonElement>('[data-subject-skill-index]');
+        const index = Number(option?.dataset.subjectSkillIndex);
+        if (!option || !Number.isInteger(index) || index === this.state.interaction.subjectSkillActiveIndex) return;
+        this.transitionInteraction(interaction => ({ ...interaction, subjectSkillActiveIndex: index }));
+        this.querySelectorAll<HTMLButtonElement>('[data-subject-skill-index]').forEach(item => {
+          const active = Number(item.dataset.subjectSkillIndex) === index;
+          item.classList.toggle('active', active);
+          item.setAttribute('aria-selected', String(active));
+        });
+        const suggestion = this.subjectSkillSuggestions(this.state.interaction.subjectSkillQuery)[index];
+        this.scheduleSubjectSkillUnderstanding(suggestion);
+        this.restoreSubjectFoundation();
+        const input = this.querySelector<HTMLInputElement>('[data-subject-skill-input]');
+        if (input) input.setAttribute('aria-activedescendant', 'subject-skill-option-' + index);
+      }
       private onKeyDown(event: Event): void {
         if (!(event instanceof KeyboardEvent)) return;
         if (this.platformReferenceField(event.target) && this.handlePlatformReferenceKey(event, event.target)) return;
+        if (this.state.id === 'pedagogy-context' && event.target instanceof HTMLInputElement && event.target.matches('[data-subject-skill-input]')) {
+          const suggestions = this.subjectSkillSuggestions(event.target.value);
+          const activeIndex = this.state.interaction.subjectSkillActiveIndex;
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            if (!suggestions.length) return;
+            event.preventDefault();
+            const nextIndex = event.key === 'ArrowDown'
+              ? (activeIndex + 1) % suggestions.length
+              : (activeIndex - 1 + suggestions.length) % suggestions.length;
+            this.transitionInteraction(interaction => ({ ...interaction, subjectSkillQuery: event.target instanceof HTMLInputElement ? event.target.value : '', subjectSkillActiveIndex: nextIndex, subjectSkillMenuOpen: true }));
+            this.scheduleSubjectSkillUnderstanding(this.subjectSkillSuggestions(event.target.value)[nextIndex]);
+            this.restoreSubjectFoundation();
+            return;
+          }
+          if (event.key === 'Enter' && this.state.interaction.subjectSkillMenuOpen) {
+            event.preventDefault();
+            const suggestion = suggestions[activeIndex] ?? suggestions[0];
+            if (suggestion) this.addSubjectSkill(suggestion.name);
+            return;
+          }
+          if (event.key === 'Escape' && this.state.interaction.subjectSkillMenuOpen) {
+            event.preventDefault();
+            this.transitionInteraction(interaction => ({ ...interaction, subjectSkillMenuOpen: false }));
+            this.restoreSubjectFoundation();
+            return;
+          }
+        }
         if (isProfileProjectPart(this.state.id)) {
           const currentStep = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('[data-project-wizard-step-select]') : null;
           if (currentStep && this.contains(currentStep)) {
@@ -4390,6 +4680,12 @@ export function registerComponentElements(): void {
         }
         if (field.hasAttribute('data-workspace-search')) {
           this.updateWorkspaceSearch(field.value);
+          return;
+        }
+        if (field.matches('[data-subject-skill-input]') && this.state.id === 'pedagogy-context') {
+          this.transitionInteraction(interaction => ({ ...interaction, subjectSkillQuery: field.value, subjectSkillActiveIndex: 0, subjectSkillMenuOpen: true }));
+          this.scheduleSubjectSkillUnderstanding(this.subjectSkillSuggestions(field.value)[0]);
+          this.restoreSubjectFoundation();
           return;
         }
         if (field.hasAttribute('data-profile-music-url')) {
@@ -4481,6 +4777,33 @@ export function registerComponentElements(): void {
       private onSubmit(event: Event): void {
         event.preventDefault();
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
+        if (form?.matches('[data-subject-foundation-form]') && this.state.id === 'pedagogy-context') {
+          const values = new FormData(form);
+          const foundation: SubjectFoundation = {
+            name: String(values.get('subjectName') ?? '').trim(),
+            nature: String(values.get('subjectNature') ?? '').trim(),
+            understanding: String(values.get('subjectUnderstanding') ?? '').trim(),
+            approach: String(values.get('subjectApproach') ?? '').trim(),
+            aspects: String(values.get('subjectAspects') ?? '').trim(),
+            skills: [...(this.state.interaction.subjectSkills ?? [])],
+          };
+          if (!foundation.name || !foundation.nature || !foundation.understanding || !foundation.approach || !foundation.aspects || !foundation.skills.length) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'Preencha o nome, as quatro dimensões da matéria e adicione ao menos uma habilidade.' }));
+            this.render();
+            this.querySelector<HTMLInputElement>('[data-subject-foundation-form] [name="subjectName"]')?.focus();
+            return;
+          }
+          this.transitionInteraction(interaction => ({
+            ...interaction,
+            subjectFoundation: foundation,
+            groups: { ...interaction.groups, 'subject-foundation-open': '', 'subject-foundation-draft-started': '' },
+            subjectSkillQuery: '', subjectSkillMenuOpen: false, subjectSkillActiveIndex: 0,
+            feedback: 'Fundação de “' + foundation.name + '” registrada nesta demonstração com quatro descrições e ' + foundation.skills.length + (foundation.skills.length === 1 ? ' habilidade.' : ' habilidades.'),
+          }));
+          this.render();
+          this.querySelector<HTMLButtonElement>('[data-subject-foundation-toggle]')?.focus();
+          return;
+        }
         if (form?.matches('[data-profile-agenda-composer]') && isProfileAgendaPart(this.state.id)) {
           const values = new FormData(form);
           const title = String(values.get('agendaTitle') ?? '').trim();

@@ -18,6 +18,14 @@
 
 The project form remains a browser-local draft. Saving in this prototype adds it only to the current page state; the chat response is advice and reflection, not a persisted project record.
 
+## Subject foundation authoring
+
+The `pedagogy-context` part can open an inline **Criar matéria** flow. Saving requires a name, a description of the subject's nature, the understanding it should build, the learning approach, relevant aspects and at least one skill. The skill input filters a suggestion catalog, supports keyboard selection, accepts additional free-form names without a fixed item limit and shows a floating tooltip for the active option. After a short input pause or when an option becomes active, the tooltip asks the local Cognoscere Forge to have Metis explain its understanding of that skill. Responses are tied to request IDs so an older response cannot replace the tooltip for a newer option. If Forge is unavailable, the panel says so and marks any catalog copy as a demonstrative reference.
+
+The saved subject foundation and skills live in that page part's state iterator for the current demo session. The four descriptions are collected as structured context for later pedagogy work; this creation flow does not yet send the whole foundation to an AI service or persist the subject beyond the session. The tooltip request sends only the currently active skill name.
+
+The component emits `lumira-subject-skill-understanding-request` with `{ requestId, partId: 'pedagogy-context', skillName }`. `src/program.ts` validates the originating part and requests a short natural-language explanation from local Forge using Metis-4B, then returns `lumira-subject-skill-understanding-result` with the same request ID. The component ignores responses for a different active skill or an obsolete request.
+
 ## Project narrative, authorship, and AI review
 
 The project part explains how a learning idea becomes collaborative work. Existing projects are expandable publication cards: opening one reveals authorship, audience, goal, justification, learning evidence, competencies, milestones, and its Social draft or private state. Teacher and student project lists use this same narrative structure.
@@ -58,6 +66,7 @@ The student profile's Competencies part starts with the student's public interes
 - Opinion-message streams are local to the running page session and clear on reload. There is no WebSocket, cross-user delivery, durable storage, or Forge request in this prototype. Community posts remain local to their page-part state iterator.
 - The part presentation describes the platform's moderation responsibility: review a student's post for respectful expression, privacy, and contribution to the activity or academic discussion, while preserving the student's authorship. This prototype displays that policy but does not implement a real moderation queue, automated classifier, or approval service. Its local posts and messages are clearly labeled as demonstration content.
 - Private assessment answers, student-specific feedback, and enrollment data do not enter the public feed or opinion circles.
+- In expanded view, the continuous page flow gives each component session more vertical space. Scroll snapping aligns each session heading with the top edge of the scroll area immediately below the presentation toolbar; scrollpoint selection follows that heading.
 
 ## Profile agenda and shareable events
 

@@ -298,7 +298,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         const componentId = point?.dataset.scrollpoint;
         const screenId = point?.dataset.screenId ?? this.state.screenId;
         if (componentId && screenId) this.selectLocation(screenId, componentId, true);
-      }, { root: scroller, rootMargin: '-12% 0px -72% 0px', threshold: 0 });
+      }, { root: scroller, rootMargin: this.state.fullView ? '-2px 0px -86% 0px' : '-12% 0px -72% 0px', threshold: 0 });
       this.querySelectorAll<HTMLElement>('[data-scrollpoint]').forEach(point => this.scrollpointObserver?.observe(point));
     }
     private focusedScrollpoint(): { screenId: string; componentId: string } | undefined {
@@ -332,8 +332,10 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         const point = [...this.querySelectorAll<HTMLElement>('[data-scrollpoint]')]
           .find(item => item.dataset.scrollpoint === componentId && item.dataset.screenId === screenId);
         if (!scroller || !point) return;
-        const top = scroller.scrollTop + point.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 12;
-        scroller.scrollTop = Math.max(0, top);
+        const target = this.state.fullView ? point.querySelector<HTMLElement>('.lm-flow-element-heading') ?? point : point;
+        const offset = this.state.fullView ? 0 : 12;
+        const top = scroller.scrollTop + target.getBoundingClientRect().top - scroller.getBoundingClientRect().top - offset;
+        scroller.scrollTo({ top: Math.max(0, top), behavior: this.state.fullView ? 'smooth' : 'auto' });
       });
     }
     private selectComponent(componentId: string, replaceUrl: boolean): void {

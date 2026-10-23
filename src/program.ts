@@ -1,6 +1,6 @@
 /** Monólito interno dos programas: domínios, gateways e API operacional da plataforma. */
 import { shell, landing, access, page, createHtmlIterator } from './components';
-import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CognoscereStatus, CommunityEvent, CommunityPost, Competency, Contracts, Gateway, LoginInput, LumiraSystem, Material, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, Preview, ProjectAssistantRequest, Role, SessionUser, SondagemPlan, SocialProfile } from './types';
+import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CognoscereStatus, CommunityEvent, CommunityPost, Competency, Contracts, Gateway, LoginInput, LumiraSystem, Material, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, Preview, ProjectAssistantRequest, Role, SessionUser, SondagemPlan, SocialProfile, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
 
 /** Domain policy stays private to this program module. */
 export interface ProgramRenderContext {
@@ -105,6 +105,34 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       else if (typeof structured.summary === 'string' && structured.summary.trim()) reply = structured.summary.trim();
     } catch { /* Texto Markdown simples também é resposta válida. */ }
     return { reply };
+  }
+  async function understandSubjectSkill(request: SubjectSkillUnderstandingRequest): Promise<string> {
+    if (request.partId !== 'pedagogy-context') throw new Error('Parte de matéria inválida.');
+    const skillName = request.skillName.trim();
+    if (!skillName || skillName.length > 180) throw new Error('Informe uma habilidade com até 180 caracteres.');
+    const messages = [
+      {
+        role: 'system',
+        content: [
+          'Você é o assistente pedagógico local da plataforma educacional Lumira. A conversa é processada pelo Metis local e revisada pelo Cognoscere Forge.',
+          'Explique em um parágrafo curto como você entende a habilidade informada e que ação de aprendizagem ela pode orientar. Use linguagem clara para uma professora.',
+          'Se a habilidade for um código curricular cuja descrição oficial não esteja explícita no pedido, não invente nem atribua uma redação oficial. Expresse a interpretação com cautela e diga que o código precisa ser confirmado no documento curricular.',
+          'Não gere atividades, comandos, JSON ou instruções para alterar o sistema. Responda somente com a explicação em texto natural.',
+        ].join('\n'),
+      },
+      { role: 'user', content: 'Habilidade selecionada: ' + skillName },
+    ];
+    const response = await fetch(localForgeEndpoint('/v1/chat/completions'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'Metis-4B', slug: cognoscereLocal.slug, unit_id: cognoscereLocal.unitId, mode: 'document_update', messages, max_tokens: 220 }),
+      signal: AbortSignal.timeout(45000),
+    });
+    if (!response.ok) throw await readForgeError(response);
+    const payload = await response.json() as { choices?: Array<{ message?: { content?: unknown } }> };
+    const content = payload.choices?.[0]?.message?.content;
+    if (typeof content !== 'string' || !content.trim()) throw new Error('O Cognoscere local não retornou uma explicação.');
+    return content.trim();
   }
   type AgeGradePolicy = {
     version: string;
@@ -420,6 +448,12 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     return event.target.dataset.componentId === partId ? event.target : null;
   }
 
+  function subjectSkillOrigin(event: Event, partId: unknown): HTMLElement | null {
+    if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
+    if (partId !== 'pedagogy-context' || event.target.dataset.componentId !== 'pedagogy-context') return null;
+    return event.target;
+  }
+
   function opinionMessageOrigin(event: Event, partId: unknown): HTMLElement | null {
     if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
     if (partId !== 'community-feed' || event.target.dataset.componentId !== 'community-feed') return null;
@@ -451,6 +485,19 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
         error: error instanceof Error ? error.message : String(error),
       });
     }
+  }
+
+  async function onSubjectSkillUnderstandingRequest(event: Event): Promise<void> {
+    const detail = (event as CustomEvent<SubjectSkillUnderstandingRequest>).detail;
+    const origin = subjectSkillOrigin(event, detail?.partId);
+    if (!origin || !detail || typeof detail.requestId !== 'string' || !/^[a-z0-9-]{1,80}$/i.test(detail.requestId)) return;
+    const result: SubjectSkillUnderstandingResult = { requestId: detail.requestId, skillName: typeof detail.skillName === 'string' ? detail.skillName : '' };
+    try {
+      result.explanation = await understandSubjectSkill(detail);
+    } catch (error) {
+      result.error = error instanceof Error ? error.message : String(error);
+    }
+    if (origin.isConnected) origin.dispatchEvent(new CustomEvent('lumira-subject-skill-understanding-result', { detail: result }));
   }
 
   function dispatchOpinionMessageEvent(origin: HTMLElement, name: string, detail: OpinionCircleMessageDelivery | OpinionCircleMessageRejection): void {
@@ -521,10 +568,12 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
   // startUI pertence ao próprio program e conecta a interface ao sistema retornado.
   mount.addEventListener('lumira-project-assistant-status-request', onProjectAssistantStatus);
   mount.addEventListener('lumira-project-assistant-request', onProjectAssistantRequest);
+  mount.addEventListener('lumira-subject-skill-understanding-request', onSubjectSkillUnderstandingRequest);
   mount.addEventListener('lumira-opinion-message-send', onOpinionMessageSend);
   removeListeners.push(
     () => mount.removeEventListener('lumira-project-assistant-status-request', onProjectAssistantStatus),
     () => mount.removeEventListener('lumira-project-assistant-request', onProjectAssistantRequest),
+    () => mount.removeEventListener('lumira-subject-skill-understanding-request', onSubjectSkillUnderstandingRequest),
     () => mount.removeEventListener('lumira-opinion-message-send', onOpinionMessageSend),
   );
 
