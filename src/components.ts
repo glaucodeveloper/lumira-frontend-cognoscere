@@ -221,7 +221,7 @@ const platformResponsibilities: Record<string, string> = {
   'teacher-personalization': 'A personalização permite à docente ajustar a apresentação do perfil e escolher quais informações deseja tornar visíveis. Essa escolha dá controle sobre a identidade pública e a autoria de suas produções.\n\nQuando a adaptação alcança uma experiência de aprendizagem, a orientação do Capítulo 01 é variar contexto, perguntas e apoios para tornar outros raciocínios observáveis, sem alterar a finalidade comum de compreender a relação estudada. Personalizar não é repetir o mesmo exercício com outra aparência.',
   'pedagogy-context': 'A matéria começa por uma fundação que explica sua natureza, o entendimento que pretende construir, a abordagem para investigar esse conhecimento e os aspectos que devem aparecer em situações de aprendizagem. Essas descrições dão à IA um contexto pedagógico antes que ela sugira materiais ou atividades.\n\nA professora associa habilidades por nome ou código curricular e revê a interpretação sugerida para cada uma. A matéria e a turma então situam série, finalidade e possibilidades de participação; variar contextos ajuda a observar a mesma relação sem presumir características do estudante pelo lugar onde vive ou pelo grupo a que pertence.',
   'pedagogy-competency': 'A habilidade curricular funciona como referência; a competência explicita a ação que será exercida sobre um assunto. Só depois dessa relação a equipe escolhe situações, materiais e critérios para observar o trabalho.\n\nUma tarefa pode mobilizar mais de uma habilidade. A revisão precisa indicar que relações aquela questão realmente permite examinar, sem afirmar que a simples presença de códigos comprova aprendizagem.',
-  'pedagogy-activity-builder': 'A professora escreve a compreensão que deseja observar e seleciona referências e contexto. A IA pode propor uma situação e alternativas de enunciado; a docente verifica se os dados são suficientes, se a pergunta exige o raciocínio pretendido e se a resposta não é antecipada pelo próprio texto.\n\nO rascunho permanece editável. A aprovação fixa uma revisão identificável para a turma; gerar outra versão não altera materiais já publicados nem muda silenciosamente os contratos de avaliação.',
+  'pedagogy-activity-builder': 'A professora começa pela compreensão que deseja observar e organiza a atividade em uma sequência de questões. Cada etapa oferece um formulário próprio para editar situação, dados, enunciado e a compreensão que aquela questão deve evidenciar; novas questões podem ser incluídas sem um limite fixo.\n\nNa revisão final, a docente percorre o conjunto e confirma se cada pergunta apresenta dados suficientes e pede o raciocínio planejado. O rascunho fica no estado local desta demonstração: aprová-lo registra a revisão na tela, sem publicar nem alterar uma atividade real.',
   'pedagogy-evidence-review': 'A leitura do monitor descreve realizações em relação a critérios específicos e aponta trechos da resposta que sustentam cada atribuição. A professora pode corrigir a leitura ou registrar que o enunciado não produziu evidência suficiente.\n\nUma resposta pode sustentar um critério e não informar outro. A plataforma não transforma um parecer isolado em nota global, progressão curricular ou decisão automática sobre o próximo conteúdo.',
   'pedagogy-course-sequence': 'Um material de compreensão encadeia texto-base, exemplo comentado, prática guiada, tentativa independente e aplicação em outro contexto. Cada segmento explica a ação que pretende exercitar e a evidência que poderá produzir.\n\nA personalização responde a uma necessidade observada: a IA pode sugerir outra representação ou contexto, e a professora revisa a razão da mudança. Concluir uma etapa não basta para declarar a competência consolidada; é preciso observar a ação em uma situação adequada.',
   'pedagogy-material-share': 'Depois da revisão, a professora escolhe como apresentar o material, a quem disponibilizá-lo e quais partes podem circular. A publicação é um objeto próprio, vinculado à matéria e à competência sem carregar a resposta privada que motivou a produção.\n\nO conteúdo social comunica a proposta pedagógica e preserva sua autoria. Respostas individuais, hipóteses e pareceres de sondagem permanecem no acompanhamento reservado.',
@@ -451,7 +451,7 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
       ...shellParts('teacher-workspace', 'derived'),
       partSpec('pedagogy-context', 'Matéria e turma', 'Especialidade, turma, série e contexto de aplicação.', 'derived', 'teacher-workspace'),
       partSpec('pedagogy-competency', 'Competência e critérios', 'Referência curricular ligada à ação e às evidências esperadas.', 'derived', 'teacher-workspace'),
-      partSpec('pedagogy-activity-builder', 'Atividade aberta', 'Orientação docente, preenchimento por IA simulada e revisão editável.', 'derived', 'teacher-workspace'),
+      partSpec('pedagogy-activity-builder', 'Atividade aberta', 'Editor em etapas com questões adicionáveis, compreensão esperada por questão e revisão final.', 'derived', 'teacher-workspace'),
       partSpec('pedagogy-evidence-review', 'Revisão de evidências', 'Resposta demonstrativa, trechos citados e revisão docente por critério.', 'derived', 'teacher-workspace'),
       partSpec('pedagogy-course-sequence', 'Material de compreensão', 'Sequência progressiva com hipótese, representação e aplicação independente.', 'derived', 'teacher-workspace'),
       partSpec('pedagogy-material-share', 'Compartilhamento do material', 'Publicação revisada com fronteira explícita para dados privados.', 'derived', 'teacher-workspace'),
@@ -704,7 +704,17 @@ export const initialComponentData: Record<string, unknown> = {
     skills: ['EF08CI03', 'EF08CI04', 'EF08CI05'],
     criteria: ['Considera a potência do conjunto de lâmpadas', 'Incorpora a mudança na duração de uso', 'Justifica a comparação com os dados do contexto'],
     prompt: 'Crie uma questão aberta situada na biblioteca escolar. Apresente interpretações divergentes e dados suficientes para confrontá-las. Solicite uma conclusão justificada. Não indique a fórmula e mantenha os critérios de análise fora do enunciado.',
-    activityTitle: '', question: '', activityContext: '', knowledgeRelation: '',
+    activityTitle: 'Consumo de energia na biblioteca',
+    activityUnderstanding: 'Comparar os usos relacionando potência total e duração. Perceber que reduzir o tempo de funcionamento pode mudar a conclusão baseada apenas na potência dos aparelhos.',
+    activityQuestions: [
+      {
+        id: 'question-1',
+        title: 'Qual proposta reduz mais o consumo?',
+        context: 'Oito lâmpadas de 10 W ficam acesas por 6 horas ao dia. Um ventilador de 100 W, antes ligado por 8 horas ao dia, passará a funcionar por 4 horas. O período observado é de 20 dias.',
+        prompt: 'Compare o consumo dos dois usos no período. Explique como chegou à conclusão e indique se uma informação adicional poderia mudar sua decisão.',
+        understanding: 'Relacionar potência, quantidade de aparelhos e duração de uso para comparar o consumo no mesmo período; justificar a conclusão com os dados e reconhecer o efeito da mudança no horário.',
+      },
+    ],
     courseTitle: 'Energia em uso: potência, tempo e consumo',
     shareDescription: 'Sequência de compreensão sobre como potência e duração de uso se relacionam ao consumo elétrico.',
   },
@@ -869,6 +879,16 @@ function labList<T = unknown>(data: ComponentFixture, key: string): T[] {
   const limits = data.__prototypeLimits as Record<string, number> | undefined;
   return limits && typeof limits[key] === 'number' ? list.slice(0, Math.max(0, limits[key])) : list;
 }
+function activityQuestionSeeds(data: ComponentFixture): ActivityQuestionSeed[] {
+  const value = data.activityQuestions;
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is ActivityQuestionSeed => Boolean(item && typeof item === 'object'
+    && typeof (item as ActivityQuestionSeed).id === 'string'
+    && typeof (item as ActivityQuestionSeed).title === 'string'
+    && typeof (item as ActivityQuestionSeed).context === 'string'
+    && typeof (item as ActivityQuestionSeed).prompt === 'string'
+    && typeof (item as ActivityQuestionSeed).understanding === 'string'));
+}
 type DemoPagePartProps = {
   id: string;
   title: string;
@@ -877,6 +897,7 @@ type DemoPagePartProps = {
   evidence: ReferenceEvidence;
   selectedId: string;
   className: string;
+  fixture: ComponentFixture;
   situation: ComponentMockSituation;
   prototypeParameters: PrototypeParameterValues;
 };
@@ -890,6 +911,7 @@ type DemoPagePartInteraction = {
   subjectSkillActiveIndex: number;
   subjectSkillMenuOpen: boolean;
   subjectSkillInsight: { skillName: string; requestId: string; status: 'pending' | 'ready' | 'error'; explanation: string } | null;
+  activityQuestionIds: string[] | null;
   communityPosts: CommunityPostDraft[];
   opinionCircleMessages: Record<string, CommunityOpinionMessage[]>;
   opinionMessageRequests: Record<string, string>;
@@ -992,6 +1014,7 @@ type SubjectFoundation = {
   aspects: string;
   skills: string[];
 };
+type ActivityQuestionSeed = { id: string; title: string; context: string; prompt: string; understanding: string };
 type SubjectSkillSuggestion = { name: string; understanding: string };
 const SUBJECT_SKILL_SUGGESTIONS: readonly SubjectSkillSuggestion[] = [
   { name: 'EF08CI03 · Transformações de energia', understanding: 'A IA lê esta habilidade como investigação das transformações de energia em aparelhos e situações, relacionando cada explicação ao fenômeno observado.' },
@@ -1480,7 +1503,7 @@ function prototypeData(id: string, data: ComponentFixture): ComponentFixture {
   result.__prototypeLimits = limits;
   return result;
 }
-function labPart(id: string, content: string, selectedId: string, className = ''): string {
+function labPart(id: string, content: string, selectedId: string, className = '', fixture: ComponentFixture = {}): string {
   if (!activePageComposition) throw new Error('Parte de página criada fora da composição de um componente de página.');
   const part = activePageComposition.existing.get(id) ?? document.createElement('lumira-page-part') as DemoPagePartElement;
   const situation = activePageComposition.situation;
@@ -1496,6 +1519,7 @@ function labPart(id: string, content: string, selectedId: string, className = ''
     evidence,
     selectedId,
     className,
+    fixture: structuredClone(fixture),
     situation: { ...situation, status: situation.componentStates?.[id] ?? situation.status },
     prototypeParameters: activePageComposition.prototypeParameters[id] ?? {},
   });
@@ -2107,15 +2131,10 @@ function renderPedagogyCompetency(data: ComponentFixture, selectedId: string): s
 
 function renderPedagogyActivityBuilder(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('pedagogy-activity-builder', data);
-  const content = '<article class="lm-panel lm-activity-builder"><header><div><span class="lm-eyebrow">EDITOR DE ATIVIDADE · RASCUNHO V1</span><h2>Preparar uma questão aberta</h2><p>Descreva a compreensão desejada. A proposta simulada será preenchida em campos que você pode revisar.</p></div><span class="lm-ai-badge"><i></i> IA · SIMULAÇÃO</span></header>'
-    + '<label class="lm-ai-prompt"><span>Orientação da professora</span><textarea name="prompt" data-ai-field="prompt" rows="4">' + e(labText(data, 'prompt')) + '</textarea></label>'
-    + '<div class="lm-ai-actions"><label><span>Formato</span><select name="responseType" data-ai-field="responseType"><option>Resposta aberta com justificativa</option><option>Comparação com tabela</option><option>Explicação oral</option></select></label><button type="button" class="lm-primary-button" data-ai-generate="activity">✦ Gerar proposta demonstrativa</button></div>'
-    + '<div class="lm-ai-empty" data-ai-empty><span aria-hidden="true">✳</span><div><b>Prévia ainda não gerada</b><p>A sugestão aparecerá aqui para edição. Nenhum modelo está conectado.</p></div></div>'
-    + '<section class="lm-generated-activity" data-ai-generated-card hidden><div class="lm-generated-heading"><div><span class="lm-eyebrow">RASCUNHO SUGERIDO · DEMONSTRAÇÃO LOCAL</span><h3>Revise cada campo antes de aprovar</h3></div><button type="button" class="lm-quiet-action" data-ai-generate="activity">Gerar alternativa</button></div>'
-    + '<div class="lm-activity-edit-grid"><label><span>Título</span><input name="activityTitle" data-ai-field="activityTitle" value=""></label><label class="lm-edit-wide"><span>Enunciado apresentado ao estudante</span><textarea name="question" data-ai-field="question" rows="4"></textarea></label><label><span>Contexto e dados</span><textarea name="activityContext" data-ai-field="activityContext" rows="3"></textarea></label><label><span>Relação planejada · uso docente</span><textarea name="teacherRelation" data-ai-field="teacherRelation" rows="3"></textarea></label></div>'
-    + '<div class="lm-generated-actions"><label><input type="checkbox" name="teacherReviewed" data-ai-field="teacherReviewed"><span>Conferi se os dados são suficientes e se o enunciado não antecipa a conclusão.</span></label><button type="button" class="lm-primary-button" data-review-action="activity">Aprovar rascunho para revisão</button></div><p class="lm-action-feedback" data-review-feedback role="status"></p></section>'
-    + '<p class="lm-pedagogy-note">A aprovação cria uma revisão de demonstração. Não publica nem altera uma atividade real.</p></article>';
-  return labPart('pedagogy-activity-builder', content, selectedId, 'lm-pedagogy-panel-part');
+  const content = '<article class="lm-panel lm-activity-builder"><header><div><span class="lm-eyebrow">EDITOR DE ATIVIDADE · RASCUNHO LOCAL</span><h2>Construir uma sequência de questões</h2><p>Organize a intenção pedagógica, edite cada pergunta em sua própria etapa e revise o conjunto antes de confirmar.</p></div><span class="lm-derived-label">EDITÁVEL NESTA TELA</span></header>'
+    + '<section class="lm-activity-editor" data-activity-editor><div data-activity-editor-content></div><p class="lm-action-feedback" data-review-feedback role="status" aria-live="polite"></p></section>'
+    + '<p class="lm-pedagogy-note">O rascunho e a aprovação existem somente nesta sessão de demonstração. Não há publicação de atividade real.</p></article>';
+  return labPart('pedagogy-activity-builder', content, selectedId, 'lm-pedagogy-panel-part', data);
 }
 
 function renderPedagogyEvidenceReview(data: ComponentFixture, selectedId: string): string {
@@ -2442,10 +2461,10 @@ export function registerComponentElements(): void {
       constructor() {
         super();
         this.transitions = componentState<DemoPagePartState>({
-          id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
+          id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', fixture: {}, situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-          groups: {}, toggles: {}, fields: {}, subjectFoundation: null, subjectSkills: null, subjectSkillQuery: '', subjectSkillActiveIndex: 0, subjectSkillMenuOpen: false, subjectSkillInsight: null, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
+          groups: {}, toggles: {}, fields: {}, subjectFoundation: null, subjectSkills: null, subjectSkillQuery: '', subjectSkillActiveIndex: 0, subjectSkillMenuOpen: false, subjectSkillInsight: null, activityQuestionIds: null, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
           projectChatStatus: null, projectChatPending: false,
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
@@ -2505,6 +2524,9 @@ export function registerComponentElements(): void {
       }
       configure(props: DemoPagePartProps): void {
         const snapshot = structuredClone(props);
+        const enteringActivityBuilder = this.state.id !== props.id && props.id === 'pedagogy-activity-builder';
+        const activitySeeds = activityQuestionSeeds(snapshot.fixture);
+        if (!activitySeeds.length && enteringActivityBuilder) activitySeeds.push({ id: 'question-1', title: '', context: '', prompt: '', understanding: '' });
         if (snapshot.id !== 'pedagogy-context' && this.subjectSkillInsightTimer !== undefined) {
           window.clearTimeout(this.subjectSkillInsightTimer);
           this.subjectSkillInsightTimer = undefined;
@@ -2526,6 +2548,23 @@ export function registerComponentElements(): void {
               subjectSkillActiveIndex: 0,
               subjectSkillMenuOpen: false,
               subjectSkillInsight: null,
+            } : {}),
+            ...(enteringActivityBuilder ? {
+              activityQuestionIds: activitySeeds.map(question => question.id),
+              fields: {
+                ...Object.fromEntries(Object.entries(current.interaction.fields).filter(([key]) => !key.startsWith('pedagogy-activity-builder:'))),
+                'pedagogy-activity-builder:activityTitle': labText(snapshot.fixture, 'activityTitle'),
+                'pedagogy-activity-builder:activityUnderstanding': labText(snapshot.fixture, 'activityUnderstanding'),
+                ...Object.fromEntries(activitySeeds.flatMap(question => [
+                  ['pedagogy-activity-builder:question:' + question.id + ':title', question.title],
+                  ['pedagogy-activity-builder:question:' + question.id + ':context', question.context],
+                  ['pedagogy-activity-builder:question:' + question.id + ':prompt', question.prompt],
+                  ['pedagogy-activity-builder:question:' + question.id + ':understanding', question.understanding],
+                ])),
+              },
+              groups: { ...current.interaction.groups, 'activity-step': '0' },
+              toggles: { ...current.interaction.toggles, 'activity-review-confirmed': false, 'activity-approved': false },
+              reviewFeedback: '',
             } : {}),
             selectedStory: current.interaction.selectedStory ?? (props.id.endsWith('-stories') ? 0 : null),
           },
@@ -3433,11 +3472,7 @@ export function registerComponentElements(): void {
       private storyFieldKey(name: string): string { return this.state.id + ':story:' + name; }
       private restorePedagogyDemo(): void {
         const interaction = this.state.interaction;
-        const activityGenerated = interaction.aiGenerated.activity === true;
-        const activityCard = this.querySelector<HTMLElement>('[data-ai-generated-card]');
-        const activityEmpty = this.querySelector<HTMLElement>('[data-ai-empty]');
-        if (activityCard) activityCard.hidden = !activityGenerated;
-        if (activityEmpty) activityEmpty.hidden = activityGenerated;
+        if (this.state.id === 'pedagogy-activity-builder') this.restoreActivityEditor();
         const sequenceGenerated = interaction.aiGenerated.sequence === true;
         const sequence = this.querySelector<HTMLElement>('[data-sequence-generated]');
         const sequenceEmpty = this.querySelector<HTMLElement>('[data-sequence-empty]');
@@ -3574,6 +3609,161 @@ export function registerComponentElements(): void {
           if (key) fields[key] = value;
         });
         this.transitionInteraction(interaction => ({ ...interaction, fields }));
+      }
+      private restoreActivityEditor(): void {
+        const host = this.querySelector<HTMLElement>('[data-activity-editor-content]');
+        if (!host) return;
+        const interaction = this.state.interaction;
+        const questionIds = interaction.activityQuestionIds?.length ? interaction.activityQuestionIds : ['question-1'];
+        const lastStep = questionIds.length + 1;
+        const selectedStep = Number(interaction.groups['activity-step'] ?? '0');
+        const step = Number.isInteger(selectedStep) ? Math.max(0, Math.min(lastStep, selectedStep)) : 0;
+        const value = (key: string): string => interaction.fields['pedagogy-activity-builder:' + key] ?? '';
+        const questionValue = (id: string, field: string): string => value('question:' + id + ':' + field);
+        const isComplete = (id: string): boolean => ['title', 'context', 'prompt', 'understanding'].every(field => Boolean(questionValue(id, field).trim()));
+        const stepButtons = [
+          { index: 0, label: 'Intenção', complete: Boolean(value('activityTitle').trim() && value('activityUnderstanding').trim()) },
+          ...questionIds.map((id, index) => ({ index: index + 1, label: 'Questão ' + (index + 1), complete: isComplete(id) })),
+          { index: lastStep, label: 'Revisão', complete: interaction.toggles['activity-approved'] === true },
+        ].map((item, index) => '<button type="button" data-activity-step-index="' + item.index + '" class="' + (step === item.index ? 'active' : '') + (item.complete ? ' complete' : '') + '" aria-current="' + (step === item.index ? 'step' : 'false') + '"><span>' + String(index + 1).padStart(2, '0') + '</span><small>' + e(item.label) + '</small></button>').join('');
+        const inputField = (label: string, name: string, key: string, current: string, placeholder: string, className = ''): string => '<label class="lm-activity-field ' + className + '"><span>' + e(label) + '</span><input name="' + e(name) + '" data-interaction-field="pedagogy-activity-builder:' + e(key) + '" value="' + e(current) + '" maxlength="140" placeholder="' + e(placeholder) + '"></label>';
+        const areaField = (label: string, name: string, key: string, current: string, placeholder: string, hint: string, rows = 4, className = ''): string => '<label class="lm-activity-field ' + className + '"><span>' + e(label) + '</span>' + (hint ? '<small>' + e(hint) + '</small>' : '') + '<textarea name="' + e(name) + '" data-interaction-field="pedagogy-activity-builder:' + e(key) + '" rows="' + rows + '" maxlength="1800" placeholder="' + e(placeholder) + '">' + e(current) + '</textarea></label>';
+        let panel = '';
+        if (step === 0) {
+          panel = '<section class="lm-activity-step-panel" aria-labelledby="activity-step-heading"><span class="lm-eyebrow">ETAPA 1 · INTENÇÃO</span><h3 id="activity-step-heading" tabindex="-1">O que esta atividade deve ajudar a compreender?</h3>'
+            + inputField('Título da atividade', 'activityTitle', 'activityTitle', value('activityTitle'), 'Ex.: Consumo de energia na biblioteca')
+            + areaField('Compreensão que organiza a atividade', 'activityUnderstanding', 'activityUnderstanding', value('activityUnderstanding'), 'Descreva a ideia ou relação que deve orientar o conjunto de questões.', 'Este objetivo ajuda a manter as questões ligadas a uma mesma aprendizagem.', 4)
+            + '<p class="lm-activity-step-note">A próxima etapa abre um formulário próprio para cada questão.</p></section>';
+        } else if (step <= questionIds.length) {
+          const index = step - 1;
+          const id = questionIds[index] ?? '';
+          panel = '<section class="lm-activity-step-panel" aria-labelledby="activity-step-heading"><div class="lm-activity-question-heading"><div><span class="lm-eyebrow">QUESTÃO ' + String(step).padStart(2, '0') + ' DE ' + String(questionIds.length).padStart(2, '0') + '</span><h3 id="activity-step-heading" tabindex="-1">Edite esta questão</h3></div><button type="button" class="lm-quiet-action" data-activity-remove-question="' + e(id) + '"' + (questionIds.length === 1 ? ' disabled' : '') + '>Remover questão</button></div>'
+            + '<div class="lm-activity-question-fields">'
+            + inputField('Título interno', 'questionTitle-' + id, 'question:' + id + ':title', questionValue(id, 'title'), 'Nome curto para identificar a questão')
+            + areaField('Contexto e dados', 'questionContext-' + id, 'question:' + id + ':context', questionValue(id, 'context'), 'Descreva a situação, os dados e as condições relevantes.', 'Apresente o que a pessoa poderá considerar para responder.', 4)
+            + areaField('Enunciado apresentado ao estudante', 'questionPrompt-' + id, 'question:' + id + ':prompt', questionValue(id, 'prompt'), 'O que a pessoa estudante deverá fazer ou explicar?', '', 4, 'lm-activity-field-wide')
+            + areaField('Compreensão que esta questão deve evidenciar', 'questionUnderstanding-' + id, 'question:' + id + ':understanding', questionValue(id, 'understanding'), 'Que compreensão esta questão deve tornar visível?', 'Orientação docente para a questão. Este texto não aparece no enunciado do estudante.', 4, 'lm-activity-field-wide lm-activity-understanding-field')
+            + '</div></section>';
+        } else {
+          const reviewed = interaction.toggles['activity-review-confirmed'] === true;
+          panel = '<section class="lm-activity-step-panel" aria-labelledby="activity-step-heading"><span class="lm-eyebrow">ETAPA ' + String(lastStep + 1).padStart(2, '0') + ' · REVISÃO FINAL</span><h3 id="activity-step-heading" tabindex="-1">Confira a atividade inteira</h3><p class="lm-activity-review-intro">' + e(value('activityTitle') || 'Atividade sem título') + ' · ' + questionIds.length + (questionIds.length === 1 ? ' questão' : ' questões') + '</p><p class="lm-activity-review-goal"><b>Compreensão da atividade</b><span>' + e(value('activityUnderstanding') || 'Descrição ainda não preenchida.') + '</span></p><div class="lm-activity-review-list">'
+            + questionIds.map((id, index) => '<article><header><span>QUESTÃO ' + String(index + 1).padStart(2, '0') + '</span><button type="button" class="lm-text-action" data-activity-step-index="' + (index + 1) + '">Editar</button></header><h4>' + e(questionValue(id, 'title') || 'Questão sem título') + '</h4><p><b>Contexto:</b> ' + e(questionValue(id, 'context') || 'Contexto ainda não preenchido.') + '</p><p><b>Enunciado:</b> ' + e(questionValue(id, 'prompt') || 'Enunciado ainda não preenchido.') + '</p><small><b>Compreensão esperada:</b> ' + e(questionValue(id, 'understanding') || 'Descrição ainda não preenchida.') + '</small></article>').join('')
+            + '</div><label class="lm-activity-review-check"><input type="checkbox" data-interaction-toggle="activity-review-confirmed"' + (reviewed ? ' checked' : '') + '><span>Revisei se contexto, enunciado e compreensão esperada estão coerentes em todas as questões.</span></label></section>';
+        }
+        const progress = Math.round(step / lastStep * 100);
+        const nextLabel = step === lastStep - 1 ? 'Revisar atividade' : 'Próxima etapa';
+        host.innerHTML = '<header class="lm-activity-editor-header"><nav class="lm-activity-stepper" aria-label="Etapas do editor de atividade">' + stepButtons + '</nav><button type="button" class="lm-secondary-button" data-activity-add-question>＋ Adicionar questão</button></header><div class="lm-activity-progress" aria-hidden="true"><i style="width:' + progress + '%"></i></div><p class="lm-activity-step-count">Etapa ' + (step + 1) + ' de ' + (lastStep + 1) + ' · ' + questionIds.length + (questionIds.length === 1 ? ' questão' : ' questões') + '</p>' + panel + '<footer class="lm-activity-editor-actions"><button type="button" class="lm-quiet-action" data-activity-nav="previous"' + (step === 0 ? ' disabled' : '') + '>← Voltar</button><div>' + (step === lastStep ? '<button type="button" class="lm-primary-button" data-activity-approve>' + (interaction.toggles['activity-approved'] === true ? 'Rascunho revisado ✓' : 'Confirmar revisão') + '</button>' : '<button type="button" class="lm-primary-button" data-activity-nav="next">' + nextLabel + ' →</button>') + '</div></footer>';
+      }
+      private handleActivityEditorClick(button: HTMLButtonElement): boolean {
+        const interaction = this.state.interaction;
+        const ids = [...(interaction.activityQuestionIds ?? [])];
+        const currentStep = Math.max(0, Number(interaction.groups['activity-step'] ?? '0'));
+        const lastStep = ids.length + 1;
+        if (button.dataset.activityStepIndex !== undefined) {
+          const next = Number(button.dataset.activityStepIndex);
+          if (!Number.isInteger(next) || next < 0 || next > lastStep) return true;
+          this.transitionInteraction(state => ({ ...state, groups: { ...state.groups, 'activity-step': String(next) }, reviewFeedback: '' }));
+          this.render();
+          this.querySelector<HTMLElement>('#activity-step-heading')?.focus();
+          return true;
+        }
+        if (button.hasAttribute('data-activity-add-question')) {
+          const id = 'question-' + projectId();
+          this.transitionInteraction(state => ({
+            ...state,
+            activityQuestionIds: [...(state.activityQuestionIds ?? []), id],
+            groups: { ...state.groups, 'activity-step': String((state.activityQuestionIds?.length ?? 0) + 1) },
+            toggles: { ...state.toggles, 'activity-review-confirmed': false, 'activity-approved': false },
+            reviewFeedback: 'Questão adicionada ao rascunho. Preencha o contexto, o enunciado e a compreensão esperada.',
+          }));
+          this.render();
+          this.querySelector<HTMLInputElement>('[data-activity-editor-content] input')?.focus();
+          return true;
+        }
+        if (button.dataset.activityRemoveQuestion) {
+          if (ids.length <= 1) return true;
+          const removedId = button.dataset.activityRemoveQuestion;
+          const removedIndex = ids.indexOf(removedId);
+          if (removedIndex < 0) return true;
+          const nextIds = ids.filter(id => id !== removedId);
+          const fields = Object.fromEntries(Object.entries(interaction.fields).filter(([key]) => !key.startsWith('pedagogy-activity-builder:question:' + removedId + ':')));
+          this.transitionInteraction(state => ({
+            ...state,
+            activityQuestionIds: nextIds,
+            fields,
+            groups: { ...state.groups, 'activity-step': String(Math.min(removedIndex + 1, nextIds.length)) },
+            toggles: { ...state.toggles, 'activity-review-confirmed': false, 'activity-approved': false },
+            reviewFeedback: 'Questão removida do rascunho.',
+          }));
+          this.render();
+          this.querySelector<HTMLElement>('#activity-step-heading')?.focus();
+          return true;
+        }
+        if (button.dataset.activityNav) {
+          const direction = button.dataset.activityNav === 'next' ? 1 : -1;
+          const next = Math.max(0, Math.min(lastStep, currentStep + direction));
+          if (direction > 0) {
+            const missing = this.activityStepMissing(currentStep);
+            if (missing) {
+              this.transitionInteraction(state => ({ ...state, reviewFeedback: 'Preencha este passo antes de continuar.' }));
+              this.render();
+              this.focusActivityField(missing);
+              return true;
+            }
+          }
+          this.transitionInteraction(state => ({ ...state, groups: { ...state.groups, 'activity-step': String(next) }, reviewFeedback: '' }));
+          this.render();
+          this.querySelector<HTMLElement>('#activity-step-heading')?.focus();
+          return true;
+        }
+        if (button.hasAttribute('data-activity-approve')) {
+          const title = interaction.fields['pedagogy-activity-builder:activityTitle']?.trim() ?? '';
+          const understanding = interaction.fields['pedagogy-activity-builder:activityUnderstanding']?.trim() ?? '';
+          const missingOverall = !title ? 'pedagogy-activity-builder:activityTitle' : !understanding ? 'pedagogy-activity-builder:activityUnderstanding' : '';
+          if (missingOverall) {
+            this.transitionInteraction(state => ({ ...state, groups: { ...state.groups, 'activity-step': '0' }, reviewFeedback: 'Complete o título e a compreensão que orienta a atividade.' }));
+            this.render();
+            this.focusActivityField(missingOverall);
+            return true;
+          }
+          for (const [index, id] of ids.entries()) {
+            const missing = (['title', 'context', 'prompt', 'understanding'] as const).find(field => !interaction.fields['pedagogy-activity-builder:question:' + id + ':' + field]?.trim());
+            if (missing) {
+              const key = 'pedagogy-activity-builder:question:' + id + ':' + missing;
+              this.transitionInteraction(state => ({ ...state, groups: { ...state.groups, 'activity-step': String(index + 1) }, reviewFeedback: 'Complete os quatro campos da questão antes de confirmar a revisão.' }));
+              this.render();
+              this.focusActivityField(key);
+              return true;
+            }
+          }
+          if (interaction.toggles['activity-review-confirmed'] !== true) {
+            this.transitionInteraction(state => ({ ...state, reviewFeedback: 'Marque a conferência do conjunto antes de confirmar a revisão.' }));
+            this.render();
+            this.querySelector<HTMLInputElement>('[data-interaction-toggle="activity-review-confirmed"]')?.focus();
+            return true;
+          }
+          this.transitionInteraction(state => ({ ...state, toggles: { ...state.toggles, 'activity-approved': true }, reviewFeedback: 'Revisão confirmada nesta sessão. O rascunho continua editável e não foi publicado.' }));
+          this.render();
+          return true;
+        }
+        return false;
+      }
+      private activityStepMissing(step: number): string {
+        const interaction = this.state.interaction;
+        if (step === 0) {
+          if (!interaction.fields['pedagogy-activity-builder:activityTitle']?.trim()) return 'pedagogy-activity-builder:activityTitle';
+          if (!interaction.fields['pedagogy-activity-builder:activityUnderstanding']?.trim()) return 'pedagogy-activity-builder:activityUnderstanding';
+          return '';
+        }
+        const id = interaction.activityQuestionIds?.[step - 1];
+        if (!id) return '';
+        const missing = (['title', 'context', 'prompt', 'understanding'] as const).find(field => !interaction.fields['pedagogy-activity-builder:question:' + id + ':' + field]?.trim());
+        return missing ? 'pedagogy-activity-builder:question:' + id + ':' + missing : '';
+      }
+      private focusActivityField(key: string): void {
+        const field = [...this.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[data-interaction-field]')]
+          .find(item => item.dataset.interactionField === key);
+        field?.focus();
       }
       private subjectSkillSuggestions(query: string): SubjectSkillSuggestion[] {
         const normalized = query.trim().toLocaleLowerCase();
@@ -3933,6 +4123,8 @@ export function registerComponentElements(): void {
       }
       private onClick(event: Event): void {
         if (!(event.target instanceof Element)) return;
+        const activityEditorButton = event.target.closest<HTMLButtonElement>('[data-activity-step-index], [data-activity-add-question], [data-activity-remove-question], [data-activity-nav], [data-activity-approve]');
+        if (this.state.id === 'pedagogy-activity-builder' && activityEditorButton && this.handleActivityEditorClick(activityEditorButton)) return;
         if (this.state.id === 'pedagogy-context' && !event.target.closest('[data-subject-skill-picker]') && this.state.interaction.subjectSkillMenuOpen) {
           this.transitionInteraction(interaction => ({ ...interaction, subjectSkillMenuOpen: false }));
           this.restoreSubjectFoundation();
@@ -4396,15 +4588,7 @@ export function registerComponentElements(): void {
           return;
         }
         if (button.dataset.aiGenerate) {
-          if (button.dataset.aiGenerate === 'activity' && this.state.id === 'pedagogy-activity-builder') {
-            this.fillMockAiFields({
-              activityTitle: 'A energia que a biblioteca precisa',
-              question: 'A equipe da biblioteca compara duas propostas de uso. Qual delas reduz mais o consumo no período? Construa uma conclusão para a escola, explique quais dados usou e indique se uma informação adicional poderia mudar sua decisão.',
-              activityContext: 'Oito lâmpadas de 10 W ficam acesas por 6 horas ao dia. O ventilador de 100 W passará de 8 para 4 horas diárias. O período observado é de 20 dias.',
-              teacherRelation: 'Relacionar potência total e duração de uso para comparar a energia consumida. A redução do tempo pode mudar uma conclusão baseada apenas na potência de um aparelho.',
-            });
-            this.transitionInteraction(interaction => ({ ...interaction, aiGenerated: { ...interaction.aiGenerated, activity: true }, reviewFeedback: 'Rascunho demonstrativo pronto para revisão. Confira dados, pergunta e relação pretendida.' }));
-          } else if (button.dataset.aiGenerate === 'sequence' && this.state.id === 'pedagogy-course-sequence') {
+          if (button.dataset.aiGenerate === 'sequence' && this.state.id === 'pedagogy-course-sequence') {
             const values: Record<string, string> = {};
             [
               ['Texto-base e relação de potência', 'Identifique o que potência descreve e relacione a quantidade de aparelhos ao tempo em que são usados.'],
@@ -4421,12 +4605,7 @@ export function registerComponentElements(): void {
         }
         if (button.dataset.reviewAction) {
           let reviewFeedback = '';
-          if (this.state.id === 'pedagogy-activity-builder') {
-            const reviewed = this.querySelector<HTMLInputElement>('[name="teacherReviewed"]')?.checked === true;
-            reviewFeedback = reviewed
-              ? 'Rascunho aprovado para revisão da professora. A publicação ainda exige a conferência final do material.'
-              : 'Marque a conferência dos dados e do enunciado antes de aprovar o rascunho.';
-          } else if (this.state.id === 'pedagogy-evidence-review') {
+          if (this.state.id === 'pedagogy-evidence-review') {
             reviewFeedback = button.dataset.reviewAction === 'accept'
               ? 'Revisão demonstrativa confirmada. O registro não atualiza o estado da competência.'
               : 'Nova leitura demonstrativa solicitada. A resposta e a atribuição original continuam visíveis.';
@@ -4703,13 +4882,24 @@ export function registerComponentElements(): void {
           return;
         }
         if (!key) return;
+        const editingActivity = this.state.id === 'pedagogy-activity-builder' && Boolean(field.closest('[data-activity-editor]'));
         const creatingActivity = this.state.id === 'teacher-activity' && Boolean(field.closest('[data-profile-activity-composer]'));
         const editingProject = isProfileProjectPart(this.state.id) && Boolean(field.closest('[data-project-create-form]'));
+        const activityReviewWasConfirmed = editingActivity && (this.state.interaction.toggles['activity-approved'] === true || this.state.interaction.toggles['activity-review-confirmed'] === true);
+        const activityReviewFeedback = activityReviewWasConfirmed ? 'O rascunho mudou. Revise o conjunto e confirme novamente.' : '';
         this.transitionInteraction(interaction => ({
           ...(editingProject ? staleProjectReview(interaction) : interaction),
           fields: { ...interaction.fields, [key]: field.value },
+          ...(editingActivity ? {
+            toggles: { ...interaction.toggles, 'activity-review-confirmed': false, 'activity-approved': false },
+            reviewFeedback: activityReviewFeedback,
+          } : {}),
           ...(creatingActivity && interaction.feedback ? { feedback: '' } : {}),
         }));
+        if (editingActivity) {
+          const status = this.querySelector<HTMLElement>('[data-review-feedback]');
+          if (status) status.textContent = activityReviewFeedback;
+        }
         if (editingProject) {
           this.restoreProfileProjects();
           this.scheduleProjectReflection();
@@ -4764,7 +4954,8 @@ export function registerComponentElements(): void {
                 : 'Preferência atualizada nesta demonstração.';
           this.transitionInteraction(interaction => ({
             ...(editingProject ? staleProjectReview(interaction) : interaction),
-            toggles: { ...interaction.toggles, [toggle]: field.checked, ...(editingProject ? { 'project-review-confirmed': false } : {}) },
+            toggles: { ...interaction.toggles, [toggle]: field.checked, ...(editingProject ? { 'project-review-confirmed': false } : {}), ...(this.state.id === 'pedagogy-activity-builder' && toggle === 'activity-review-confirmed' ? { 'activity-approved': false } : {}) },
+            ...(this.state.id === 'pedagogy-activity-builder' && toggle === 'activity-review-confirmed' && interaction.toggles['activity-approved'] ? { reviewFeedback: 'A conferência foi alterada. Confirme novamente a revisão.' } : {}),
             feedback,
           }));
         } else {

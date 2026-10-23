@@ -26,6 +26,12 @@ The saved subject foundation and skills live in that page part's state iterator 
 
 The component emits `lumira-subject-skill-understanding-request` with `{ requestId, partId: 'pedagogy-context', skillName }`. `src/program.ts` validates the originating part and requests a short natural-language explanation from local Forge using Metis-4B, then returns `lumira-subject-skill-understanding-result` with the same request ID. The component ignores responses for a different active skill or an obsolete request.
 
+## Activity editor
+
+The `pedagogy-activity-builder` part opens as a step editor. Step one stores the activity title and the overall understanding it should develop. Each question has a separate step with an internal title, context and data, student-facing prompt, and teacher-only description of the understanding that question should reveal. The final step presents the full set, including each question's context, prompt, and expected understanding, then asks the teacher to confirm the review. Questions can be added without a fixed count; removal is available for the current question while at least one remains.
+
+Step number, question IDs, field values, review checkbox, approval state, and feedback belong to the page part's state iterator. Moving forward validates the current step; final confirmation validates every field, and edits after confirmation invalidate it. The fixture seeds one complete sample question for demonstration. These values last only for the current page session: this editor does not call Forge, save an activity, or publish it. Only TypeScript and production compilation have been checked for this change; the interaction flow has not been manually exercised in a browser.
+
 ## Project narrative, authorship, and AI review
 
 The project part explains how a learning idea becomes collaborative work. Existing projects are expandable publication cards: opening one reveals authorship, audience, goal, justification, learning evidence, competencies, milestones, and its Social draft or private state. Teacher and student project lists use this same narrative structure.
