@@ -6,7 +6,7 @@ O PDF [Apresentação inicial — edição de perfil e partes da plataforma](../
 
 ## Acesso e edição de perfil
 
-A tela de entrada pede exatamente duas credenciais do serviço local: o PAT de chat do Cognoscere e a chave local do Port Router. A aplicação valida as duas em `POST /auth/validate`; Forge verifica o PAT e o Port Router verifica sua própria chave. As credenciais ficam na memória do programa até recarregar a página, sem armazenamento no navegador. Essa etapa autentica a conexão ao Forge, não torna privado o GitHub Pages ou seu repositório público.
+A tela de entrada pede um PAT GitHub com acesso ao metadado do segredo `ROUTER_KEY` no repositório `glaucodeveloper/remote-station-support-repo` e a chave local do Port Router. O Port Router valida o token na API do GitHub e cria uma sessão temporária; não lê nem retorna o valor do segredo. O PAT GitHub é descartado após a validação. A credencial do Forge fica no ambiente local e é usada pelo router ao encaminhar conversas. Nenhuma chave é salva no navegador. Essa entrada libera a experiência e a conexão local; GitHub Pages e os arquivos publicados continuam públicos.
 
 ## Chat de projetos com Cognoscere
 

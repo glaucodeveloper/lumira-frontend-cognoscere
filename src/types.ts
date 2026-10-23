@@ -266,7 +266,7 @@ export interface LevelingQuestionGenerationRequest {
 
 export interface ForgeAuthenticationRequest {
   requestId: string;
-  pat: string;
+  repositoryPat: string;
   routerKey: string;
 }
 

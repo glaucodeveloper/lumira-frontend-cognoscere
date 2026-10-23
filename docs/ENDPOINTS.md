@@ -2,17 +2,19 @@
 
 ## Integração implementada: autenticação e Cognoscere Forge
 
-O browser chama o serviço local pelo endereço fixo do túnel `https://ateliotic-jann-paragonless.ngrok-free.dev/19195`. O usuário informa exatamente duas credenciais na tela de autenticação: o PAT de chat do Cognoscere e a chave local do Port Router. A aplicação envia as chaves ao serviço somente por headers HTTPS; mantém ambas apenas na memória do `program()` até recarregar a página.
+O browser chama o serviço local pelo endereço fixo do túnel `https://ateliotic-jann-paragonless.ngrok-free.dev/19195`. A tela pede duas credenciais: um PAT GitHub com acesso ao metadado do segredo `ROUTER_KEY` no repositório configurado do Port Router e a chave local do Port Router. O Port Router valida o PAT na API do GitHub e emite uma sessão aleatória de oito horas. O PAT GitHub é descartado após a validação; o valor do segredo nunca é solicitado à API do GitHub nem lido por esse fluxo. O programa mantém a sessão e a chave local apenas em memória até recarregar a página.
 
 | Método | Rota | Uso |
 |---|---|---|
-| POST | `/auth/validate` | Validar PAT no Forge e confirmar passagem pelo Port Router antes de abrir a aplicação |
+| POST | `/auth/validate` | Validar acesso ao segredo `ROUTER_KEY` do repositório configurado e emitir sessão da Lumira |
 | GET | `/health` | Consultar estado do Forge, Metis e MiniCPM |
 | POST | `/v1/chat/completions` | Conversas da aplicação e geração de questões de nivelamento |
 
-O PAT é enviado como `Authorization: Bearer …`; Forge compara com `COGNOSCERE_API_TOKEN` configurado no serviço. A chave do router vai em `X-Port-Router-Key` e é validada pelo Port Router. Ambos os headers são exigidos em todas as chamadas do browser. PAT inválido recebe 401; ausência de PAT no Forge recebe 503. As chaves não entram em prompts, `localStorage`, `sessionStorage`, URL ou bundle.
+No `POST /auth/validate`, o PAT GitHub segue em `Authorization: Bearer …` até o Port Router, que consulta `GET /repos/{owner}/{repo}/actions/secrets/{secret_name}`. Para PAT fine-grained, conceda **Secrets: read** apenas no repositório configurado; PAT classic exige escopo `repo` e acesso de colaborador. A API retorna metadados do segredo, nunca seu valor. A chave do Port Router vai em `X-Port-Router-Key` e é validada antes da consulta.
 
-O túnel deve encaminhar a porta `19195`; o router deve incluir essa porta em `PORT_ROUTER_ALLOWED_PORTS`. Forge deve aceitar a origem web e os headers `Authorization` e `X-Port-Router-Key` no preflight CORS. A geração usa `model: Metis-4B`, `slug: lumira`, `unit_id: lumira-cognoscere-monitor` e `mode: document_update`. O cliente valida quantidade, cobertura de habilidades, intuito selecionado e quatro alternativas antes de exibir o conjunto. A resposta e o estado da matrícula não são persistidos. A aplicação não permite trocar a URL do serviço.
+Após autenticar, o Port Router emite um token de sessão aleatório, mantido apenas na memória do processo e válido por oito horas. Nas chamadas da Lumira, o browser envia esse token em `Authorization` e a chave local em `X-Port-Router-Key`; o router troca o token de sessão pela credencial `COGNOSCERE_API_TOKEN` carregada do ambiente local antes de encaminhar ao Forge. O PAT GitHub não é enviado ao Forge nem a prompts. Nenhuma credencial é salva em `localStorage`, `sessionStorage`, URL, fonte ou bundle. O gate da aplicação não torna privado o GitHub Pages ou o repositório.
+
+O túnel deve encaminhar a porta `19195`; o router deve incluí-la em `PORT_ROUTER_ALLOWED_PORTS`, carregar `PORT_ROUTER_GITHUB_REPO`, `PORT_ROUTER_GITHUB_SECRET_NAME` e a variável local `COGNOSCERE_API_TOKEN`. O router aceita a origem web e os headers `Authorization` e `X-Port-Router-Key` no preflight CORS. A geração usa `model: Metis-4B`, `slug: lumira`, `unit_id: lumira-cognoscere-monitor` e `mode: document_update`. O cliente valida quantidade, cobertura de habilidades, intuito selecionado e quatro alternativas antes de exibir o conjunto. A resposta e o estado da matrícula não são persistidos. A aplicação não permite trocar a URL do serviço.
 
 Os seguintes endpoints são placeholders de integração em `workers-gateway.ts`. **Não são endpoints confirmados nem exigem o mesmo formato do Metis.**
 

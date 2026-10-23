@@ -23,7 +23,7 @@ export type ProgramFactory = (options: ProgramOptions) => LumiraSystem;
 export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, documentTitle, bindEvents = true }: ProgramOptions): LumiraSystem {
   const cognoscereLocal = Object.freeze({ slug: 'lumira', unitId: 'lumira-cognoscere-monitor' });
   const cognoscereForgeTunnel = 'https://ateliotic-jann-paragonless.ngrok-free.dev/19195';
-  let forgeCredentials: { pat: string; routerKey: string } | null = null;
+  let forgeCredentials: { sessionToken: string; routerKey: string } | null = null;
   const metisApplicationProfile = [
     'PERFIL GERAL DO METIS NA LUMIRA: em toda conversa, reflexão, explicação e texto de apresentação, atue como parceiro de reflexão pedagógica. Use linguagem clara, respeitosa e situada na experiência de ensinar e aprender. Este perfil vale para todos os fluxos da aplicação; as instruções específicas da tarefa apenas acrescentam contexto.',
     'Em textos de apresentação sobre uma parte ou percurso da plataforma, desenvolva em prosa a finalidade, a responsabilidade de quem participa e o lugar daquela parte no percurso de aprendizagem. Relacione-a às outras etapas quando os dados permitirem; não escreva propaganda genérica, não invente funcionalidades e não reduza a apresentação a uma enumeração de controles.',
@@ -35,9 +35,9 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     return cognoscereForgeTunnel.replace(/\/+$/, '') + path;
   }
   async function forgeRequest(path: string, init: RequestInit = {}): Promise<Response> {
-    if (!forgeCredentials) throw new Error('Entre com o PAT do Cognoscere e a chave do Port Router na tela de autenticação.');
+    if (!forgeCredentials) throw new Error('Autentique o acesso ao repositório e informe a chave local do Port Router.');
     const headers = new Headers(init.headers);
-    headers.set('Authorization', 'Bearer ' + forgeCredentials.pat);
+    headers.set('Authorization', 'Bearer ' + forgeCredentials.sessionToken);
     headers.set('X-Port-Router-Key', forgeCredentials.routerKey);
     return fetch(tunneledForgeEndpoint(path), { ...init, headers });
   }
@@ -48,9 +48,9 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       if (typeof payload.error === 'string') detail = payload.error;
     } catch { /* O serviço pode responder sem JSON. */ }
     if (response.status === 401 || response.status === 403) {
-      if (detail === 'PAT inválido') return new Error('PAT de chat recusado pelo Cognoscere Forge. Confira o PAT configurado no serviço local.');
       if (detail === 'port-router authentication required') return new Error('Chave local do Port Router recusada. Confira a chave configurada no router local.');
-      return new Error('Autenticação recusada pelo túnel ou serviço Cognoscere. Confira o PAT e a chave local do Port Router.');
+      if (detail.startsWith('GitHub PAT')) return new Error(detail);
+      return new Error('Autenticação recusada pelo túnel ou serviço local. Confira o PAT do repositório e a chave do Port Router.');
     }
     return new Error(detail || `Cognoscere Forge respondeu com HTTP ${response.status}.`);
   }
@@ -276,7 +276,6 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       throw new Error('Não foi possível alcançar o endpoint Ngrok. Confira o túnel, o CORS do Forge e a URL configurada.');
     }
     if (!response.ok) {
-      if (response.status === 401 || response.status === 403) throw new Error('O túnel recusou a chamada. Confira o PAT e a chave do Port Router na tela de autenticação.');
       throw await readForgeError(response);
     }
     const payload = await response.json() as { choices?: Array<{ message?: { content?: unknown } }> };
@@ -774,26 +773,27 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     if (!origin || !detail || typeof detail.requestId !== 'string' || !/^lumira-auth-[a-z0-9-]{1,100}$/i.test(detail.requestId)) return;
     const result: ForgeAuthenticationResult = { requestId: detail.requestId };
     forgeCredentials = null;
-    const pat = typeof detail.pat === 'string' ? detail.pat.trim() : '';
+    const repositoryPat = typeof detail.repositoryPat === 'string' ? detail.repositoryPat.trim() : '';
     const routerKey = typeof detail.routerKey === 'string' ? detail.routerKey.trim() : '';
-    if (!pat || pat.length > 4096 || /[\r\n]/.test(pat) || !routerKey || routerKey.length > 300 || /[\r\n]/.test(routerKey)) {
-      result.error = 'Informe um PAT válido e a chave do Port Router.';
+    if (!repositoryPat || repositoryPat.length > 4096 || /[\r\n]/.test(repositoryPat) || !routerKey || routerKey.length > 300 || /[\r\n]/.test(routerKey)) {
+      result.error = 'Informe o PAT com acesso ao segredo do repositório e a chave do Port Router.';
     } else {
       try {
         const response = await fetch(tunneledForgeEndpoint('/auth/validate'), {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + pat, 'X-Port-Router-Key': routerKey },
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + repositoryPat, 'X-Port-Router-Key': routerKey },
           body: '{}',
           signal: AbortSignal.timeout(15000),
         });
-        if (response.status === 401 || response.status === 403) {
+        if (!response.ok) {
           result.error = (await readForgeError(response)).message;
-        } else if (!response.ok) {
-          result.error = response.status === 503
-            ? 'O Forge local não tem um PAT configurado para validar.'
-            : (await readForgeError(response)).message;
         } else {
-          forgeCredentials = { pat, routerKey };
+          const payload = await response.json() as { sessionToken?: unknown };
+          if (typeof payload.sessionToken !== 'string' || payload.sessionToken.length < 32) {
+            result.error = 'O router não retornou uma sessão válida para abrir a apresentação.';
+          } else {
+            forgeCredentials = { sessionToken: payload.sessionToken, routerKey };
+          }
         }
       } catch (error) {
         result.error = error instanceof Error && error.name === 'TimeoutError'
