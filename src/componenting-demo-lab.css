@@ -499,6 +499,9 @@ lumira-page-part {
   font-size: 10px;
   line-height: 1.55;
 }
+.lm-presentation-overview>p+p {
+  margin-top: 8px;
+}
 .lm-inspector-section-heading {
   display: flex;
   align-items: center;
@@ -999,12 +1002,15 @@ lumira-page-part {
   padding: 16px 14px 0;
 }
 .lm-part-responsibility {
-  margin: 0;
+  display: grid;
+  gap: 8px;
   padding: 0 33px 12px;
   color: #58616a;
   font-size: 10px;
   line-height: 1.65;
-  white-space: pre-line;
+}
+.lm-part-responsibility>p {
+  margin: 0;
 }
 .lm-page-part.is-selected::after {
   position: absolute;

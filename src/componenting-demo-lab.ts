@@ -17,6 +17,9 @@ import type { LumiraSystem } from './types';
 
 type Part = string | HTMLElement;
 function add(parts: Part[], part: Part): Part[] { parts.push(part); return parts; }
+function narrativeParagraphs(text: string): string {
+  return text.split(/\n\s*\n/).map(paragraph => '<p>' + e(paragraph.trim()) + '</p>').join('');
+}
 function mountParts(host: HTMLElement, parts: readonly Part[]): void {
   const elements: HTMLElement[] = [];
   host.innerHTML = parts.map(part => {
@@ -378,7 +381,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const roleLabel = this.querySelector<HTMLElement>('[data-current-role]');
       if (roleLabel) roleLabel.textContent = this.state.role;
       const responsibility = region.responsibility ?? region.description;
-      const paragraphs = responsibility.split(/\n\s*\n/).map(paragraph => '<p>' + e(paragraph.trim()) + '</p>').join('');
+      const paragraphs = narrativeParagraphs(responsibility);
       const responsibilityPanel = [...this.querySelectorAll<HTMLElement>('.lm-page-responsibility')]
         .find(item => !item.dataset.screenId || item.dataset.screenId === screenId);
       if (responsibilityPanel) {
@@ -386,7 +389,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       }
       const overview = this.querySelector<HTMLElement>('.lm-presentation-overview');
       if (overview) {
-        overview.innerHTML = '<span class="lm-eyebrow">PARTE SELECIONADA</span><h3>' + e(region.title) + '</h3><p>' + e(region.presentation) + '</p>';
+        overview.innerHTML = '<span class="lm-eyebrow">PARTE SELECIONADA</span><h3>' + e(region.title) + '</h3>' + narrativeParagraphs(region.presentation);
       }
       const stateSelect = this.querySelector<HTMLSelectElement>('[data-component-state]');
       if (stateSelect) {
@@ -704,7 +707,8 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const selectedRegion = screen.regions.find(region => region.id === this.state.componentId) ?? screen.regions[0];
       const selectedId = selectedRegion?.id ?? screen.defaultComponentId;
       const selectedResponsibility = selectedRegion?.responsibility ?? selectedRegion?.description ?? screen.presentation;
-      const responsibilityParagraphs = selectedResponsibility.split(/\n\s*\n/).map(paragraph => '<p>' + e(paragraph.trim()) + '</p>').join('');
+      const responsibilityParagraphs = narrativeParagraphs(selectedResponsibility);
+      const presentationParagraphs = narrativeParagraphs(selectedRegion?.presentation ?? screen.presentation);
       const data = labRecord(this.state.fixtures[screen.fixtureKey]);
       const pageMounts: Array<[string, HTMLElement]> = [];
       const screensToMount = this.state.fullView ? this.state.screens : [screen];
@@ -783,7 +787,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         + '<nav class="lm-inspector-tabs" role="tablist" aria-label="Propriedades da demonstração">' + inspectorTabButtons + '</nav>'
         + '<section class="lm-inspector-panel" id="inspector-panel-part" role="tabpanel" aria-labelledby="inspector-tab-part" data-inspector-panel="part" tabindex="0"' + (this.state.inspectorTab === 'part' ? '' : ' hidden') + '>'
         + '<section class="lm-inspector-section lm-presentation-overview"><span class="lm-eyebrow">PARTE SELECIONADA</span><h3>' + e(selectedRegion?.title ?? screen.title) + '</h3>'
-        + '<p>' + e(selectedRegion?.presentation ?? screen.presentation) + '</p></section>'
+        + presentationParagraphs + '</section>'
         + '<section class="lm-inspector-section lm-controls-section"><header class="lm-inspector-section-heading"><span class="lm-eyebrow">ESTADO DA PARTE</span></header>'
         + '<label class="lm-selected-state"><span>' + e(selectedRegion?.title ?? 'Parte') + '</span><select data-component-state="' + e(selectedId) + '" data-screen-id="' + e(screen.id) + '" aria-label="Estado de ' + e(selectedRegion?.title ?? 'Parte') + '">' + selectedStateOptions + '</select></label></section>'
         + '<section class="lm-inspector-section lm-prototype-section"><div class="lm-prototype-mount"></div></section></section>'

@@ -1,6 +1,6 @@
 /** Monólito interno dos programas: domínios, gateways e API operacional da plataforma. */
 import { shell, landing, access, page, createHtmlIterator } from './components';
-import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CognoscereStatus, CommunityEvent, CommunityPost, Competency, Contracts, Gateway, LoginInput, LumiraSystem, Material, Preview, ProjectAssistantRequest, Role, SessionUser, SondagemPlan, SocialProfile } from './types';
+import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CognoscereStatus, CommunityEvent, CommunityPost, Competency, Contracts, Gateway, LoginInput, LumiraSystem, Material, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, Preview, ProjectAssistantRequest, Role, SessionUser, SondagemPlan, SocialProfile } from './types';
 
 /** Domain policy stays private to this program module. */
 export interface ProgramRenderContext {
@@ -255,6 +255,8 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     message: string | null;
   } = { session: null, snapshot: null, pending: false, error: null, message: null };
   const removeListeners: Array<() => void> = [];
+  const opinionCircleStreams = new Map<string, OpinionCircleMessageEvent[]>();
+  let opinionMessageSequence = 0;
   const defaultView = ({ route, session, snapshot }: ProgramRenderContext): string => {
     if (route === '/') return landing();
     if (route === '/acesso' || !session) return access();
@@ -418,6 +420,12 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     return event.target.dataset.componentId === partId ? event.target : null;
   }
 
+  function opinionMessageOrigin(event: Event, partId: unknown): HTMLElement | null {
+    if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
+    if (partId !== 'community-feed' || event.target.dataset.componentId !== 'community-feed') return null;
+    return event.target;
+  }
+
   function dispatchProjectAssistantEvent(origin: HTMLElement, name: string, detail: unknown): void {
     origin.dispatchEvent(new CustomEvent(name, { detail }));
   }
@@ -445,12 +453,79 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     }
   }
 
+  function dispatchOpinionMessageEvent(origin: HTMLElement, name: string, detail: OpinionCircleMessageDelivery | OpinionCircleMessageRejection): void {
+    origin.dispatchEvent(new CustomEvent(name, { detail }));
+  }
+
+  function onOpinionMessageSend(event: Event): void {
+    const detail = (event as CustomEvent<OpinionCircleMessageSendRequest>).detail;
+    const origin = opinionMessageOrigin(event, detail?.partId);
+    if (!origin || !detail) return;
+    const requestId = typeof detail.requestId === 'string' ? detail.requestId : '';
+    const reject = (reason: string): void => dispatchOpinionMessageEvent(origin, 'lumira-opinion-message-rejected', {
+      requestId,
+      circleId: typeof detail.circleId === 'string' ? detail.circleId : '',
+      reason,
+    });
+    if (!/^[a-z0-9-]{1,80}$/i.test(requestId)) {
+      reject('Não foi possível identificar esta mensagem. Tente enviar novamente.');
+      return;
+    }
+    const circleId = typeof detail.circleId === 'string' ? detail.circleId.trim() : '';
+    const matchingCircle = [...origin.querySelectorAll<HTMLFormElement>('[data-opinion-message-form]')]
+      .some(form => form.dataset.opinionMessageForm === circleId);
+    if (!matchingCircle) {
+      reject('Esta roda não está disponível nesta página.');
+      return;
+    }
+    const text = typeof detail.text === 'string' ? detail.text.trim() : '';
+    if (!text) {
+      reject('Escreva uma ideia ou pergunta antes de enviar.');
+      return;
+    }
+    if (text.length > 500) {
+      reject('A mensagem pode ter no máximo 500 caracteres.');
+      return;
+    }
+    const actors: Record<OpinionCircleActorRole, { author: string; role: string; tone: string }> = {
+      professor: { author: 'Ana Beatriz', role: 'Professora · Comunidade', tone: 'teal' },
+      aluno: { author: 'Caio Almeida', role: 'Estudante', tone: 'blue' },
+      visitante: { author: 'Visitante', role: 'Participante convidado', tone: 'rose' },
+    };
+    if (!Object.hasOwn(actors, detail.actorRole)) {
+      reject('Escolha um papel válido para participar da roda.');
+      return;
+    }
+    const actor = actors[detail.actorRole];
+    const now = new Date();
+    const sequence = ++opinionMessageSequence;
+    const message: OpinionCircleMessageEvent = {
+      type: 'opinion-circle.message',
+      id: 'opinion-message-' + String(sequence).padStart(6, '0'),
+      sequence,
+      circleId,
+      author: actor.author,
+      role: actor.role,
+      tone: actor.tone,
+      text,
+      createdAt: now.toISOString(),
+      time: new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(now),
+    };
+    const stream = opinionCircleStreams.get(circleId) ?? [];
+    stream.push(message);
+    if (stream.length > 250) stream.splice(0, stream.length - 250);
+    opinionCircleStreams.set(circleId, stream);
+    dispatchOpinionMessageEvent(origin, 'lumira-opinion-message-delivered', { requestId, message });
+  }
+
   // startUI pertence ao próprio program e conecta a interface ao sistema retornado.
   mount.addEventListener('lumira-project-assistant-status-request', onProjectAssistantStatus);
   mount.addEventListener('lumira-project-assistant-request', onProjectAssistantRequest);
+  mount.addEventListener('lumira-opinion-message-send', onOpinionMessageSend);
   removeListeners.push(
     () => mount.removeEventListener('lumira-project-assistant-status-request', onProjectAssistantStatus),
     () => mount.removeEventListener('lumira-project-assistant-request', onProjectAssistantRequest),
+    () => mount.removeEventListener('lumira-opinion-message-send', onOpinionMessageSend),
   );
 
   function startUI(): void {

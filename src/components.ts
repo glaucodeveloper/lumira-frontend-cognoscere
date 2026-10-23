@@ -1,6 +1,6 @@
 /** Componentes, páginas e dados iniciais da plataforma e do Componenting Demo Lab. */
 
-import type { AppSnapshot, CognoscereStatus, CommunityEvent, ProjectAssistantRequest, SessionUser } from './types';
+import type { AppSnapshot, CognoscereStatus, CommunityEvent, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, ProjectAssistantRequest, SessionUser } from './types';
 import profileCoverAsset from './assets/profile/serra-dourada-cover.webp';
 import communityPostAsset from './assets/community/sala-colaborativa.webp';
 import studentRampStoryAsset from './assets/stories/student-ramp-experiment.webp';
@@ -406,7 +406,7 @@ const sharedPrototypeParameters: readonly PrototypeParameterSpec[] = [
 const partSpec = (id: string, title: string, description: string, evidence: ReferenceEvidence, fixtureKey: string): ReferenceRegionSpec =>
   ({
     id, title, description, responsibility: platformResponsibilities[id] ?? description,
-    presentation: presentationNotes[id] ?? description, evidence, fixtureKey, kind: id,
+    presentation: platformResponsibilities[id] ?? presentationNotes[id] ?? description, evidence, fixtureKey, kind: id,
     parameters: [...sharedPrototypeParameters, ...(prototypeFieldsByRegion[id] ?? [])],
   });
 
@@ -886,6 +886,7 @@ type DemoPagePartInteraction = {
   fields: Record<string, string>;
   communityPosts: CommunityPostDraft[];
   opinionCircleMessages: Record<string, CommunityOpinionMessage[]>;
+  opinionMessageRequests: Record<string, string>;
   profileActivityItems: ProfileActivityItem[];
   profileProjects: ProfileProjectItem[];
   profileAgendaItems: ProfileAgendaItem[];
@@ -976,7 +977,7 @@ type CommunityPostDraft = {
   likes: number;
   comments: number;
 };
-type CommunityOpinionMessage = { author: string; role: string; text: string; time: string; tone: string };
+type CommunityOpinionMessage = OpinionCircleMessageEvent;
 type ProfileProjectMilestone = { id: string; title: string; date: string };
 type ProjectChatMessage = { id: string; role: 'student' | 'assistant'; text: string; kind?: 'conversation' | 'reflection' | 'review'; revision?: number; status?: 'pending' | 'error' };
 type ProfileProjectItem = {
@@ -1486,7 +1487,9 @@ function labPart(id: string, content: string, selectedId: string, className = ''
     const contextHeading = '<header class="lm-flow-element-heading"><span class="lm-component-index">'
       + String(situation.flowIndexOffset === undefined ? partIndex + 1 : sequenceIndex).padStart(2, '0') + '</span><h2>' + e(title)
       + '</h2><span class="lm-evidence-badge ' + e(evidence) + '">' + e(evidenceLabels[evidence]) + '</span></header>';
-    const contextText = presentation ? '<p class="lm-part-responsibility">' + e(presentation) + '</p>' : '';
+    const contextText = presentation
+      ? '<div class="lm-part-responsibility">' + presentation.split(/\n\s*\n/).map(paragraph => '<p>' + e(paragraph.trim()) + '</p>').join('') + '</div>'
+      : '';
     return '<section class="lm-part-session" id="lab-point-' + e(situation.screenId) + '-' + e(id) + '" data-screen-id="' + e(situation.screenId) + '" data-scrollpoint="' + e(id)
       + '" aria-label="' + e(title) + '"><div class="lm-part-context">'
       + contextHeading + contextText + '</div><span data-demo-part-slot="' + slot + '"></span></section>';
@@ -2404,7 +2407,7 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-          groups: {}, toggles: {}, fields: {}, communityPosts: [], opinionCircleMessages: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
+          groups: {}, toggles: {}, fields: {}, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {},
           projectChatStatus: null, projectChatPending: false,
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, aiReflection: '', studentSubmissions: [],
@@ -2417,6 +2420,8 @@ export function registerComponentElements(): void {
         this.addEventListener('input', event => this.onInput(event));
         this.addEventListener('change', event => this.onChange(event));
         this.addEventListener('submit', event => this.onSubmit(event));
+        this.addEventListener('lumira-opinion-message-delivered', event => this.onOpinionMessageDelivered(event as CustomEvent<OpinionCircleMessageDelivery>));
+        this.addEventListener('lumira-opinion-message-rejected', event => this.onOpinionMessageRejected(event as CustomEvent<OpinionCircleMessageRejection>));
         this.addEventListener('focusout', event => {
           if (event.target === this.platformReferenceTarget) this.closePlatformReferenceMenu();
         });
@@ -2889,13 +2894,58 @@ export function registerComponentElements(): void {
             const article = document.createElement('article');
             article.className = 'lm-opinion-message lm-opinion-message-local';
             const header = document.createElement('header');
-            header.innerHTML = LabAvatar(message.author, message.tone, 'tiny') + '<div><b>' + e(message.author) + '</b><small>' + e(message.role) + ' · ' + e(message.time) + '</small></div>';
+            header.innerHTML = LabAvatar(message.author, message.tone, 'tiny') + '<div><b>' + e(message.author) + '</b><small>' + e(message.role) + ' · ' + e(message.time) + ' · evento ' + String(message.sequence).padStart(3, '0') + '</small></div>';
             const body = document.createElement('p');
             body.textContent = message.text;
             article.append(header, body);
             list.append(article);
           }
         }
+      }
+      private focusOpinionMessageComposer(circleId: string): void {
+        [...this.querySelectorAll<HTMLFormElement>('[data-opinion-message-form]')]
+          .find(form => form.dataset.opinionMessageForm === circleId)
+          ?.querySelector<HTMLTextAreaElement>('textarea')?.focus();
+      }
+      private onOpinionMessageDelivered(event: CustomEvent<OpinionCircleMessageDelivery>): void {
+        if (this.state.id !== 'community-feed') return;
+        const detail = event.detail;
+        const message = detail?.message;
+        if (!detail?.requestId || !message || message.type !== 'opinion-circle.message') return;
+        const circleId = message.circleId;
+        if (this.state.interaction.opinionMessageRequests[circleId] !== detail.requestId) return;
+        const requests = { ...this.state.interaction.opinionMessageRequests };
+        delete requests[circleId];
+        this.transitionInteraction(interaction => {
+          const existing = interaction.opinionCircleMessages[circleId] ?? [];
+          return {
+            ...interaction,
+            opinionMessageRequests: requests,
+            opinionCircleMessages: {
+              ...interaction.opinionCircleMessages,
+              [circleId]: existing.some(item => item.id === message.id) ? existing : [...existing, message],
+            },
+            groups: { ...interaction.groups, 'community-opinion-circle': circleId },
+            fields: { ...interaction.fields, ['community-feed:circle-message:' + circleId]: '' },
+            feedback: 'Mensagem recebida na roda · evento ' + String(message.sequence).padStart(3, '0') + '.',
+          };
+        });
+        this.render();
+        this.focusOpinionMessageComposer(circleId);
+      }
+      private onOpinionMessageRejected(event: CustomEvent<OpinionCircleMessageRejection>): void {
+        if (this.state.id !== 'community-feed') return;
+        const detail = event.detail;
+        if (!detail?.requestId || this.state.interaction.opinionMessageRequests[detail.circleId] !== detail.requestId) return;
+        const requests = { ...this.state.interaction.opinionMessageRequests };
+        delete requests[detail.circleId];
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          opinionMessageRequests: requests,
+          feedback: detail.reason,
+        }));
+        this.render();
+        this.focusOpinionMessageComposer(detail.circleId);
       }
       private restoreProfileProjects(): void {
         if (!isProfileProjectPart(this.state.id)) return;
@@ -4830,17 +4880,22 @@ export function registerComponentElements(): void {
             this.render();
             return;
           }
-          const message: CommunityOpinionMessage = { author: 'Ana Beatriz', role: 'Professora · Comunidade', text, time: 'agora', tone: 'teal' };
+          if (text.length > 500) {
+            this.transitionInteraction(interaction => ({ ...interaction, feedback: 'A mensagem pode ter no máximo 500 caracteres.' }));
+            this.render();
+            return;
+          }
+          const requestId = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+          const actorRole: OpinionCircleActorRole = this.state.situation.role;
           this.transitionInteraction(interaction => ({
             ...interaction,
-            opinionCircleMessages: { ...interaction.opinionCircleMessages, [circleId]: [...(interaction.opinionCircleMessages[circleId] ?? []), message] },
-            groups: { ...interaction.groups, 'community-opinion-circle': circleId },
-            fields: { ...interaction.fields, ['community-feed:circle-message:' + circleId]: '' },
-            feedback: 'Mensagem adicionada à roda nesta demonstração local.',
+            opinionMessageRequests: { ...interaction.opinionMessageRequests, [circleId]: requestId },
           }));
-          this.render();
-          [...this.querySelectorAll<HTMLFormElement>('[data-opinion-message-form]')]
-            .find(item => item.dataset.opinionMessageForm === circleId)?.querySelector<HTMLTextAreaElement>('textarea')?.focus();
+          this.dispatchEvent(new CustomEvent<OpinionCircleMessageSendRequest>('lumira-opinion-message-send', {
+            bubbles: true,
+            composed: true,
+            detail: { requestId, partId: 'community-feed', circleId, actorRole, text },
+          }));
           return;
         }
         if (this.state.id === 'community-feed' && form?.matches('[data-community-post-form]')) {

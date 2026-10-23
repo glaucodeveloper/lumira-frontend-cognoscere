@@ -217,6 +217,40 @@ export interface ProjectAssistantRequest {
   conversation: ProjectAssistantMessage[];
 }
 
+export type OpinionCircleActorRole = 'professor' | 'aluno' | 'visitante';
+
+export interface OpinionCircleMessageSendRequest {
+  requestId: string;
+  partId: 'community-feed';
+  circleId: string;
+  actorRole: OpinionCircleActorRole;
+  text: string;
+}
+
+export interface OpinionCircleMessageEvent {
+  type: 'opinion-circle.message';
+  id: string;
+  sequence: number;
+  circleId: string;
+  author: string;
+  role: string;
+  tone: string;
+  text: string;
+  createdAt: string;
+  time: string;
+}
+
+export interface OpinionCircleMessageDelivery {
+  requestId: string;
+  message: OpinionCircleMessageEvent;
+}
+
+export interface OpinionCircleMessageRejection {
+  requestId: string;
+  circleId: string;
+  reason: string;
+}
+
 export interface CognoscereStatus {
   available: boolean;
   configured: boolean;
