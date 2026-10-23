@@ -8,7 +8,6 @@ const ROUTER_PORT = Number(process.env.PORT_ROUTER_PORT || "7777");
 const KEY = process.env.PORT_ROUTER_KEY || "";
 const FORGE_PORT = 19195;
 const GITHUB_REPO = process.env.PORT_ROUTER_GITHUB_REPO || "";
-const GITHUB_SECRET_NAME = process.env.PORT_ROUTER_GITHUB_SECRET_NAME || "";
 const COGNOSCERE_API_TOKEN = process.env.COGNOSCERE_API_TOKEN || "";
 const AUTH_SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 const authSessions = new Map();
@@ -239,7 +238,7 @@ function pruneAuthSessions() {
 
 async function validateRepositoryPat(req, res) {
   const repoMatch = /^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)$/.exec(GITHUB_REPO);
-  if (!repoMatch || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(GITHUB_SECRET_NAME)) {
+  if (!repoMatch) {
     jsonResponse(res, 503, { error: "GitHub repository authentication is not configured in Port Router." });
     req.resume();
     return;
@@ -259,10 +258,10 @@ async function validateRepositoryPat(req, res) {
 
   req.resume();
   const [owner, repo] = repoMatch.slice(1);
-  const secretUrl = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/actions/secrets/${encodeURIComponent(GITHUB_SECRET_NAME)}`;
+  const repositoryUrl = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;
   let githubResponse;
   try {
-    githubResponse = await fetch(secretUrl, {
+    githubResponse = await fetch(repositoryUrl, {
       method: "GET",
       headers: {
         Accept: "application/vnd.github+json",
@@ -283,7 +282,7 @@ async function validateRepositoryPat(req, res) {
   }
   if (githubResponse.status === 403 || githubResponse.status === 404) {
     jsonResponse(res, 401, {
-      error: `GitHub PAT lacks access to secret metadata ${GITHUB_SECRET_NAME} in ${GITHUB_REPO}, or that secret is absent. Fine-grained PATs need Secrets: read; classic PATs need repo scope and collaborator access.`,
+      error: `GitHub PAT cannot access the private repository ${GITHUB_REPO}. A fine-grained PAT must include this repository; a classic PAT needs repo scope and account access.`,
     });
     return;
   }
@@ -300,11 +299,11 @@ async function validateRepositoryPat(req, res) {
   try {
     metadata = await githubResponse.json();
   } catch {
-    jsonResponse(res, 502, { error: "GitHub returned an unreadable repository-secret response." });
+    jsonResponse(res, 502, { error: "GitHub returned unreadable repository metadata." });
     return;
   }
-  if (metadata?.name !== GITHUB_SECRET_NAME) {
-    jsonResponse(res, 403, { error: `GitHub did not confirm the configured secret ${GITHUB_SECRET_NAME} in ${GITHUB_REPO}.` });
+  if (String(metadata?.full_name || "").toLowerCase() !== GITHUB_REPO.toLowerCase() || metadata?.private !== true) {
+    jsonResponse(res, 503, { error: `Port Router expected the private repository ${GITHUB_REPO}.` });
     return;
   }
 
@@ -321,7 +320,6 @@ async function validateRepositoryPat(req, res) {
     sessionToken,
     expiresAt: new Date(expiresAt).toISOString(),
     repository: GITHUB_REPO,
-    secretName: GITHUB_SECRET_NAME,
   });
 }
 

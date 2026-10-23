@@ -2,19 +2,19 @@
 
 ## Integração implementada: autenticação e Cognoscere Forge
 
-O browser chama o serviço local pelo endereço fixo do túnel `https://ateliotic-jann-paragonless.ngrok-free.dev/19195`. A tela pede duas credenciais: um PAT GitHub com acesso ao metadado do segredo `ROUTER_KEY` no repositório configurado do Port Router e a chave local do Port Router. O Port Router valida o PAT na API do GitHub e emite uma sessão aleatória de oito horas. O PAT GitHub é descartado após a validação; o valor do segredo nunca é solicitado à API do GitHub nem lido por esse fluxo. O programa mantém a sessão e a chave local apenas em memória até recarregar a página.
+O browser chama o serviço local pelo endereço fixo do túnel `https://ateliotic-jann-paragonless.ngrok-free.dev/19195`. A tela pede duas credenciais: um PAT GitHub com acesso ao repositório privado `glaucodeveloper/remote-station-support-repo` e a chave local do Port Router. O Port Router valida o PAT com `GET /repos/{owner}/{repo}` e emite uma sessão aleatória de oito horas. O PAT GitHub é descartado após a validação. Esse fluxo não lê Actions secrets. O programa mantém a sessão e a chave local apenas em memória até recarregar a página.
 
 | Método | Rota | Uso |
 |---|---|---|
-| POST | `/auth/validate` | Validar acesso ao segredo `ROUTER_KEY` do repositório configurado e emitir sessão da Lumira |
+| POST | `/auth/validate` | Validar acesso ao repositório privado configurado e emitir sessão da Lumira |
 | GET | `/health` | Consultar estado do Forge, Metis e MiniCPM |
 | POST | `/v1/chat/completions` | Conversas da aplicação e geração de questões de nivelamento |
 
-No `POST /auth/validate`, o PAT GitHub segue em `Authorization: Bearer …` até o Port Router, que consulta `GET /repos/{owner}/{repo}/actions/secrets/{secret_name}`. Para PAT fine-grained, conceda **Secrets: read** apenas no repositório configurado; PAT classic exige escopo `repo` e acesso de colaborador. A API retorna metadados do segredo, nunca seu valor. A chave do Port Router vai em `X-Port-Router-Key` e é validada antes da consulta.
+No `POST /auth/validate`, o PAT GitHub segue em `Authorization: Bearer …` até o Port Router, que consulta `GET /repos/{owner}/{repo}`. O PAT fine-grained deve incluir esse repositório privado; o PAT classic exige escopo `repo` e acesso à conta. Não é necessário conceder permissão para ler Actions secrets ou conteúdo. A chave do Port Router vai em `X-Port-Router-Key` e é validada antes da consulta.
 
 Após autenticar, o Port Router emite um token de sessão aleatório, mantido apenas na memória do processo e válido por oito horas. Nas chamadas da Lumira, o browser envia esse token em `Authorization` e a chave local em `X-Port-Router-Key`; o router troca o token de sessão pela credencial `COGNOSCERE_API_TOKEN` carregada do ambiente local antes de encaminhar ao Forge. O PAT GitHub não é enviado ao Forge nem a prompts. Nenhuma credencial é salva em `localStorage`, `sessionStorage`, URL, fonte ou bundle. O gate da aplicação não torna privado o GitHub Pages ou o repositório.
 
-O túnel deve encaminhar a porta `19195`; o router deve incluí-la em `PORT_ROUTER_ALLOWED_PORTS`, carregar `PORT_ROUTER_GITHUB_REPO`, `PORT_ROUTER_GITHUB_SECRET_NAME` e a variável local `COGNOSCERE_API_TOKEN`. O router aceita a origem web e os headers `Authorization` e `X-Port-Router-Key` no preflight CORS. A geração usa `model: Metis-4B`, `slug: lumira`, `unit_id: lumira-cognoscere-monitor` e `mode: document_update`. O cliente valida quantidade, cobertura de habilidades, intuito selecionado e quatro alternativas antes de exibir o conjunto. A resposta e o estado da matrícula não são persistidos. A aplicação não permite trocar a URL do serviço.
+O túnel deve encaminhar a porta `19195`; o router deve incluí-la em `PORT_ROUTER_ALLOWED_PORTS`, carregar `PORT_ROUTER_GITHUB_REPO` e a variável local `COGNOSCERE_API_TOKEN`. O router aceita a origem web e os headers `Authorization` e `X-Port-Router-Key` no preflight CORS. A geração usa `model: Metis-4B`, `slug: lumira`, `unit_id: lumira-cognoscere-monitor` e `mode: document_update`. O cliente valida quantidade, cobertura de habilidades, intuito selecionado e quatro alternativas antes de exibir o conjunto. A resposta e o estado da matrícula não são persistidos. A aplicação não permite trocar a URL do serviço.
 
 Os seguintes endpoints são placeholders de integração em `workers-gateway.ts`. **Não são endpoints confirmados nem exigem o mesmo formato do Metis.**
 

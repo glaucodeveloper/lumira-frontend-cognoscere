@@ -70,7 +70,7 @@ O inventário das telas prioritárias — acesso, perfis de professor/aluno e so
 
 ## Limites da demonstração
 
-O gateway padrão mantém dados apenas em memória. A página pública chama o Cognoscere Forge local pelo túnel Ngrok. A entrada da apresentação valida um PAT GitHub com acesso ao metadado do segredo `ROUTER_KEY` no repositório `glaucodeveloper/remote-station-support-repo`, além da chave local do Port Router. O Forge usa sua credencial de serviço mantida no ambiente local; o PAT GitHub não é encaminhado ao modelo. GitHub Pages e seus arquivos continuam públicos. `?mode=worker` seleciona o contrato HTTP proposto, que depende de uma API Workers implantada.
+O gateway padrão mantém dados apenas em memória. A página pública chama o Cognoscere Forge local pelo túnel Ngrok. A entrada da apresentação valida um PAT GitHub com acesso ao repositório privado `glaucodeveloper/remote-station-support-repo`, além da chave local do Port Router. O PAT não precisa ler o segredo `ROUTER_KEY` nem conteúdos do repositório; o Forge usa sua credencial local. GitHub Pages e seus arquivos continuam públicos. `?mode=worker` seleciona o contrato HTTP proposto, que depende de uma API Workers implantada.
 
 A referência Lumira menciona um coeficiente idade/série, mas não define a fórmula. O projeto mostra idade e série como contexto e mantém o coeficiente pendente de política institucional; não atribui nível escolar automaticamente. A sondagem continua exigindo revisão docente.
 
