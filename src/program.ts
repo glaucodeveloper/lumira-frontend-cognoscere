@@ -1,6 +1,6 @@
 /** Monólito interno dos programas: domínios, gateways e API operacional da plataforma. */
 import { shell, landing, access, page, createHtmlIterator } from './components';
-import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CognoscereStatus, CommunityEvent, CommunityPost, Competency, Contracts, Gateway, LoginInput, LumiraSystem, Material, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, Preview, ProjectAssistantRequest, QuestionnaireMonitorRequest, QuestionnaireMonitorResult, Role, SessionUser, SondagemPlan, SocialProfile, SubjectFoundationAssistantRequest, SubjectFoundationAssistantResult, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
+import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CognoscereStatus, CommunityEvent, CommunityPost, Competency, Contracts, ForgeAuthenticationRequest, ForgeAuthenticationResult, Gateway, LevelingGeneratedQuestion, LevelingQuestionGenerationRequest, LevelingQuestionGenerationResult, LoginInput, LumiraSystem, Material, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, Preview, ProjectAssistantRequest, QuestionnaireMonitorRequest, QuestionnaireMonitorResult, Role, SessionUser, SondagemPlan, SocialProfile, SubjectFoundationAssistantRequest, SubjectFoundationAssistantResult, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
 
 /** Domain policy stays private to this program module. */
 export interface ProgramRenderContext {
@@ -21,22 +21,28 @@ export interface ProgramOptions {
 export type ProgramFactory = (options: ProgramOptions) => LumiraSystem;
 
 export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, documentTitle, bindEvents = true }: ProgramOptions): LumiraSystem {
-  const cognoscereLocal = Object.freeze({ baseUrl: 'http://127.0.0.1:19195', slug: 'lumira', unitId: 'lumira-cognoscere-monitor' });
-  const metisPedagogicalCommunication = [
-    'COMUNICAÇÃO PEDAGÓGICA: converse como parceiro de reflexão da professora, com linguagem clara, respeitosa e situada na experiência de ensinar e aprender.',
+  const cognoscereLocal = Object.freeze({ slug: 'lumira', unitId: 'lumira-cognoscere-monitor' });
+  const cognoscereForgeTunnel = 'https://ateliotic-jann-paragonless.ngrok-free.dev/19195';
+  let forgeCredentials: { pat: string; routerKey: string } | null = null;
+  const metisApplicationProfile = [
+    'PERFIL GERAL DO METIS NA LUMIRA: em toda conversa, reflexão, explicação e texto de apresentação, atue como parceiro de reflexão pedagógica. Use linguagem clara, respeitosa e situada na experiência de ensinar e aprender. Este perfil vale para todos os fluxos da aplicação; as instruções específicas da tarefa apenas acrescentam contexto.',
+    'Em textos de apresentação sobre uma parte ou percurso da plataforma, desenvolva em prosa a finalidade, a responsabilidade de quem participa e o lugar daquela parte no percurso de aprendizagem. Relacione-a às outras etapas quando os dados permitirem; não escreva propaganda genérica, não invente funcionalidades e não reduza a apresentação a uma enumeração de controles.',
     'Em respostas que interpretam contexto ou aprendizagem, escreva de 2 a 4 parágrafos completos, separados obrigatoriamente por uma linha em branco (\n\n). Não coloque toda a análise em um único parágrafo. Cada parágrafo deve avançar a leitura: contexto e entendimento; significado pedagógico e relações entre elementos; evidências, lacunas ou limites; pergunta ou próximo passo, quando útil.',
     'Construa uma explicação conectada: diga o que os dados permitem compreender, por que isso importa para a aprendizagem e o que ainda precisa ser observado ou decidido. Use exemplos específicos do contexto recebido. Não transforme toda resposta em lista; use títulos ou listas somente quando ajudarem a organizar uma proposta com várias etapas.',
     'Diferencie dado explícito de interpretação, reconheça incertezas e não invente conteúdo, intenção, evidência ou resultado. Não exponha raciocínio interno; apresente apenas a síntese pedagógica que a professora pode revisar.',
   ].join('\n');
-  function localForgeEndpoint(path: string): string {
-    const endpoint = new URL(cognoscereLocal.baseUrl);
-    if (endpoint.protocol !== 'http:' || !['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname)) {
-      throw new Error('A aplicação aceita somente o Cognoscere Forge local.');
-    }
-    return endpoint.origin + path;
+  function tunneledForgeEndpoint(path: string): string {
+    return cognoscereForgeTunnel.replace(/\/+$/, '') + path;
+  }
+  async function forgeRequest(path: string, init: RequestInit = {}): Promise<Response> {
+    if (!forgeCredentials) throw new Error('Entre com o PAT do Cognoscere e a chave do Port Router na tela de autenticação.');
+    const headers = new Headers(init.headers);
+    headers.set('Authorization', 'Bearer ' + forgeCredentials.pat);
+    headers.set('X-Port-Router-Key', forgeCredentials.routerKey);
+    return fetch(tunneledForgeEndpoint(path), { ...init, headers });
   }
   async function readForgeError(response: Response): Promise<Error> {
-    if (response.status === 401 || response.status === 403) return new Error('O Cognoscere local recusou a chamada.');
+    if (response.status === 401 || response.status === 403) return new Error('O Cognoscere Forge recusou o PAT ou a chave do Port Router.');
     let detail = '';
     try {
       const payload = await response.json() as { error?: unknown };
@@ -60,7 +66,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     if (paragraphCount(draft) >= minimumParagraphs) return draft;
     let revised = '';
     try {
-      const response = await fetch(localForgeEndpoint('/v1/chat/completions'), {
+      const response = await forgeRequest('/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -91,28 +97,27 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     return separateExistingSentences(revised || draft, minimumParagraphs);
   }
   async function requestCognoscereStatus(): Promise<CognoscereStatus> {
-    const endpoint = localForgeEndpoint('/health');
     try {
-      const response = await fetch(endpoint, { signal: AbortSignal.timeout(3500) });
+      const response = await forgeRequest('/health', { signal: AbortSignal.timeout(3500) });
       if (!response.ok) throw await readForgeError(response);
       const health = await response.json() as { ok?: boolean; service?: string; configured?: boolean; system_model_configured?: boolean; model?: string };
-      if (health.ok !== true || health.service !== 'cognoscere-forge') throw new Error('O serviço local não confirmou Cognoscere Forge.');
+      if (health.ok !== true || health.service !== 'cognoscere-forge') throw new Error('O endpoint fixo não confirmou Cognoscere Forge.');
       return {
         available: true,
         configured: health.configured === true,
         systemModelConfigured: health.system_model_configured === true,
         model: typeof health.model === 'string' ? health.model : 'Metis local',
-        endpoint: 'http://127.0.0.1:19195',
+        endpoint: cognoscereForgeTunnel,
         message: health.configured === true && health.system_model_configured === true
-          ? 'Forge, Metis e MiniCPM locais estão prontos.'
-          : 'Forge local respondeu; confira se Metis e MiniCPM estão ativos.',
+          ? 'Forge local, Metis e MiniCPM estão prontos pelo túnel.'
+          : 'Forge local respondeu pelo túnel; confira se Metis e MiniCPM estão ativos.',
       };
     } catch (error) {
       return {
-        available: false, configured: false, systemModelConfigured: false, model: '', endpoint: 'http://127.0.0.1:19195',
+        available: false, configured: false, systemModelConfigured: false, model: '', endpoint: cognoscereForgeTunnel,
         message: error instanceof Error && error.name === 'TypeError'
-          ? 'Não foi possível acessar o Forge local. Inicie o Cognoscere e permita a conexão local no navegador.'
-          : error instanceof Error ? error.message : 'Não foi possível consultar o Cognoscere local.',
+          ? 'Não foi possível acessar o Forge local pelo túnel Ngrok. Confira o serviço e as chaves.'
+          : error instanceof Error ? error.message : 'Não foi possível consultar o Cognoscere Forge pelo túnel.',
       };
     }
   }
@@ -123,7 +128,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     const system = [
       'Você é o assistente local de planejamento colaborativo da plataforma educacional Lumira. A conversa é processada pelo Metis local; o MiniCPM local revisa a resposta no Cognoscere Forge.',
       'Ajude a compreender e desenvolver projetos da comunidade escolar e do Social. Responda em português natural e contextualizado.',
-      metisPedagogicalCommunication,
+      metisApplicationProfile,
       'Formate com Markdown legível; negrito com moderação; blocos de código somente para código. Evite tabelas, imagens, HTML, JSON e comandos de sistema.',
       reflection
         ? 'Esta é uma reflexão automática da ficha após uma alteração. Explique em parágrafos o entendimento atualizado do projeto com base somente nos campos, competências e marcos atuais. Relacione objetivo, público, competências e marcos apenas quando os dados permitirem. Aponte lacunas sem inventar dados. Não trate esta reflexão como pedido de edição e não afirme que salvou ou publicou.'
@@ -138,7 +143,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       ...request.conversation,
       { role: 'user', content: request.prompt },
     ];
-    const response = await fetch(localForgeEndpoint('/v1/chat/completions'), {
+    const response = await forgeRequest('/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -176,7 +181,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
         role: 'system',
         content: [
           'Você é o monitor pedagógico local da plataforma educacional Lumira. O Metis compreende o questionário e responde em texto natural; o Cognoscere Forge revisa a resposta localmente.',
-          metisPedagogicalCommunication,
+          metisApplicationProfile,
           'Leia em conjunto a competência, os cinco contextos, os pedidos e as respostas do estudante. Relacione o raciocínio que aparece no conjunto a evidências concretas, reconheça um aspecto consistente e identifique o que ainda pede revisão. Termine com uma pergunta ou próximo passo útil para a pessoa revisar.',
           'Use evidências concretas das respostas sem expor trechos longos. Se as respostas forem insuficientes ou vazias, diga isso com precisão e peça uma ampliação específica. Não invente dados nem atribua intenção, característica pessoal, nota, nível, diagnóstico ou domínio da competência. Uma tentativa não decide progressão escolar.',
           'Responda somente com feedback em texto natural e Markdown simples. Não gere JSON, operações, comandos de sistema, notas numéricas ou propostas de alteração automática.',
@@ -184,7 +189,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       },
       { role: 'user', content: JSON.stringify({ competency: request.competency, attemptNumber: request.attemptNumber, answers: request.answers }) },
     ];
-    const response = await fetch(localForgeEndpoint('/v1/chat/completions'), {
+    const response = await forgeRequest('/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -199,6 +204,138 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     if (typeof content !== 'string' || !content.trim()) throw new Error('O monitor local não retornou feedback.');
     return { reply: await ensurePedagogicalParagraphs(messages, content.trim(), 'Organize em 3 parágrafos: síntese do raciocínio observado; evidências e limites da leitura; próximo passo útil para o estudante.', 3) };
   }
+  async function generateLevelingQuestions(request: LevelingQuestionGenerationRequest): Promise<LevelingGeneratedQuestion[]> {
+    if (request.partId !== 'leveling-assessment') throw new Error('Parte de nivelamento inválida.');
+    if (!Number.isInteger(request.age) || request.age < 6 || request.age > 18 || ![6, 7, 8, 9].includes(request.grade)) {
+      throw new Error('O contexto da matrícula exige idade entre 6 e 18 anos e série do 6º ao 9º ano.');
+    }
+    if (![3, 5, 8].includes(request.questionCount)) throw new Error('A geração aceita 3, 5 ou 8 questões.');
+    const skillCodePattern = /^EF\d{2}[A-Z]{2}\d{2}$/;
+    if (!request.competency || request.competency.title.trim().length < 4 || request.competency.title.length > 180
+      || request.competency.description.trim().length < 12 || request.competency.description.length > 900
+      || !Array.isArray(request.competency.skills) || request.competency.skills.length < 2 || request.competency.skills.length > 12
+      || request.competency.skills.some(skill => !skill || !skillCodePattern.test(skill.code) || skill.description.trim().length < 8 || skill.description.length > 300)) {
+      throw new Error('A competência exige título, descrição e de duas a doze habilidades BNCC válidas.');
+    }
+    const skillCodes = request.competency.skills.map(skill => skill.code.toUpperCase());
+    if (new Set(skillCodes).size !== skillCodes.length) throw new Error('Remova códigos de habilidade repetidos.');
+    const intentLabels: Record<string, string> = {
+      'reconhecer-fenomeno': 'Reconhecer fenômenos e conceitos',
+      'relacionar-dados': 'Relacionar variáveis e dados',
+      'comparar-evidencias': 'Comparar evidências e interpretações',
+      'justificar-conclusao': 'Justificar uma conclusão',
+      'reconhecer-limites': 'Reconhecer limites da evidência',
+      'transferir-contexto': 'Transferir a compreensão para outro contexto',
+    };
+    if (!Array.isArray(request.intents) || !request.intents.length || request.intents.length > Object.keys(intentLabels).length
+      || request.intents.some(intent => !Object.hasOwn(intentLabels, intent)) || new Set(request.intents).size !== request.intents.length) {
+      throw new Error('Selecione ao menos um intuito de aprendizagem válido.');
+    }
+    const thesisFields = Object.values(request.thesis ?? {});
+    if (thesisFields.length !== 6 || thesisFields.some(value => typeof value !== 'string' || value.trim().length < 12 || value.length > 1200)) {
+      throw new Error('A tese exige delimitação, afirmação, desenvolvimento, contraponto, limites e conclusão preenchidos.');
+    }
+    const requestedIntentLabels = request.intents.map(intent => intentLabels[intent]);
+    const messages = [
+      {
+        role: 'system',
+        content: [
+          'Você é Metis, assistente pedagógico da Lumira. Compreenda a tese e a competência antes de propor material. O Cognoscere Forge revisa a resposta com MiniCPM5-2B.',
+          metisApplicationProfile,
+          'Gere exatamente a quantidade solicitada de questões de nivelamento, em português brasileiro, situadas para a idade e série informadas. A competência é composta somente pelas habilidades BNCC fornecidas. Distribua a cobertura: cada questão deve mobilizar uma ou duas habilidades fornecidas; ao longo do conjunto, cubra todas as habilidades. Não invente códigos nem redação oficial da BNCC; use as descrições de trabalho como orientação, sem apresentá-las como transcrição curricular oficial.',
+          'Cada questão deve avaliar um intuito selecionado, criar um contexto com dados suficientes, solicitar raciocínio e ter quatro alternativas plausíveis, somente uma correta. Varie contextos e evite revelar a estratégia no enunciado. A evidência descreve o raciocínio observável; a explicação justifica a alternativa correta com os dados apresentados. Não atribua nota, domínio, diagnóstico ou progressão ao estudante.',
+          'Retorne somente um objeto JSON válido, sem bloco Markdown ou texto antes/depois, neste formato: {"questions":[{"title":"...","context":"...","prompt":"...","evidence":"...","choices":["...","...","...","..."],"correctOption":0,"explanation":"...","skillCodes":["EF08CI03"],"intent":"relacionar-dados"}]}. `correctOption` é índice de zero a três. `intent` deve ser um dos IDs selecionados. Não inclua propriedades extras.',
+        ].join('\n'),
+      },
+      {
+        role: 'user',
+        content: JSON.stringify({
+          task: 'Geração de atividade de nivelamento',
+          age: request.age,
+          grade: request.grade,
+          thesis: request.thesis,
+          competency: request.competency,
+          selectedIntents: request.intents.map(id => ({ id, label: intentLabels[id] })),
+          questionCount: request.questionCount,
+        }),
+      },
+    ];
+    let response: Response;
+    try {
+      response = await forgeRequest('/v1/chat/completions', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'Metis-4B', slug: cognoscereLocal.slug, unit_id: cognoscereLocal.unitId, mode: 'document_update', messages, max_tokens: 8192 }),
+        signal: AbortSignal.timeout(240000),
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name === 'TimeoutError') throw new Error('A geração excedeu quatro minutos. Tente novamente com menos questões.');
+      throw new Error('Não foi possível alcançar o endpoint Ngrok. Confira o túnel, o CORS do Forge e a URL configurada.');
+    }
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) throw new Error('O túnel recusou a chamada. Confira o PAT e a chave do Port Router na tela de autenticação.');
+      throw await readForgeError(response);
+    }
+    const payload = await response.json() as { choices?: Array<{ message?: { content?: unknown } }> };
+    const rawContent = payload.choices?.[0]?.message?.content;
+    if (typeof rawContent !== 'string' || !rawContent.trim()) throw new Error('O Cognoscere Forge não retornou conteúdo de geração.');
+    let content = rawContent.trim();
+    for (let depth = 0; depth < 3; depth += 1) {
+      const cleaned = content.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      let parsed: unknown;
+      try { parsed = JSON.parse(cleaned); }
+      catch {
+        const start = cleaned.indexOf('{'), end = cleaned.lastIndexOf('}');
+        if (start < 0 || end <= start) throw new Error('A resposta do Forge não contém JSON válido de questões.');
+        try { parsed = JSON.parse(cleaned.slice(start, end + 1)); }
+        catch { throw new Error('A resposta do Forge contém JSON inválido. Gere novamente.'); }
+      }
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        const object = parsed as Record<string, unknown>;
+        if (typeof object.reply === 'string') { content = object.reply.trim(); continue; }
+        if (Array.isArray(object.questions)) {
+          if (object.questions.length !== request.questionCount) throw new Error('O Forge devolveu ' + object.questions.length + ' questões; eram esperadas ' + request.questionCount + '.');
+          const allowedSkills = new Set(skillCodes);
+          const allowedIntents = new Set(request.intents);
+          const generated = object.questions.map((item, index): LevelingGeneratedQuestion => {
+            if (!item || typeof item !== 'object' || Array.isArray(item)) throw new Error('A questão ' + (index + 1) + ' tem formato inválido.');
+            const question = item as Record<string, unknown>;
+            const textFields = ['title', 'context', 'prompt', 'evidence', 'explanation'] as const;
+            for (const field of textFields) {
+              if (typeof question[field] !== 'string' || !question[field].trim() || question[field].length > 1400) {
+                throw new Error('A questão ' + (index + 1) + ' não contém ' + field + ' válido.');
+              }
+            }
+            if (!Array.isArray(question.choices) || question.choices.length !== 4 || question.choices.some(choice => typeof choice !== 'string' || !choice.trim() || choice.length > 500)) {
+              throw new Error('A questão ' + (index + 1) + ' precisa conter quatro alternativas.');
+            }
+            if (!Number.isInteger(question.correctOption) || Number(question.correctOption) < 0 || Number(question.correctOption) > 3) {
+              throw new Error('A questão ' + (index + 1) + ' não identificou uma alternativa de referência válida.');
+            }
+            if (!Array.isArray(question.skillCodes) || !question.skillCodes.length || question.skillCodes.length > 2
+              || question.skillCodes.some(code => typeof code !== 'string' || !allowedSkills.has(code.toUpperCase()))) {
+              throw new Error('A questão ' + (index + 1) + ' cita habilidade que não pertence à competência.');
+            }
+            if (typeof question.intent !== 'string' || !allowedIntents.has(question.intent)) {
+              throw new Error('A questão ' + (index + 1) + ' não corresponde a um intuito selecionado.');
+            }
+            return {
+              id: 'leveling-question-' + String(index + 1).padStart(2, '0'),
+              title: (question.title as string).trim(), context: (question.context as string).trim(), prompt: (question.prompt as string).trim(),
+              evidence: (question.evidence as string).trim(), choices: question.choices.map(choice => (choice as string).trim()),
+              correctOption: Number(question.correctOption), explanation: (question.explanation as string).trim(), points: 20,
+              skillCodes: question.skillCodes.map(code => (code as string).toUpperCase()), intent: question.intent,
+            };
+          });
+          const coverage = new Set(generated.flatMap(question => question.skillCodes));
+          const uncovered = skillCodes.filter(code => !coverage.has(code));
+          if (uncovered.length) throw new Error('O conjunto não cobriu todas as habilidades da competência: ' + uncovered.join(', ') + '. Gere novamente.');
+          return generated;
+        }
+      }
+      throw new Error('A resposta do Forge não trouxe a propriedade questions esperada.');
+    }
+    throw new Error('O Forge retornou uma resposta estruturada em camadas inesperadas.');
+  }
   async function understandSubjectSkill(request: SubjectSkillUnderstandingRequest): Promise<string> {
     if (request.partId !== 'pedagogy-context') throw new Error('Parte de matéria inválida.');
     const skillName = request.skillName.trim();
@@ -208,7 +345,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
         role: 'system',
         content: [
           'Você é o assistente pedagógico local da plataforma educacional Lumira. A conversa é processada pelo Metis local e revisada pelo Cognoscere Forge.',
-          metisPedagogicalCommunication,
+          metisApplicationProfile,
           'Explique como você interpreta a habilidade informada e que ação de aprendizagem ela pode orientar. Desenvolva a explicação em dois parágrafos curtos: interpretação contextualizada e possível observação pedagógica.',
           'Se a habilidade for um código curricular cuja descrição oficial não esteja explícita no pedido, não invente nem atribua uma redação oficial. Expresse a interpretação com cautela e diga que o código precisa ser confirmado no documento curricular.',
           'Não gere atividades, comandos, JSON ou instruções para alterar o sistema. Responda somente com a explicação em texto natural.',
@@ -216,7 +353,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       },
       { role: 'user', content: 'Habilidade selecionada: ' + skillName },
     ];
-    const response = await fetch(localForgeEndpoint('/v1/chat/completions'), {
+    const response = await forgeRequest('/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'Metis-4B', slug: cognoscereLocal.slug, unit_id: cognoscereLocal.unitId, mode: 'document_update', messages, max_tokens: 220 }),
@@ -242,7 +379,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     }
     const system = [
       'Você é o assistente pedagógico local da Lumira. Metis compreende a matéria e responde em texto natural; o Cognoscere Forge faz a revisão local.',
-      metisPedagogicalCommunication,
+      metisApplicationProfile,
       'A fundação tem quatro responsabilidades distintas: Natureza delimita o campo, fenômenos e objetos; Entendimento define relações e evidências que demonstram compreensão; Abordagem descreve práticas para investigar, interpretar e produzir conhecimento; Aspectos registram contextos, representações, limites e diversidade relevantes.',
       'Na reflexão sobre a ficha, escreva exatamente 3 parágrafos, cada um com 2 ou 3 frases completas, separados por uma linha em branco real (\n\n). Parágrafo 1: interprete os conteúdos presentes nas dimensões da ficha e cite o que os dados sustentam. Parágrafo 2: explique como natureza, entendimento, abordagem e aspectos se sustentam ou entram em tensão e o que isso orienta no ensino. Parágrafo 3: indique uma lacuna, ambiguidade ou desalinhamento concreto e termine com uma pergunta específica que ajude a professora a decidir o próximo passo. Não use lista, não compacte os três movimentos num parágrafo e não invente informações.',
       'Na primeira interação, a ficha pode estar vazia. Ainda assim, escreva exatamente 3 parágrafos separados por uma linha em branco: primeiro, explique o limite de não haver descrições preenchidas; segundo, desenvolva como Natureza, Entendimento, Abordagem e Aspectos precisam se articular para orientar uma aprendizagem, sem apenas enumerar definições; terceiro, proponha uma decisão inicial concreta e faça uma pergunta que ajude a professora a escolher um fenômeno, problema ou evidência. Não finja que já compreendeu uma matéria específica.',
@@ -254,7 +391,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       ...conversation.map(message => ({ role: message.role, content: message.content })),
       { role: 'user', content: JSON.stringify({ kind: request.kind, instruction: request.prompt, currentSubjectFoundation: context }) },
     ];
-    const response = await fetch(localForgeEndpoint('/v1/chat/completions'), {
+    const response = await forgeRequest('/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'Metis-4B', slug: cognoscereLocal.slug, unit_id: cognoscereLocal.unitId, mode: 'document_update', messages, max_tokens: request.kind === 'reflection' ? 1000 : 1100 }),
@@ -588,6 +725,11 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     return event.target.dataset.componentId === partId ? event.target : null;
   }
 
+  function forgeAuthenticationOrigin(event: Event): HTMLElement | null {
+    if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
+    return event.target.localName === 'lumira-access-gate' ? event.target : null;
+  }
+
   function subjectSkillOrigin(event: Event, partId: unknown): HTMLElement | null {
     if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
     if (partId !== 'pedagogy-context' || event.target.dataset.componentId !== 'pedagogy-context') return null;
@@ -606,6 +748,12 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     return event.target;
   }
 
+  function levelingQuestionGenerationOrigin(event: Event, partId: unknown): HTMLElement | null {
+    if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
+    if (partId !== 'leveling-assessment' || event.target.dataset.componentId !== 'leveling-assessment') return null;
+    return event.target;
+  }
+
   function opinionMessageOrigin(event: Event, partId: unknown): HTMLElement | null {
     if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
     if (partId !== 'community-feed' || event.target.dataset.componentId !== 'community-feed') return null;
@@ -614,6 +762,42 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
 
   function dispatchProjectAssistantEvent(origin: HTMLElement, name: string, detail: unknown): void {
     origin.dispatchEvent(new CustomEvent(name, { detail }));
+  }
+
+  async function onForgeAuthenticationRequest(event: Event): Promise<void> {
+    const detail = (event as CustomEvent<ForgeAuthenticationRequest>).detail;
+    const origin = forgeAuthenticationOrigin(event);
+    if (!origin || !detail || typeof detail.requestId !== 'string' || !/^lumira-auth-[a-z0-9-]{1,100}$/i.test(detail.requestId)) return;
+    const result: ForgeAuthenticationResult = { requestId: detail.requestId };
+    forgeCredentials = null;
+    const pat = typeof detail.pat === 'string' ? detail.pat.trim() : '';
+    const routerKey = typeof detail.routerKey === 'string' ? detail.routerKey.trim() : '';
+    if (!pat || pat.length > 4096 || /[\r\n]/.test(pat) || !routerKey || routerKey.length > 300 || /[\r\n]/.test(routerKey)) {
+      result.error = 'Informe um PAT válido e a chave do Port Router.';
+    } else {
+      try {
+        const response = await fetch(tunneledForgeEndpoint('/auth/validate'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + pat, 'X-Port-Router-Key': routerKey },
+          body: '{}',
+          signal: AbortSignal.timeout(15000),
+        });
+        if (response.status === 401 || response.status === 403) {
+          result.error = 'PAT ou chave do Port Router recusada. Confira as duas chaves.';
+        } else if (!response.ok) {
+          result.error = response.status === 503
+            ? 'O Forge local não tem um PAT configurado para validar.'
+            : (await readForgeError(response)).message;
+        } else {
+          forgeCredentials = { pat, routerKey };
+        }
+      } catch (error) {
+        result.error = error instanceof Error && error.name === 'TimeoutError'
+          ? 'A validação excedeu 15 segundos. Confira o serviço local e o túnel.'
+          : 'Não foi possível validar as chaves pelo túnel Ngrok. Confira o serviço local e tente novamente.';
+      }
+    }
+    if (origin.isConnected) origin.dispatchEvent(new CustomEvent('lumira-forge-authentication-result', { detail: result }));
   }
 
   async function onProjectAssistantStatus(event: Event): Promise<void> {
@@ -650,6 +834,19 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       result.error = error instanceof Error ? error.message : String(error);
     }
     if (origin.isConnected) origin.dispatchEvent(new CustomEvent('lumira-questionnaire-monitor-result', { detail: result }));
+  }
+
+  async function onLevelingQuestionGenerationRequest(event: Event): Promise<void> {
+    const detail = (event as CustomEvent<LevelingQuestionGenerationRequest>).detail;
+    const origin = levelingQuestionGenerationOrigin(event, detail?.partId);
+    if (!origin || !detail || typeof detail.requestId !== 'string' || !/^leveling-[a-z0-9-]{1,100}$/i.test(detail.requestId)) return;
+    const result: LevelingQuestionGenerationResult = { requestId: detail.requestId };
+    try {
+      result.questions = await generateLevelingQuestions(detail);
+    } catch (error) {
+      result.error = error instanceof Error ? error.message : 'Falha desconhecida ao gerar questões pelo Cognoscere Forge.';
+    }
+    if (origin.isConnected) origin.dispatchEvent(new CustomEvent('lumira-leveling-question-generation-result', { detail: result }));
   }
 
   async function onSubjectSkillUnderstandingRequest(event: Event): Promise<void> {
@@ -745,16 +942,20 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
   }
 
   // startUI pertence ao próprio program e conecta a interface ao sistema retornado.
+  mount.addEventListener('lumira-forge-authentication-request', onForgeAuthenticationRequest);
   mount.addEventListener('lumira-project-assistant-status-request', onProjectAssistantStatus);
   mount.addEventListener('lumira-project-assistant-request', onProjectAssistantRequest);
   mount.addEventListener('lumira-questionnaire-monitor-request', onQuestionnaireMonitorRequest);
+  mount.addEventListener('lumira-leveling-question-generation-request', onLevelingQuestionGenerationRequest);
   mount.addEventListener('lumira-subject-skill-understanding-request', onSubjectSkillUnderstandingRequest);
   mount.addEventListener('lumira-subject-foundation-assistant-request', onSubjectFoundationAssistantRequest);
   mount.addEventListener('lumira-opinion-message-send', onOpinionMessageSend);
   removeListeners.push(
+    () => mount.removeEventListener('lumira-forge-authentication-request', onForgeAuthenticationRequest),
     () => mount.removeEventListener('lumira-project-assistant-status-request', onProjectAssistantStatus),
     () => mount.removeEventListener('lumira-project-assistant-request', onProjectAssistantRequest),
     () => mount.removeEventListener('lumira-questionnaire-monitor-request', onQuestionnaireMonitorRequest),
+    () => mount.removeEventListener('lumira-leveling-question-generation-request', onLevelingQuestionGenerationRequest),
     () => mount.removeEventListener('lumira-subject-skill-understanding-request', onSubjectSkillUnderstandingRequest),
     () => mount.removeEventListener('lumira-subject-foundation-assistant-request', onSubjectFoundationAssistantRequest),
     () => mount.removeEventListener('lumira-opinion-message-send', onOpinionMessageSend),
@@ -782,6 +983,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     ...system,
     destroy: (): void => {
       removeListeners.forEach(remove => remove());
+      forgeCredentials = null;
       mount.innerHTML = '';
     },
   });

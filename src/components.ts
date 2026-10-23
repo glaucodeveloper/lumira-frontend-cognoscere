@@ -1,6 +1,6 @@
 /** Componentes, páginas e dados iniciais da plataforma e do Componenting Demo Lab. */
 
-import type { AppSnapshot, CognoscereStatus, CommunityEvent, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, ProjectAssistantRequest, QuestionnaireMonitorRequest, QuestionnaireMonitorResult, SessionUser, SubjectFoundationAssistantRequest, SubjectFoundationAssistantResult, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
+import type { AppSnapshot, CognoscereStatus, CommunityEvent, LevelingGeneratedQuestion, LevelingQuestionGenerationRequest, LevelingQuestionGenerationResult, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, ProjectAssistantRequest, QuestionnaireMonitorRequest, QuestionnaireMonitorResult, SessionUser, SubjectFoundationAssistantRequest, SubjectFoundationAssistantResult, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
 import profileCoverAsset from './assets/profile/serra-dourada-cover.webp';
 import communityPostAsset from './assets/community/sala-colaborativa.webp';
 import studentRampStoryAsset from './assets/stories/student-ramp-experiment.webp';
@@ -178,7 +178,7 @@ const presentationNotes: Record<string, string> = {
   'pedagogy-course-sequence': 'A sequência simulada organiza base conceitual, hipótese inicial, representação, mudança de condição e aplicação independente para ensinar uma relação em mais de um contexto.',
   'pedagogy-material-share': 'A publicação cria uma peça compartilhável a partir do material revisado. A resposta privada e a devolutiva individual ficam fora do conteúdo público.',
   'learner-activity-question': 'Cada questão reúne texto de referência, enunciado e resposta. A diretriz da questão seleciona o formato aberto, fechado ou por associação e apresenta sua legenda antes do campo correspondente.',
-  'leveling-assessment': 'A matrícula começa com idade e série, que definem o contexto da sondagem. Um stepper conduz cinco situações de uma competência e atualiza uma pontuação demonstrativa a cada resposta; idade e série não determinam domínio nem progressão.',
+  'leveling-assessment': 'A matrícula começa por idade e série para situar a sondagem, sem inferir domínio a partir desses dados. Em uma etapa própria, a equipe escreve a tese pedagógica com delimitação, afirmação central, desenvolvimento de evidências, contraponto, limites e conclusão verificável.\n\nDepois, formaliza uma competência composta por habilidades BNCC e escolhe os intuitos que as questões precisam observar. O Cognoscere Forge recebe esse contexto pelo endpoint Ngrok configurado e devolve propostas vinculadas às habilidades; a pessoa revisa o conjunto antes de responder. A pontuação continua demonstrativa e não define nota, matrícula ou progressão escolar.',
   'quest-board': 'As competições sociais são eventos cadastrados com organização, período, formato, regulamento, pontuação e etapas de entrega. A inscrição e cada participação ficam registradas no histórico do evento.',
   'quest-principles': 'Pontuação e colocação seguem o regulamento de cada competição. O resultado social não vira nota curricular; respostas pedagógicas permanecem no espaço reservado.',
   'competency-question-context': 'Cada pergunta apresenta uma situação e dados suficientes para tornar observável uma relação da competência em foco, sem sugerir uma fórmula ou revelar o contrato interno de avaliação.',
@@ -480,12 +480,12 @@ export const referenceScreenSpecs: readonly ReferenceScreenSpec[] = [
     ],
   },
   {
-    id: 'leveling-enrollment', title: 'Matrícula no nivelamento', description: 'Cadastro inicial de idade e série, seguido de questionário em etapas para uma competência.',
-    presentation: 'A matrícula abre um questionário de nivelamento contextualizado pela idade e pela série informadas. O percurso concentra cinco situações em uma competência demonstrativa; a pontuação muda conforme as respostas e permanece ilustrativa, sem substituir revisão pedagógica nem criar classificação oficial.',
+    id: 'leveling-enrollment', title: 'Matrícula no nivelamento', description: 'Cadastro, tese pedagógica, competência composta por habilidades BNCC e geração contextualizada de questões.',
+    presentation: 'A matrícula reúne duas decisões que precisam permanecer ligadas: situar a sondagem pela idade e série e explicitar o que a competência pretende tornar observável. A etapa de tese delimita o problema, formula uma afirmação central, desenvolve as evidências, considera um contraponto, registra limites e fecha com um critério de verificação; esse percurso orienta, mas não substitui, a revisão pedagógica.\n\nEm seguida, a equipe formaliza uma competência por meio de habilidades BNCC e escolhe os intuitos de aprendizagem que as questões devem mobilizar. O Cognoscere Forge, pelo endpoint configurado em túnel Ngrok, propõe situações vinculadas às habilidades e aos intuitos selecionados. As questões só entram no stepper quando a resposta do serviço passa pela validação; falhas deixam o rascunho disponível para nova tentativa. A pontuação deste protótipo é demonstrativa e não classifica estudantes nem decide progressão.',
     evidence: 'derived', fixtureKey: 'leveling-enrollment', defaultComponentId: 'leveling-assessment',
     regions: [
       ...shellParts('leveling-enrollment', 'derived'),
-      partSpec('leveling-assessment', 'Cadastro e questionário de nivelamento', 'Idade, série, stepper de cinco questões e barra dinâmica de pontuação demonstrativa.', 'derived', 'leveling-enrollment'),
+      partSpec('leveling-assessment', 'Tese, competência e questões de nivelamento', 'Stepper de cadastro, tese pedagógica, habilidades BNCC, intuitos configuráveis e geração pelo Cognoscere Forge.', 'derived', 'leveling-enrollment'),
     ],
   },
   {
@@ -795,8 +795,24 @@ export const initialComponentData: Record<string, unknown> = {
   },
   'leveling-enrollment': {
     name: 'Caio Almeida', handle: '@caioalmeida', role: 'Estudante · em matrícula',
+    age: 13, grade: 8,
     competency: 'Relacionar potência total, duração de uso e consumo elétrico',
-    skills: ['EF08CI03', 'EF08CI04', 'EF08CI05'], questionCount: 5, questions: levelingAssessmentQuestions,
+    competencyDescription: 'Comparar situações de uso de energia e justificar conclusões com potência, quantidade e duração.',
+    thesis: {
+      delimitation: 'Como a quantidade de aparelhos, a potência e o tempo de funcionamento se relacionam ao consumo de energia em espaços da escola?',
+      claim: 'Uma comparação de consumo só é sustentada quando considera, no mesmo período, a potência total e a duração de uso.',
+      evidence: 'Os dados de potência, quantidade e horas de uso permitem calcular valores comparáveis e justificar qual condição altera a conclusão.',
+      counterpoint: 'Um aparelho mais potente pode consumir menos no período se funcionar por menos tempo ou em menor quantidade.',
+      limits: 'Os cálculos não mostram, sozinhos, se a mudança atende às necessidades de iluminação, ventilação ou uso do espaço.',
+      conclusion: 'A tese fica apoiada quando a resposta relaciona os dados do contexto e indica que informação adicional poderia mudar a decisão.',
+    },
+    skills: [
+      'EF08CI03 | Classificar aparelhos pelas transformações de energia observadas.',
+      'EF08CI04 | Relacionar potência e tempo de uso ao consumo de energia.',
+      'EF08CI05 | Propor ações de uso responsável com critérios de sustentabilidade.',
+    ],
+    intents: ['relacionar-dados', 'comparar-evidencias', 'justificar-conclusao', 'reconhecer-limites'],
+    questionCount: 5, questions: [],
   },
   quests: {
     name: 'Caio Almeida', handle: '@caioalmeida', role: 'Estudante · 8º ano', school: 'Escola Aurora',
@@ -1031,6 +1047,7 @@ type DemoPagePartInteraction = {
   questParticipations: QuestParticipation[];
   questionFeedback: string;
   feedback: string;
+  levelingGeneratedQuestions: LevelingGeneratedQuestion[] | null;
 };
 type QuestCompetitionStage = { id: string; title: string; dueLabel: string; description: string; deliverable: string };
 type QuestFixture = {
@@ -2397,25 +2414,62 @@ function renderLevelingAssessment(data: ComponentFixture, selectedId: string): s
   const questions = labList<CompetencyQuestionFixture>(data, 'questions');
   const skills = labList<string>(data, 'skills');
   const totalPoints = questions.reduce((sum, question) => sum + Number(question.points ?? 20), 0);
-  const lastStep = questions.length + 1;
+  const resultStep = 4 + questions.length;
+  const generationStatus = labText(data, 'generationStatus', 'idle');
+  const thesis = typeof data.thesis === 'object' && data.thesis !== null ? data.thesis as ComponentFixture : {};
+  const intents: Array<[string, string]> = [
+    ['reconhecer-fenomeno', 'Reconhecer fenômenos e conceitos'],
+    ['relacionar-dados', 'Relacionar variáveis e dados'],
+    ['comparar-evidencias', 'Comparar evidências e interpretações'],
+    ['justificar-conclusao', 'Justificar uma conclusão'],
+    ['reconhecer-limites', 'Reconhecer limites da evidência'],
+    ['transferir-contexto', 'Transferir a compreensão para outro contexto'],
+  ];
+  const intentsDefault = new Set(labList<string>(data, 'intents'));
+  const stepButton = (step: number, label: string, state: string, number: number): string => '<button type="button" data-leveling-step-select="' + step + '" aria-current="false"><span>' + String(number).padStart(2, '0') + '</span><b>' + e(label) + '</b><small data-leveling-step-state>' + e(state) + '</small></button>';
   const stepper = '<nav class="lm-leveling-stepper" data-leveling-stepper aria-label="Etapas da matrícula e do nivelamento" hidden>'
-    + '<button type="button" data-leveling-step-select="0" aria-current="step" class="active"><span>01</span><b>Cadastro</b><small data-leveling-step-state>Dados iniciais</small></button>'
-    + questions.map((question, index) => '<button type="button" data-leveling-step-select="' + (index + 1) + '" aria-current="false"><span>' + String(index + 2).padStart(2, '0') + '</span><b>Questão ' + (index + 1) + '</b><small data-leveling-step-state>Em aberto</small></button>').join('')
-    + '<button type="button" data-leveling-step-select="' + lastStep + '" aria-current="false" disabled><span>' + String(lastStep + 1).padStart(2, '0') + '</span><b>Resultado</b><small data-leveling-step-state>Após responder</small></button></nav>';
-  const questionsMarkup = questions.map((question, index) => '<form class="lm-leveling-question" data-leveling-step-panel="' + (index + 1) + '" data-leveling-question-form data-leveling-question-index="' + index + '" data-question-id="' + e(question.id) + '" hidden>'
+    + stepButton(0, 'Cadastro', 'Dados iniciais', 1)
+    + stepButton(1, 'Tese', 'Argumento orientador', 2)
+    + stepButton(2, 'Competência', 'Habilidades BNCC', 3)
+    + stepButton(3, 'Intuitos', generationStatus === 'ready' ? 'Questões prontas' : 'Configurar e gerar', 4)
+    + questions.map((question, index) => stepButton(index + 4, 'Questão ' + (index + 1), 'Gerada pelo Forge', index + 5)).join('')
+    + stepButton(resultStep, 'Síntese', 'Após responder', questions.length + 5) + '</nav>';
+  const questionsMarkup = questions.map((question, index) => '<form class="lm-leveling-question" data-leveling-step-panel="' + (index + 4) + '" data-leveling-question-form data-leveling-question-index="' + index + '" data-question-id="' + e(question.id) + '" hidden>'
     + '<div class="lm-leveling-question-heading"><span class="lm-eyebrow">QUESTÃO ' + String(index + 1).padStart(2, '0') + ' · ' + String(question.points ?? 20) + ' PONTOS DEMONSTRATIVOS</span><h3 tabindex="-1">' + e(question.title) + '</h3></div>'
     + '<section class="lm-question-situation"><small>A SITUAÇÃO</small><p>' + e(question.context) + '</p></section><p class="lm-leveling-prompt">' + e(question.prompt) + '</p>'
+    + '<section class="lm-leveling-evidence"><small>EVIDÊNCIA OBSERVÁVEL</small><p>' + e(question.evidence) + '</p></section>'
+    + (question.skillCodes?.length ? '<div class="lm-leveling-generated-meta"><span>HABILIDADES EM FOCO</span>' + question.skillCodes.map(skill => LabPill(skill, 'blue')).join('') + '<span>INTUITO · ' + e(question.intent ?? 'Aprendizagem') + '</span></div>' : '')
     + '<fieldset class="lm-leveling-choices"><legend>Escolha a resposta que melhor representa sua análise</legend>'
     + (question.choices ?? []).map((choice, choiceIndex) => '<label class="lm-leveling-choice"><input type="radio" name="leveling-' + e(question.id) + '" value="' + choiceIndex + '" required data-interaction-field="leveling-answer:' + e(question.id) + '"><span><b>' + String.fromCharCode(65 + choiceIndex) + '</b>' + e(choice) + '</span></label>').join('')
     + '</fieldset><p class="lm-leveling-answer-feedback" data-leveling-answer-feedback role="status"></p>'
-    + '<footer class="lm-leveling-question-actions"><button type="button" class="lm-secondary-button" data-leveling-step-nav="previous">← Voltar</button><button type="submit" class="lm-primary-button">' + (index === questions.length - 1 ? 'Registrar resposta e ver resultado' : 'Registrar resposta e continuar') + ' <span aria-hidden="true">→</span></button></footer></form>').join('');
+    + '<footer class="lm-leveling-question-actions"><button type="button" class="lm-secondary-button" data-leveling-step-nav="previous">← Voltar</button><button type="submit" class="lm-primary-button">' + (index === questions.length - 1 ? 'Registrar resposta e ver síntese' : 'Registrar resposta e continuar') + ' <span aria-hidden="true">→</span></button></footer></form>').join('');
   const resultRows = questions.map((question, index) => '<li data-leveling-result-row="' + e(question.id) + '"><span>' + String(index + 1).padStart(2, '0') + '</span><div><b>' + e(question.title) + '</b><small data-leveling-result-status>Sem resposta</small></div><strong data-leveling-result-points>0/' + String(question.points ?? 20) + '</strong></li>').join('');
-  const content = '<section class="lm-panel lm-leveling-assessment"><header class="lm-leveling-assessment-heading"><div><span class="lm-eyebrow">MATRÍCULA · QUESTIONÁRIO DE NIVELAMENTO</span><h2>Comece pelo seu contexto</h2><p>Informe idade e série. Em seguida, percorra cinco situações de uma competência.</p></div><span class="lm-question-set-count">' + String(questions.length).padStart(2, '0') + '<br><small>QUESTÕES</small></span></header>'
-    + '<section class="lm-leveling-score" aria-label="Status da competência demonstrativa"><div class="lm-leveling-score-heading"><div><span class="lm-eyebrow">COMBINAÇÃO DE CONTEXTO</span><strong data-leveling-combination>Aguardando cadastro de idade e série</strong><small>' + e(labText(data, 'competency', 'Relacionar potência total, duração de uso e consumo elétrico')) + '</small></div><b data-leveling-score-label>0/' + totalPoints + '</b></div><div class="lm-leveling-score-track" role="progressbar" aria-label="Pontuação demonstrativa da competência" aria-valuemin="0" aria-valuemax="' + totalPoints + '" aria-valuenow="0"><i data-leveling-score-fill></i></div><p data-leveling-score-caption>Escolha respostas para ver a pontuação demonstrativa. A combinação de idade e série só contextualiza este exemplo.</p></section>'
-    + '<div class="lm-bncc-codes">' + skills.map(skill => LabPill(skill, 'blue')).join('') + '</div>'
-    + '<form class="lm-leveling-registration" data-leveling-registration-form data-leveling-step-panel="0"><header><span class="lm-eyebrow">01 · CADASTRO INICIAL</span><h3 tabindex="-1">Qual é sua idade e série?</h3><p>Esses dados organizam a combinação de contexto para a sondagem desta competência.</p></header><div class="lm-leveling-registration-fields"><label>Idade<input type="number" name="age" min="6" max="18" inputmode="numeric" required data-interaction-field="leveling-age" value="' + e(String(data.age ?? '')) + '" placeholder="Ex.: 13"><small>De 6 a 18 anos</small></label><label>Série atual<select name="grade" required data-interaction-field="leveling-grade"><option value="" disabled' + (data.grade === undefined ? ' selected' : '') + '>Selecione a série</option><option value="6"' + (Number(data.grade) === 6 ? ' selected' : '') + '>6º ano</option><option value="7"' + (Number(data.grade) === 7 ? ' selected' : '') + '>7º ano</option><option value="8"' + (Number(data.grade) === 8 ? ' selected' : '') + '>8º ano</option><option value="9"' + (Number(data.grade) === 9 ? ' selected' : '') + '>9º ano</option></select><small>Amostra demonstrativa de Ciências da Natureza</small></label></div><button type="submit" class="lm-primary-button">Registrar e iniciar o questionário <span aria-hidden="true">→</span></button></form>'
-    + stepper + questionsMarkup
-    + '<section class="lm-leveling-result" data-leveling-step-panel="' + lastStep + '" hidden><header><span class="lm-eyebrow">SÍNTESE DA DEMONSTRAÇÃO</span><h3 tabindex="-1">Resultado da competência em foco</h3><p data-leveling-result-combination></p></header><ul class="lm-leveling-result-list">' + resultRows + '</ul><div class="lm-private-boundary"><span aria-hidden="true">⌑</span><p><b>Pontuação demonstrativa, não classificação escolar.</b> Idade e série não calculam domínio; nenhuma decisão de matrícula, nota ou progressão é tomada por este protótipo.</p></div><button type="button" class="lm-secondary-button" data-leveling-step-nav="previous">← Revisar respostas</button></section>'
+  const registration = '<form class="lm-leveling-registration" data-leveling-registration-form data-leveling-step-panel="0"><header><span class="lm-eyebrow">01 · CONTEXTO DA MATRÍCULA</span><h3 tabindex="-1">Qual é sua idade e série?</h3><p>Esses dados situam a etapa escolar. Eles não determinam dificuldade, domínio ou progressão.</p></header><div class="lm-leveling-registration-fields"><label>Idade<input type="number" name="age" min="6" max="18" inputmode="numeric" required data-interaction-field="leveling-age" value="' + e(String(data.age ?? '')) + '" placeholder="Ex.: 13"><small>De 6 a 18 anos</small></label><label>Série atual<select name="grade" required data-interaction-field="leveling-grade"><option value="" disabled' + (data.grade === undefined ? ' selected' : '') + '>Selecione a série</option><option value="6"' + (Number(data.grade) === 6 ? ' selected' : '') + '>6º ano</option><option value="7"' + (Number(data.grade) === 7 ? ' selected' : '') + '>7º ano</option><option value="8"' + (Number(data.grade) === 8 ? ' selected' : '') + '>8º ano</option><option value="9"' + (Number(data.grade) === 9 ? ' selected' : '') + '>9º ano</option></select><small>Contexto para adaptar as situações</small></label></div><button type="submit" class="lm-primary-button">Registrar e continuar <span aria-hidden="true">→</span></button></form>';
+  const thesisForm = '<form class="lm-leveling-authoring" data-leveling-thesis-form data-leveling-step-panel="1" hidden><header><span class="lm-eyebrow">02 · TESE PEDAGÓGICA</span><h3 tabindex="-1">Qual afirmação a sondagem vai investigar?</h3><p>Construa um argumento revisável: delimite o objeto, formule uma tese, desenvolva evidências, confronte uma interpretação alternativa, explicite limites e feche com um critério de verificação.</p></header>'
+    + '<div class="lm-leveling-thesis-fields">'
+    + '<label>Delimitação do objeto<textarea required minlength="12" maxlength="1200" rows="2" data-interaction-field="leveling-thesis-delimitation" placeholder="Que relação de aprendizagem será observada?">' + e(labText(thesis, 'delimitation')) + '</textarea></label>'
+    + '<label>Tese central<textarea required minlength="12" maxlength="1200" rows="2" data-interaction-field="leveling-thesis-claim" placeholder="O que a competência afirma que a pessoa poderá compreender?">' + e(labText(thesis, 'claim')) + '</textarea></label>'
+    + '<label>Desenvolvimento das evidências<textarea required minlength="12" maxlength="1200" rows="2" data-interaction-field="leveling-thesis-evidence" placeholder="Que dados e relações sustentam a tese?">' + e(labText(thesis, 'evidence')) + '</textarea></label>'
+    + '<label>Contraponto mais forte<textarea required minlength="12" maxlength="1200" rows="2" data-interaction-field="leveling-thesis-counterpoint" placeholder="Qual explicação alternativa precisa ser considerada?">' + e(labText(thesis, 'counterpoint')) + '</textarea></label>'
+    + '<label>Limites e condições<textarea required minlength="12" maxlength="1200" rows="2" data-interaction-field="leveling-thesis-limits" placeholder="Em que situação esta conclusão não se sustenta?">' + e(labText(thesis, 'limits')) + '</textarea></label>'
+    + '<label>Conclusão e verificação<textarea required minlength="12" maxlength="1200" rows="2" data-interaction-field="leveling-thesis-conclusion" placeholder="Que evidência confirmaria ou enfraqueceria a tese?">' + e(labText(thesis, 'conclusion')) + '</textarea></label></div>'
+    + '<footer><button type="button" class="lm-secondary-button" data-leveling-step-nav="previous">← Voltar</button><button type="submit" class="lm-primary-button">Consolidar tese <span aria-hidden="true">→</span></button></footer></form>';
+  const competencyForm = '<form class="lm-leveling-authoring" data-leveling-competency-form data-leveling-step-panel="2" hidden><header><span class="lm-eyebrow">03 · COMPETÊNCIA E HABILIDADES BNCC</span><h3 tabindex="-1">Formalize a competência do nivelamento</h3><p>Uma competência reúne habilidades que se conectam por uma ação de aprendizagem observável. Registre códigos e foco de trabalho, um por linha; confira as redações oficiais no documento curricular.</p></header>'
+    + '<label>Nome da competência<input required maxlength="180" data-interaction-field="leveling-competency-title" value="' + e(labText(data, 'competency')) + '" placeholder="Ex.: Relacionar potência, duração e consumo"></label>'
+    + '<label>O que a competência reúne<textarea required rows="3" maxlength="900" data-interaction-field="leveling-competency-description" placeholder="Descreva a ação integrada e o objeto de conhecimento">' + e(labText(data, 'competencyDescription')) + '</textarea></label>'
+    + '<label>Habilidades BNCC · código | foco de trabalho<textarea required rows="5" maxlength="2400" data-interaction-field="leveling-skill-list" placeholder="EF08CI03 | foco observável da habilidade&#10;EF08CI04 | foco observável da habilidade">' + e(skills.join('\n')) + '</textarea><small>Use pelo menos duas linhas no formato EF08CI03 | descrição. A descrição é de trabalho e precisa ser conferida na BNCC.</small></label>'
+    + '<footer><button type="button" class="lm-secondary-button" data-leveling-step-nav="previous">← Voltar</button><button type="submit" class="lm-primary-button">Validar competência <span aria-hidden="true">→</span></button></footer></form>';
+  const intentsForm = '<form class="lm-leveling-authoring" data-leveling-generation-form data-leveling-step-panel="3" hidden><header><span class="lm-eyebrow">04 · INTUITOS DA ATIVIDADE</span><h3 tabindex="-1">O que as questões devem permitir observar?</h3><p>Escolha os intuitos que orientarão cada situação. O pedido combina esta seleção com a tese e as habilidades da competência.</p></header>'
+    + '<fieldset class="lm-leveling-intents"><legend>Intuitos de aprendizagem · selecione um ou mais</legend>'
+    + intents.map(([value, label]) => '<label><input type="checkbox" name="leveling-intent" value="' + e(value) + '" data-interaction-toggle="leveling-intent:' + e(value) + '"' + (intentsDefault.has(value) ? ' checked' : '') + '><span>' + e(label) + '</span></label>').join('') + '</fieldset>'
+    + '<div class="lm-leveling-generation-options"><label>Quantidade de questões<select name="questionCount" data-interaction-field="leveling-question-count"><option value="3"' + (Number(data.questionCount) === 3 ? ' selected' : '') + '>3 questões</option><option value="5"' + (Number(data.questionCount ?? 5) === 5 ? ' selected' : '') + '>5 questões</option><option value="8"' + (Number(data.questionCount) === 8 ? ' selected' : '') + '>8 questões</option></select></label>'
+    + '<div class="lm-leveling-forge-note"><span aria-hidden="true">◉</span><p><b>Geração Cognoscere Forge</b><br>O endpoint Ngrok configurado recebe a tese, a competência, as habilidades e os intuitos selecionados. A resposta passa por validação antes de entrar no questionário.</p></div>'
+    + '<p class="lm-leveling-generation-status" data-leveling-generation-status role="status" aria-live="polite"></p>'
+    + '<footer><button type="button" class="lm-secondary-button" data-leveling-step-nav="previous">← Voltar</button><button type="submit" class="lm-primary-button" data-leveling-generate-button>' + (generationStatus === 'pending' ? '<span class="lm-leveling-spinner" aria-hidden="true"></span> Gerando questões…' : generationStatus === 'ready' ? 'Gerar novamente' : 'Gerar questões no Forge') + ' <span aria-hidden="true">→</span></button></footer></form>';
+  const resultStepPanel = '<section class="lm-leveling-result" data-leveling-step-panel="' + resultStep + '" hidden><header><span class="lm-eyebrow">SÍNTESE DO NIVELAMENTO</span><h3 tabindex="-1">Respostas da competência em foco</h3><p data-leveling-result-combination></p></header><ul class="lm-leveling-result-list">' + resultRows + '</ul><div class="lm-private-boundary"><span aria-hidden="true">⌑</span><p><b>Pontuação demonstrativa, não classificação escolar.</b> Idade e série contextualizam o conjunto. Nenhuma decisão de matrícula, nota ou progressão é tomada por este protótipo.</p></div><button type="button" class="lm-secondary-button" data-leveling-step-nav="previous">← Revisar respostas</button></section>';
+  const content = '<section class="lm-panel lm-leveling-assessment"><header class="lm-leveling-assessment-heading"><div><span class="lm-eyebrow">MATRÍCULA · TESE E NIVELAMENTO</span><h2>Construa uma sondagem contextualizada</h2><p>Formalize a competência e gere questões a partir das habilidades BNCC e dos intuitos escolhidos.</p></div><span class="lm-question-set-count" data-leveling-question-count>' + String(questions.length || Number(data.questionCount ?? 5)).padStart(2, '0') + '<br><small>' + (questions.length ? 'QUESTÕES' : 'PLANEJADAS') + '</small></span></header>'
+    + '<section class="lm-leveling-score" data-leveling-score-panel hidden aria-label="Status demonstrativo da competência"><div class="lm-leveling-score-heading"><div><span class="lm-eyebrow">COMBINAÇÃO DE CONTEXTO</span><strong data-leveling-combination>Aguardando cadastro de idade e série</strong><small>' + e(labText(data, 'competency', 'Competência em foco')) + '</small></div><b data-leveling-score-label>0/' + totalPoints + '</b></div><div class="lm-leveling-score-track" role="progressbar" aria-label="Pontuação demonstrativa do questionário" aria-valuemin="0" aria-valuemax="' + totalPoints + '" aria-valuenow="0"><i data-leveling-score-fill></i></div><p data-leveling-score-caption>Resultado local ilustrativo; não representa nota ou classificação.</p></section>'
+    + stepper + registration + thesisForm + competencyForm + intentsForm + questionsMarkup + resultStepPanel
     + '<p class="lm-action-feedback" data-leveling-feedback role="status"></p></section>';
   return labPart('leveling-assessment', content, selectedId, 'lm-pedagogy-panel-part');
 }
@@ -2471,7 +2525,15 @@ type CompetencyQuestionFixture = {
   correctOption?: number;
   explanation?: string;
   points?: number;
+  skillCodes?: string[];
+  intent?: string;
 };
+function parseLevelingSkillLines(value: string): Array<{ code: string; description: string }> {
+  return value.split(/\r?\n/).map(line => {
+    const separator = line.indexOf('|');
+    return { code: separator < 0 ? line.trim() : line.slice(0, separator).trim().toUpperCase(), description: separator < 0 ? '' : line.slice(separator + 1).trim() };
+  }).filter(skill => skill.code || skill.description);
+}
 function renderCompetencyQuestionContext(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('competency-question-context', data);
   const skills = labList<string>(data, 'skills');
@@ -2658,7 +2720,7 @@ export function registerComponentElements(): void {
           id: '', title: '', content: '', presentation: '', evidence: 'derived', selectedId: '', className: '', fixture: {}, situation: emptySituation(''),
           prototypeParameters: {},
           interaction: {
-          groups: {}, toggles: {}, fields: {}, subjectFoundation: null, subjectSkills: null, subjectSkillQuery: '', subjectSkillActiveIndex: 0, subjectSkillMenuOpen: false, subjectSkillInsight: null, subjectReflection: null, subjectChatMessages: [], subjectChatPending: false, activityQuestionIds: null, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {}, questParticipations: [],
+            groups: {}, toggles: {}, fields: {}, subjectFoundation: null, subjectSkills: null, subjectSkillQuery: '', subjectSkillActiveIndex: 0, subjectSkillMenuOpen: false, subjectSkillInsight: null, subjectReflection: null, subjectChatMessages: [], subjectChatPending: false, activityQuestionIds: null, communityPosts: [], opinionCircleMessages: {}, opinionMessageRequests: {}, profileActivityItems: [], profileProjects: [], profileAgendaItems: [], profileAgendaPosts: [], projectChatMessages: [], projectReviewStatus: 'idle', projectReviewText: '', projectMilestones: [], actions: {}, communityEvents: [], localStories: [], aiGenerated: {}, questParticipations: [], levelingGeneratedQuestions: null,
           projectChatStatus: null, projectChatPending: false,
             selectedStory: null, storyAnswers: {}, storyComposerOpen: false, storyComposerExpanded: false, storyComposerTool: 'text', storyOrientation: 'portrait',
             storyFilter: 'original', storyImage: '', storyReplies: {}, studentSubmissions: [],
@@ -2676,6 +2738,7 @@ export function registerComponentElements(): void {
         this.addEventListener('lumira-opinion-message-delivered', event => this.onOpinionMessageDelivered(event as CustomEvent<OpinionCircleMessageDelivery>));
         this.addEventListener('lumira-opinion-message-rejected', event => this.onOpinionMessageRejected(event as CustomEvent<OpinionCircleMessageRejection>));
         this.addEventListener('lumira-questionnaire-monitor-result', event => this.onQuestionnaireMonitorResult(event as CustomEvent<QuestionnaireMonitorResult>));
+        this.addEventListener('lumira-leveling-question-generation-result', event => this.onLevelingQuestionGenerationResult(event as CustomEvent<LevelingQuestionGenerationResult>));
         this.addEventListener('lumira-subject-skill-understanding-result', event => this.onSubjectSkillUnderstandingResult(event as CustomEvent<SubjectSkillUnderstandingResult>));
         this.addEventListener('lumira-subject-foundation-assistant-result', event => this.onSubjectFoundationAssistantResult(event as CustomEvent<SubjectFoundationAssistantResult>));
         this.addEventListener('focusout', event => {
@@ -2961,11 +3024,50 @@ export function registerComponentElements(): void {
         this.restoreCompetencyQuestionResponse();
         this.render();
       }
+      private onLevelingQuestionGenerationResult(event: CustomEvent<LevelingQuestionGenerationResult>): void {
+        if (this.state.id !== 'leveling-assessment') return;
+        const result = event.detail;
+        if (!result?.requestId || result.requestId !== this.state.interaction.groups['leveling-generation-request-id']) return;
+        if (result.error || !Array.isArray(result.questions) || result.questions.length !== Number(this.state.interaction.fields['leveling-question-count'] ?? this.state.fixture.questionCount ?? 5)) {
+          const error = result.error || 'O Forge não retornou a quantidade de questões solicitada.';
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'leveling-generation-status': 'error', 'leveling-generation-error': error }, enrollmentFeedback: '' }));
+          this.render();
+          this.querySelector<HTMLElement>('[data-leveling-generation-status]')?.focus();
+          return;
+        }
+        const questions = result.questions as LevelingGeneratedQuestion[];
+        const fields = Object.fromEntries(Object.entries(this.state.interaction.fields).filter(([key]) => !key.startsWith('leveling-answer:')));
+        const toggles = { ...this.state.interaction.toggles };
+        Object.keys(toggles).filter(key => key.startsWith('leveling-submitted:')).forEach(key => { delete toggles[key]; });
+        this.transitionInteraction(interaction => ({
+          ...interaction,
+          fields,
+          toggles,
+          levelingGeneratedQuestions: structuredClone(questions),
+          groups: { ...interaction.groups, 'leveling-generation-status': 'ready', 'leveling-generation-error': '', 'leveling-step': '4' },
+          enrollmentFeedback: questions.length + ' questões recebidas do Forge e associadas às habilidades e intuitos selecionados.',
+        }));
+        this.render();
+        this.querySelector<HTMLElement>('[data-leveling-step-panel="4"] h3')?.focus();
+      }
       private transitionInteraction(change: (interaction: DemoPagePartInteraction) => DemoPagePartInteraction): void {
         this.state = this.transitions.next(current => ({
           ...current,
           interaction: change(structuredClone(current.interaction)),
         })).value;
+      }
+      private invalidateLevelingQuestionSet(interaction: DemoPagePartInteraction, step: number): DemoPagePartInteraction {
+        const fields = Object.fromEntries(Object.entries(interaction.fields).filter(([key]) => !key.startsWith('leveling-answer:')));
+        const toggles = { ...interaction.toggles };
+        Object.keys(toggles).filter(key => key.startsWith('leveling-submitted:')).forEach(key => { delete toggles[key]; });
+        return {
+          ...interaction,
+          fields,
+          toggles,
+          levelingGeneratedQuestions: null,
+          groups: { ...interaction.groups, 'leveling-step': String(step), 'leveling-generation-status': 'idle', 'leveling-generation-error': '', 'leveling-generation-request-id': '' },
+          enrollmentFeedback: '',
+        };
       }
       private prepareControls(): void {
         const { id } = this.state;
@@ -3749,7 +3851,7 @@ export function registerComponentElements(): void {
       private restoreLevelingAssessment(): void {
         if (this.state.id !== 'leveling-assessment') return;
         const interaction = this.state.interaction;
-        const questions = labList<CompetencyQuestionFixture>(this.state.fixture, 'questions');
+        const questions = interaction.groups['leveling-generation-status'] === 'ready' ? interaction.levelingGeneratedQuestions ?? [] : [];
         const registrationForm = this.querySelector<HTMLFormElement>('[data-leveling-registration-form]');
         const registered = interaction.toggles['leveling-profile-registered'] === true;
         const enteredAge = interaction.fields['leveling-age'] ?? registrationForm?.querySelector<HTMLInputElement>('[name="age"]')?.value ?? String(this.state.fixture.age ?? '');
@@ -3774,13 +3876,18 @@ export function registerComponentElements(): void {
           return sum + (item.answer !== '' && correct ? Number(item.question.points ?? 20) : 0);
         }, 0);
         const totalPoints = questions.reduce((sum, question) => sum + Number(question.points ?? 20), 0);
-        const resultStep = questions.length + 1;
+        const resultStep = 4 + questions.length;
         const requestedStep = Math.max(0, Math.min(resultStep, Number(interaction.groups['leveling-step'] ?? '0')));
         const activeStep = registered ? requestedStep : 0;
         const allSubmitted = questions.length > 0 && completedCount === questions.length;
+        const thesisReady = interaction.toggles['leveling-thesis-ready'] === true;
+        const competencyReady = interaction.toggles['leveling-competency-ready'] === true;
+        const generationStatus = interaction.groups['leveling-generation-status'] ?? 'idle';
+        const generationReady = generationStatus === 'ready' && questions.length > 0;
 
         const stepper = this.querySelector<HTMLElement>('[data-leveling-stepper]');
         if (stepper) stepper.hidden = !registered;
+        this.querySelector<HTMLElement>('[data-leveling-score-panel]')?.toggleAttribute('hidden', !generationReady);
         this.querySelectorAll<HTMLElement>('[data-leveling-step-panel]').forEach(panel => {
           panel.hidden = Number(panel.dataset.levelingStepPanel ?? '-1') !== activeStep;
         });
@@ -3788,15 +3895,24 @@ export function registerComponentElements(): void {
           const step = Number(button.dataset.levelingStepSelect ?? '0');
           const active = step === activeStep;
           const status = button.querySelector<HTMLElement>('[data-leveling-step-state]');
+          const questionIndex = step - 4;
+          button.hidden = step >= 4 && !generationReady;
           button.classList.toggle('active', active);
-          button.classList.toggle('answered', step > 0 && step < resultStep && completion[step - 1]?.submitted === true);
+          button.classList.toggle('answered', questionIndex >= 0 && questionIndex < questions.length && completion[questionIndex]?.submitted === true);
           button.setAttribute('aria-current', active ? 'step' : 'false');
-          button.disabled = step > 0 && (!registered || step === resultStep && !allSubmitted);
+          button.disabled = step > 0 && (!registered
+            || step >= 2 && !thesisReady
+            || step >= 3 && !competencyReady
+            || step >= 4 && !generationReady
+            || step === resultStep && !allSubmitted);
           if (status) {
             if (step === 0) status.textContent = registered ? 'Dados registrados' : 'Dados iniciais';
+            else if (step === 1) status.textContent = thesisReady ? 'Tese registrada' : 'Argumento orientador';
+            else if (step === 2) status.textContent = competencyReady ? 'Competência validada' : 'Habilidades BNCC';
+            else if (step === 3) status.textContent = generationStatus === 'pending' ? 'Gerando…' : generationReady ? 'Questões prontas' : generationStatus === 'error' ? 'Revisar e tentar' : 'Configurar e gerar';
             else if (step === resultStep) status.textContent = allSubmitted ? 'Pronto' : 'Após responder';
             else {
-              const item = completion[step - 1];
+              const item = completion[questionIndex];
               status.textContent = item?.submitted ? 'Registrada' : item?.answer !== '' ? 'Selecionada' : active ? 'Atual' : 'Em aberto';
             }
           }
@@ -3840,6 +3956,17 @@ export function registerComponentElements(): void {
         if (scoreCaption) scoreCaption.textContent = contextChanged
           ? 'Idade ou série alteradas no cadastro. Registre os dados para reiniciar as respostas e calcular a nova combinação.'
           : selectedCount + '/' + questions.length + ' respostas marcadas · ' + completedCount + ' registradas. Pontuação ilustrativa das escolhas, sem efeito em nota ou progressão.';
+        const generationMessage = this.querySelector<HTMLElement>('[data-leveling-generation-status]');
+        if (generationMessage) generationMessage.textContent = generationStatus === 'pending'
+          ? 'O Forge está elaborando questões a partir da tese, das habilidades e dos intuitos selecionados.'
+          : generationStatus === 'error' ? interaction.groups['leveling-generation-error'] ?? 'A geração falhou. Revise a configuração e tente novamente.'
+            : generationReady ? questions.length + ' questões recebidas e validadas. Revise o conjunto antes de iniciar as respostas.' : '';
+        const generateButton = this.querySelector<HTMLButtonElement>('[data-leveling-generate-button]');
+        if (generateButton) generateButton.disabled = generationStatus === 'pending';
+        const countBadge = this.querySelector<HTMLElement>('[data-leveling-question-count]');
+        if (countBadge) countBadge.innerHTML = String(questions.length || Number(interaction.fields['leveling-question-count'] ?? this.state.fixture.questionCount ?? 5)).padStart(2, '0') + '<br><small>' + (questions.length ? 'QUESTÕES' : 'PLANEJADAS') + '</small>';
+        const competencyLabel = this.querySelector<HTMLElement>('.lm-leveling-score-heading small');
+        if (competencyLabel) competencyLabel.textContent = interaction.fields['leveling-competency-title'] ?? labText(this.state.fixture, 'competency', 'Competência em foco');
         const feedback = this.querySelector<HTMLElement>('[data-leveling-feedback]');
         if (feedback) feedback.textContent = interaction.enrollmentFeedback;
       }
@@ -4935,18 +5062,21 @@ export function registerComponentElements(): void {
         }
         if (this.state.id === 'leveling-assessment' && button.dataset.levelingStepSelect !== undefined) {
           const step = Number(button.dataset.levelingStepSelect);
-          const questions = labList<CompetencyQuestionFixture>(this.state.fixture, 'questions');
+          const questions = this.state.interaction.levelingGeneratedQuestions ?? [];
           const registered = this.state.interaction.toggles['leveling-profile-registered'] === true;
+          const thesisReady = this.state.interaction.toggles['leveling-thesis-ready'] === true;
+          const competencyReady = this.state.interaction.toggles['leveling-competency-ready'] === true;
+          const generationReady = this.state.interaction.groups['leveling-generation-status'] === 'ready' && questions.length > 0;
           const allSubmitted = questions.length > 0 && questions.every(question => this.state.interaction.toggles['leveling-submitted:' + question.id] === true);
-          if (!registered || step === questions.length + 1 && !allSubmitted) return;
+          if (step > 0 && !registered || step >= 2 && !thesisReady || step >= 3 && !competencyReady
+            || step >= 4 && !generationReady || step === 4 + questions.length && !allSubmitted) return;
           this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'leveling-step': String(step) }, enrollmentFeedback: '' }));
           this.restoreLevelingAssessment();
           return;
         }
         if (this.state.id === 'leveling-assessment' && button.dataset.levelingStepNav === 'previous') {
-          const questions = labList<CompetencyQuestionFixture>(this.state.fixture, 'questions');
           const current = Number(this.state.interaction.groups['leveling-step'] ?? '0');
-          const previous = current === questions.length + 1 ? questions.length : Math.max(0, current - 1);
+          const previous = Math.max(0, current - 1);
           this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'leveling-step': String(previous) }, enrollmentFeedback: '' }));
           this.restoreLevelingAssessment();
           return;
@@ -5700,28 +5830,43 @@ export function registerComponentElements(): void {
         const learnerQuestionWasSubmitted = Boolean(learnerQuestionId && this.state.interaction.toggles['activity-question-submitted:' + learnerQuestionId] === true);
         const activityReviewWasConfirmed = editingActivity && (this.state.interaction.toggles['activity-approved'] === true || this.state.interaction.toggles['activity-review-confirmed'] === true);
         const activityReviewFeedback = activityReviewWasConfirmed ? 'O rascunho mudou. Revise o conjunto e confirme novamente.' : '';
-        this.transitionInteraction(interaction => ({
-          ...(editingProject ? staleProjectReview(interaction) : interaction),
-          fields: { ...interaction.fields, [key]: field.value },
-          ...(editingActivity ? {
-            toggles: { ...interaction.toggles, 'activity-review-confirmed': false, 'activity-approved': false },
-            reviewFeedback: activityReviewFeedback,
-          } : {}),
-          ...(questionWasSubmitted ? {
-            toggles: {
-              ...interaction.toggles,
-              ['competency-submitted:' + questionId]: false,
-              'competency-question-finalized': false,
-            },
-            groups: { ...interaction.groups, 'questionnaire-monitor-status': 'idle', 'questionnaire-monitor-request-id': '' },
-            questionFeedback: 'Resposta alterada. Registre novamente antes de finalizar o questionário.',
-          } : {}),
-          ...(learnerQuestionWasSubmitted ? {
-            toggles: { ...interaction.toggles, ['activity-question-submitted:' + learnerQuestionId]: false },
-            groups: { ...interaction.groups, ['activity-question-feedback:' + learnerQuestionId]: 'Resposta alterada. Envie novamente para atualizar o registro.' },
-          } : {}),
-          ...(creatingActivity && interaction.feedback ? { feedback: '' } : {}),
-        }));
+        const levelingEditStep = this.state.id !== 'leveling-assessment' ? -1
+          : ['leveling-age', 'leveling-grade'].includes(key) ? 0
+            : key.startsWith('leveling-thesis-') ? 1
+              : key.startsWith('leveling-competency-') || key === 'leveling-skill-list' ? 2
+                : ['leveling-question-count'].includes(key) ? 3 : -1;
+        this.transitionInteraction(interaction => {
+          let next: DemoPagePartInteraction = {
+            ...(editingProject ? staleProjectReview(interaction) : interaction),
+            fields: { ...interaction.fields, [key]: field.value },
+            ...(editingActivity ? {
+              toggles: { ...interaction.toggles, 'activity-review-confirmed': false, 'activity-approved': false },
+              reviewFeedback: activityReviewFeedback,
+            } : {}),
+            ...(questionWasSubmitted ? {
+              toggles: {
+                ...interaction.toggles,
+                ['competency-submitted:' + questionId]: false,
+                'competency-question-finalized': false,
+              },
+              groups: { ...interaction.groups, 'questionnaire-monitor-status': 'idle', 'questionnaire-monitor-request-id': '' },
+              questionFeedback: 'Resposta alterada. Registre novamente antes de finalizar o questionário.',
+            } : {}),
+            ...(learnerQuestionWasSubmitted ? {
+              toggles: { ...interaction.toggles, ['activity-question-submitted:' + learnerQuestionId]: false },
+              groups: { ...interaction.groups, ['activity-question-feedback:' + learnerQuestionId]: 'Resposta alterada. Envie novamente para atualizar o registro.' },
+            } : {}),
+            ...(creatingActivity && interaction.feedback ? { feedback: '' } : {}),
+          };
+          if (levelingEditStep >= 0) {
+            next = { ...next, toggles: { ...next.toggles,
+              ...(levelingEditStep <= 1 ? { 'leveling-thesis-ready': false, 'leveling-competency-ready': false } : {}),
+              ...(levelingEditStep === 2 ? { 'leveling-competency-ready': false } : {}),
+            } };
+            next = this.invalidateLevelingQuestionSet(next, levelingEditStep);
+          }
+          return next;
+        });
         if (this.state.id === 'learner-activity-question') this.restoreLearnerActivityQuestion();
         if (questionWasSubmitted) {
           this.restoreCompetencyQuestionResponse();
@@ -5799,15 +5944,24 @@ export function registerComponentElements(): void {
               : this.state.id === 'pedagogy-material-share'
                 ? 'Seleção de publicação atualizada.'
                 : 'Preferência atualizada nesta demonstração.';
-          this.transitionInteraction(interaction => ({
-            ...(editingProject ? staleProjectReview(interaction) : interaction),
-            toggles: { ...interaction.toggles, [toggle]: field.checked, ...(editingProject ? { 'project-review-confirmed': false } : {}), ...(this.state.id === 'pedagogy-activity-builder' && toggle === 'activity-review-confirmed' ? { 'activity-approved': false } : {}) },
-            ...(this.state.id === 'pedagogy-activity-builder' && toggle === 'activity-review-confirmed' && interaction.toggles['activity-approved'] ? { reviewFeedback: 'A conferência foi alterada. Confirme novamente a revisão.' } : {}),
-            feedback,
-          }));
+          this.transitionInteraction(interaction => {
+            let next: DemoPagePartInteraction = {
+              ...(editingProject ? staleProjectReview(interaction) : interaction),
+              toggles: { ...interaction.toggles, [toggle]: field.checked, ...(editingProject ? { 'project-review-confirmed': false } : {}), ...(this.state.id === 'pedagogy-activity-builder' && toggle === 'activity-review-confirmed' ? { 'activity-approved': false } : {}) },
+              ...(this.state.id === 'pedagogy-activity-builder' && toggle === 'activity-review-confirmed' && interaction.toggles['activity-approved'] ? { reviewFeedback: 'A conferência foi alterada. Confirme novamente a revisão.' } : {}),
+              feedback,
+            };
+            if (this.state.id === 'leveling-assessment' && toggle.startsWith('leveling-intent:')) next = this.invalidateLevelingQuestionSet(next, 3);
+            return next;
+          });
         } else {
           if (!key) return;
-          this.transitionInteraction(interaction => ({ ...(editingProject ? staleProjectReview(interaction) : interaction), fields: { ...interaction.fields, [key]: field.value } }));
+          const levelingEditStep = this.state.id !== 'leveling-assessment' ? -1 : key === 'leveling-question-count' ? 3 : -1;
+          this.transitionInteraction(interaction => {
+            let next: DemoPagePartInteraction = { ...(editingProject ? staleProjectReview(interaction) : interaction), fields: { ...interaction.fields, [key]: field.value } };
+            if (levelingEditStep >= 0) next = this.invalidateLevelingQuestionSet(next, levelingEditStep);
+            return next;
+          });
         }
         this.render();
         if (editingProject) this.scheduleProjectReflection();
@@ -6111,43 +6265,111 @@ export function registerComponentElements(): void {
             this.restoreLevelingAssessment();
             return;
           }
-          const questions = labList<CompetencyQuestionFixture>(this.state.fixture, 'questions');
-          const firstUnanswered = questions.findIndex(question => this.state.interaction.toggles['leveling-submitted:' + question.id] !== true);
-          const nextStep = firstUnanswered >= 0 ? firstUnanswered + 1 : questions.length + 1;
+          const nextStep = 1;
           this.transitionInteraction(interaction => {
             const changedContext = interaction.toggles['leveling-profile-registered'] === true
               && (interaction.fields['leveling-registered-age'] !== age || interaction.fields['leveling-registered-grade'] !== grade);
             const fields = Object.fromEntries(Object.entries(interaction.fields).filter(([key]) => !(changedContext && key.startsWith('leveling-answer:'))));
             const toggles: Record<string, boolean> = { ...interaction.toggles, 'leveling-profile-registered': true };
-            if (changedContext) questions.forEach(question => { delete toggles['leveling-submitted:' + question.id]; });
-            const firstOpen = changedContext ? 1 : nextStep;
+            if (changedContext) {
+              Object.keys(toggles).filter(key => key.startsWith('leveling-submitted:')).forEach(key => { delete toggles[key]; });
+            }
             return {
               ...interaction,
               fields: { ...fields, 'leveling-age': age, 'leveling-grade': grade, 'leveling-registered-age': age, 'leveling-registered-grade': grade },
               toggles,
-              groups: { ...interaction.groups, 'leveling-step': String(firstOpen) },
+              ...(changedContext ? { levelingGeneratedQuestions: null } : {}),
+              groups: { ...interaction.groups, 'leveling-step': String(nextStep), ...(changedContext ? { 'leveling-generation-status': 'idle', 'leveling-generation-error': '' } : {}) },
               enrollmentFeedback: changedContext
-                ? 'Idade ou série alteradas. As respostas foram reiniciadas para o novo contexto.'
-                : interaction.toggles['leveling-profile-registered'] === true ? 'Cadastro atualizado.' : 'Cadastro registrado. A sondagem começa pela primeira questão.',
+                ? 'Idade ou série alteradas. A geração anterior foi invalidada; revise a tese e gere outro conjunto.'
+                : interaction.toggles['leveling-profile-registered'] === true ? 'Cadastro atualizado. Continue pela tese orientadora.' : 'Cadastro registrado. Continue pela tese orientadora.',
             };
           });
           this.render();
           this.querySelector<HTMLElement>('[data-leveling-step-panel]:not([hidden]) h3')?.focus();
           return;
         }
+        if (form?.matches('[data-leveling-thesis-form]') && this.state.id === 'leveling-assessment') {
+          const fields = ['leveling-thesis-delimitation', 'leveling-thesis-claim', 'leveling-thesis-evidence', 'leveling-thesis-counterpoint', 'leveling-thesis-limits', 'leveling-thesis-conclusion'];
+          const values = fields.map(key => this.state.interaction.fields[key] ?? form.querySelector<HTMLTextAreaElement>('[data-interaction-field="' + key + '"]')?.value ?? '');
+          const missing = fields.find((key, index) => values[index].trim().length < 12 || values[index].length > 1200);
+          if (missing) {
+            this.transitionInteraction(interaction => ({ ...interaction, enrollmentFeedback: 'Desenvolva cada movimento da tese em pelo menos 12 caracteres e até 1.200.' }));
+            this.querySelector<HTMLElement>('[data-interaction-field="' + missing + '"]')?.focus();
+            this.restoreLevelingAssessment();
+            return;
+          }
+          const thesisFields = Object.fromEntries(fields.map((key, index) => [key, values[index]]));
+          this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, ...thesisFields }, toggles: { ...interaction.toggles, 'leveling-thesis-ready': true }, groups: { ...interaction.groups, 'leveling-step': '2' }, enrollmentFeedback: 'Tese consolidada. Agora formalize a competência e suas habilidades.' }));
+          this.render();
+          this.querySelector<HTMLElement>('[data-leveling-step-panel="2"] h3')?.focus();
+          return;
+        }
+        if (form?.matches('[data-leveling-competency-form]') && this.state.id === 'leveling-assessment') {
+          const title = (this.state.interaction.fields['leveling-competency-title'] ?? form.querySelector<HTMLInputElement>('[data-interaction-field="leveling-competency-title"]')?.value ?? '').trim();
+          const description = (this.state.interaction.fields['leveling-competency-description'] ?? form.querySelector<HTMLTextAreaElement>('[data-interaction-field="leveling-competency-description"]')?.value ?? '').trim();
+          const skillsText = this.state.interaction.fields['leveling-skill-list'] ?? form.querySelector<HTMLTextAreaElement>('[data-interaction-field="leveling-skill-list"]')?.value ?? '';
+          const skills = parseLevelingSkillLines(skillsText);
+          const invalidSkill = skills.find(skill => !/^EF\d{2}[A-Z]{2}\d{2}$/.test(skill.code) || skill.description.length < 8 || skill.description.length > 300);
+          const duplicateSkills = new Set(skills.map(skill => skill.code)).size !== skills.length;
+          if (title.length < 4 || title.length > 180 || description.length < 12 || description.length > 900 || skills.length < 2 || skills.length > 12 || invalidSkill || duplicateSkills) {
+            const feedback = title.length < 4 ? 'Dê à competência um título com pelo menos quatro caracteres.' : title.length > 180 ? 'Limite o título da competência a 180 caracteres.' : description.length < 12 ? 'Descreva a ação integrada em pelo menos 12 caracteres.' : description.length > 900 ? 'Limite a descrição da competência a 900 caracteres.' : skills.length < 2 ? 'Inclua pelo menos duas habilidades BNCC.' : skills.length > 12 ? 'Use no máximo doze habilidades por competência.' : duplicateSkills ? 'Remova códigos de habilidades repetidos.' : 'Revise cada habilidade: use um código EF válido, o separador | e uma descrição de trabalho entre 8 e 300 caracteres.';
+            this.transitionInteraction(interaction => ({ ...interaction, enrollmentFeedback: feedback }));
+            this.querySelector<HTMLInputElement | HTMLTextAreaElement>('[data-interaction-field="' + (!title ? 'leveling-competency-title' : !description ? 'leveling-competency-description' : 'leveling-skill-list') + '"]')?.focus();
+            this.restoreLevelingAssessment();
+            return;
+          }
+          this.transitionInteraction(interaction => ({ ...interaction, fields: { ...interaction.fields, 'leveling-competency-title': title, 'leveling-competency-description': description, 'leveling-skill-list': skillsText }, toggles: { ...interaction.toggles, 'leveling-competency-ready': true }, groups: { ...interaction.groups, 'leveling-step': '3' }, enrollmentFeedback: skills.length + ' habilidades associadas à competência. Configure os intuitos da atividade.' }));
+          this.render();
+          this.querySelector<HTMLElement>('[data-leveling-step-panel="3"] h3')?.focus();
+          return;
+        }
+        if (form?.matches('[data-leveling-generation-form]') && this.state.id === 'leveling-assessment') {
+          const values = new FormData(form);
+          const intents = values.getAll('leveling-intent').map(String).filter(Boolean);
+          const fields = this.state.interaction.fields;
+          const thesis = {
+            delimitation: fields['leveling-thesis-delimitation'] ?? '', claim: fields['leveling-thesis-claim'] ?? '',
+            evidence: fields['leveling-thesis-evidence'] ?? '', counterpoint: fields['leveling-thesis-counterpoint'] ?? '',
+            limits: fields['leveling-thesis-limits'] ?? '', conclusion: fields['leveling-thesis-conclusion'] ?? '',
+          };
+          const skills = parseLevelingSkillLines(fields['leveling-skill-list'] ?? '');
+          const age = Number(fields['leveling-registered-age']);
+          const grade = Number(fields['leveling-registered-grade']);
+          const questionCount = Number(values.get('questionCount') ?? fields['leveling-question-count'] ?? this.state.fixture.questionCount ?? 5);
+          const competency = { title: fields['leveling-competency-title'] ?? '', description: fields['leveling-competency-description'] ?? '', skills };
+          if (!this.state.interaction.toggles['leveling-profile-registered'] || !this.state.interaction.toggles['leveling-thesis-ready'] || !this.state.interaction.toggles['leveling-competency-ready']) {
+            this.transitionInteraction(interaction => ({ ...interaction, enrollmentFeedback: 'Conclua cadastro, tese e competência antes de gerar as questões.' }));
+            this.restoreLevelingAssessment();
+            return;
+          }
+          if (!intents.length || ![3, 5, 8].includes(questionCount)) {
+            this.transitionInteraction(interaction => ({ ...interaction, enrollmentFeedback: !intents.length ? 'Selecione ao menos um intuito de aprendizagem.' : 'Escolha 3, 5 ou 8 questões.' }));
+            this.restoreLevelingAssessment();
+            return;
+          }
+          const requestId = 'leveling-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+          const request: LevelingQuestionGenerationRequest = {
+            requestId, partId: 'leveling-assessment', age, grade, thesis, competency, intents, questionCount,
+          };
+          this.transitionInteraction(interaction => ({ ...interaction, groups: { ...interaction.groups, 'leveling-step': '3', 'leveling-generation-status': 'pending', 'leveling-generation-error': '', 'leveling-generation-request-id': requestId }, enrollmentFeedback: '' }));
+          this.render();
+          this.dispatchEvent(new CustomEvent<LevelingQuestionGenerationRequest>('lumira-leveling-question-generation-request', { bubbles: true, composed: true, detail: request }));
+          return;
+        }
         if (form?.matches('[data-leveling-question-form]') && this.state.id === 'leveling-assessment') {
           const questionId = form.dataset.questionId ?? '';
-          const question = labList<CompetencyQuestionFixture>(this.state.fixture, 'questions').find(item => item.id === questionId);
+          const questions = this.state.interaction.levelingGeneratedQuestions ?? [];
+          const question = questions.find(item => item.id === questionId);
           const answer = String(new FormData(form).get('leveling-' + questionId) ?? this.state.interaction.fields['leveling-answer:' + questionId] ?? '');
           if (!question || answer === '') {
             this.transitionInteraction(interaction => ({ ...interaction, enrollmentFeedback: 'Escolha uma resposta antes de continuar.' }));
             this.restoreLevelingAssessment();
             return;
           }
-          const questions = labList<CompetencyQuestionFixture>(this.state.fixture, 'questions');
           const nextQuestion = questions.findIndex(item => item.id !== questionId && this.state.interaction.toggles['leveling-submitted:' + item.id] !== true);
-          const resultStep = questions.length + 1;
-          const nextStep = nextQuestion >= 0 ? nextQuestion + 1 : resultStep;
+          const resultStep = 4 + questions.length;
+          const nextStep = nextQuestion >= 0 ? nextQuestion + 4 : resultStep;
           this.transitionInteraction(interaction => ({
             ...interaction,
             fields: { ...interaction.fields, ['leveling-answer:' + questionId]: answer },
@@ -6395,12 +6617,20 @@ export function registerComponentElements(): void {
         this.dataset.prototypeAccent = typeof prototypeParameters.accent === 'string' ? prototypeParameters.accent : 'teal';
         this.removeAttribute('id');
         delete this.dataset.scrollpoint;
+        const componentContent = id === 'leveling-assessment'
+          ? renderLevelingAssessment({
+            ...this.state.fixture,
+            questions: this.state.interaction.groups['leveling-generation-status'] === 'ready' ? this.state.interaction.levelingGeneratedQuestions ?? [] : [],
+            generationStatus: this.state.interaction.groups['leveling-generation-status'] ?? 'idle',
+          }, selectedId)
+          : content;
         const visibleContent = prototypeParameters.visible === false
           ? '<div class="lm-prototype-hidden" role="status"><strong>Componente oculto</strong><span>Ative “Exibir componente” nos parâmetros para mostrar a peça.</span></div>'
-          : content;
+          : componentContent;
         this.innerHTML = visibleContent + componentStateLayer(situation.status);
         this.prepareControls();
         this.restoreInteraction();
+        if (id === 'leveling-assessment') this.restoreLevelingAssessment();
       }
     }
     customElements.define('lumira-page-part', DemoPagePart);

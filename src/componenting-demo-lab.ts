@@ -33,6 +33,29 @@ function mountParts(host: HTMLElement, parts: readonly Part[]): void {
 type DemoScreenState = ComponentMockSituation['status'];
 type LabRole = ComponentMockSituation['role'];
 type InspectorTab = 'part' | 'page' | 'data';
+type LabTheme = 'carbon-light' | 'dracula-carbon' | 'midnight-tokyo' | 'porcelain-editorial' | 'botanical-fieldnotes' | 'solar-pop' | 'terminal-moss';
+const labThemes: readonly { id: LabTheme; label: string }[] = [
+  { id: 'carbon-light', label: 'Carbon Light' },
+  { id: 'dracula-carbon', label: 'Dracula Carbon' },
+  { id: 'midnight-tokyo', label: 'Midnight Tokyo' },
+  { id: 'porcelain-editorial', label: 'Porcelain Editorial' },
+  { id: 'botanical-fieldnotes', label: 'Botanical Fieldnotes' },
+  { id: 'solar-pop', label: 'Solar Pop' },
+  { id: 'terminal-moss', label: 'Terminal Moss' },
+];
+const LAB_THEME_STORAGE_KEY = 'lumira.componenting-demo.theme.v1';
+function parseLabTheme(value: string | null): LabTheme | undefined {
+  return labThemes.find(theme => theme.id === value)?.id;
+}
+function savedLabTheme(): LabTheme {
+  try {
+    const fromUrl = typeof window === 'undefined' ? null : parseLabTheme(new URLSearchParams(window.location.search).get('theme'));
+    const fromStorage = typeof window === 'undefined' ? null : parseLabTheme(window.localStorage.getItem(LAB_THEME_STORAGE_KEY));
+    return fromUrl ?? fromStorage ?? 'carbon-light';
+  } catch {
+    return 'carbon-light';
+  }
+}
 type LabState = {
   screens: readonly ReferenceScreenSpec[];
   fixtures: Record<string, unknown>;
@@ -44,6 +67,7 @@ type LabState = {
   componentParameters: Record<string, PrototypeParameterValues>;
   fullView: boolean;
   inspectorTab: InspectorTab;
+  theme: LabTheme;
 };
 type LabStateIterator<T> = Generator<T, never, (state: T) => T>;
 function componentStateKey(screenId: string, componentId: string): string {
@@ -133,8 +157,6 @@ const configuredAccessKeyDigest = import.meta.env.VITE_PTA_ACCESS_KEY_SHA256?.tr
 const DEMO_ACCESS_KEY_SHA256 = configuredAccessKeyDigest && /^[a-f0-9]{64}$/.test(configuredAccessKeyDigest)
   ? configuredAccessKeyDigest
   : '577354857eae071767721a0f07cd8d9663502309f08bfd341bdc12f10d0ae94f';
-const DEMO_ACCESS_SESSION_KEY = 'lumira.presentation.pta-access.v1';
-
 export function componentingDemoLab({ screens, fixtures }: { screens: readonly ReferenceScreenSpec[]; fixtures: Record<string, unknown> }): HTMLElement {
   registerComponentElements();
   class DemoDataEditor extends HTMLElement implements DemoDataEditorElement {
@@ -266,7 +288,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       const initialScreen = screens.find(screen => screen.id === 'teacher-workspace') ?? screens.find(screen => screen.id === 'teacher-profile') ?? screens[0];
       this.transitions = stateIterator<LabState>({
         screens: [], fixtures: {}, screenId: initialScreen?.id ?? '',
-        componentId: initialScreen?.defaultComponentId ?? '', role: 'professor', screenState: 'ready', componentStates: {}, componentParameters: {}, fullView: false, inspectorTab: 'part',
+        componentId: initialScreen?.defaultComponentId ?? '', role: 'professor', screenState: 'ready', componentStates: {}, componentParameters: {}, fullView: false, inspectorTab: 'part', theme: savedLabTheme(),
       });
       this.state = this.transitions.next().value;
       this.addEventListener('click', event => this.onClick(event));
@@ -437,6 +459,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       this.state = this.transitions.next(state => ({
         ...state, screens: nextScreens, fixtures: copiedFixtures,
         screenId: initialScreen?.id ?? '', componentId: initialRegion?.id ?? initialScreen?.defaultComponentId ?? '', role: initialRole, inspectorTab: 'part',
+        theme: parseLabTheme(params.get('theme')) ?? state.theme,
       })).value;
       this.writeSelectionToLocation(true);
       this.render();
@@ -447,6 +470,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
       url.searchParams.set('screen', this.state.screenId);
       url.searchParams.set('part', this.state.componentId);
       url.searchParams.set('role', this.state.role);
+      url.searchParams.set('theme', this.state.theme);
       window.history[replace ? 'replaceState' : 'pushState']({ componentingDemoLab: true }, '', url);
     }
     private restoreSelectionFromLocation(): void {
@@ -460,6 +484,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         : ['student-profile', 'student-activity', 'leveling-enrollment', 'quests', 'competency-questions'].includes(screen.id) ? 'aluno' : screen.id === 'access' ? 'visitante' : 'professor';
       this.state = this.transitions.next(state => ({
         ...state, screenId: screen.id, componentId: region?.id ?? screen.defaultComponentId, role, screenState: 'ready', inspectorTab: 'part',
+        theme: parseLabTheme(params.get('theme')) ?? state.theme,
       })).value;
       this.render();
       this.scrollToComponent(region?.id ?? screen.defaultComponentId);
@@ -624,6 +649,16 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
     }
     private onChange(event: Event): void {
       if (!(event.target instanceof HTMLSelectElement)) return;
+      if (event.target.matches('[data-theme-select]')) {
+        const theme = parseLabTheme(event.target.value);
+        if (!theme || theme === this.state.theme) return;
+        this.state = this.transitions.next(state => ({ ...state, theme })).value;
+        try { window.localStorage.setItem(LAB_THEME_STORAGE_KEY, theme); } catch { /* Tema continua ativo nesta sessão. */ }
+        this.writeSelectionToLocation(true);
+        this.render();
+        this.querySelector<HTMLSelectElement>('[data-theme-select]')?.focus();
+        return;
+      }
       const componentStateSelect = event.target.closest<HTMLSelectElement>('[data-component-state]');
       if (componentStateSelect && this.contains(componentStateSelect)) {
         const componentId = componentStateSelect.dataset.componentState;
@@ -775,12 +810,12 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
         const selected = this.state.inspectorTab === tab;
         return '<button type="button" id="inspector-tab-' + tab + '" role="tab" aria-controls="inspector-panel-' + tab + '" aria-selected="' + String(selected) + '" tabindex="' + (selected ? '0' : '-1') + '" data-inspector-tab="' + tab + '" class="' + (selected ? 'active' : '') + '">' + label + '</button>';
       }).join('');
-      const markup = '<div class="componenting-lab-shell' + (this.state.fullView ? ' is-full-view' : '') + '">'
+      const markup = '<div class="componenting-lab-shell' + (this.state.fullView ? ' is-full-view' : '') + '" data-theme="' + e(this.state.theme) + '">'
         + '<aside class="lm-app-rail"><header class="lm-lab-brand"><span class="lm-brand-glyph">L</span><div><b>LUMIRA</b><small>APRESENTAÇÃO INTERATIVA</small></div></header>'
         + '<div class="lm-rail-label">TELAS DE REFERÊNCIA</div><nav class="lm-page-nav">' + pageButtons + '</nav>'
         + '<div class="lm-rail-label lm-scrollpoint-label">PONTOS DA PÁGINA</div><nav class="lm-scrollpoint-nav" aria-label="Navegação por partes da página">' + componentButtons + '</nav>'
         + '<div class="lm-rail-bottom"><span>ROTEIRO DE APRESENTAÇÃO</span><b>' + String(this.state.screens.length).padStart(2, '0') + ' TELAS · ESTADOS INTERATIVOS</b></div></aside>'
-        + '<section class="lm-preview-column"><header class="lm-preview-toolbar"><div><span class="lm-live-dot"></span><span>APRESENTAÇÃO LUMIRA</span><i>/</i><b data-current-screen-title>' + e(screen.title) + '</b></div><div class="lm-viewport-controls"><button type="button" class="lm-share-link" data-copy-demo-link><span aria-hidden="true">↗</span><span data-copy-demo-label>Compartilhar esta parte</span></button><button type="button" class="lm-full-view-toggle" data-full-view-toggle aria-pressed="' + String(this.state.fullView) + '" aria-label="' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '"><span aria-hidden="true">' + (this.state.fullView ? '⤡' : '⤢') + '</span><span>' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '</span></button></div></header>'
+        + '<section class="lm-preview-column"><header class="lm-preview-toolbar"><div><span class="lm-live-dot"></span><span>APRESENTAÇÃO LUMIRA</span><i>/</i><b data-current-screen-title>' + e(screen.title) + '</b></div><div class="lm-viewport-controls"><label class="lm-theme-picker"><span>TEMA</span><select data-theme-select aria-label="Tema visual">' + labThemes.map(theme => '<option value="' + theme.id + '" ' + (theme.id === this.state.theme ? 'selected' : '') + '>' + e(theme.label) + '</option>').join('') + '</select></label><button type="button" class="lm-share-link" data-copy-demo-link><span aria-hidden="true">↗</span><span data-copy-demo-label>Compartilhar esta parte</span></button><button type="button" class="lm-full-view-toggle" data-full-view-toggle aria-pressed="' + String(this.state.fullView) + '" aria-label="' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '"><span aria-hidden="true">' + (this.state.fullView ? '⤡' : '⤢') + '</span><span>' + (this.state.fullView ? 'Voltar ao laboratório' : 'Expandir prévia') + '</span></button></div></header>'
         + '<div class="lm-page-scroll">' + (this.state.fullView
           ? '<div class="lm-continuous-component-list lm-full-flow-list" data-screen-id="' + e(screen.id) + '" data-screen-state="' + e(this.state.screenState) + '">' + pageMarkup + '</div>'
           : '<div class="lm-page-caption"><div><span class="lm-eyebrow">LUMIRA · EXPERIÊNCIA DE PÁGINA</span><h1>' + e(screen.title) + '</h1>'
@@ -840,7 +875,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
   return lab;
 }
 
-type AccessGateState = { page: HTMLElement | null; error: string; entry: string; authorized: boolean };
+type AccessGateState = { page: HTMLElement | null; error: string; entry: string; authorized: boolean; pending: boolean; requestId: string };
 function accessKeyDigest(value: string): Promise<string> {
   return crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)).then(buffer =>
     Array.from(new Uint8Array(buffer), byte => byte.toString(16).padStart(2, '0')).join(''));
@@ -860,9 +895,10 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
       private state: AccessGateState;
       constructor() {
         super();
-        this.transitions = stateIterator<AccessGateState>({ page: null, error: '', entry: '', authorized: false });
+        this.transitions = stateIterator<AccessGateState>({ page: null, error: '', entry: '', authorized: false, pending: false, requestId: '' });
         this.state = this.transitions.next().value;
         this.addEventListener('submit', event => { void this.onSubmit(event); });
+        this.addEventListener('lumira-forge-authentication-result', event => this.onAuthenticationResult(event as CustomEvent<{ requestId: string; error?: string }>));
       }
       configure(content: HTMLElement): void {
         this.state = this.transitions.next(state => ({ ...state, page: content })).value;
@@ -872,13 +908,22 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
         const form = event.target instanceof HTMLFormElement ? event.target : undefined;
         if (!form?.matches('[data-demo-access-form]')) return;
         event.preventDefault();
+        if (this.state.pending) return;
         const input = form.querySelector<HTMLInputElement>('[name="accessKey"]');
         const entry = input?.value ?? '';
+        const pat = form.querySelector<HTMLInputElement>('[name="pat"]')?.value.trim() ?? '';
+        const routerKey = form.querySelector<HTMLInputElement>('[name="routerKey"]')?.value.trim() ?? '';
         const candidate = normalizeAccessKey(entry);
         if (!candidate) {
           this.state = this.transitions.next(state => ({ ...state, entry: '', error: 'Digite a chave PTA para continuar.' })).value;
           this.render();
           this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
+          return;
+        }
+        if (!pat || !routerKey) {
+          this.state = this.transitions.next(state => ({ ...state, entry, error: 'Digite o PAT do Cognoscere e a chave do Port Router.' })).value;
+          this.render();
+          this.querySelector<HTMLInputElement>(!pat ? '[name="pat"]' : '[name="routerKey"]')?.focus();
           return;
         }
         try {
@@ -894,27 +939,47 @@ function protectDemoWithAccessKey(page: HTMLElement): HTMLElement {
             this.querySelector<HTMLInputElement>('[name="accessKey"]')?.focus();
             return;
           }
-          try { sessionStorage.setItem(DEMO_ACCESS_SESSION_KEY, 'authorized'); } catch { /* Acesso vale nesta aba mesmo sem sessão persistente. */ }
-          this.state = this.transitions.next(state => ({ ...state, error: '', entry: '', authorized: true })).value;
+          const requestId = 'lumira-auth-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
+          this.state = this.transitions.next(state => ({ ...state, error: '', entry: candidate, pending: true, requestId })).value;
           this.render();
+          this.dispatchEvent(new CustomEvent('lumira-forge-authentication-request', {
+            bubbles: true,
+            composed: true,
+            detail: { requestId, pat, routerKey },
+          }));
         } catch (error) {
           this.state = this.transitions.next(state => ({ ...state, entry, error: error instanceof Error ? error.message : 'Não foi possível validar a chave PTA.' })).value;
           this.render();
         }
       }
+      private onAuthenticationResult(event: CustomEvent<{ requestId: string; error?: string }>): void {
+        const result = event.detail;
+        if (!result || result.requestId !== this.state.requestId || !this.state.pending) return;
+        this.state = this.transitions.next(state => ({
+          ...state,
+          pending: false,
+          authorized: !result.error,
+          error: result.error ?? '',
+          entry: result.error ? state.entry : '',
+          requestId: '',
+        })).value;
+        this.render();
+        if (result.error) this.querySelector<HTMLInputElement>('[name="pat"]')?.focus();
+      }
       private render(): void {
-        let sessionAuthorized = false;
-        try { sessionAuthorized = sessionStorage.getItem(DEMO_ACCESS_SESSION_KEY) === 'authorized'; } catch { /* Sessão indisponível. */ }
-        if (this.state.page && (this.state.authorized || sessionAuthorized)) {
+        if (this.state.page && this.state.authorized) {
           this.replaceChildren(this.state.page);
           return;
         }
         const helpId = this.state.error ? 'lm-presentation-key-error' : 'lm-presentation-key-help';
-        const helpText = 'A chave abre esta apresentação protegida. O Cognoscere local é conectado separadamente pelo navegador.';
+        const helpText = 'A PTA libera a apresentação. O PAT e a chave do Port Router validam a conexão com o Cognoscere Forge.';
+        const disabled = this.state.pending ? ' disabled' : '';
         this.innerHTML = '<main class="lm-access-gate"><section class="lm-access-gate-intro"><span class="lm-access-gate-mark">L</span><span class="lm-eyebrow">LUMIRA · COMPONENTING DEMO LAB</span><h1>Uma plataforma que torna o raciocínio visível.</h1><p>Explore as telas, as partes de página e suas interações demonstrativas.</p><small>Apresentação de produto · acesso por convite</small></section>'
-          + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">CHAVE DE ACESSO</span><h2>Digite a chave PTA</h2><p>Use a chave de acesso para abrir a demonstração.</p><label for="lm-presentation-key">Chave de acesso</label><input id="lm-presentation-key" name="accessKey" type="password" autocomplete="current-password" spellcheck="false" required aria-invalid="' + String(Boolean(this.state.error)) + '" aria-describedby="' + helpId + '" value="' + e(this.state.entry) + '" placeholder="PTA-XXXX-XXXX-…">'
+          + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">AUTENTICAÇÃO</span><h2>Acesse a apresentação</h2><p>Informe o convite e as duas chaves do serviço para continuar.</p><label for="lm-presentation-key">Chave PTA · apresentação</label><input id="lm-presentation-key" name="accessKey" type="password" autocomplete="current-password" spellcheck="false" required' + disabled + ' aria-invalid="' + String(this.state.error.includes('PTA') || this.state.error.includes('Chave não reconhecida')) + '" aria-describedby="' + helpId + '" value="' + e(this.state.entry) + '" placeholder="PTA-XXXX-XXXX-…">'
+          + '<label for="lm-cognoscere-pat">PAT · Cognoscere</label><input id="lm-cognoscere-pat" name="pat" type="password" autocomplete="off" spellcheck="false" required' + disabled + ' placeholder="PAT do serviço local">'
+          + '<label for="lm-port-router-key">Chave · Port Router</label><input id="lm-port-router-key" name="routerKey" type="password" autocomplete="off" spellcheck="false" required' + disabled + ' placeholder="Chave do túnel">'
           + (this.state.error ? '<p id="lm-presentation-key-error" class="lm-access-gate-error" role="alert">' + e(this.state.error) + '</p>' : '<small id="lm-presentation-key-help">' + e(helpText) + '</small>')
-          + '<button type="submit" class="lm-access-gate-submit">Abrir apresentação <span aria-hidden="true">↗</span></button></form><small class="lm-access-gate-note">O código é compartilhado separadamente.</small></section></main>';
+          + '<button type="submit" class="lm-access-gate-submit"' + disabled + '>' + (this.state.pending ? '<span class="lm-auth-spinner" aria-hidden="true"></span> Validando as chaves…' : 'Abrir apresentação') + '<span aria-hidden="true">↗</span></button></form><small class="lm-access-gate-note">As chaves do serviço ficam somente na memória desta sessão e são apagadas ao recarregar.</small></section></main>';
       }
     }
     customElements.define('lumira-access-gate', LumiraAccessGate);

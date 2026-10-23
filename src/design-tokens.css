@@ -7,10 +7,13 @@
   --lm-ink: #17324f;
   --lm-ink-strong: #102943;
   --lm-muted: #71849a;
-  --lm-canvas: #f4f7fb;
+  --lm-canvas: #eff4f8;
   --lm-surface: #ffffff;
   --lm-surface-soft: #f8fafc;
-  --lm-line: #e4eaf1;
+  --lm-surface-recessed: #edf3f7;
+  --lm-line: #dce5ed;
+  --lm-outline: #c6d4e1;
+  --lm-outline-soft: #e8eef3;
   --lm-brand: #0b477d;
   --lm-brand-strong: #082e5c;
   --lm-teal: #21a99f;
@@ -36,6 +39,7 @@
   --lm-radius-md: 14px;
   --lm-radius-lg: 20px;
   --lm-radius-pill: 999px;
-  --lm-shadow-soft: 0 8px 28px rgba(19, 47, 77, .08);
-  --lm-shadow-lifted: 0 18px 46px rgba(19, 47, 77, .14);
+  --lm-shadow-soft: 0 1px 2px rgba(19, 47, 77, .05), 0 7px 20px rgba(19, 47, 77, .07);
+  --lm-shadow-lifted: 0 2px 5px rgba(19, 47, 77, .08), 0 18px 42px rgba(19, 47, 77, .16);
+  --lm-shadow-inset-edge: inset 0 1px 0 rgba(255, 255, 255, .92);
 }

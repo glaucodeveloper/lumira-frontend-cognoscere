@@ -239,6 +239,62 @@ export interface QuestionnaireMonitorResult {
   error?: string;
 }
 
+export interface LevelingSkillInput {
+  code: string;
+  description: string;
+}
+
+export interface LevelingThesisInput {
+  delimitation: string;
+  claim: string;
+  evidence: string;
+  counterpoint: string;
+  limits: string;
+  conclusion: string;
+}
+
+export interface LevelingQuestionGenerationRequest {
+  requestId: string;
+  partId: 'leveling-assessment';
+  age: number;
+  grade: number;
+  thesis: LevelingThesisInput;
+  competency: { title: string; description: string; skills: LevelingSkillInput[] };
+  intents: string[];
+  questionCount: number;
+}
+
+export interface ForgeAuthenticationRequest {
+  requestId: string;
+  pat: string;
+  routerKey: string;
+}
+
+export interface ForgeAuthenticationResult {
+  requestId: string;
+  error?: string;
+}
+
+export interface LevelingGeneratedQuestion {
+  id: string;
+  title: string;
+  context: string;
+  prompt: string;
+  evidence: string;
+  choices: string[];
+  correctOption: number;
+  explanation: string;
+  points: number;
+  skillCodes: string[];
+  intent: string;
+}
+
+export interface LevelingQuestionGenerationResult {
+  requestId: string;
+  questions?: LevelingGeneratedQuestion[];
+  error?: string;
+}
+
 export interface SubjectSkillUnderstandingRequest {
   requestId: string;
   partId: 'pedagogy-context';
