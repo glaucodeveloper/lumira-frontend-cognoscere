@@ -65,11 +65,11 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'Metis-4B', slug: cognoscereLocal.slug, unit_id: cognoscereLocal.unitId,
-          mode: 'document_update', max_tokens: 1100,
+          mode: 'document_update', max_tokens: 1500,
           messages: [
             ...messages,
             { role: 'assistant', content: draft },
-            { role: 'user', content: 'Revise a resposta anterior para cumprir o formato pedagógico pedido. ' + instruction + ' Preserve o sentido e os limites do contexto; não acrescente fatos nem explique que está revisando. Separe os parágrafos com uma linha em branco real (\\n\\n).' },
+            { role: 'user', content: 'A resposta anterior não desenvolveu a leitura. Escreva uma nova resposta, sem apenas copiar ou dividir as frases anteriores. ' + instruction + ' Desenvolva cada parágrafo com explicação e consequência pedagógica, usando somente o contexto e as definições presentes na mensagem de sistema. Não invente fatos, matéria, intenção ou evidência. Separe os parágrafos com uma linha em branco real (\\n\\n).' },
           ],
         }),
         signal: AbortSignal.timeout(90000),
@@ -271,7 +271,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       else if (typeof envelope.summary === 'string' && envelope.summary.trim()) reply = envelope.summary.trim();
     } catch { /* Resposta Markdown simples também é válida. */ }
     return ensurePedagogicalParagraphs(messages, reply, request.kind === 'reflection'
-      ? 'Escreva exatamente 3 parágrafos: (1) o que a ficha permite compreender e o que ainda falta; (2) como as quatro dimensões se articulam e orientam a aprendizagem; (3) uma decisão ou lacuna concreta e uma pergunta específica. Com ficha vazia, explique como começar sem inventar uma matéria.'
+      ? 'Escreva exatamente 3 parágrafos de 2 ou 3 frases: (1) o que a ficha permite compreender e o que ainda falta; (2) como Natureza, Entendimento, Abordagem e Aspectos se articulam e orientam a aprendizagem, explicando essa relação sem enumerar definições; (3) uma decisão pedagógica concreta e uma pergunta específica. Com ficha vazia, explique o papel articulado das quatro dimensões e como começar sem inventar uma matéria.'
       : 'Organize em 2 parágrafos: resposta à pergunta conectada à ficha atual; consequência para o ensino, limite ou próximo passo.', request.kind === 'reflection' ? 3 : 2);
   }
   type AgeGradePolicy = {
