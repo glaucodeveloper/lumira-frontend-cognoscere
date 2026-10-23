@@ -39,4 +39,4 @@ npm run preview
 
 ## Sondagem e coeficiente idade/série
 
-A tela `/professor/sondagem` mostra idade, série de referência e diferença etária para contexto. O coeficiente permanece nulo até a escola validar uma fórmula; o repositório consultado não define uma regra matemática. O plano inicial propõe cinco contextos por competência e continua sujeito à revisão docente. Nenhum nível é inferido automaticamente da idade.
+A tela de matrícula no nivelamento começa com idade e série, depois abre um stepper de cinco questões para uma competência demonstrativa. A barra dinâmica soma até 100 pontos de acordo com as respostas escolhidas. O coeficiente idade/série permanece indefinido porque o repositório consultado não estabelece uma fórmula; a pontuação mostra apenas o estado do protótipo e não define nível, nota ou avanço escolar.

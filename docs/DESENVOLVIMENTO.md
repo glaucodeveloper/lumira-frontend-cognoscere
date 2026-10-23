@@ -23,7 +23,7 @@ Documentar a estrutura visual e técnica inicial da plataforma Lumira, preservar
 |---|---|---|
 | Entrada | `/`, `/acesso` | apresentação pública e seleção de perfil demonstrativo |
 | Professor | `/professor/inicio`, `/professor/materias`, `/professor/monitor` | início, matérias, contratos e revisão de atividades |
-| Sondagem | `/professor/sondagem`, `/aluno/sondagem` | contexto idade/série, plano de sondagem e perguntas de referência |
+| Sondagem | `/professor/sondagem`, `/aluno/sondagem` | cadastro demonstrativo de idade/série e stepper de cinco questões para uma competência |
 | Aprendizagem | `/aluno/atividade`, `/professor/evidencias`, `/cursos` | atividade, respostas, evidências e conteúdo |
 | Comunidade | `/social`, `/social/eventos/:id`, `/perfil` | fórum, calendário, eventos e perfil |
 | Administração | `/admin` | superfície administrativa inicial |
@@ -32,7 +32,7 @@ As rotas descrevem o protótipo e não equivalem à implementação de um produt
 
 ## Sondagem e idade/série
 
-A interface apresenta idade, série e diferença etária como contexto para planejar a sondagem. O material consultado não define uma fórmula validada para o coeficiente idade/série. Por isso, o código não inventa um coeficiente, não classifica domínio automaticamente e não recomenda mudança de série a partir da idade. A regra matemática e os critérios pedagógicos ficam pendentes de política institucional versionada e revisão docente.
+A tela de matrícula registra idade e série no estado local e conduz cinco questões sobre uma competência. Uma barra soma pontos demonstrativos conforme as alternativas marcadas. O material consultado não define fórmula validada para coeficiente idade/série; por isso, idade e série apenas contextualizam o exemplo, e a pontuação não classifica domínio, não define nota e não recomenda mudança de série. A regra matemática e os critérios pedagógicos ficam pendentes de política institucional versionada e revisão docente.
 
 ## Execução e validação
 

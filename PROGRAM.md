@@ -32,6 +32,14 @@ The `pedagogy-activity-builder` part opens as a step editor. Step one stores the
 
 Step number, question IDs, field values, review checkbox, approval state, and feedback belong to the page part's state iterator. Moving forward validates the current step; final confirmation validates every field, and edits after confirmation invalidate it. The fixture seeds one complete sample question for demonstration. These values last only for the current page session: this editor does not call Forge, save an activity, or publish it. Only TypeScript and production compilation have been checked for this change; the interaction flow has not been manually exercised in a browser.
 
+## Enrollment and competency leveling
+
+The `leveling-enrollment` page contains one `leveling-assessment` part. Enrollment begins with an age and grade form; submitting it opens a stepper with five contexts for one sample competency: relating total power, duration of use, and energy consumption. The sample is tied to EF08CI03, EF08CI04, and EF08CI05.
+
+The combination bar shows the registered age and grade beside the competency. Selecting an answer updates a demonstration score from 0 to 100 using 20 points for each expected choice; submitting a question records it and advances to the next unanswered step. The student can revisit answers. Changing age or grade and submitting the form clears prior answers before starting the questionnaire again. The result step stays unavailable until all five answers are submitted.
+
+This score exists only to demonstrate dynamic questionnaire state. The consulted repository does not define an age-grade coefficient or an institutional scoring policy, so age and grade only label context; the score is not a school grade, mastery level, placement decision, or progression rule. Answers and registration remain in the page-part state iterator for the current browser session. The flow does not call Forge, persist enrollment, or associate the student with a school or class.
+
 ## Project narrative, authorship, and AI review
 
 The project part explains how a learning idea becomes collaborative work. Existing projects are expandable publication cards: opening one reveals authorship, audience, goal, justification, learning evidence, competencies, milestones, and its Social draft or private state. Teacher and student project lists use this same narrative structure.
