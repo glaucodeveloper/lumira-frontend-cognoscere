@@ -1,6 +1,6 @@
 /** Monólito interno dos programas: domínios, gateways e API operacional da plataforma. */
 import { shell, landing, access, page, createHtmlIterator } from './components';
-import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CognoscereStatus, CommunityEvent, CommunityPost, Competency, Contracts, Gateway, LoginInput, LumiraSystem, Material, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, Preview, ProjectAssistantRequest, Role, SessionUser, SondagemPlan, SocialProfile, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
+import type { AgeGradeContext, Answer, AppSnapshot, ClassRoom, CognoscereStatus, CommunityEvent, CommunityPost, Competency, Contracts, Gateway, LoginInput, LumiraSystem, Material, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, Preview, ProjectAssistantRequest, QuestionnaireMonitorRequest, QuestionnaireMonitorResult, Role, SessionUser, SondagemPlan, SocialProfile, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
 
 /** Domain policy stays private to this program module. */
 export interface ProgramRenderContext {
@@ -105,6 +105,40 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
       else if (typeof structured.summary === 'string' && structured.summary.trim()) reply = structured.summary.trim();
     } catch { /* Texto Markdown simples também é resposta válida. */ }
     return { reply };
+  }
+  async function reviewQuestionnaireAnswers(request: QuestionnaireMonitorRequest): Promise<{ reply: string }> {
+    if (request.partId !== 'competency-question-response') throw new Error('Parte de questionário inválida.');
+    if (!Number.isInteger(request.attemptNumber) || request.attemptNumber < 1) throw new Error('Tentativa inválida.');
+    if (request.answers.length !== 5 || request.answers.some(answer => !answer.response.trim())) throw new Error('O monitor exige as cinco respostas registradas.');
+    if (request.answers.some(answer => [answer.questionId, answer.title, answer.context, answer.prompt, answer.response].some(value => value.length > 12000))) {
+      throw new Error('Uma resposta excede o limite de leitura do monitor.');
+    }
+    const messages = [
+      {
+        role: 'system',
+        content: [
+          'Você é o monitor pedagógico local da plataforma educacional Lumira. O Metis compreende o questionário e responde em texto natural; o Cognoscere Forge revisa a resposta localmente.',
+          'Leia em conjunto a competência, os cinco contextos, os pedidos e as respostas do estudante. Responda em português claro, com um resumo curto do raciocínio que aparece no conjunto, um aspecto consistente e uma pergunta ou próximo passo útil para a pessoa revisar.',
+          'Use evidências concretas das respostas sem expor trechos longos. Se as respostas forem insuficientes ou vazias, diga isso com precisão e peça uma ampliação específica. Não invente dados nem atribua intenção, característica pessoal, nota, nível, diagnóstico ou domínio da competência. Uma tentativa não decide progressão escolar.',
+          'Responda somente com feedback em texto natural e Markdown simples. Não gere JSON, operações, comandos de sistema, notas numéricas ou propostas de alteração automática.',
+        ].join('\n'),
+      },
+      { role: 'user', content: JSON.stringify({ competency: request.competency, attemptNumber: request.attemptNumber, answers: request.answers }) },
+    ];
+    const response = await fetch(localForgeEndpoint('/v1/chat/completions'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'Metis-4B', slug: cognoscereLocal.slug, unit_id: cognoscereLocal.unitId,
+        mode: 'document_update', messages, max_tokens: 850,
+      }),
+      signal: AbortSignal.timeout(240000),
+    });
+    if (!response.ok) throw await readForgeError(response);
+    const payload = await response.json() as { choices?: Array<{ message?: { content?: unknown } }> };
+    const content = payload.choices?.[0]?.message?.content;
+    if (typeof content !== 'string' || !content.trim()) throw new Error('O monitor local não retornou feedback.');
+    return { reply: content.trim() };
   }
   async function understandSubjectSkill(request: SubjectSkillUnderstandingRequest): Promise<string> {
     if (request.partId !== 'pedagogy-context') throw new Error('Parte de matéria inválida.');
@@ -454,6 +488,12 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     return event.target;
   }
 
+  function questionnaireMonitorOrigin(event: Event, partId: unknown): HTMLElement | null {
+    if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
+    if (partId !== 'competency-question-response' || event.target.dataset.componentId !== 'competency-question-response') return null;
+    return event.target;
+  }
+
   function opinionMessageOrigin(event: Event, partId: unknown): HTMLElement | null {
     if (!(event.target instanceof HTMLElement) || !mount.contains(event.target)) return null;
     if (partId !== 'community-feed' || event.target.dataset.componentId !== 'community-feed') return null;
@@ -485,6 +525,19 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
         error: error instanceof Error ? error.message : String(error),
       });
     }
+  }
+
+  async function onQuestionnaireMonitorRequest(event: Event): Promise<void> {
+    const detail = (event as CustomEvent<QuestionnaireMonitorRequest>).detail;
+    const origin = questionnaireMonitorOrigin(event, detail?.partId);
+    if (!origin || !detail || typeof detail.requestId !== 'string' || !/^[a-z0-9-]{1,100}$/i.test(detail.requestId)) return;
+    const result: QuestionnaireMonitorResult = { requestId: detail.requestId };
+    try {
+      result.reply = (await reviewQuestionnaireAnswers(detail)).reply;
+    } catch (error) {
+      result.error = error instanceof Error ? error.message : String(error);
+    }
+    if (origin.isConnected) origin.dispatchEvent(new CustomEvent('lumira-questionnaire-monitor-result', { detail: result }));
   }
 
   async function onSubjectSkillUnderstandingRequest(event: Event): Promise<void> {
@@ -568,11 +621,13 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
   // startUI pertence ao próprio program e conecta a interface ao sistema retornado.
   mount.addEventListener('lumira-project-assistant-status-request', onProjectAssistantStatus);
   mount.addEventListener('lumira-project-assistant-request', onProjectAssistantRequest);
+  mount.addEventListener('lumira-questionnaire-monitor-request', onQuestionnaireMonitorRequest);
   mount.addEventListener('lumira-subject-skill-understanding-request', onSubjectSkillUnderstandingRequest);
   mount.addEventListener('lumira-opinion-message-send', onOpinionMessageSend);
   removeListeners.push(
     () => mount.removeEventListener('lumira-project-assistant-status-request', onProjectAssistantStatus),
     () => mount.removeEventListener('lumira-project-assistant-request', onProjectAssistantRequest),
+    () => mount.removeEventListener('lumira-questionnaire-monitor-request', onQuestionnaireMonitorRequest),
     () => mount.removeEventListener('lumira-subject-skill-understanding-request', onSubjectSkillUnderstandingRequest),
     () => mount.removeEventListener('lumira-opinion-message-send', onOpinionMessageSend),
   );

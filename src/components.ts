@@ -1,6 +1,6 @@
 /** Componentes, páginas e dados iniciais da plataforma e do Componenting Demo Lab. */
 
-import type { AppSnapshot, CognoscereStatus, CommunityEvent, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, ProjectAssistantRequest, SessionUser, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
+import type { AppSnapshot, CognoscereStatus, CommunityEvent, OpinionCircleActorRole, OpinionCircleMessageDelivery, OpinionCircleMessageEvent, OpinionCircleMessageRejection, OpinionCircleMessageSendRequest, ProjectAssistantRequest, QuestionnaireMonitorRequest, QuestionnaireMonitorResult, SessionUser, SubjectSkillUnderstandingRequest, SubjectSkillUnderstandingResult } from './types';
 import profileCoverAsset from './assets/profile/serra-dourada-cover.webp';
 import communityPostAsset from './assets/community/sala-colaborativa.webp';
 import studentRampStoryAsset from './assets/stories/student-ramp-experiment.webp';
@@ -1507,7 +1507,14 @@ interface DemoPagePartElement extends HTMLElement {
   configure(props: DemoPagePartProps): void;
   syncQuestionnaireMonitorFeedback(receipt: QuestionnaireMonitorReceipt | null): void;
 }
-type QuestionnaireMonitorReceipt = { attemptNumber: number; answerCount: number; submittedAt: string };
+type QuestionnaireMonitorReceipt = {
+  attemptNumber: number;
+  answerCount: number;
+  submittedAt: string;
+  status: 'pending' | 'ready' | 'error';
+  reply?: string;
+  error?: string;
+};
 type PageCompositionContext = {
   host: HTMLElement;
   situation: ComponentMockSituation;
@@ -2376,10 +2383,12 @@ function renderCompetencyQuestionResponse(data: ComponentFixture, selectedId: st
 
 function renderCompetencyMonitorFeedback(selectedId: string): string {
   const content = '<section class="lm-panel lm-question-monitor-feedback"><header><div><span class="lm-eyebrow">MONITOR DE APRENDIZAGEM</span><h2 tabindex="-1">Feedback e entrega</h2><p>O retorno aparece quando você finaliza e envia o questionário.</p></div><span class="lm-lock-label">⌑ PRIVADO</span></header>'
-    + '<div class="lm-monitor-feedback-pending" data-monitor-feedback-pending><span aria-hidden="true">◷</span><div><b>Aguardando a entrega</b><p>Registre as cinco respostas e finalize o questionário para receber a confirmação do monitor.</p></div></div>'
-    + '<section class="lm-monitor-feedback-receipt" data-monitor-feedback-receipt hidden aria-live="polite"><div class="lm-monitor-feedback-status"><span class="lm-enrollment-success-mark" aria-hidden="true">✓</span><div><span class="lm-eyebrow">ENTREGA RECEBIDA · DEMONSTRAÇÃO LOCAL</span><h3>Questionário enviado ao monitor</h3></div></div>'
-    + '<p data-monitor-feedback-text></p><dl class="lm-monitor-attempt-record"><div><dt>Tentativa atribuída</dt><dd data-monitor-attempt-number>—</dd></div><div><dt>Respostas entregues</dt><dd data-monitor-answer-count>—</dd></div><div><dt>Registro</dt><dd data-monitor-submitted-at>—</dd></div></dl>'
-    + '<p class="lm-monitor-attempt-roadmap"><b>Sistema de tentativas · futuro</b><span>Histórico persistente, retomada e abertura de novas tentativas ainda serão integrados. Esta tela não grava um registro de backend nem fornece avaliação real do modelo.</span></p></section></section>';
+    + '<div class="lm-monitor-feedback-pending" data-monitor-feedback-idle role="status"><span aria-hidden="true">◷</span><div><b>Aguardando a entrega</b><p>Registre as cinco respostas e finalize o questionário para solicitar a leitura do monitor local.</p></div></div>'
+    + '<div class="lm-monitor-feedback-pending" data-monitor-feedback-pending hidden role="status" aria-live="polite"><span class="lm-spinner" aria-hidden="true"></span><div><b>Monitor lendo as respostas</b><p>O questionário foi enviado ao Cognoscere local. O retorno aparece aqui ao terminar.</p></div></div>'
+    + '<section class="lm-monitor-feedback-receipt" data-monitor-feedback-receipt hidden aria-live="polite"><div class="lm-monitor-feedback-status"><span class="lm-enrollment-success-mark" aria-hidden="true">✓</span><div><span class="lm-eyebrow">COGNOSCERE · MONITOR LOCAL</span><h3>Feedback do questionário</h3></div></div>'
+    + '<p class="lm-monitor-feedback-text" data-monitor-feedback-text></p><dl class="lm-monitor-attempt-record"><div><dt>Tentativa atribuída</dt><dd data-monitor-attempt-number>—</dd></div><div><dt>Respostas analisadas</dt><dd data-monitor-answer-count>—</dd></div><div><dt>Registro</dt><dd data-monitor-submitted-at>—</dd></div></dl>'
+    + '<p class="lm-monitor-attempt-roadmap"><b>Sistema de tentativas · futuro</b><span>Este envio usa a tentativa demonstrativa 01. Histórico persistente, retomada e abertura de novas tentativas ainda serão integrados.</span></p></section>'
+    + '<section class="lm-monitor-feedback-error" data-monitor-feedback-error hidden role="alert"><b>O monitor não concluiu a leitura</b><p data-monitor-error></p><span>Suas respostas permanecem nesta sessão. Você pode tentar a entrega novamente no caderno.</span></section></section>';
   return labPart('competency-monitor-feedback', content, selectedId, 'lm-pedagogy-panel-part');
 }
 
@@ -2550,6 +2559,7 @@ export function registerComponentElements(): void {
         this.addEventListener('submit', event => this.onSubmit(event));
         this.addEventListener('lumira-opinion-message-delivered', event => this.onOpinionMessageDelivered(event as CustomEvent<OpinionCircleMessageDelivery>));
         this.addEventListener('lumira-opinion-message-rejected', event => this.onOpinionMessageRejected(event as CustomEvent<OpinionCircleMessageRejection>));
+        this.addEventListener('lumira-questionnaire-monitor-result', event => this.onQuestionnaireMonitorResult(event as CustomEvent<QuestionnaireMonitorResult>));
         this.addEventListener('lumira-subject-skill-understanding-result', event => this.onSubjectSkillUnderstandingResult(event as CustomEvent<SubjectSkillUnderstandingResult>));
         this.addEventListener('focusout', event => {
           if (event.target === this.platformReferenceTarget) this.closePlatformReferenceMenu();
@@ -2786,13 +2796,40 @@ export function registerComponentElements(): void {
             ...interaction.fields,
             'monitor-answer-count': receipt ? String(receipt.answerCount) : '',
             'monitor-submitted-at': receipt?.submittedAt ?? '',
-            'monitor-feedback-text': receipt
-              ? 'Recebemos o conjunto completo de respostas e o encaminhamos para revisão pedagógica. Esta confirmação registra a entrega; a análise interpretativa do monitor será conectada ao serviço em uma etapa futura.'
-              : '',
+            'monitor-feedback-text': receipt?.reply ?? '',
+            'monitor-error': receipt?.error ?? '',
           },
-          groups: { ...interaction.groups, 'monitor-attempt-number': receipt ? String(receipt.attemptNumber).padStart(2, '0') : '' },
-          toggles: { ...interaction.toggles, 'monitor-questionnaire-delivered': Boolean(receipt) },
+          groups: {
+            ...interaction.groups,
+            'monitor-attempt-number': receipt ? String(receipt.attemptNumber).padStart(2, '0') : '',
+            'monitor-status': receipt?.status ?? 'idle',
+          },
         }));
+        this.render();
+      }
+      private onQuestionnaireMonitorResult(event: CustomEvent<QuestionnaireMonitorResult>): void {
+        if (this.state.id !== 'competency-question-response') return;
+        const result = event.detail;
+        if (!result?.requestId || result.requestId !== this.state.interaction.groups['questionnaire-monitor-request-id']) return;
+        const status: QuestionnaireMonitorReceipt['status'] = result.error || !result.reply?.trim() ? 'error' : 'ready';
+        const interaction = this.state.interaction;
+        const receipt: QuestionnaireMonitorReceipt = {
+          attemptNumber: Number(interaction.groups['questionnaire-attempt-number'] ?? '1'),
+          answerCount: Number(interaction.groups['questionnaire-answer-count'] ?? '0'),
+          submittedAt: interaction.groups['questionnaire-submitted-at'] ?? '',
+          status,
+          reply: result.reply?.trim(),
+          error: result.error || (!result.reply?.trim() ? 'O monitor não retornou feedback.' : undefined),
+        };
+        this.transitionInteraction(current => ({
+          ...current,
+          groups: { ...current.groups, 'questionnaire-monitor-status': status },
+          fields: { ...current.fields, 'questionnaire-monitor-feedback': receipt.reply ?? '', 'questionnaire-monitor-error': receipt.error ?? '' },
+          toggles: { ...current.toggles, 'competency-question-finalized': status === 'ready' },
+          questionFeedback: status === 'ready' ? 'Feedback do monitor recebido · tentativa demonstrativa 01.' : 'Falha ao solicitar feedback. As respostas continuam registradas; tente enviar novamente.',
+        }));
+        this.parentElement?.querySelector<DemoPagePartElement>('[data-component-id="competency-monitor-feedback"]')?.syncQuestionnaireMonitorFeedback(receipt);
+        this.restoreCompetencyQuestionResponse();
         this.render();
       }
       private transitionInteraction(change: (interaction: DemoPagePartInteraction) => DemoPagePartInteraction): void {
@@ -3794,6 +3831,7 @@ export function registerComponentElements(): void {
         const questionIndex = Math.max(0, Math.min(questionForms.length - 1, Number(interaction.groups['competency-question-index'] ?? '0')));
         const submittedQuestions = questionForms.filter(form => interaction.toggles['competency-submitted:' + (form.dataset.questionId ?? '')] === true);
         const finalized = interaction.toggles['competency-question-finalized'] === true;
+        const monitorStatus = interaction.groups['questionnaire-monitor-status'] ?? 'idle';
         questionForms.forEach((form, index) => { form.hidden = index !== questionIndex; });
         this.querySelectorAll<HTMLButtonElement>('[data-question-select]').forEach(button => {
           const index = Number(button.dataset.questionSelect ?? '0');
@@ -3819,29 +3857,39 @@ export function registerComponentElements(): void {
         const finalizeButton = this.querySelector<HTMLButtonElement>('[data-question-finalize]');
         if (finalizeButton) {
           finalizeButton.disabled = finalized;
-          finalizeButton.textContent = finalized ? 'Questionário entregue ✓' : 'Finalizar e entregar respostas →';
+          finalizeButton.textContent = monitorStatus === 'pending' ? 'Enviando ao monitor…'
+            : monitorStatus === 'ready' ? 'Feedback recebido ✓'
+              : monitorStatus === 'error' ? 'Tentar enviar novamente →' : 'Finalizar e entregar respostas →';
         }
         const finalizeFeedback = this.querySelector<HTMLElement>('[data-question-finalize-feedback]');
-        if (finalizeFeedback) finalizeFeedback.textContent = finalized ? 'Entrega registrada. Consulte o feedback do monitor abaixo.' : '';
+        if (finalizeFeedback) finalizeFeedback.textContent = monitorStatus === 'pending' ? 'A entrega está em processamento.'
+          : monitorStatus === 'ready' ? 'Feedback do monitor recebido abaixo.'
+            : monitorStatus === 'error' ? 'O envio falhou. Tente novamente.' : '';
         const questionForm = questionForms[questionIndex];
         const previous = questionForm?.querySelector<HTMLButtonElement>('[data-question-nav="previous"]');
         if (previous) previous.disabled = questionIndex === 0;
       }
       private restoreQuestionnaireMonitorFeedback(): void {
         const interaction = this.state.interaction;
-        const delivered = interaction.toggles['monitor-questionnaire-delivered'] === true;
+        const status = interaction.groups['monitor-status'] ?? 'idle';
+        const idle = this.querySelector<HTMLElement>('[data-monitor-feedback-idle]');
         const pending = this.querySelector<HTMLElement>('[data-monitor-feedback-pending]');
         const receipt = this.querySelector<HTMLElement>('[data-monitor-feedback-receipt]');
-        if (pending) pending.hidden = delivered;
-        if (receipt) receipt.hidden = !delivered;
+        const errorPanel = this.querySelector<HTMLElement>('[data-monitor-feedback-error]');
+        if (idle) idle.hidden = status !== 'idle';
+        if (pending) pending.hidden = status !== 'pending';
+        if (receipt) receipt.hidden = status !== 'ready';
+        if (errorPanel) errorPanel.hidden = status !== 'error';
         const feedback = this.querySelector<HTMLElement>('[data-monitor-feedback-text]');
         if (feedback) feedback.textContent = interaction.fields['monitor-feedback-text'] ?? '';
+        const error = this.querySelector<HTMLElement>('[data-monitor-error]');
+        if (error) error.textContent = interaction.fields['monitor-error'] ?? '';
         const attempt = this.querySelector<HTMLElement>('[data-monitor-attempt-number]');
-        if (attempt) attempt.textContent = delivered ? 'Tentativa ' + (interaction.groups['monitor-attempt-number'] ?? '01') : '—';
+        if (attempt) attempt.textContent = status === 'ready' ? 'Tentativa ' + (interaction.groups['monitor-attempt-number'] ?? '01') : '—';
         const count = this.querySelector<HTMLElement>('[data-monitor-answer-count]');
-        if (count) count.textContent = delivered ? interaction.fields['monitor-answer-count'] ?? '0' : '—';
+        if (count) count.textContent = status === 'ready' ? interaction.fields['monitor-answer-count'] ?? '0' : '—';
         const submittedAt = this.querySelector<HTMLElement>('[data-monitor-submitted-at]');
-        if (submittedAt) submittedAt.textContent = interaction.fields['monitor-submitted-at'] ?? '—';
+        if (submittedAt) submittedAt.textContent = status === 'ready' ? interaction.fields['monitor-submitted-at'] ?? '—' : '—';
       }
       private fillMockAiFields(values: Record<string, string>): void {
         const fields = { ...this.state.interaction.fields };
@@ -4454,18 +4502,54 @@ export function registerComponentElements(): void {
             this.restoreCompetencyQuestionResponse();
             return;
           }
+          const answers = questionForms.map(form => {
+            const questionId = form.dataset.questionId ?? '';
+            return {
+              questionId,
+              title: form.querySelector<HTMLElement>('.lm-question-panel-heading h3')?.textContent?.trim() ?? 'Questão',
+              context: form.querySelector<HTMLElement>('.lm-question-situation p')?.textContent?.trim() ?? '',
+              prompt: form.querySelector<HTMLElement>('.lm-question-prompt p')?.textContent?.trim() ?? '',
+              response: form.querySelector<HTMLTextAreaElement>('textarea[data-interaction-field]')?.value.trim() ?? this.state.interaction.fields['competency-answer:' + questionId]?.trim() ?? '',
+            };
+          });
+          if (answers.some(answer => !answer.response)) {
+            this.transitionInteraction(interaction => ({ ...interaction, questionFeedback: 'Uma resposta está vazia. Preencha e registre novamente antes de entregar.' }));
+            this.restoreCompetencyQuestionResponse();
+            return;
+          }
+          const attemptNumber = 1;
+          const submittedAt = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+          const requestId = 'questionnaire-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+          const contextPart = this.parentElement?.querySelector<HTMLElement>('[data-component-id="competency-question-context"]');
+          const request: QuestionnaireMonitorRequest = {
+            requestId,
+            partId: 'competency-question-response',
+            attemptNumber,
+            competency: contextPart?.querySelector('h2')?.textContent?.trim() ?? 'Competência em foco',
+            answers,
+          };
           const receipt: QuestionnaireMonitorReceipt = {
-            attemptNumber: 1,
+            attemptNumber,
             answerCount,
-            submittedAt: new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
+            submittedAt,
+            status: 'pending',
           };
           this.transitionInteraction(interaction => ({
             ...interaction,
             toggles: { ...interaction.toggles, 'competency-question-finalized': true },
-            questionFeedback: 'Questionário finalizado e entregue ao monitor · tentativa demonstrativa 01.',
+            groups: {
+              ...interaction.groups,
+              'questionnaire-monitor-request-id': requestId,
+              'questionnaire-monitor-status': 'pending',
+              'questionnaire-attempt-number': String(attemptNumber),
+              'questionnaire-answer-count': String(answerCount),
+              'questionnaire-submitted-at': submittedAt,
+            },
+            questionFeedback: 'Questionário enviado ao monitor local · tentativa demonstrativa 01.',
           }));
           this.parentElement?.querySelector<DemoPagePartElement>('[data-component-id="competency-monitor-feedback"]')
             ?.syncQuestionnaireMonitorFeedback(receipt);
+          this.dispatchEvent(new CustomEvent('lumira-questionnaire-monitor-request', { bubbles: true, composed: true, detail: request }));
           this.restoreCompetencyQuestionResponse();
           this.render();
           const monitorHeading = this.parentElement?.querySelector<HTMLElement>('[data-component-id="competency-monitor-feedback"] h2');
@@ -5205,7 +5289,7 @@ export function registerComponentElements(): void {
         const questionForm = this.state.id === 'competency-question-response' ? field.closest<HTMLFormElement>('[data-competency-question-form]') : null;
         const questionId = questionForm?.dataset.questionId ?? '';
         const questionWasSubmitted = Boolean(questionId && this.state.interaction.toggles['competency-submitted:' + questionId] === true);
-        const questionWasFinalized = this.state.interaction.toggles['competency-question-finalized'] === true;
+        const questionMonitorHasState = ['pending', 'ready', 'error'].includes(this.state.interaction.groups['questionnaire-monitor-status'] ?? 'idle');
         const activityReviewWasConfirmed = editingActivity && (this.state.interaction.toggles['activity-approved'] === true || this.state.interaction.toggles['activity-review-confirmed'] === true);
         const activityReviewFeedback = activityReviewWasConfirmed ? 'O rascunho mudou. Revise o conjunto e confirme novamente.' : '';
         this.transitionInteraction(interaction => ({
@@ -5221,13 +5305,14 @@ export function registerComponentElements(): void {
               ['competency-submitted:' + questionId]: false,
               'competency-question-finalized': false,
             },
+            groups: { ...interaction.groups, 'questionnaire-monitor-status': 'idle', 'questionnaire-monitor-request-id': '' },
             questionFeedback: 'Resposta alterada. Registre novamente antes de finalizar o questionário.',
           } : {}),
           ...(creatingActivity && interaction.feedback ? { feedback: '' } : {}),
         }));
         if (questionWasSubmitted) {
           this.restoreCompetencyQuestionResponse();
-          if (questionWasFinalized) this.parentElement?.querySelector<DemoPagePartElement>('[data-component-id="competency-monitor-feedback"]')?.syncQuestionnaireMonitorFeedback(null);
+          if (questionMonitorHasState) this.parentElement?.querySelector<DemoPagePartElement>('[data-component-id="competency-monitor-feedback"]')?.syncQuestionnaireMonitorFeedback(null);
         }
         if (editingActivity) {
           const status = this.querySelector<HTMLElement>('[data-review-feedback]');

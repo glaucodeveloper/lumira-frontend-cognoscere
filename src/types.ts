@@ -217,6 +217,28 @@ export interface ProjectAssistantRequest {
   conversation: ProjectAssistantMessage[];
 }
 
+export interface QuestionnaireMonitorAnswer {
+  questionId: string;
+  title: string;
+  context: string;
+  prompt: string;
+  response: string;
+}
+
+export interface QuestionnaireMonitorRequest {
+  requestId: string;
+  partId: 'competency-question-response';
+  attemptNumber: number;
+  competency: string;
+  answers: QuestionnaireMonitorAnswer[];
+}
+
+export interface QuestionnaireMonitorResult {
+  requestId: string;
+  reply?: string;
+  error?: string;
+}
+
 export interface SubjectSkillUnderstandingRequest {
   requestId: string;
   partId: 'pedagogy-context';

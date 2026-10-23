@@ -5077,13 +5077,15 @@ lumira-page-part {
 .lm-question-session-complete p { max-width: 600px; }
 .lm-question-monitor-feedback { margin-top: 14px; }
 .lm-monitor-feedback-pending { display: flex; align-items: flex-start; gap: 11px; margin-top: 12px; padding: 13px; border: 1px dashed #cad8e3; border-radius: 9px; background: #f8fafc; color: #61788b; }
-.lm-monitor-feedback-pending>span { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #eaf0f4; color: #637f91; font-size: 16px; }
+.lm-monitor-feedback-pending>span:not(.lm-spinner) { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #eaf0f4; color: #637f91; font-size: 16px; }
+.lm-monitor-feedback-pending>.lm-spinner { flex: 0 0 auto; }
 .lm-monitor-feedback-pending b { color: #38556c; font-size: 11px; }
 .lm-monitor-feedback-pending p { margin: 3px 0 0; font-size: 10px; line-height: 1.55; }
 .lm-monitor-feedback-receipt { margin-top: 12px; padding: 14px; border: 1px solid #d5e9df; border-radius: 9px; background: #f6fbf7; }
 .lm-monitor-feedback-status { display: flex; align-items: center; gap: 9px; }
 .lm-monitor-feedback-status h3 { margin: 2px 0 0; color: #28523e; font-size: 13px; }
 .lm-monitor-feedback-receipt>p { margin: 10px 0; color: #536c60; font-size: 10px; line-height: 1.65; }
+.lm-monitor-feedback-receipt>.lm-monitor-feedback-text { white-space: pre-line; }
 .lm-monitor-attempt-record { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin: 12px 0; }
 .lm-monitor-attempt-record>div { display: grid; gap: 4px; padding: 9px; border: 1px solid #e1ece4; border-radius: 7px; background: #fff; }
 .lm-monitor-attempt-record dt { color: #7b8e81; font-size: 8px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
@@ -5091,6 +5093,10 @@ lumira-page-part {
 .lm-monitor-attempt-roadmap { display: grid; gap: 4px; padding: 9px; border-left: 2px solid #9bb7a5; background: #fff; }
 .lm-monitor-attempt-roadmap b { color: #456650; font-size: 9px; }
 .lm-monitor-attempt-roadmap span { color: #6f8274; font-size: 9px; line-height: 1.5; }
+.lm-monitor-feedback-error { display: grid; gap: 5px; margin-top: 12px; padding: 12px; border: 1px solid #ead5d2; border-radius: 8px; background: #fff9f8; color: #8a4c46; }
+.lm-monitor-feedback-error>b { font-size: 11px; }
+.lm-monitor-feedback-error>p { margin: 0; font-size: 10px; line-height: 1.5; }
+.lm-monitor-feedback-error>span { color: #946a65; font-size: 9px; line-height: 1.5; }
 @media (max-width: 760px) {
   .lm-monitor-attempt-record { grid-template-columns: 1fr; }
 }
