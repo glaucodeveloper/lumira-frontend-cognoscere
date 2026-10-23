@@ -4411,7 +4411,7 @@ export function registerComponentElements(): void {
         const requestId = 'subject-' + Date.now().toString(36) + '-' + revision.toString(36);
         const request: SubjectFoundationAssistantRequest = {
           requestId, partId: 'pedagogy-context', kind: 'reflection',
-          prompt: 'Leia a fundação atual da matéria. Reflita o que entendeu sobre cada responsabilidade preenchida, como elas se conectam e se essa leitura corresponde ao que a professora pretende. Aponte lacunas sem completar por conta própria.',
+          prompt: 'Leia a fundação atual da matéria e responda em exatamente 3 parágrafos, com 2 ou 3 frases completas em cada um e uma linha em branco real entre eles. Não una tudo em um bloco. Primeiro, descreva o que os campos atuais permitem compreender e o que permanece sem base. Depois, desenvolva como as dimensões Natureza, Entendimento, Abordagem e Aspectos se relacionam e o que essa relação orienta na aprendizagem. Por fim, indique uma lacuna ou decisão pedagógica concreta e faça uma pergunta específica para a professora. Se a ficha estiver vazia, explique com clareza o que falta e como começar, sem inventar uma matéria.',
           context: this.subjectFoundationContext(),
           conversation: this.subjectFoundationConversation(),
         };
