@@ -2409,7 +2409,7 @@ function renderStudentActivityPage(props: ComponentPageProps): string {
     + renderLearnerActivityQuestion(data, selectedId) + '</main></div></div>';
 }
 
-function renderLevelingAssessment(data: ComponentFixture, selectedId: string): string {
+function renderLevelingAssessmentContent(data: ComponentFixture, selectedId: string): string {
   data = prototypeData('leveling-assessment', data);
   const questions = labList<CompetencyQuestionFixture>(data, 'questions');
   const skills = labList<string>(data, 'skills');
@@ -2471,7 +2471,11 @@ function renderLevelingAssessment(data: ComponentFixture, selectedId: string): s
     + '<section class="lm-leveling-score" data-leveling-score-panel hidden aria-label="Status demonstrativo da competência"><div class="lm-leveling-score-heading"><div><span class="lm-eyebrow">COMBINAÇÃO DE CONTEXTO</span><strong data-leveling-combination>Aguardando cadastro de idade e série</strong><small>' + e(labText(data, 'competency', 'Competência em foco')) + '</small></div><b data-leveling-score-label>0/' + totalPoints + '</b></div><div class="lm-leveling-score-track" role="progressbar" aria-label="Pontuação demonstrativa do questionário" aria-valuemin="0" aria-valuemax="' + totalPoints + '" aria-valuenow="0"><i data-leveling-score-fill></i></div><p data-leveling-score-caption>Resultado local ilustrativo; não representa nota ou classificação.</p></section>'
     + stepper + registration + thesisForm + competencyForm + intentsForm + questionsMarkup + resultStepPanel
     + '<p class="lm-action-feedback" data-leveling-feedback role="status"></p></section>';
-  return labPart('leveling-assessment', content, selectedId, 'lm-pedagogy-panel-part');
+  return content;
+}
+
+function renderLevelingAssessment(data: ComponentFixture, selectedId: string): string {
+  return labPart('leveling-assessment', renderLevelingAssessmentContent(data, selectedId), selectedId, 'lm-pedagogy-panel-part', data);
 }
 
 function renderLevelingEnrollmentPage(props: ComponentPageProps): string {
@@ -6618,7 +6622,7 @@ export function registerComponentElements(): void {
         this.removeAttribute('id');
         delete this.dataset.scrollpoint;
         const componentContent = id === 'leveling-assessment'
-          ? renderLevelingAssessment({
+          ? renderLevelingAssessmentContent({
             ...this.state.fixture,
             questions: this.state.interaction.groups['leveling-generation-status'] === 'ready' ? this.state.interaction.levelingGeneratedQuestions ?? [] : [],
             generationStatus: this.state.interaction.groups['leveling-generation-status'] ?? 'idle',
