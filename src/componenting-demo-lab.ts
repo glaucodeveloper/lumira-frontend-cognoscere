@@ -871,7 +871,7 @@ export function componentingDemoLab({ screens, fixtures }: { screens: readonly R
   return lab;
 }
 
-type AccessGateState = { page: HTMLElement | null; error: string; authorized: boolean; pending: boolean; requestId: string };
+type AccessGateState = { page: HTMLElement | null; error: string; pat: string; routerKey: string; authorized: boolean; pending: boolean; requestId: string };
 function protectDemoWithServiceAuthentication(page: HTMLElement): HTMLElement {
   interface AccessGateElement extends HTMLElement { configure(page: HTMLElement): void; }
   if (!customElements.get('lumira-access-gate')) {
@@ -880,7 +880,7 @@ function protectDemoWithServiceAuthentication(page: HTMLElement): HTMLElement {
       private state: AccessGateState;
       constructor() {
         super();
-        this.transitions = stateIterator<AccessGateState>({ page: null, error: '', authorized: false, pending: false, requestId: '' });
+        this.transitions = stateIterator<AccessGateState>({ page: null, error: '', pat: '', routerKey: '', authorized: false, pending: false, requestId: '' });
         this.state = this.transitions.next().value;
         this.addEventListener('submit', event => { void this.onSubmit(event); });
         this.addEventListener('lumira-forge-authentication-result', event => this.onAuthenticationResult(event as CustomEvent<{ requestId: string; error?: string }>));
@@ -897,13 +897,13 @@ function protectDemoWithServiceAuthentication(page: HTMLElement): HTMLElement {
         const pat = form.querySelector<HTMLInputElement>('[name="pat"]')?.value.trim() ?? '';
         const routerKey = form.querySelector<HTMLInputElement>('[name="routerKey"]')?.value.trim() ?? '';
         if (!pat || !routerKey) {
-          this.state = this.transitions.next(state => ({ ...state, error: 'Informe o PAT de chat e a chave local do Port Router.' })).value;
+          this.state = this.transitions.next(state => ({ ...state, pat, routerKey, error: 'Informe o PAT de chat e a chave local do Port Router.' })).value;
           this.render();
           this.querySelector<HTMLInputElement>(!pat ? '[name="pat"]' : '[name="routerKey"]')?.focus();
           return;
         }
         const requestId = 'lumira-auth-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
-        this.state = this.transitions.next(state => ({ ...state, error: '', pending: true, requestId })).value;
+        this.state = this.transitions.next(state => ({ ...state, pat, routerKey, error: '', pending: true, requestId })).value;
         this.render();
         this.dispatchEvent(new CustomEvent('lumira-forge-authentication-request', {
           bubbles: true,
@@ -919,10 +919,15 @@ function protectDemoWithServiceAuthentication(page: HTMLElement): HTMLElement {
           pending: false,
           authorized: !result.error,
           error: result.error ?? '',
+          pat: result.error ? state.pat : '',
+          routerKey: result.error ? state.routerKey : '',
           requestId: '',
         })).value;
         this.render();
-        if (result.error) this.querySelector<HTMLInputElement>('[name="pat"]')?.focus();
+        if (result.error) {
+          const rejectedRouterKey = result.error.includes('Port Router');
+          this.querySelector<HTMLInputElement>(rejectedRouterKey ? '[name="routerKey"]' : '[name="pat"]')?.focus();
+        }
       }
       private render(): void {
         if (this.state.page && this.state.authorized) {
@@ -933,8 +938,8 @@ function protectDemoWithServiceAuthentication(page: HTMLElement): HTMLElement {
         const helpText = 'O PAT de chat e a chave local do Port Router validam a conexão com o Cognoscere Forge.';
         const disabled = this.state.pending ? ' disabled' : '';
         this.innerHTML = '<main class="lm-access-gate"><section class="lm-access-gate-intro"><span class="lm-access-gate-mark">L</span><span class="lm-eyebrow">LUMIRA · COMPONENTING DEMO LAB</span><h1>Uma plataforma que torna o raciocínio visível.</h1><p>Explore as telas, as partes de página e suas interações demonstrativas.</p><small>Apresentação de produto · conexão com serviço local</small></section>'
-          + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">AUTENTICAÇÃO DO SERVIÇO</span><h2>Acesse a apresentação</h2><p>Informe as duas credenciais do serviço para continuar.</p><label for="lm-cognoscere-pat">PAT de chat · Cognoscere</label><input id="lm-cognoscere-pat" name="pat" type="password" autocomplete="off" spellcheck="false" required' + disabled + ' placeholder="PAT usado pelo serviço de chat">'
-          + '<label for="lm-port-router-key">Chave local · Port Router</label><input id="lm-port-router-key" name="routerKey" type="password" autocomplete="off" spellcheck="false" required' + disabled + ' placeholder="Chave do router local">'
+          + '<section class="lm-access-gate-panel"><form data-demo-access-form><span class="lm-eyebrow">AUTENTICAÇÃO DO SERVIÇO</span><h2>Acesse a apresentação</h2><p>Informe as duas credenciais do serviço para continuar.</p><label for="lm-cognoscere-pat">PAT de chat · Cognoscere</label><input id="lm-cognoscere-pat" name="pat" type="password" autocomplete="off" spellcheck="false" required' + disabled + ' value="' + e(this.state.pat) + '" placeholder="PAT usado pelo serviço de chat">'
+          + '<label for="lm-port-router-key">Chave local · Port Router</label><input id="lm-port-router-key" name="routerKey" type="password" autocomplete="off" spellcheck="false" required' + disabled + ' value="' + e(this.state.routerKey) + '" placeholder="Chave do router local">'
           + (this.state.error ? '<p id="lm-service-auth-error" class="lm-access-gate-error" role="alert">' + e(this.state.error) + '</p>' : '<small id="lm-service-auth-help">' + e(helpText) + '</small>')
           + '<button type="submit" class="lm-access-gate-submit"' + disabled + '>' + (this.state.pending ? '<span class="lm-auth-spinner" aria-hidden="true"></span> Validando as chaves…' : 'Abrir apresentação') + '<span aria-hidden="true">↗</span></button></form><small class="lm-access-gate-note">As duas credenciais ficam somente na memória desta sessão e são apagadas ao recarregar.</small></section></main>';
       }

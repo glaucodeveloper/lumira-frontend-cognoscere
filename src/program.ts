@@ -42,12 +42,16 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
     return fetch(tunneledForgeEndpoint(path), { ...init, headers });
   }
   async function readForgeError(response: Response): Promise<Error> {
-    if (response.status === 401 || response.status === 403) return new Error('O Cognoscere Forge recusou o PAT ou a chave do Port Router.');
     let detail = '';
     try {
       const payload = await response.json() as { error?: unknown };
       if (typeof payload.error === 'string') detail = payload.error;
     } catch { /* O serviço pode responder sem JSON. */ }
+    if (response.status === 401 || response.status === 403) {
+      if (detail === 'PAT inválido') return new Error('PAT de chat recusado pelo Cognoscere Forge. Confira o PAT configurado no serviço local.');
+      if (detail === 'port-router authentication required') return new Error('Chave local do Port Router recusada. Confira a chave configurada no router local.');
+      return new Error('Autenticação recusada pelo túnel ou serviço Cognoscere. Confira o PAT e a chave local do Port Router.');
+    }
     return new Error(detail || `Cognoscere Forge respondeu com HTTP ${response.status}.`);
   }
   function paragraphCount(text: string): number {
@@ -783,7 +787,7 @@ export function program({ mount, mode = 'demo', baseUrl = '/api', renderView, do
           signal: AbortSignal.timeout(15000),
         });
         if (response.status === 401 || response.status === 403) {
-          result.error = 'PAT ou chave do Port Router recusada. Confira as duas chaves.';
+          result.error = (await readForgeError(response)).message;
         } else if (!response.ok) {
           result.error = response.status === 503
             ? 'O Forge local não tem um PAT configurado para validar.'
